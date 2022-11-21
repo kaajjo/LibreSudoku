@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">LibreSudoku</string>
+    <string name="nav_bar_statistics">Statistics</string>
+    <string name="nav_bar_home">Home</string>
+    <string name="nav_bar_more">More</string>
+    <string name="new_game">New game</string>
+    <string name="dialog_new_game">You have unfinished game, do you really want to start new?</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_confirm">Yes</string>
+    <string name="action_play">Play</string>
+    <string name="action_continue">Play</string>
+
+    <string name="difficulty_unspecified">Unspecified</string>
+    <string name="difficulty_simple">Simple</string>
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_moderate">Moderate</string>
+    <string name="difficulty_hard">Hard</string>
+    <string name="difficulty_challenge">Challenge</string>
+    <string name="difficulty_custom">Custom</string>
+
+    <string name="type_default_6x6">6x6</string>
+    <string name="type_default_9x9">9x9</string>
+    <string name="type_default_12x12">12x12</string>
+    <string name="type_unspecified">Unspecified</string>
 </resources>
