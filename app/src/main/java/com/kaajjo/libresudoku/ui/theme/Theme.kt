@@ -1,20 +1,13 @@
 package com.kaajjo.libresudoku.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.ViewCompat
 
 @Composable
 fun LibreSudokuTheme(
@@ -22,18 +15,18 @@ fun LibreSudokuTheme(
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     amoled: Boolean = false,
-    appThemes: AppThemes = AppThemes.Green,
+    appTheme: AppTheme = AppTheme.Green,
     content: @Composable () -> Unit,
 ) {
-    val appTheme = AppTheme()
-    val currentTheme = appTheme.getTheme(appThemes, darkTheme)
+    val appColorScheme = AppColorScheme()
+    val currentTheme = appColorScheme.getTheme(appTheme, darkTheme)
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
 
-            // standard implementation: if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            // default implementation: if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 
-            // имплементация с амолед цветами, банально заменяем на черный
+            // additional theme with amoled black
             when {
                 darkTheme && amoled -> dynamicDarkColorScheme(context).copy(background = Color.Black, surface = Color.Black)
                 darkTheme && !amoled -> dynamicDarkColorScheme(context)

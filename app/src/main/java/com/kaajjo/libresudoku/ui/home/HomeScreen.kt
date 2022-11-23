@@ -12,23 +12,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
-import com.kaajjo.libresudoku.core.qqwing.QQWingController
-import com.kaajjo.libresudoku.data.database.model.SudokuBoard
-import com.kaajjo.libresudoku.data.database.repository.BoardRepository
-import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 
 @Composable
 fun HomeScreen(
@@ -38,19 +25,19 @@ fun HomeScreen(
     if(viewModel.showContinueGameDialog) {
         AlertDialog(
             title = { Text(stringResource(R.string.dialog_new_game)) },
-            text = { Text("У вас есть неоконченная игра, вы действительно хотите начать новую игру?") },
+            text = { Text(stringResource(R.string.dialog_new_game_text)) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.showContinueGameDialog = false
                     viewModel.giveUpLastGame()
                     viewModel.generate()
                 }) {
-                    Text("Начать новую")
+                    Text(stringResource(R.string.dialog_new_game_positive))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.showContinueGameDialog = false }) {
-                    Text("Отмена")
+                    Text(stringResource(R.string.action_cancel))
                 }
             },
             onDismissRequest = {
@@ -66,7 +53,7 @@ fun HomeScreen(
         if(viewModel.isGenerating || viewModel.isSolving) {
             GeneratingDialog(
                 onDismiss = { },
-                text = if(viewModel.isGenerating) "Генерируем..." else "Решаем..."
+                text = if(viewModel.isGenerating) stringResource(R.string.dialog_generating) else stringResource(R.string.dialog_solving)
             )
         }
         LaunchedEffect(viewModel.generated) {

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import com.kaajjo.libresudoku.ui.theme.AppThemes
+import com.kaajjo.libresudoku.ui.theme.AppTheme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -51,13 +51,13 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
         preferences[amoledBlackKey] ?: false
     }
 
-    suspend fun setCurrentTheme(appThemes: AppThemes) {
-        val stringTheme = when(appThemes) {
-            AppThemes.Green -> "green"
-            AppThemes.Pink -> "pink"
-            AppThemes.Yellow -> "yellow"
-            AppThemes.Lavender -> "lavender"
-            AppThemes.BlackAndWhite -> "black_and_white"
+    suspend fun setCurrentTheme(appTheme: AppTheme) {
+        val stringTheme = when(appTheme) {
+            AppTheme.Green -> "green"
+            AppTheme.Pink -> "pink"
+            AppTheme.Yellow -> "yellow"
+            AppTheme.Lavender -> "lavender"
+            AppTheme.BlackAndWhite -> "black_and_white"
         }
         dataStore.edit { settings ->
             settings[currentThemeKey] = stringTheme

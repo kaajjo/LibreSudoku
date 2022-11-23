@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,15 +17,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
+import com.kaajjo.libresudoku.ui.game.GameScreen
 import com.kaajjo.libresudoku.ui.home.HomeScreen
-import com.kaajjo.libresudoku.ui.theme.AppThemes
+import com.kaajjo.libresudoku.ui.more.MoreScreen
+import com.kaajjo.libresudoku.ui.more.about.AboutScreen
+import com.kaajjo.libresudoku.ui.onboarding.WelcomeScreen
+import com.kaajjo.libresudoku.ui.settings.SettingsScreen
+import com.kaajjo.libresudoku.ui.theme.AppTheme
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,13 +61,13 @@ class MainActivity : ComponentActivity() {
                 },
                 dynamicColor = dynamicColors.value,
                 amoled = amoledBlack.value,
-                appThemes = when(currentTheme.value) {
-                    "green" -> AppThemes.Green
-                    "pink" -> AppThemes.Pink
-                    "yellow" -> AppThemes.Yellow
-                    "lavender" -> AppThemes.Lavender
-                    "black_and_white" -> AppThemes.BlackAndWhite
-                    else -> AppThemes.Green
+                appTheme = when(currentTheme.value) {
+                    "green" -> AppTheme.Green
+                    "pink" -> AppTheme.Pink
+                    "yellow" -> AppTheme.Yellow
+                    "lavender" -> AppTheme.Lavender
+                    "black_and_white" -> AppTheme.BlackAndWhite
+                    else -> AppTheme.Green
                 }
             ) {
                 val systemUiController = rememberSystemUiController()
@@ -80,7 +86,7 @@ class MainActivity : ComponentActivity() {
                 }
                 LaunchedEffect(firstLaunch) {
                     if(firstLaunch) {
-                        //navController.navigate("welcome_screen")
+                        navController.navigate("welcome_screen")
                     }
                 }
                 Scaffold(
@@ -97,6 +103,30 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(paddingValues)
                     ) {
                         composable("home") { HomeScreen(navController, hiltViewModel()) }
+                        composable("more") { MoreScreen(navController) }
+                        composable("about") { AboutScreen(navController)}
+                        composable("welcome_screen") { WelcomeScreen(navController, hiltViewModel()) }
+                        composable(
+                            route = "settings/?fromGame={fromGame}",
+                            arguments = listOf(navArgument("fromGame") {
+                                defaultValue = false
+                                type = NavType.BoolType
+                            })
+                        ) {
+                            SettingsScreen(navController, hiltViewModel())
+                        }
+                        composable(
+                            route = "game/{uid}/{saved}",
+                            arguments = listOf(
+                                navArgument(name = "uid") { type = NavType.LongType},
+                                navArgument(name = "saved") {
+                                    type = NavType.BoolType
+                                    defaultValue = false
+                                }
+                            )
+                        ) {
+                            GameScreen(navController, hiltViewModel())
+                        }
                     }
                 }
             }

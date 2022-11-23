@@ -5,14 +5,14 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-class AppTheme {
-    fun getTheme(appThemes: AppThemes, dark: Boolean = false): ColorScheme {
-        return when(appThemes) {
-            AppThemes.Green -> if(dark) greenDark else greenLight
-            AppThemes.Pink -> if(dark) pinkDark else pinkLight
-            AppThemes.Yellow -> if(dark) yellowDark else yellowLight
-            AppThemes.Lavender -> if(dark) lavenderDark else lavenderLight
-            AppThemes.BlackAndWhite -> if(dark) blackAndWhiteDark else blackAndWhiteLight
+class AppColorScheme {
+    fun getTheme(appTheme: AppTheme, dark: Boolean = false): ColorScheme {
+        return when(appTheme) {
+            AppTheme.Green -> if(dark) greenDark else greenLight
+            AppTheme.Pink -> if(dark) pinkDark else pinkLight
+            AppTheme.Yellow -> if(dark) yellowDark else yellowLight
+            AppTheme.Lavender -> if(dark) lavenderDark else lavenderLight
+            AppTheme.BlackAndWhite -> if(dark) blackAndWhiteDark else blackAndWhiteLight
         }
     }
 
@@ -316,7 +316,7 @@ class AppTheme {
     )
 }
 
-enum class AppThemes {
+enum class AppTheme {
     Green,
     Pink,
     Yellow,

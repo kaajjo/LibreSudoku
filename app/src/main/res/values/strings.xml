@@ -4,11 +4,14 @@
     <string name="nav_bar_home">Home</string>
     <string name="nav_bar_more">More</string>
     <string name="new_game">New game</string>
-    <string name="dialog_new_game">You have unfinished game, do you really want to start new?</string>
+    <string name="dialog_new_game">Game in progress</string>
+    <string name="dialog_new_game_text">You have unfinished game, do you really want to start new?</string>
+    <string name="dialog_new_game_positive">Start new</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_confirm">Yes</string>
     <string name="action_play">Play</string>
-    <string name="action_continue">Play</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_delete">Delete</string>
 
     <string name="difficulty_unspecified">Unspecified</string>
     <string name="difficulty_simple">Simple</string>
@@ -22,4 +25,109 @@
     <string name="type_default_9x9">9x9</string>
     <string name="type_default_12x12">12x12</string>
     <string name="type_unspecified">Unspecified</string>
+
+    <string name="settings">Settings</string>
+    <string name="more">More</string>
+    <string name="app_about">About</string>
+    <string name="learn_tutorial">Learn</string>
+
+    <string name="pref_appearance">Appearance</string>
+    <string name="pref_dark_theme">Dark theme</string>
+    <string name="pref_dark_theme_follow">Follow system</string>
+    <string name="pref_dark_theme_off">Off</string>
+    <string name="pref_dark_theme_on">On</string>
+
+    <string name="pref_board_font_size">Board font size</string>
+    <string name="pref_board_font_size_small">Small</string>
+    <string name="pref_board_font_size_medium">Medium</string>
+    <string name="pref_board_font_size_large">Large</string>
+
+    <string name="pref_input">Input method</string>
+    <string name="pref_input_cell_first">Cell first</string>
+    <string name="pref_input_digit_first">Digit first</string>
+
+    <string name="pref_delete_stats">Delete all statistics</string>
+    <string name="pref_delete_stats_text">This action will delete all your statistics, saved games and records and can\'t be undone</string>
+    <string name="action_deleted">Deleted</string>
+
+    <string name="pref_app_theme">App theme</string>
+
+    <string name="theme_dynamic">Dynamic</string>
+    <string name="theme_green">Green</string>
+    <string name="theme_peach">Peach</string>
+    <string name="theme_yellow">Yellow?</string>
+    <string name="theme_lavender">Lavender</string>
+    <string name="theme_black_and_white">Black and white</string>
+
+    <string name="pref_pure_black">Pure black dark theme</string>
+    <string name="pref_gameplay">Gameplay</string>
+
+    <string name="pref_mistakes_limit">Mistakes limit</string>
+    <string name="pref_mistakes_limit_sub">3 mistakes and you\'re done</string>
+
+    <string name="pref_disable_hints">Disable hints</string>
+    <string name="pref_disable_hints_sub">You don\'t like hints? Then just remove them!</string>
+
+    <string name="pref_show_timer">Show timer</string>
+    <string name="pref_reset_timer">Reset timer on game reset</string>
+
+    <string name="pref_assistance">Assistance</string>
+    <string name="pref_mistakes_check">Mistakes checking</string>
+    <string name="pref_mistakes_check_off">Off</string>
+    <string name="pref_mistakes_check_violations">Rules violations</string>
+    <string name="pref_mistakes_check_final">With final solution</string>
+
+    <string name="pref_highlight_identical">Highlight identical numbers</string>
+    <string name="pref_highlight_identical_sub">When you select a number on a board the cells with the same numbers will be highlighted</string>
+
+    <string name="pref_remaining_uses">Remaining uses</string>
+    <string name="pref_remaining_uses_sub">The number of remaining uses of the number will be shown on the keyboard</string>
+
+    <string name="pref_position_lines">Position lines</string>
+    <string name="pref_position_lines_sub">The row and the column of the selected cell will be highlighted</string>
+
+    <string name="pref_auto_erase_notes">Auto erase notes</string>
+
+    <string name="pref_other">Other</string>
+    <string name="pref_keep_screen_on">Keep screen on</string>
+
+    <string name="pref_reset_tipcards">Reset all tip cards</string>
+    <string name="pref_tipcards_reset">Tip cards was reset!</string>
+
+    <string name="about_version">Version</string>
+    <string name="about_github_project">Project on GitHub</string>
+
+    <string name="action_give_up">Give up</string>
+    <string name="action_reset_game">Reset game</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+
+    <string name="action_show_notes">Show notes</string>
+    <string name="action_clear_notes">Clear notes</string>
+    <string name="action_compute_notes">Compute notes</string>
+    <string name="action_show_solution">Show solution</string>
+
+    <string name="welcome">Welcome</string>
+    <string name="intro_what_is_sudoku">A classic sudoku looks like this</string>
+    <string name="intro_rules">The goal of the game is to fill all the cells with numbers from 1 to 9. So that the numbers do not repeat in any column, row or smaller box (3x3)</string>
+    <string name="onboard_recommendation_prefs">We recommend visiting the settings so that you can customize the app for you</string>
+    <string name="action_start">Start</string>
+    <string name="toolboard_undo_description">Undo. Just undo</string>
+    <string name="toolboard_notes_description">Notes mode when highlighted. Tap to highlight!</string>
+    <string name="toolboard_hint_description">Inserts the correct number into the selected cell. Can be disabled in settings</string>
+    <string name="toolboard_erase_description">Removes a number or all notes from the selected cell</string>
+    <string name="first_game_dialog_title">Quick tour</string>
+    <string name="first_game_dialog_got_it">Got it</string>
+    <string name="action_exit">Exit</string>
+    <string name="action_stay">Stay</string>
+    <string name="mistakes_number_out_of">Mistakes %1$d/%2$d</string>
+    <string name="reset_game_text">Do you want to reset current puzzle?</string>
+    <string name="give_up_text">Do you want to give up? After you give up, you can see the solution, but the game will be over</string>
+    <string name="game_completed">Game completed</string>
+    <string name="game_completed_text">You have completed the game. You can stay or exit to the main screen to start a new game</string>
+    <string name="game_over">Game over</string>
+    <string name="game_over_mistakes">You made 3 mistakes</string>
+
+    <string name="dialog_generating">Generating…</string>
+    <string name="dialog_solving">Solving…</string>
 </resources>
