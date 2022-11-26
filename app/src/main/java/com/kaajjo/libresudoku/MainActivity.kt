@@ -32,6 +32,7 @@ import com.kaajjo.libresudoku.ui.more.MoreScreen
 import com.kaajjo.libresudoku.ui.more.about.AboutScreen
 import com.kaajjo.libresudoku.ui.onboarding.WelcomeScreen
 import com.kaajjo.libresudoku.ui.settings.SettingsScreen
+import com.kaajjo.libresudoku.ui.statistics.StatisticsScreen
 import com.kaajjo.libresudoku.ui.theme.AppTheme
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -106,6 +107,7 @@ class MainActivity : ComponentActivity() {
                         composable("more") { MoreScreen(navController) }
                         composable("about") { AboutScreen(navController)}
                         composable("welcome_screen") { WelcomeScreen(navController, hiltViewModel()) }
+                        composable("statistics") { StatisticsScreen(navController, hiltViewModel()) }
                         composable(
                             route = "settings/?fromGame={fromGame}",
                             arguments = listOf(navArgument("fromGame") {

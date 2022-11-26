@@ -130,4 +130,26 @@
 
     <string name="dialog_generating">Generating…</string>
     <string name="dialog_solving">Solving…</string>
+
+    <string name="statistics">Statistics</string>
+    <string name="games_started">Games started</string>
+    <string name="games_completed">Games completed</string>
+    <string name="win_rate">Win rate</string>
+    <string name="win_streak">Win streak</string>
+    <string name="current_streak">Current streak</string>
+    <string name="best_streak">Best streak</string>
+    <string name="number_best_games">%1$d best games</string>
+    <string name="games">Games</string>
+    <string name="time">Time</string>
+    <string name="delete_question">Delete?</string>
+    <string name="delete_record_dialog">Do you want to delete your %1$d record? It can\'t be undone</string>
+    <string name="statistics_difficulty_filter_all">All</string>
+    <string name="average_time">Average time</string>
+    <string name="best_time">Best time</string>
+    <string name="win_rate_percentage">%1$d%%</string>
+    <string name="tip_card_win_streak_summ">A win streak is reset when you lose (mistakes limit), give up, or start a new game without completing the previous one, so be careful</string>
+    <string name="tip_card_records_list_title">List of records</string>
+    <string name="tip_card_records_list_summ">This list contains 5 of your best records, or less, depending on how many times you\'ve played. You can delete a records you don\'t like by long pressing on it</string>
+    <string name="statistics_no_records">You have no records yet</string>
+
 </resources>
