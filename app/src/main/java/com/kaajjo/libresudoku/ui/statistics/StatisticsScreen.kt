@@ -83,8 +83,8 @@ fun StatisticsScreen(
             )
             ChipRowType(
                 types = listOf(
-                    Pair(GameType.Default9x9, stringResource(R.string.type_default_6x6)),
-                    Pair(GameType.Default6x6, stringResource(R.string.type_default_9x9))
+                    Pair(GameType.Default9x9, stringResource(R.string.type_default_9x9)),
+                    Pair(GameType.Default6x6, stringResource(R.string.type_default_6x6))
                 ),
                 selected = viewModel.selectedType,
                 onSelected = { viewModel.setType(it) }
@@ -144,9 +144,10 @@ fun StatisticsScreen(
                         viewModel.getCurrentStreak(savedGameList.value).toString()
                     )
                     }
-                    val maxStreak by remember { mutableStateOf(
-                        viewModel.getMaxStreak(savedGameList.value).toString()
-                    )
+                    val maxStreak by remember {
+                        mutableStateOf(
+                            viewModel.getMaxStreak(savedGameList.value).toString()
+                        )
                     }
 
                     StatisticsSection(
@@ -174,7 +175,8 @@ fun StatisticsScreen(
                     title = stringResource(R.string.number_best_games, 5) + if(
                         viewModel.selectedType != GameType.Unspecified && viewModel.selectedDifficulty != GameDifficulty.Unspecified
                     ) {
-                        " ${viewModel.getCurrentTypeString(context).lowercase()} ${viewModel.getCurrentDifficultyString(context).lowercase()}"
+                        " ${viewModel.getCurrentTypeString(context).lowercase()} " +
+                                viewModel.getDifficultyString(viewModel.selectedDifficulty, context).lowercase()
                     } else {
                         ""
                     },

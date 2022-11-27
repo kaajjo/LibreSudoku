@@ -152,4 +152,21 @@
     <string name="tip_card_records_list_summ">This list contains 5 of your best records, or less, depending on how many times you\'ve played. You can delete a records you don\'t like by long pressing on it</string>
     <string name="statistics_no_records">You have no records yet</string>
 
+    <string name="history_title">History</string>
+    <string name="history_no_games">You don\'t played yet</string>
+    <string name="history_item_time">Time:</string>
+    <string name="history_item_id">Game ID:</string>
+
+    <string name="saved_game_screen_title">Saved game</string>
+    <string name="saved_game_current">Current</string>
+    <string name="saved_game_initial">Initial</string>
+    <string name="saved_game_progress">Progress %1$d/%2$d</string>
+    <string name="empty_screen_something_went_wrong">Oops, something went wrong…</string>
+    <string name="saved_game_difficulty">Difficulty: %1$s</string>
+    <string name="saved_game_type">Type: %1$s</string>
+    <string name="saved_game_time">Time: %1$s</string>
+    <string name="saved_game_completed">The game was completed</string>
+    <string name="saved_game_give_up">The game was not completed, you gave up</string>
+    <string name="saved_game_in_progress">In progress</string>
+    <string name="saved_game_mistakes_limit">The game was not completed, you exceeded the mistakes limit</string>
 </resources>

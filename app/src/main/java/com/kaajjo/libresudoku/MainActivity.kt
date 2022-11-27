@@ -27,6 +27,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.ui.game.GameScreen
+import com.kaajjo.libresudoku.ui.gameshistory.GamesHistoryScreen
+import com.kaajjo.libresudoku.ui.gameshistory.savedgame.SavedGameScreen
 import com.kaajjo.libresudoku.ui.home.HomeScreen
 import com.kaajjo.libresudoku.ui.more.MoreScreen
 import com.kaajjo.libresudoku.ui.more.about.AboutScreen
@@ -108,6 +110,8 @@ class MainActivity : ComponentActivity() {
                         composable("about") { AboutScreen(navController)}
                         composable("welcome_screen") { WelcomeScreen(navController, hiltViewModel()) }
                         composable("statistics") { StatisticsScreen(navController, hiltViewModel()) }
+                        composable("history") { GamesHistoryScreen(navController, hiltViewModel()) }
+
                         composable(
                             route = "settings/?fromGame={fromGame}",
                             arguments = listOf(navArgument("fromGame") {
@@ -117,6 +121,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             SettingsScreen(navController, hiltViewModel())
                         }
+
                         composable(
                             route = "game/{uid}/{saved}",
                             arguments = listOf(
@@ -128,6 +133,13 @@ class MainActivity : ComponentActivity() {
                             )
                         ) {
                             GameScreen(navController, hiltViewModel())
+                        }
+
+                        composable(
+                            route = "saved_game/{uid}",
+                            arguments = listOf(navArgument("uid") { type = NavType.LongType } )
+                        ) {
+                            SavedGameScreen(navController, hiltViewModel())
                         }
                     }
                 }

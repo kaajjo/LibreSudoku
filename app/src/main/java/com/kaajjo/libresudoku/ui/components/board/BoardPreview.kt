@@ -27,7 +27,8 @@ import kotlin.math.sqrt
 fun BoardPreview(
     modifier: Modifier = Modifier,
     size: Int = 9,
-    board: List<List<Cell>>,
+    boardString: String? = null,
+    board: List<List<Cell>>? = null,
     mainTextSize: TextUnit = when(size){
         6 -> 16.sp
         9 -> 11.sp
@@ -111,15 +112,30 @@ fun BoardPreview(
             textPaint.getTextBounds("1", 0, 1, textBounds)
 
             drawIntoCanvas { canvas ->
-                for (i in 0 until size) {
-                    for (j in 0 until size) {
-                        if (board[i][j].value != 0) {
-                            canvas.nativeCanvas.drawText(
-                                board[i][j].value.toString(),
-                                board[i][j].col * cellSize + (cellSize - width) / 2f,
-                                (board[i][j].row * cellSize + cellSize) - (cellSize - textBounds.height()) / 2f,
-                                textPaint
-                            )
+                if(board != null) {
+                    for (i in 0 until size) {
+                        for (j in 0 until size) {
+                            if (board[i][j].value != 0) {
+                                canvas.nativeCanvas.drawText(
+                                    board[i][j].value.toString(),
+                                    board[i][j].col * cellSize + (cellSize - width) / 2f,
+                                    (board[i][j].row * cellSize + cellSize) - (cellSize - textBounds.height()) / 2f,
+                                    textPaint
+                                )
+                            }
+                        }
+                    }
+                } else if(boardString != null && boardString.length == size * size) {
+                    for (i in 0 until size) {
+                        for (j in 0 until size) {
+                            if (boardString[size * j + i] != '0') {
+                                canvas.nativeCanvas.drawText(
+                                    boardString[size * j + i].toString(),
+                                    i * cellSize + (cellSize - width) / 2f,
+                                    j * cellSize + cellSize - (cellSize - textBounds.height()) / 2f,
+                                    textPaint
+                                )
+                            }
                         }
                     }
                 }
