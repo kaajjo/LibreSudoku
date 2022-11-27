@@ -58,10 +58,10 @@ fun MoreScreen(
             }
         )
         PreferenceRow(
-            title = stringResource(R.string.learn_tutorial),
+            title = stringResource(R.string.learn_screen_title),
             painter = painterResource(R.drawable.ic_outline_help_outline_24),
             onClick = {
-                navController.navigate("help")
+                navController.navigate("learn")
             }
         )
     }

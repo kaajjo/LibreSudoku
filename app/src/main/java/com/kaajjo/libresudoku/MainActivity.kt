@@ -30,6 +30,7 @@ import com.kaajjo.libresudoku.ui.game.GameScreen
 import com.kaajjo.libresudoku.ui.gameshistory.GamesHistoryScreen
 import com.kaajjo.libresudoku.ui.gameshistory.savedgame.SavedGameScreen
 import com.kaajjo.libresudoku.ui.home.HomeScreen
+import com.kaajjo.libresudoku.ui.learn.LearnScreen
 import com.kaajjo.libresudoku.ui.more.MoreScreen
 import com.kaajjo.libresudoku.ui.more.about.AboutScreen
 import com.kaajjo.libresudoku.ui.onboarding.WelcomeScreen
@@ -111,7 +112,7 @@ class MainActivity : ComponentActivity() {
                         composable("welcome_screen") { WelcomeScreen(navController, hiltViewModel()) }
                         composable("statistics") { StatisticsScreen(navController, hiltViewModel()) }
                         composable("history") { GamesHistoryScreen(navController, hiltViewModel()) }
-
+                        composable("learn") { LearnScreen(navController) }
                         composable(
                             route = "settings/?fromGame={fromGame}",
                             arguments = listOf(navArgument("fromGame") {
@@ -159,6 +160,14 @@ fun NavigationBar(
         targetState = bottomBarState
     ) { visible ->
         if (visible) {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+            LaunchedEffect(key1 = currentDestination) {
+                currentDestination?.let {
+                    selectedScreen = it.route ?: ""
+                }
+            }
+
             NavigationBar {
                 NavigationBarItem(
                     icon = {
@@ -169,9 +178,8 @@ fun NavigationBar(
                     },
                     selected = selectedScreen == "statistics",
                     onClick = {
-                        if(selectedScreen != "statistics") {
-                            selectedScreen = "statistics"
-                            navController.navigate("statistics")
+                        navController.navigate("statistics") {
+                            launchSingleTop = true
                         }
                     },
                     label = {
@@ -190,9 +198,8 @@ fun NavigationBar(
                     },
                     selected = selectedScreen == "home",
                     onClick = {
-                        if(selectedScreen != "home") {
-                            selectedScreen = "home"
-                            navController.navigate("home")
+                        navController.navigate("home") {
+                            launchSingleTop = true
                         }
                     },
                     label = {
@@ -211,9 +218,8 @@ fun NavigationBar(
                     },
                     selected = selectedScreen == "more",
                     onClick = {
-                        if(selectedScreen != "more") {
-                            selectedScreen = "more"
-                            navController.navigate("more")
+                        navController.navigate("more") {
+                            launchSingleTop = true
                         }
                     },
                     label = {
