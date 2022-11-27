@@ -90,49 +90,41 @@ class GameViewModel @Inject constructor(
     var showMenu by mutableStateOf(false)
     var showNotesMenu by mutableStateOf(false)
 
-    // считать количество оставшихся использований
+    // count remaining uses
     var remainingUse = appSettingsManager.remainingUse
 
-    // таймер
+    // timer
     var timerEnabled = appSettingsManager.timerEnabled
 
-    // подсветка одинаковых чисел
+    // identical numbers highlight
     val identicalHighlight = appSettingsManager.highlightIdentical
 
-    // подсветка ошибок
-    var errorHighlight = appSettingsManager.highlightMistakes
-    // метод проверки чисел.
-    // True - конфликтующие числа. False - серяем с конечным решением
-    private var errorMethodConflict = errorHighlight.stateIn(viewModelScope, SharingStarted.Eagerly, 1)
+    // mistakes checking method
+    var mistakesMethod = appSettingsManager.highlightMistakes
+    private var mistakesMethodValue = mistakesMethod.stateIn(viewModelScope, SharingStarted.Eagerly, 1)
 
-    // подсветка строки и столбца текущей клетки
     var positionLines = appSettingsManager.positionLines
 
-    // считать и ограничить количество ошибок
     var mistakesLimit = appSettingsManager.mistakesLimit
     var mistakesLimitValue = mistakesLimit.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    // автоматически стирать заметки
     private val autoEraseNotes = appSettingsManager.autoEraseNotes
     private var autoEraseNotesValue = autoEraseNotes.stateIn(viewModelScope, SharingStarted.Eagerly, true)
 
-    // сбрасывать таймер при рестарте
     var resetTimerOnRestart = appSettingsManager.resetTimerEnabled
 
-    // вкл/выкл кнопка подсказок
     var disableHints = appSettingsManager.hintsDisabled
 
     var endGame by mutableStateOf(false)
     var giveUpDialog by mutableStateOf(false)
 
-    // ошибки
+    // mistakes
     var mistakesCount by mutableStateOf(0)
     var mistakesLimitDialog by mutableStateOf(false)
-    // заметки
+    // notes
     var notesToggled by mutableStateOf(false)
     var notes by mutableStateOf(emptyList<Note>())
 
-    // игровое поле
     private lateinit var initialBoard: List<List<Cell>>
     var gameBoard by mutableStateOf(List(9) { row -> List(9) { col -> Cell(row, col, 0) } } )
     var solvedBoard = List(9) { row -> List(9) { col -> Cell(row, col, 0) } }
@@ -142,13 +134,12 @@ class GameViewModel @Inject constructor(
     private var sudokuUtils = SudokuUtils()
     var gameCompleted by mutableStateOf(false)
 
-    // выбранное число для ввода "сперва число"
-    var fdSelectedNumber by mutableStateOf(0)
+    // Selected number for digit first method
+    var digitFirstNumber by mutableStateOf(0)
     val inputMethod = appSettingsManager.inputMethod
-    // при лонгтапе метод ввода переключается на сперва число
-    var overrideInputMethodFD by mutableStateOf(false)
+    // temporarily use digit first method when true
+    var overrideInputMethodDF by mutableStateOf(false)
 
-    // очищает заметки в заданной клетке
     private fun clearNotesAtCell(notes: List<Note>, row: Int = currCell.row, col: Int = currCell.col) : List<Note> {
         return notes.minus(
             notes.filter { note ->
@@ -158,7 +149,6 @@ class GameViewModel @Inject constructor(
         )
     }
 
-    // очищает все заметки на поле
     private fun emptyNotes() : List<Note> = emptyList()
 
     fun clearNotes() {
@@ -167,33 +157,21 @@ class GameViewModel @Inject constructor(
             GameState(gameBoard, notes)
         )
     }
-    // добавляет заметку в клетку
+
     private fun addNote(note: Int, row: Int, col: Int) : List<Note> {
         return notes.plus(Note(row, col, note))
     }
 
-    // удаляет заметку из клетки
     private fun removeNote(note: Int, row: Int, col: Int) : List<Note> = notes.minus(Note(row, col, note))
 
-    // возвращает игровое поле с отличающимися ссылками (рекомпозиция завязана на ссылках)
     private fun getBoardNoRef():List<List<Cell>> = gameBoard.map { items -> items.map { item -> item.copy() } }
 
-    // устаналивает значение в клетке (в выбранную клетку, если не указано другое)
     private fun setValueCell(value: Int, row: Int = currCell.row, col: Int = currCell.col) : List<List<Cell>> {
-        // такое копирование и присовоение чтобы избавиться от ссылок на объекты чтобы рекомпозиция произошла
         var new = getBoardNoRef()
 
-        // сохраняем стейт
-        //if(!(value == 0 && new[row][col].value == 0)) {
-        //    undoManager.addState(GameState(new, notes))
-        //}
-
-        // ставим число в клетку
         new[row][col].value = value
-        // пересчитываем использования
         remainingUsesList = countRemainingUses(new)
 
-        // если это выбранная клетка, то обновляем ее состояние
         if(currCell.row == row && currCell.col == col) {
             currCell = currCell.copy(value = new[row][col].value)
         }
@@ -202,12 +180,10 @@ class GameViewModel @Inject constructor(
             currCell.error = false
             return new
         }
-        // проверка числа
-        if(errorMethodConflict.value == 1) {
-            // проверка основываясь на текущем поле (конфликтующие числа)
-            // проверяем текущую клетку
+        // checking for mistakes
+        if(mistakesMethodValue.value == 1) {
+            // rule violations
             new[row][col].error = !sudokuUtils.isValidCellDynamic(new, new[row][col], boardEntity.type)
-            // проверяем все неверные клетки
             new.forEach { cells ->
                 cells.forEach { cell ->
                     if(cell.value != 0 && cell.error) {
@@ -215,16 +191,16 @@ class GameViewModel @Inject constructor(
                     }
                 }
             }
-        } else if(errorMethodConflict.value == 2) {
-            // проверка основываясь на конечном решении
+        } else if(mistakesMethodValue.value == 2) {
+            // check with final solution
             new = isValidCell(new, new[row][col])
         }
+
         currCell.error = currCell.value == 0
-        // считаем ошибки, если лимит то пиздец
+        // updating mistakes limit
         if(mistakesLimitValue.value && new[row][col].error) {
             mistakesCount++
             if(mistakesCount >= 3) {
-                // выводим диалог о 3х ошибка, останавливаем таймер, останаливаем игру
                 mistakesLimitDialog = true
                 pauseTimer()
                 giveUp()
@@ -232,10 +208,8 @@ class GameViewModel @Inject constructor(
             }
         }
 
-        // проверяем решена ли судоку
         gameCompleted = isCompleted(new)
 
-        // атоудаление заметок
         if(autoEraseNotesValue.value) {
             notes = autoEraseNotes(new, currCell)
         }
@@ -243,8 +217,6 @@ class GameViewModel @Inject constructor(
         return new
     }
 
-    // Считает количество оставшихся использований для каждого числа
-    // Используется для вывода оставшихся испольозваний под цифрами клавиатуры
     private fun countRemainingUses(board: List<List<Cell>>): MutableList<Int> {
         val uses = mutableListOf<Int>()
         for(i in 0..size) {
@@ -256,22 +228,22 @@ class GameViewModel @Inject constructor(
     fun processInput(inputMethod: Int, cell: Cell, remainingUse: Boolean, longTap: Boolean = false): Boolean {
         if(gamePlaying) {
             currCell =
-                if(currCell.row == cell.row && currCell.col == cell.col && fdSelectedNumber == 0) Cell(-1, -1) else cell
+                if(currCell.row == cell.row && currCell.col == cell.col && digitFirstNumber == 0) Cell(-1, -1) else cell
 
             if(currCell.row >= 0 && currCell.col >= 0) {
-                if(inputMethod == 1 || overrideInputMethodFD) {
+                if(inputMethod == 1 || overrideInputMethodDF) {
                     if(!longTap) {
-                        if(fdSelectedNumber > 0 &&
-                            (remainingUsesList.size >= fdSelectedNumber &&
-                                    remainingUsesList[fdSelectedNumber - 1] > 0) ||
+                        if(digitFirstNumber > 0 &&
+                            (remainingUsesList.size >= digitFirstNumber &&
+                                    remainingUsesList[digitFirstNumber - 1] > 0) ||
                             !remainingUse
                         ) {
-                            processNumberInput(fdSelectedNumber)
+                            processNumberInput(digitFirstNumber)
                             undoManager.addState(GameState(gameBoard, notes))
-                            if(notesToggled) currCell = Cell(currCell.row, currCell.col, fdSelectedNumber)
+                            if(notesToggled) currCell = Cell(currCell.row, currCell.col, digitFirstNumber)
                         }
                     } else {
-                        setNote(fdSelectedNumber)
+                        setNote(digitFirstNumber)
                         undoManager.addState(GameState(gameBoard, notes))
                     }
                 }
@@ -289,30 +261,29 @@ class GameViewModel @Inject constructor(
         if(gamePlaying) {
             if(!longTap) {
                 if(inputMethod == 0) {
-                    overrideInputMethodFD = false
-                    fdSelectedNumber = 0
+                    overrideInputMethodDF = false
+                    digitFirstNumber = 0
                     processNumberInput(number)
                     undoManager.addState(GameState(gameBoard, notes))
                 } else if(inputMethod == 1){
-                    fdSelectedNumber = if(fdSelectedNumber == number) 0 else number
-                    currCell = Cell(-1,-1, fdSelectedNumber)
+                    digitFirstNumber = if(digitFirstNumber == number) 0 else number
+                    currCell = Cell(-1,-1, digitFirstNumber)
                 }
             } else {
                 if(inputMethod == 0) {
-                    overrideInputMethodFD = true
-                    fdSelectedNumber = if(fdSelectedNumber == number) 0 else number
-                    currCell = Cell(-1,-1, fdSelectedNumber)
+                    overrideInputMethodDF = true
+                    digitFirstNumber = if(digitFirstNumber == number) 0 else number
+                    currCell = Cell(-1,-1, digitFirstNumber)
                 }
             }
         }
     }
 
 
-    // Обработка числа с клавиатуры
     fun processNumberInput(number: Int) {
         if(currCell.row >= 0 && currCell.col >= 0 && gamePlaying && !currCell.locked) {
             if(!notesToggled) {
-                // Удаляем все затметки с клетки, чтобы поставить в ней число
+                // Clear all note to set a number
                 notes = clearNotesAtCell(notes, currCell.row, currCell.col)
 
                 gameBoard = setValueCell(
@@ -327,7 +298,6 @@ class GameViewModel @Inject constructor(
     }
 
     fun setNote(number: Int) {
-        // Создаме заметку. Если такая уже есть, то удаляем
         val note = Note(currCell.row, currCell.col, number)
         notes = if(notes.contains(note)) {
             removeNote(note.value, note.row, note.col)
@@ -344,14 +314,13 @@ class GameViewModel @Inject constructor(
     fun startTimer() {
         if(!gamePlaying) {
             gamePlaying = true
-            // Периодичность обновления таймера в миллисекундах
             val updateRate = 50L
 
             timer = fixedRateTimer(initialDelay = updateRate, period = updateRate) {
                 val prevTime = duration
 
                 duration = duration.plus((updateRate * 1e6).toDuration(DurationUnit.NANOSECONDS))
-                // обновляем ui только при измении секунд
+                // update text every second
                 if(prevTime.toInt(DurationUnit.SECONDS) != duration.toInt(DurationUnit.SECONDS)) {
                     timeText = durationToString(duration)
                     // save game
@@ -374,18 +343,15 @@ class GameViewModel @Inject constructor(
         timer.cancel()
     }
 
-    // обработка команд с клавиатуры с инструментами
     fun toolBoardClick(item: ToolBardItem) {
         if(gamePlaying) {
             when(item) {
                 ToolBardItem.Undo -> {
                     if(undoManager.count() > 0) {
-                        // ставим предыдущий стейт
                         undoManager.getPrevState().also {
                             gameBoard = it.board
                             notes = it.notes
                         }
-                        // добавляем его наверх
                         undoManager.addState(GameState(getBoardNoRef(), notes))
                     }
                     remainingUsesList = countRemainingUses(gameBoard)
@@ -432,7 +398,7 @@ class GameViewModel @Inject constructor(
             duration = Duration.ZERO
             timeText = durationToString(duration)
         }
-        fdSelectedNumber = 0
+        digitFirstNumber = 0
         notesToggled = false
         undoManager.clear()
 
@@ -474,14 +440,11 @@ class GameViewModel @Inject constructor(
         return true
     }
 
-    // заполняет все пустые клетки числами, которые могут стоять в клетке
     fun computeNotes() {
         notes = sudokuUtils.computeNotes(gameBoard, boardEntity.type)
         undoManager.addState(GameState(gameBoard, notes))
     }
 
-    // возвращает список всех заметок без заметок, которые имеют значение,
-    // конфликтующее с заданной клеткой
     private fun autoEraseNotes(board: List<List<Cell>> = getBoardNoRef(), cell: Cell) : List<Note> {
         if(currCell.row <0 || currCell.col < 0) {
             return notes
@@ -533,7 +496,7 @@ class GameViewModel @Inject constructor(
                     gameBoard[i][j].locked = initialBoard[i][j].locked
 
                     if(gameBoard[i][j].value != 0 && !gameBoard[i][j].locked) {
-                        if(errorMethodConflict.value == 1) {
+                        if(mistakesMethodValue.value == 1) {
                             gameBoard[i][j].error =
                                 !sudokuUtils.isValidCellDynamic(
                                     board = gameBoard,

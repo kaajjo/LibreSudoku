@@ -4,12 +4,12 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-enum class GameDifficulty(val resName: String) : Parcelable {
-    Unspecified("Неизвестно"),
-    Simple("Легчайше"),
-    Easy("Легко"),
-    Moderate("Средне"),
-    Hard("Сложно"),
-    Challenge("Экстремально"),
-    Custom("Кастомная")
+enum class GameDifficulty : Parcelable {
+    Unspecified,
+    Simple,
+    Easy,
+    Moderate,
+    Hard,
+    Challenge,
+    Custom
 }

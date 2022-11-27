@@ -168,7 +168,6 @@ fun GeneratingDialog(
     }
 }
 
-// TODO: нужно что-то решить с паддингом
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HorizontalPicker(

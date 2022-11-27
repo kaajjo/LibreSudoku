@@ -94,7 +94,6 @@ class SudokuUtils {
         board.forEach { cells ->
             cells.forEach { cell ->
                 if(cell.value == 0) {
-                    // получаем список чисел, которые могут стоять в этой клетке
                     getCandidates(board, cell, type).forEach {
                         notes = notes.plus(Note(cell.row, cell.col, it))
                     }

@@ -290,7 +290,7 @@ fun GameScreen(
                 .padding(scaffoldPadding)
                 .padding(start = 12.dp, end = 12.dp, top = 48.dp)
         ) {
-            val errorHighlight by viewModel.errorHighlight.collectAsState(initial = 1)
+            val errorHighlight by viewModel.mistakesMethod.collectAsState(initial = 1)
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -403,7 +403,7 @@ fun GameScreen(
                             longTap = true
                         )
                     },
-                    selected = viewModel.fdSelectedNumber
+                    selected = viewModel.digitFirstNumber
                 )
             }
             Row(

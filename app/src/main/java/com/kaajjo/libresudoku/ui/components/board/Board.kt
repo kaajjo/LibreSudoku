@@ -300,7 +300,7 @@ fun Board(
                 val noteBounds = Rect()
                 notePaint.getTextBounds("1", 0, 1, noteBounds)
                 val noteWidthHalf = notePaint.measureText("1") / 2f
-                // TODO: рисуем заметки
+
                 drawIntoCanvas { canvas ->
                     notes.forEach { note ->
                         val widthOffset = when(note.value) {

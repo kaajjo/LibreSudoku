@@ -34,7 +34,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel
 ) {
     val scope = rememberCoroutineScope()
-    // enterAlways лагает как сука, ну или просто так обновляет
+    // enterAlways feels laggy
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(

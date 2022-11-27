@@ -154,22 +154,12 @@ fun NavigationBar(
     navController: NavController,
     bottomBarState: Boolean
 ) {
-    val screens by remember {
-        mutableStateOf(
-            listOf(
-                "statistics", "home", "more"
-            )
-        )
-    }
-
     var selectedScreen by remember { mutableStateOf("home") }
     AnimatedContent(
         targetState = bottomBarState
     ) { visible ->
         if (visible) {
             NavigationBar {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-
                 NavigationBarItem(
                     icon = {
                         Icon(
@@ -179,8 +169,10 @@ fun NavigationBar(
                     },
                     selected = selectedScreen == "statistics",
                     onClick = {
-                        selectedScreen = "statistics"
-                        navController.navigate("statistics")
+                        if(selectedScreen != "statistics") {
+                            selectedScreen = "statistics"
+                            navController.navigate("statistics")
+                        }
                     },
                     label = {
                         Text(
@@ -198,8 +190,10 @@ fun NavigationBar(
                     },
                     selected = selectedScreen == "home",
                     onClick = {
-                        selectedScreen = "homessssssssssss"
-                        navController.navigate("home")
+                        if(selectedScreen != "home") {
+                            selectedScreen = "home"
+                            navController.navigate("home")
+                        }
                     },
                     label = {
                         Text(
@@ -217,8 +211,10 @@ fun NavigationBar(
                     },
                     selected = selectedScreen == "more",
                     onClick = {
-                        selectedScreen = "more"
-                        navController.navigate("more")
+                        if(selectedScreen != "more") {
+                            selectedScreen = "more"
+                            navController.navigate("more")
+                        }
                     },
                     label = {
                         Text(
