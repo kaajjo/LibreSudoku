@@ -21,7 +21,7 @@ import com.kaajjo.libresudoku.data.database.repository.BoardRepository
 import com.kaajjo.libresudoku.data.database.repository.RecordRepository
 import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
-import com.kaajjo.libresudoku.ui.game.components.ToolBardItem
+import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -343,10 +343,10 @@ class GameViewModel @Inject constructor(
         timer.cancel()
     }
 
-    fun toolBoardClick(item: ToolBardItem) {
+    fun toolbarClick(item: ToolBarItem) {
         if(gamePlaying) {
             when(item) {
-                ToolBardItem.Undo -> {
+                ToolBarItem.Undo -> {
                     if(undoManager.count() > 0) {
                         undoManager.getPrevState().also {
                             gameBoard = it.board
@@ -356,12 +356,12 @@ class GameViewModel @Inject constructor(
                     }
                     remainingUsesList = countRemainingUses(gameBoard)
                 }
-                ToolBardItem.Hint -> {
+                ToolBarItem.Hint -> {
                     useHint()
                 }
 
-                ToolBardItem.Note -> { notesToggled = !notesToggled }
-                ToolBardItem.Remove -> {
+                ToolBarItem.Note -> { notesToggled = !notesToggled }
+                ToolBarItem.Remove -> {
                     if(currCell.row >= 0 && currCell.col >= 0 && !currCell.locked) {
                         val prevValue = gameBoard[currCell.row][currCell.col].value
                         val notesInCell =  notes.count { note -> note.row == currCell.row && note.col == currCell.col }

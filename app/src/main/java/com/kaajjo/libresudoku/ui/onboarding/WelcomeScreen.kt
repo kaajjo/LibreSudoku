@@ -46,7 +46,7 @@ fun WelcomeScreen(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                text = stringResource(R.string.welcome),
+                text = stringResource(R.string.onboard_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Medium
             )

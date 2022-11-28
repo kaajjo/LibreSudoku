@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.game.NotesMenu
-import com.kaajjo.libresudoku.ui.game.components.ToolBoardItem
+import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 
 @Composable
@@ -61,35 +61,35 @@ fun FirstGameScreen() {
             .padding(vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val toolBoardWeight  by remember { mutableStateOf(0.35f) }
+        val toolbarWeight  by remember { mutableStateOf(0.35f) }
         ToolRow {
-            ToolBoardItem(
-                modifier = Modifier.weight(toolBoardWeight),
+            ToolbarItem(
+                modifier = Modifier.weight(toolbarWeight),
                 painter = painterResource(R.drawable.ic_round_undo_24),
                 onClick = {  }
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(R.string.toolboard_undo_description))
+                text = stringResource(R.string.toolbar_undo_description))
         }
         ToolRow {
-            ToolBoardItem(
-                modifier = Modifier.weight(toolBoardWeight),
+            ToolbarItem(
+                modifier = Modifier.weight(toolbarWeight),
                 painter = painterResource(R.drawable.ic_lightbulb_stars_24),
                 onClick = { }
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(R.string.toolboard_hint_description))
+                text = stringResource(R.string.toolbar_hint_description))
         }
         ToolRow {
             var notesMenu by remember { mutableStateOf(false) }
             var noteToggled by remember { mutableStateOf(false) }
             var renderNotes by remember { mutableStateOf(true) }
             Box(
-                modifier = Modifier.weight(toolBoardWeight)
+                modifier = Modifier.weight(toolbarWeight)
             ) {
                 NotesMenu(
                     expanded = notesMenu,
@@ -98,7 +98,7 @@ fun FirstGameScreen() {
                     onClearNotesClick = {  },
                     renderNotes = renderNotes,
                     onRenderNotesClick = {  renderNotes = !renderNotes })
-                ToolBoardItem(
+                ToolbarItem(
                     toggled = noteToggled,
                     painter = painterResource(R.drawable.ic_round_edit_24),
                     onClick = { noteToggled = !noteToggled },
@@ -113,15 +113,15 @@ fun FirstGameScreen() {
                 text = stringResource(R.string.action_clear_notes))
         }
         ToolRow {
-            ToolBoardItem(
-                modifier = Modifier.weight(toolBoardWeight),
+            ToolbarItem(
+                modifier = Modifier.weight(toolbarWeight),
                 painter = painterResource(R.drawable.ic_eraser_24),
                 onClick = { }
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(R.string.toolboard_erase_description))
+                text = stringResource(R.string.toolbar_erase_description))
         }
         Spacer(modifier = Modifier.height(8.dp))
     }

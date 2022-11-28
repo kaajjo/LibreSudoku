@@ -121,7 +121,7 @@ fun SettingsScreen(
             val context = LocalContext.current
             AlertDialog(
                 title = { Text(stringResource(R.string.pref_delete_stats)) },
-                text = { Text(stringResource(R.string.pref_delete_stats_text)) },
+                text = { Text(stringResource(R.string.pref_delete_stats_summ)) },
                 confirmButton = {
                     TextButton(onClick = {
                         viewModel.deleteAllTables()
@@ -289,7 +289,7 @@ fun SettingsScreen(
                 val mistakesLimit = viewModel.mistakesLimit.collectAsState(initial = false)
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_mistakes_limit),
-                    subtitle = stringResource(R.string.pref_mistakes_limit_sub),
+                    subtitle = stringResource(R.string.pref_mistakes_limit_summ),
                     checked = mistakesLimit.value,
                     onClick = { viewModel.updateMistakesLimit(!mistakesLimit.value) }
                 )
@@ -297,7 +297,7 @@ fun SettingsScreen(
                 val hintDisabled = viewModel.disableHints.collectAsState(initial = false)
                 PreferenceRowSwitch(
                     title =  stringResource(R.string.pref_disable_hints),
-                    subtitle = stringResource(R.string.pref_disable_hints_sub),
+                    subtitle = stringResource(R.string.pref_disable_hints_summ),
                     checked = hintDisabled.value,
                     onClick = { viewModel.updateHintDisabled(!hintDisabled.value) }
                 )
@@ -336,7 +336,7 @@ fun SettingsScreen(
                 val highlightIdentical = viewModel.highlightIdentical.collectAsState(initial = true)
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_highlight_identical),
-                    subtitle = stringResource(R.string.pref_highlight_identical_sub),
+                    subtitle = stringResource(R.string.pref_highlight_identical_summ),
                     checked = highlightIdentical.value,
                     onClick = {
                         viewModel.updateHighlightIdentical(!highlightIdentical.value)
@@ -345,14 +345,14 @@ fun SettingsScreen(
                 val remainingUse = viewModel.remainingUse.collectAsState(initial = true)
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_remaining_uses),
-                    subtitle = stringResource(R.string.pref_remaining_uses_sub),
+                    subtitle = stringResource(R.string.pref_remaining_uses_summ),
                     checked = remainingUse.value,
                     onClick = { viewModel.updateRemainingUse(!remainingUse.value) }
                 )
                 val positionLines = viewModel.positionLines.collectAsState(initial = true)
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_position_lines),
-                    subtitle = stringResource(R.string.pref_position_lines_sub),
+                    subtitle = stringResource(R.string.pref_position_lines_summ),
                     checked = positionLines.value,
                     onClick = { viewModel.updatePositionLines(!positionLines.value) }
                 )

@@ -36,8 +36,8 @@ import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
-import com.kaajjo.libresudoku.ui.game.components.ToolBardItem
-import com.kaajjo.libresudoku.ui.game.components.ToolBoardItem
+import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
+import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
 import com.kaajjo.libresudoku.ui.onboarding.FirstGameDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -410,17 +410,17 @@ fun GameScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
-                ToolBoardItem(
+                ToolbarItem(
                     modifier = Modifier.weight(1f),
                     painter = painterResource(R.drawable.ic_round_undo_24),
-                    onClick = { viewModel.toolBoardClick(ToolBardItem.Undo) }
+                    onClick = { viewModel.toolbarClick(ToolBarItem.Undo) }
                 )
                 val hintsDisabled = viewModel.disableHints.collectAsState(initial = false)
                 if (!hintsDisabled.value) {
-                    ToolBoardItem(
+                    ToolbarItem(
                         modifier = Modifier.weight(1f),
                         painter = painterResource(R.drawable.ic_lightbulb_stars_24),
-                        onClick = { viewModel.toolBoardClick(ToolBardItem.Hint) }
+                        onClick = { viewModel.toolbarClick(ToolBarItem.Hint) }
                     )
                 }
 
@@ -436,10 +436,10 @@ fun GameScreen(
                         renderNotes = renderNotes,
                         onRenderNotesClick = { renderNotes = !renderNotes }
                     )
-                    ToolBoardItem(
+                    ToolbarItem(
                         painter = painterResource(R.drawable.ic_round_edit_24),
                         toggled = viewModel.notesToggled,
-                        onClick = { viewModel.toolBoardClick(ToolBardItem.Note) },
+                        onClick = { viewModel.toolbarClick(ToolBarItem.Note) },
                         onLongClick = {
                             if(viewModel.gamePlaying) {
                                 localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
@@ -449,11 +449,11 @@ fun GameScreen(
                     )
 
                 }
-                ToolBoardItem(
+                ToolbarItem(
                     modifier = Modifier.weight(1f),
                     painter = painterResource(R.drawable.ic_eraser_24),
                     onClick = {
-                        viewModel.toolBoardClick(ToolBardItem.Remove)
+                        viewModel.toolbarClick(ToolBarItem.Remove)
                     }
                 )
             }

@@ -46,7 +46,7 @@
     <string name="pref_input_digit_first">Digit first</string>
 
     <string name="pref_delete_stats">Delete all statistics</string>
-    <string name="pref_delete_stats_text">This action will delete all your statistics, saved games and records and can\'t be undone</string>
+    <string name="pref_delete_stats_summ">This action will delete all your statistics, saved games and records and can\'t be undone</string>
     <string name="action_deleted">Deleted</string>
 
     <string name="pref_app_theme">App theme</string>
@@ -62,10 +62,10 @@
     <string name="pref_gameplay">Gameplay</string>
 
     <string name="pref_mistakes_limit">Mistakes limit</string>
-    <string name="pref_mistakes_limit_sub">3 mistakes and you\'re done</string>
+    <string name="pref_mistakes_limit_summ">3 mistakes and you\'re done</string>
 
     <string name="pref_disable_hints">Disable hints</string>
-    <string name="pref_disable_hints_sub">You don\'t like hints? Then just remove them!</string>
+    <string name="pref_disable_hints_summ">You don\'t like hints? Then just remove them!</string>
 
     <string name="pref_show_timer">Show timer</string>
     <string name="pref_reset_timer">Reset timer on game reset</string>
@@ -77,13 +77,13 @@
     <string name="pref_mistakes_check_final">With final solution</string>
 
     <string name="pref_highlight_identical">Highlight identical numbers</string>
-    <string name="pref_highlight_identical_sub">When you select a number on a board the cells with the same numbers will be highlighted</string>
+    <string name="pref_highlight_identical_summ">When you select a number on a board the cells with the same numbers will be highlighted</string>
 
     <string name="pref_remaining_uses">Remaining uses</string>
-    <string name="pref_remaining_uses_sub">The number of remaining uses of the number will be shown on the keyboard</string>
+    <string name="pref_remaining_uses_summ">The number of remaining uses of the number will be shown on the keyboard</string>
 
     <string name="pref_position_lines">Position lines</string>
-    <string name="pref_position_lines_sub">The row and the column of the selected cell will be highlighted</string>
+    <string name="pref_position_lines_summ">The row and the column of the selected cell will be highlighted</string>
 
     <string name="pref_auto_erase_notes">Auto erase notes</string>
 
@@ -106,15 +106,15 @@
     <string name="action_compute_notes">Compute notes</string>
     <string name="action_show_solution">Show solution</string>
 
-    <string name="welcome">Welcome</string>
+    <string name="onboard_title">Welcome</string>
     <string name="intro_what_is_sudoku">A classic sudoku looks like this</string>
     <string name="intro_rules">The goal of the game is to fill all the cells with numbers from 1 to 9. So that the numbers do not repeat in any column, row or smaller box (3x3)</string>
     <string name="onboard_recommendation_prefs">We recommend visiting the settings so that you can customize the app for you</string>
     <string name="action_start">Start</string>
-    <string name="toolboard_undo_description">Undo. Just undo</string>
-    <string name="toolboard_notes_description">Notes mode when highlighted. Tap to highlight!</string>
-    <string name="toolboard_hint_description">Inserts the correct number into the selected cell. Can be disabled in settings</string>
-    <string name="toolboard_erase_description">Removes a number or all notes from the selected cell</string>
+    <string name="toolbar_undo_description">Undo. Just undo</string>
+    <string name="toolbar_notes_description">Notes mode when highlighted. Tap to highlight!</string>
+    <string name="toolbar_hint_description">Inserts the correct number into the selected cell. Can be disabled in settings</string>
+    <string name="toolbar_erase_description">Removes a number or all notes from the selected cell</string>
     <string name="first_game_dialog_title">Quick tour</string>
     <string name="first_game_dialog_got_it">Got it</string>
     <string name="action_exit">Exit</string>

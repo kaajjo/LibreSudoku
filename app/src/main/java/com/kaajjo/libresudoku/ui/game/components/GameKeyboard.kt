@@ -120,7 +120,7 @@ fun DefaultGameKeyboard(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ToolBoardItem(
+fun ToolbarItem(
     modifier: Modifier = Modifier,
     painter: Painter,
     toggled: Boolean = false,
@@ -152,7 +152,7 @@ fun ToolBoardItem(
     }
 }
 
-enum class ToolBardItem {
+enum class ToolBarItem {
     Undo,
     Hint,
     Note,
