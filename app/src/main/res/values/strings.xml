@@ -155,6 +155,7 @@
     <string name="history_no_games">You don\'t played yet</string>
     <string name="history_item_time">Time:</string>
     <string name="history_item_id">Game ID:</string>
+    <string name="history_item_can_continue">You can continue this game</string>
 
     <string name="saved_game_screen_title">Saved game</string>
     <string name="saved_game_current">Current</string>

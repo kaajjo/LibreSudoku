@@ -21,15 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.kaajjo.libresudoku.core.Cell
-import com.kaajjo.libresudoku.core.qqwing.GameType
-import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.data.database.model.SavedGame
-import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import kotlinx.coroutines.coroutineScope
 import kotlin.math.sqrt
-import kotlin.time.Duration
 import kotlin.time.toKotlinDuration
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,10 +152,14 @@ fun SudokuHistoryItem(
             ) {
                 Text(text = "$difficulty $type")
                 Text(
-                    text = stringResource(R.string.history_item_time) + savedGame.timer.toKotlinDuration().toComponents { minutes, seconds, _ ->
-                        String.format(" %02d:%02d", minutes, seconds)
-                    }
+                    text = stringResource(R.string.history_item_time) + savedGame.timer.toKotlinDuration()
+                        .toComponents { minutes, seconds, _ ->
+                            String.format(" %02d:%02d", minutes, seconds)
+                        }
                 )
+                if(savedGame.canContinue) {
+                    Text(stringResource(R.string.history_item_can_continue))
+                }
                 Text(stringResource(R.string.history_item_id) + " ${savedGame.uid}")
             }
         }
