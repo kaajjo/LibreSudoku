@@ -82,35 +82,35 @@ class StatisticsViewModel
         }
     }
 
-    fun setStreakTipCard(enabled: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            tipCardsDataStore.setStreakCard(enabled)
-        }
-    }
-
-    fun getCurrentStreak(games: List<SavedGame>): Int {
-        var currentStreak = 0
-        games.forEach { game ->
-            if(game.completed) {
-                currentStreak = if(!game.giveUp) currentStreak + 1 else 0
-            }
-        }
-        return currentStreak
-    }
-
-    fun getMaxStreak(games: List<SavedGame>): Int {
-        var maxStreak = 0
-        var currentStreak = 0
-        games.forEach { game ->
-            if(game.completed) {
-                currentStreak = if(!game.giveUp && !game.canContinue) currentStreak + 1 else 0
-                if(currentStreak > maxStreak){
-                    maxStreak = currentStreak
-                }
-            }
-        }
-        return maxStreak
-    }
+    //fun setStreakTipCard(enabled: Boolean) {
+    //    viewModelScope.launch(Dispatchers.IO) {
+    //        tipCardsDataStore.setStreakCard(enabled)
+    //    }
+    //}
+    //
+    //fun getCurrentStreak(games: List<SavedGame>): Int {
+    //    var currentStreak = 0
+    //    games.forEach { game ->
+    //        if(game.completed && !game.canContinue) {
+    //            currentStreak = if(!game.giveUp) currentStreak + 1 else 0
+    //        }
+    //    }
+    //    return currentStreak
+    //}
+    //
+    //fun getMaxStreak(games: List<SavedGame>): Int {
+    //    var maxStreak = 0
+    //    var currentStreak = 0
+    //    games.forEach { game ->
+    //        if(game.completed && !game.canContinue) {
+    //            currentStreak = if(!game.giveUp) currentStreak + 1 else 0
+    //            if(currentStreak > maxStreak){
+    //                maxStreak = currentStreak
+    //            }
+    //        }
+    //    }
+    //    return maxStreak
+    //}
 
     fun getCurrentTypeString(context: Context): String {
         val sudokuUtils = SudokuUtils()

@@ -140,34 +140,34 @@ fun StatisticsScreen(
                         )
                     )
 
-                    val currentStreak by remember { mutableStateOf(
-                        viewModel.getCurrentStreak(savedGameList.value).toString()
-                    )
-                    }
-                    val maxStreak by remember {
-                        mutableStateOf(
-                            viewModel.getMaxStreak(savedGameList.value).toString()
-                        )
-                    }
-
-                    StatisticsSection(
-                        title = stringResource(R.string.win_streak),
-                        painter = painterResource(R.drawable.ic_outline_verified_24),
-                        statRows = listOf(
-                            listOf(stringResource(R.string.current_streak), currentStreak),
-                            listOf(stringResource(R.string.best_streak), maxStreak)
-                        )
-                    )
-                    val streakCard = viewModel.streakTipCard.collectAsState(initial = false)
-                    AnimatedVisibility(visible = streakCard.value) {
-                        HelpCard(
-                            modifier = Modifier.padding(horizontal = 12.dp),
-                            title = stringResource(R.string.win_streak),
-                            details = stringResource(R.string.tip_card_win_streak_summ),
-                            painter = painterResource(R.drawable.ic_outline_verified_24),
-                            onCloseClicked = { viewModel.setStreakTipCard(false) }
-                        )
-                    }
+                    //val currentStreak by remember { mutableStateOf(
+                    //    viewModel.getCurrentStreak(savedGameList.value).toString()
+                    //)
+                    //}
+                    //val maxStreak by remember {
+                    //    mutableStateOf(
+                    //        viewModel.getMaxStreak(savedGameList.value).toString()
+                    //    )
+                    //}
+                    //
+                    //StatisticsSection(
+                    //    title = stringResource(R.string.win_streak),
+                    //    painter = painterResource(R.drawable.ic_outline_verified_24),
+                    //    statRows = listOf(
+                    //        listOf(stringResource(R.string.current_streak), currentStreak),
+                    //        listOf(stringResource(R.string.best_streak), maxStreak)
+                    //    )
+                    //)
+                    //val streakCard = viewModel.streakTipCard.collectAsState(initial = false)
+                    //AnimatedVisibility(visible = streakCard.value) {
+                    //    HelpCard(
+                    //        modifier = Modifier.padding(horizontal = 12.dp),
+                    //        title = stringResource(R.string.win_streak),
+                    //        details = stringResource(R.string.tip_card_win_streak_summ),
+                    //        painter = painterResource(R.drawable.ic_outline_verified_24),
+                    //        onCloseClicked = { viewModel.setStreakTipCard(false) }
+                    //    )
+                    //}
                 }
                 val context = LocalContext.current
                 StatsSectionName(
