@@ -22,6 +22,8 @@ import com.google.accompanist.pager.rememberPagerState
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.learn.learnapp.LearnAppScreen
 import com.kaajjo.libresudoku.ui.learn.learnapp.ToolbarTutorialScreen
+import com.kaajjo.libresudoku.ui.learn.learnsudoku.LearnNakedPairs
+import com.kaajjo.libresudoku.ui.learn.learnsudoku.LearnSudokuRules
 import com.kaajjo.libresudoku.ui.learn.learnsudoku.LearnSudokuScreen
 import kotlinx.coroutines.launch
 
@@ -31,8 +33,10 @@ fun LearnScreen(
 ) {
     val helpNavController = rememberNavController()
     NavHost(navController = helpNavController, startDestination = "help") {
-        composable(route = "help") { LearnScreenContent(navController, helpNavController) }
-        composable(route = "app_toolbar") { ToolbarTutorialScreen(helpNavController) }
+        composable("help") { LearnScreenContent(navController, helpNavController) }
+        composable("app_toolbar") { ToolbarTutorialScreen(helpNavController) }
+        composable("sudoku_rules") { LearnSudokuRules(helpNavController) }
+        composable("sudoku_naked_pairs") { LearnNakedPairs(helpNavController) }
     }
 }
 

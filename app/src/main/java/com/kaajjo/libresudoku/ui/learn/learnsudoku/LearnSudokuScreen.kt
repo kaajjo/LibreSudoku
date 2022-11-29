@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.learn.components.LearnRowItem
 
 @Composable
@@ -18,8 +20,12 @@ fun LearnSudokuScreen(
         LazyColumn {
             item {
                 LearnRowItem(
-                    title = "EXAMPLE 1",
-                    onClick = { }
+                    title = stringResource(R.string.learn_sudoku_rules),
+                    onClick = { helpNavController.navigate("sudoku_rules") }
+                )
+                LearnRowItem(
+                    title = stringResource(R.string.learn_naked_pairs_title),
+                    onClick = { helpNavController.navigate("sudoku_naked_pairs") }
                 )
             }
         }
