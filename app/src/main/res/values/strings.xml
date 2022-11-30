@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LibreSudoku</string>
+    <string name="app_name" translatable="false">LibreSudoku</string>
     <string name="nav_bar_statistics">Statistics</string>
     <string name="nav_bar_home">Home</string>
     <string name="nav_bar_more">More</string>
@@ -184,7 +184,7 @@
     <string name="learn_sudoku_rules_mistakes_explanation">The first mistake is two 2 in the sixth box. Do you remember the rule that there can\'t be duplicate numbers in a box? The second mistake is the number 6 in row 2, column 8 (R2C8) because there is already 6 in this column in R5C8</string>
     <string name="learn_naked_pairs_title">Naked pairs</string>
     <string name="learn_naked_pairs_explanation">There are two cells that share the same two pencil marks. So how does this help us? I mean, right now we can\'t tell which one is the 2 and which is the 3, right?\nThis is true - we cannot tell which is which. But because Sudoku rules tell us that every block only has only one "2" and only one "3", we can assume that one of them is the 2 and the other is the 3</string>
-    <string name="learn_naked_pairs_end">Now, this wouldn\'t help us if there weren\'t any other "2" or "3" pencil marks in that block. But since there are, we can remove them! The other cells in the block cannot be 2 or 3. By the way, by doing this, we have created a Lone Single in the lower right cell - 5</string>
+    <string name="learn_naked_pairs_end">Now, this wouldn\'t help us if there weren\'t any other "2" or "3" pencil marks in that block. But since there are, we can remove them! The other cells in the block cannot be 2 or 3</string>
 
 
     <string name="page_previous">Previous</string>
