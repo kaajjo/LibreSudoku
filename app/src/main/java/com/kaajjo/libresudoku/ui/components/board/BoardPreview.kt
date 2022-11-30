@@ -50,9 +50,7 @@ fun BoardPreview(
         var vertThick by remember { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
         var horThick by remember { mutableStateOf(ceil(sqrt(size.toFloat())).toInt()) }
 
-        LaunchedEffect(
-            key1 = size
-        ) {
+        LaunchedEffect(size) {
             cellSize = maxWidth / size.toFloat()
             vertThick = floor(sqrt(size.toFloat())).toInt()
             horThick = ceil(sqrt(size.toFloat())).toInt()

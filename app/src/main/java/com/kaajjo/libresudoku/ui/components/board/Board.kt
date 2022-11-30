@@ -79,9 +79,7 @@ fun Board(
 
         var vertThick by remember { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
         var horThick by remember { mutableStateOf(ceil(sqrt(size.toFloat())).toInt()) }
-        LaunchedEffect(
-            key1 = size
-        ) {
+        LaunchedEffect(size) {
             cellSize = maxWidth / size.toFloat()
             vertThick = floor(sqrt(size.toFloat())).toInt()
             horThick = ceil(sqrt(size.toFloat())).toInt()
@@ -131,7 +129,7 @@ fun Board(
         var width by remember { mutableStateOf(textPaint.measureText("1")) }
 
         val context = LocalContext.current
-        LaunchedEffect(key1 = mainTextSize) {
+        LaunchedEffect(mainTextSize) {
             fontSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, mainTextSize.value, context.resources.displayMetrics)
             textPaint =  Paint().apply {
                 color = foregroundColor.toArgb()

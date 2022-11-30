@@ -70,9 +70,7 @@ fun GameScreen(
                 viewModel.pauseTimer()
                 viewModel.currCell = Cell(-1, -1, 0)
             }
-            Lifecycle.Event.ON_DESTROY -> {
-                viewModel.pauseTimer()
-            }
+            Lifecycle.Event.ON_DESTROY -> viewModel.pauseTimer()
             else -> { }
         }
     }
@@ -192,7 +190,7 @@ fun GameScreen(
             },
         )
     }
-    LaunchedEffect(key1 = viewModel.gameCompleted) {
+    LaunchedEffect(viewModel.gameCompleted) {
         if(viewModel.gameCompleted) {
             viewModel.onGameComplete()
         }
@@ -310,23 +308,21 @@ fun GameScreen(
                         GameDifficulty.Custom -> context.getString(R.string.difficulty_custom)
                     }
                 }
-                TopBoardSection(text = difficultyText)
+                TopBoardSection(difficultyText)
 
                 val mistakesLimit = viewModel.mistakesLimit.collectAsState(initial = false)
                 if(mistakesLimit.value && errorHighlight != 0) {
-                    TopBoardSection(text = stringResource(R.string.mistakes_number_out_of, viewModel.mistakesCount, 3))
+                    TopBoardSection(stringResource(R.string.mistakes_number_out_of, viewModel.mistakesCount, 3))
                 }
 
                 val timerEnabled = viewModel.timerEnabled.collectAsState(initial = false)
                 if(timerEnabled.value) {
-                    TopBoardSection(
-                        text = viewModel.timeText
-                    )
+                    TopBoardSection(viewModel.timeText)
                 }
             }
 
             var renderNotes by remember { mutableStateOf(true) }
-            val inputMethod = viewModel.inputMethod.collectAsState(initial = 0)
+            val inputMethod = viewModel.inputMethod.collectAsState(initial = 1)
             val configuration = LocalConfiguration.current
             Box(
                 modifier = Modifier
@@ -341,11 +337,12 @@ fun GameScreen(
                 val scale by animateFloatAsState(targetValue = if(viewModel.gamePlaying || viewModel.endGame) 1f else 0.90f)
 
                 val fontSizeFactor by viewModel.fontSize.collectAsState(initial = 1)
-                var fontSizeValue by remember { mutableStateOf(
-                    viewModel.getFontSize(factor = fontSizeFactor)
-                )
+                var fontSizeValue by remember {
+                    mutableStateOf(
+                        viewModel.getFontSize(factor = fontSizeFactor)
+                    )
                 }
-                LaunchedEffect(key1 = fontSizeFactor) {
+                LaunchedEffect(fontSizeFactor) {
                     fontSizeValue = viewModel.getFontSize(factor = fontSizeFactor)
                 }
 
@@ -542,8 +539,8 @@ fun GameMenu(
 
 @Composable
 fun TopBoardSection(
-    modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,

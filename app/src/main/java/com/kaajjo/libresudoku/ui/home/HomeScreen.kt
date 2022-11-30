@@ -117,17 +117,13 @@ fun HomeScreen(
                     viewModel.generate()
                 }
             }) {
-                Text(
-                    text = stringResource(R.string.action_play)
-                )
+                Text(stringResource(R.string.action_play))
             }
             if(lastGame.value != null && !lastGame.value!!.completed) {
                 Button(onClick = {
                     navController.navigate("game/${lastGame.value!!.uid}/true")
                 }) {
-                    Text(
-                        text = stringResource(R.string.action_continue)
-                    )
+                    Text(stringResource(R.string.action_continue))
                 }
             }
         }
@@ -193,9 +189,7 @@ fun HorizontalPicker(
             targetState = text,
             transitionSpec = { fadeIn() with fadeOut() }
         ) {
-            Text(
-                text = text
-            )
+            Text(text)
         }
         IconButton(onClick = onRightClick) {
             Icon(

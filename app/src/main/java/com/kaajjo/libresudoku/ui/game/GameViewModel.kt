@@ -287,7 +287,7 @@ class GameViewModel @Inject constructor(
                 notes = clearNotesAtCell(notes, currCell.row, currCell.col)
 
                 gameBoard = setValueCell(
-                    value = if(gameBoard[currCell.row][currCell.col].value == number) 0 else number
+                    if(gameBoard[currCell.row][currCell.col].value == number) 0 else number
                 )
             } else {
                 gameBoard = setValueCell(0)
