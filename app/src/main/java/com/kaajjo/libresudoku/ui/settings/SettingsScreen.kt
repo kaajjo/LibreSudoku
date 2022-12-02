@@ -1,6 +1,7 @@
 package com.kaajjo.libresudoku.ui.settings
 
 import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -17,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
@@ -61,6 +63,7 @@ fun SettingsScreen(
         val inputMethod = viewModel.inputMethod.collectAsState(initial = 0)
         val darkTheme = viewModel.darkTheme.collectAsState(initial = 0)
         val fontSize = viewModel.fontSize.collectAsState(initial = 1)
+        val localeContext = LocalContext.current
         if(viewModel.mistakesDialog) {
             SelectionDialog(
                 title = stringResource(R.string.pref_mistakes_check),
@@ -144,6 +147,21 @@ fun SettingsScreen(
                     }
                 },
                 onDismissRequest = { viewModel.resetStatsDialog = false }
+            )
+        } else if(viewModel.languagePickDialog) {
+            LanguagePicker(
+                title = stringResource(R.string.pref_app_language),
+                entries = viewModel.getLangs(localeContext),
+                selected = viewModel.getCurrentLocaleString(localeContext),
+                onSelect = { localeKey ->
+                    val locale = if (localeKey == "")  {
+                        LocaleListCompat.getEmptyLocaleList()
+                    } else {
+                        LocaleListCompat.forLanguageTags(localeKey)
+                    }
+                    AppCompatDelegate.setApplicationLocales(locale)
+                },
+                onDismiss = { viewModel.languagePickDialog = false }
             )
         }
 
@@ -270,6 +288,15 @@ fun SettingsScreen(
                         else -> ""
                     },
                     onClick = { viewModel.fontSizeDialog = true }
+                )
+                val localContext = LocalContext.current
+                val currentLanguage by remember { mutableStateOf(
+                    viewModel.getCurrentLocaleString(localContext)
+                ) }
+                PreferenceRow(
+                    title = stringResource(R.string.pref_app_language),
+                    subtitle = currentLanguage,
+                    onClick = { viewModel.languagePickDialog = true }
                 )
                 Divider(
                     modifier = Modifier.fillMaxWidth()
