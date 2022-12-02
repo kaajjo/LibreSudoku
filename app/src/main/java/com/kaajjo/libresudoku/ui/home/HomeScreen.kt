@@ -138,7 +138,7 @@ fun GeneratingDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(28.dp),
-            color = MaterialTheme.colorScheme.surface
+            color = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp)
         ) {
             Box(
                 contentAlignment = Alignment.Center,
