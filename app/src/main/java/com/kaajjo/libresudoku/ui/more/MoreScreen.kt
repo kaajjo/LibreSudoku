@@ -32,7 +32,7 @@ fun MoreScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(id = R.string.app_name),
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineLarge
             )
         }

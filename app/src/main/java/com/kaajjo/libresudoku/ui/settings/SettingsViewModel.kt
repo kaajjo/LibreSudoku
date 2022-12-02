@@ -30,7 +30,7 @@ class SettingsViewModel
     private val settingsDataManager: AppSettingsManager,
     private val tipCardsDataStore: TipCardsDataStore,
     private val appDatabase: AppDatabase,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ): ViewModel() {
     @Inject
     lateinit var appThemeDataStore: ThemeSettingsManager
@@ -179,17 +179,6 @@ class SettingsViewModel
             return context.getString(R.string.pref_app_language_default)
         }
         return getDisplayName(locales.toLanguageTags())
-
-        if(locales.isEmpty) {
-            return context.getString(R.string.pref_app_language_default)
-        }
-        Log.d("tag", locales.size().toString())
-
-        val localeOptions = mapOf(
-            "en" to R.string.en,
-            "ru" to R.string.ru
-        ).mapValues { context.getString(it.value) }
-        return localeOptions[locales.toLanguageTags()].toString()
     }
 
     fun getLangs(context: Context): Map<String, String> {
@@ -217,7 +206,7 @@ class SettingsViewModel
         return langs.toMap()
     }
 
-    fun getDisplayName(lang: String?): String {
+    private fun getDisplayName(lang: String?): String {
         if (lang == null) {
             return ""
         }

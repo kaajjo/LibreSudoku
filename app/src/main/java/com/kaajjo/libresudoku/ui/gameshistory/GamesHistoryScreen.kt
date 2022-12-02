@@ -150,7 +150,7 @@ fun SudokuHistoryItem(
             Column(
                 modifier = Modifier.padding(horizontal = 12.dp)
             ) {
-                Text(text = "$difficulty $type")
+                Text("$difficulty $type")
                 Text(
                     text = stringResource(R.string.history_item_time) + savedGame.timer.toKotlinDuration()
                         .toComponents { minutes, seconds, _ ->

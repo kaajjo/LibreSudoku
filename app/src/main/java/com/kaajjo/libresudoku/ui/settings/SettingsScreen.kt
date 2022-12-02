@@ -175,7 +175,6 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ){
-
                 SettingsCategory(
                     title = stringResource(R.string.pref_appearance)
                 )

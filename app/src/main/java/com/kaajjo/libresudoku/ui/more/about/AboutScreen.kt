@@ -51,7 +51,7 @@ fun AboutScreen(
                 title = stringResource(R.string.about_github_project),
                 painter = painterResource(R.drawable.ic_github_24dp),
                 onClick = {
-                    uriHandler.openUri("https://youtu.be/dQw4w9WgXcQ")
+                    uriHandler.openUri("https://github.com/kaajjo/Libre-Sudoku")
                 }
             )
         }

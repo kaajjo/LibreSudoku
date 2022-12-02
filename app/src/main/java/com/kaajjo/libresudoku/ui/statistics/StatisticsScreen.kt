@@ -51,7 +51,7 @@ fun StatisticsScreen(
                         navController.navigate("history")
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_round_history_24),
+                            painter = painterResource(R.drawable.ic_round_history_24),
                             contentDescription = null
                         )
                     }
@@ -262,11 +262,11 @@ fun ShowDeleteDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
-                Text(text = stringResource(R.string.dialog_no))
+                Text(stringResource(R.string.dialog_no))
             }
         },
         title = {
-            Text(text = stringResource(R.string.delete_question))
+            Text(stringResource(R.string.delete_question))
         },
         text = {
             Text(
