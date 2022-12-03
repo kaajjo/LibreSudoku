@@ -31,6 +31,10 @@ fun LearnSudokuScreen(
                     title = stringResource(R.string.naked_pairs_title),
                     onClick = { helpNavController.navigate("sudoku_naked_pairs") }
                 )
+                LearnRowItem(
+                    title = stringResource(R.string.learn_hidden_pairs_title),
+                    onClick = { helpNavController.navigate("sudoku_hidden_pairs") }
+                )
             }
         }
     }

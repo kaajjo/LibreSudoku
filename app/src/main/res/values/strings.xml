@@ -198,6 +198,10 @@
     <string name="learn_basic_4">And we are left with only one cell in which the number 8 can stand</string>
     <string name="learn_basic_5">The same logic applies to rows and columns Look at the first row. Here, the number 4 in R7C3 blocks the third column in our row. The number 4 in R3C5 blocks two columns at once (4 and 6), because there can be no other fours in the same block. R6C7 blocks column number 7</string>
     <string name="learn_basic_6">As a result, we are left with only one cell in which the number 4 can stand. This is cell R1C3</string>
+
+    <string name="learn_hidden_pairs_title">Hidden pairs</string>
+    <string name="learn_hidden_pairs_1">Hidden pairs are almost the same as naked pairs, the only difference being that they are hidden among the others. These two cells have something in common, namely they can hold the numbers 6 and 9, and these are the only two squares here where they can stand</string>
+    <string name="learn_hidden_pairs_2">From this, you can conclude that these two cells will contain only these two numbers, and not the others. So you can remove unnecessary marks from those cells. As with naked pairs, this works with columns and rows the same way</string>
     <string name="page_previous">Previous</string>
     <string name="page_next">Next</string>
 </resources>
