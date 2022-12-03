@@ -22,6 +22,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.learn.learnapp.LearnAppScreen
 import com.kaajjo.libresudoku.ui.learn.learnapp.ToolbarTutorialScreen
+import com.kaajjo.libresudoku.ui.learn.learnsudoku.LearnBasic
 import com.kaajjo.libresudoku.ui.learn.learnsudoku.LearnNakedPairs
 import com.kaajjo.libresudoku.ui.learn.learnsudoku.LearnSudokuRules
 import com.kaajjo.libresudoku.ui.learn.learnsudoku.LearnSudokuScreen
@@ -37,6 +38,7 @@ fun LearnScreen(
         composable("app_toolbar") { ToolbarTutorialScreen(helpNavController) }
         composable("sudoku_rules") { LearnSudokuRules(helpNavController) }
         composable("sudoku_naked_pairs") { LearnNakedPairs(helpNavController) }
+        composable("sudoku_basic") { LearnBasic(helpNavController) }
     }
 }
 

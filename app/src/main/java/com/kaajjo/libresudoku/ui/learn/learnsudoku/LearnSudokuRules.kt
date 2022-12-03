@@ -55,14 +55,14 @@ fun LearnSudokuRules(
                 onClick = { selectedCell = it },
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(stringResource(R.string.learn_sudoku_rules_mistakes))
+            Text(stringResource(R.string.sudoku_rules_mistakes))
 
             var highlightError by remember { mutableStateOf(false) }
             Row (
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(checked = highlightError, onCheckedChange = { highlightError = !highlightError} )
-                Text(stringResource(R.string.learn_sudoku_rules_mistakes_highlight))
+                Text(stringResource(R.string.sudoku_rules_mistakes_highlight))
             }
 
             val errorBoard by remember {
@@ -90,7 +90,7 @@ fun LearnSudokuRules(
                 selectedCell = secondSelectedCell,
                 onClick = { secondSelectedCell = it },
             )
-            Text(stringResource(R.string.learn_sudoku_rules_mistakes_explanation))
+            Text(stringResource(R.string.sudoku_rules_mistakes_explanation))
         }
     }
 }

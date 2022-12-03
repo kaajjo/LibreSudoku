@@ -1,16 +1,7 @@
 package com.kaajjo.libresudoku.ui.learn.learnsudoku
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,14 +13,14 @@ import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.learn.components.TutorialBase
+import com.kaajjo.libresudoku.ui.learn.components.TutorialBottomContent
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun LearnNakedPairs(
     helpNavController: NavController
 ) {
     TutorialBase(
-        title = stringResource(R.string.learn_naked_pairs_title),
+        title = stringResource(R.string.naked_pairs_title),
         helpNavController = helpNavController
     ) {
         val sudokuParser = SudokuParser()
@@ -68,8 +59,8 @@ fun LearnNakedPairs(
             )
         }
         val steps = listOf(
-            stringResource(R.string.learn_naked_pairs_explanation),
-            stringResource(R.string.learn_naked_pairs_end),
+            stringResource(R.string.naked_pairs_explanation),
+            stringResource(R.string.naked_pairs_end),
         )
         val stepsCell = listOf(
             listOf(Cell(4,4),Cell(4,5))
@@ -96,33 +87,13 @@ fun LearnNakedPairs(
                 onClick = { },
                 selectedCell = Cell(-1,-1)
             )
-            Column(
-                modifier = Modifier.padding(top = 8.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                AnimatedContent(targetState = steps[step]) { stepText ->
-                    Column {
-                        Text(stepText)
-                    }
-                }
-                Row(
-                    modifier = Modifier
-                        .align(CenterHorizontally)
-                        .padding(top = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    if(step > 0) {
-                        FilledTonalButton(onClick = { step-- }) {
-                            Text(stringResource(R.string.page_previous))
-                        }
-                    }
-                    if(step < steps.size - 1) {
-                        FilledTonalButton(onClick = { step++ }) {
-                            Text(stringResource(R.string.page_next))
-                        }
-                    }
-                }
-            }
+            TutorialBottomContent(
+                steps = steps,
+                step = step,
+                onPreviousClick = { if(step > 0) step-- },
+                onNextClick = { if(step < (steps.size - 1)) step++ }
+            )
         }
     }
 }
+

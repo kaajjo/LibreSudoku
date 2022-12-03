@@ -184,14 +184,20 @@
 
     <string name="learn_sudoku_rules">Sudoku rules</string>
 
-    <string name="learn_sudoku_rules_mistakes">There is a mistake here, can you spot it? Maybe even two</string>
-    <string name="learn_sudoku_rules_mistakes_highlight">Highlight mistakes</string>
-    <string name="learn_sudoku_rules_mistakes_explanation">The first mistake is two 2 in the sixth box. Do you remember the rule that there can\'t be duplicate numbers in a box? The second mistake is the number 6 in row 2, column 8 (R2C8) because there is already 6 in this column in R5C8</string>
-    <string name="learn_naked_pairs_title">Naked pairs</string>
-    <string name="learn_naked_pairs_explanation">There are two cells that share the same two pencil marks. So how does this help us? I mean, right now we can\'t tell which one is the 2 and which is the 3, right?\nThis is true - we cannot tell which is which. But because Sudoku rules tell us that every block only has only one "2" and only one "3", we can assume that one of them is the 2 and the other is the 3</string>
-    <string name="learn_naked_pairs_end">Now, this wouldn\'t help us if there weren\'t any other "2" or "3" pencil marks in that block. But since there are, we can remove them! The other cells in the block cannot be 2 or 3</string>
+    <string name="sudoku_rules_mistakes">There is a mistake here, can you spot it? Maybe even two</string>
+    <string name="sudoku_rules_mistakes_highlight">Highlight mistakes</string>
+    <string name="sudoku_rules_mistakes_explanation">The first mistake is two 2 in the sixth box. Do you remember the rule that there can\'t be duplicate numbers in a box? The second mistake is the number 6 in row 2, column 8 (R2C8) because there is already 6 in this column in R5C8</string>
+    <string name="naked_pairs_title">Naked pairs</string>
+    <string name="naked_pairs_explanation">There are two cells that share the same two pencil marks. Right now we can\'t tell which one is the 2 and which is the 3\nBut because Sudoku rules tell us that every block only has only one "2" and only one "3", we can assume that one of them is the 2 and the other is the 3</string>
+    <string name="naked_pairs_end">Now, this wouldn\'t help us if there weren\'t any other "2" or "3" pencil marks in that block. But since there are, we can remove them! The other cells in the block cannot be 2 or 3</string>
 
-
+    <string name="learn_basic_title">Basic</string>
+    <string name="learn_basic_1">Let\'s choose block number 7. There are already four cells filled here</string>
+    <string name="learn_basic_2">Now let\'s take a look at the number 8. The number 8 in row 4, column 3 (R4C3), blocks the entire column in our block. So number 8 can\'t stand there</string>
+    <string name="learn_basic_3">Also the number 8 in R7C5 blocks the whole row in our block</string>
+    <string name="learn_basic_4">And we are left with only one cell in which the number 8 can stand</string>
+    <string name="learn_basic_5">The same logic applies to rows and columns Look at the first row. Here, the number 4 in R7C3 blocks the third column in our row. The number 4 in R3C5 blocks two columns at once (4 and 6), because there can be no other fours in the same block. R6C7 blocks column number 7</string>
+    <string name="learn_basic_6">As a result, we are left with only one cell in which the number 4 can stand. This is cell R1C3</string>
     <string name="page_previous">Previous</string>
     <string name="page_next">Next</string>
 </resources>
