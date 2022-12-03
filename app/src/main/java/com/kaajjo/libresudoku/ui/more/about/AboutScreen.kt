@@ -44,7 +44,7 @@ fun AboutScreen(
             PreferenceRow(
                 title = stringResource(R.string.about_version),
                 subtitle = BuildConfig.VERSION_NAME,
-                painter = painterResource(R.drawable.ic_round_info_24),
+                painter = painterResource(R.drawable.ic_outline_info_24),
             )
             val uriHandler = LocalUriHandler.current
             PreferenceRow(

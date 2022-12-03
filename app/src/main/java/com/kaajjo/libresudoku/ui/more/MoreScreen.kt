@@ -45,14 +45,14 @@ fun MoreScreen(
 
         PreferenceRow(
             title = stringResource(R.string.settings),
-            painter = painterResource(R.drawable.ic_round_settings_24),
+            painter = painterResource(R.drawable.ic_settings_24),
             onClick = {
                 navController.navigate("settings/?fromGame=false")
             }
         )
         PreferenceRow(
             title = stringResource(R.string.app_about),
-            painter = painterResource(R.drawable.ic_round_info_24),
+            painter = painterResource(R.drawable.ic_outline_info_24),
             onClick = {
                 navController.navigate("about")
             }
