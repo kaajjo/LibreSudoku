@@ -204,4 +204,5 @@
     <string name="learn_hidden_pairs_2">From this, you can conclude that these two cells will contain only these two numbers, and not the others. So you can remove unnecessary marks from those cells. As with naked pairs, this works with columns and rows the same way</string>
     <string name="page_previous">Previous</string>
     <string name="page_next">Next</string>
+    <string name="no_value_default" translatable="false">--</string>
 </resources>

@@ -123,12 +123,10 @@ fun StatisticsScreen(
                             if(savedGameList.value.isNotEmpty()) {
                                 context.getString(
                                     R.string.win_rate_percentage,
-                                    (savedGameList.value
-                                        .count { it.completed && !it.giveUp } * 100f / savedGameList.value.count())
-                                        .roundToInt()
+                                    viewModel.getWinRate(savedGameList.value).roundToInt()
                                 )
                             } else {
-                                "--"
+                                context.getString(R.string.no_value_default)
                             }
                         )
                     }

@@ -130,4 +130,11 @@ class StatisticsViewModel
         val sudokuUtils = SudokuUtils()
         return sudokuUtils.getGameTypeString(gameType, context)
     }
+
+    fun getWinRate(savedGames: List<SavedGame>): Float {
+        return savedGames
+            .count { it.completed && !it.giveUp && !it.canContinue } * 100f / savedGames.count()
+            .toFloat()
+    }
+
 }
