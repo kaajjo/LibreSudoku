@@ -54,6 +54,13 @@ fun AboutScreen(
                     uriHandler.openUri("https://github.com/kaajjo/Libre-Sudoku")
                 }
             )
+            PreferenceRow(
+                title = stringResource(R.string.libraries_licenses_title),
+                painter = painterResource(R.drawable.ic_outline_info_24),
+                onClick = {
+                    navController.navigate("open_source_licenses")
+                }
+            )
         }
     }
 }

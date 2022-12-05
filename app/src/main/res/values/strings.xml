@@ -205,4 +205,6 @@
     <string name="page_previous">Previous</string>
     <string name="page_next">Next</string>
     <string name="no_value_default" translatable="false">--</string>
+
+    <string name="libraries_licenses_title">Open source licenses</string>
 </resources>

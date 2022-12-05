@@ -33,6 +33,7 @@ import com.kaajjo.libresudoku.ui.gameshistory.savedgame.SavedGameScreen
 import com.kaajjo.libresudoku.ui.home.HomeScreen
 import com.kaajjo.libresudoku.ui.learn.LearnScreen
 import com.kaajjo.libresudoku.ui.more.MoreScreen
+import com.kaajjo.libresudoku.ui.more.about.AboutLibrariesScreen
 import com.kaajjo.libresudoku.ui.more.about.AboutScreen
 import com.kaajjo.libresudoku.ui.onboarding.WelcomeScreen
 import com.kaajjo.libresudoku.ui.settings.SettingsScreen
@@ -114,6 +115,7 @@ class MainActivity : AppCompatActivity() {
                         composable("statistics") { StatisticsScreen(navController, hiltViewModel()) }
                         composable("history") { GamesHistoryScreen(navController, hiltViewModel()) }
                         composable("learn") { LearnScreen(navController) }
+                        composable("open_source_licenses") { AboutLibrariesScreen(navController) }
                         composable(
                             route = "settings/?fromGame={fromGame}",
                             arguments = listOf(navArgument("fromGame") {
