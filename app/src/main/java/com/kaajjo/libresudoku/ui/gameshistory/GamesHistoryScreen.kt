@@ -1,5 +1,6 @@
 package com.kaajjo.libresudoku.ui.gameshistory
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -141,6 +142,7 @@ fun SudokuHistoryItem(
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
                     .size(130.dp)
+                    .align(Alignment.CenterVertically)
             ) {
                 BoardPreview(
                     size = sqrt(board.length.toFloat()).toInt(),
@@ -148,19 +150,37 @@ fun SudokuHistoryItem(
                 )
             }
             Column(
-                modifier = Modifier.padding(horizontal = 12.dp)
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
             ) {
-                Text("$difficulty $type")
-                Text(
-                    text = stringResource(R.string.history_item_time) + savedGame.timer.toKotlinDuration()
-                        .toComponents { minutes, seconds, _ ->
-                            String.format(" %02d:%02d", minutes, seconds)
-                        }
-                )
-                if(savedGame.canContinue) {
-                    Text(stringResource(R.string.history_item_can_continue))
+                Column {
+                    Text("$difficulty $type")
+                    Text(
+                        text = stringResource(R.string.history_item_time) + savedGame.timer.toKotlinDuration()
+                            .toComponents { minutes, seconds, _ ->
+                                String.format(" %02d:%02d", minutes, seconds)
+                            }
+                    )
+                    Text(stringResource(R.string.history_item_id) + " ${savedGame.uid}")
                 }
-                Text(stringResource(R.string.history_item_id) + " ${savedGame.uid}")
+
+                Spacer(modifier = Modifier.height(12.dp))
+                if(savedGame.canContinue) {
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = MaterialTheme.shapes.large
+                            )
+                            .padding(vertical = 4.dp, horizontal = 8.dp)
+                    ) {
+                        Text(
+                            text = "Can continue",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
             }
         }
     }
