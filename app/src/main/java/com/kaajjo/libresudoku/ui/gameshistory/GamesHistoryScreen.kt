@@ -175,7 +175,7 @@ fun SudokuHistoryItem(
                             .padding(vertical = 4.dp, horizontal = 8.dp)
                     ) {
                         Text(
-                            text = "Can continue",
+                            text = stringResource(R.string.can_continue_label),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
