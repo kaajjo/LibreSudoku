@@ -60,6 +60,11 @@ class GameViewModel @Inject constructor(
                     boardEntity.solvedBoard,
                     boardEntity.type
                 )
+                for(i in solvedBoard.indices) {
+                    for(j in initialBoard.indices) {
+                        solvedBoard[i][j].locked = initialBoard[i][j].locked
+                    }
+                }
             }
 
             withContext(Dispatchers.Main) {
@@ -139,6 +144,9 @@ class GameViewModel @Inject constructor(
     val inputMethod = appSettingsManager.inputMethod
     // temporarily use digit first method when true
     var overrideInputMethodDF by mutableStateOf(false)
+
+    // show/hide solution (when give up)
+    var showSolution by mutableStateOf(false)
 
     private fun clearNotesAtCell(notes: List<Note>, row: Int = currCell.row, col: Int = currCell.col) : List<Note> {
         return notes.minus(

@@ -110,6 +110,7 @@
     <string name="action_clear_notes">Clear notes</string>
     <string name="action_compute_notes">Compute notes</string>
     <string name="action_show_solution">Show solution</string>
+    <string name="action_show_mine_sudoku">Show mine</string>
 
     <string name="onboard_title">Welcome</string>
     <string name="intro_what_is_sudoku">A classic sudoku looks like this</string>

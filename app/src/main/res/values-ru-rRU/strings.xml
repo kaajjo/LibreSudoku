@@ -171,4 +171,5 @@
     <string name="learn_hidden_pairs_2">Из этого можно сделать вывод, что эти две клетки будут содержать имеено эти две цифры, и никакие другие. Так что, мы можем убрать ненужные заметки из этих клеток. Как и с голыми парами, это точно также работае со строками и столбцами</string>
     <string name="libraries_licenses_title">Open source лицензии</string>
     <string name="can_continue_label">Можно продолжить</string>
+    <string name="action_show_mine_sudoku">Показать свое</string>
 </resources>

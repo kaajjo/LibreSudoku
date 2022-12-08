@@ -3,7 +3,9 @@ package com.kaajjo.libresudoku.ui.game
 import android.os.Build
 import android.view.HapticFeedbackConstants
 import android.view.View
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -40,7 +42,7 @@ import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
 import com.kaajjo.libresudoku.ui.onboarding.FirstGameDialog
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun GameScreen(
     navController: NavController,
@@ -195,9 +197,6 @@ fun GameScreen(
             viewModel.onGameComplete()
         }
     }
-
-    val showAnswerInteractionSource = remember { MutableInteractionSource() }
-    val showAnswerPressed by showAnswerInteractionSource.collectIsPressedAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -218,10 +217,14 @@ fun GameScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             FilledTonalButton(
-                                interactionSource = showAnswerInteractionSource,
-                                onClick = { }
+                                onClick = { viewModel.showSolution = !viewModel.showSolution }
                             ) {
-                                Text(stringResource(R.string.action_show_solution))
+                                AnimatedContent(
+                                    if(viewModel.showSolution) stringResource(R.string.action_show_mine_sudoku)
+                                    else stringResource(R.string.action_show_solution)
+                                ) {
+                                    Text(it)
+                                }
                             }
                         }
                     }
@@ -351,7 +354,7 @@ fun GameScreen(
                     modifier = Modifier
                         .blur(boardBlur)
                         .scale(scale, scale),
-                    board = if(!showAnswerPressed) viewModel.gameBoard else viewModel.solvedBoard,
+                    board = if(!viewModel.showSolution) viewModel.gameBoard else viewModel.solvedBoard,
                     size = viewModel.size,
                     mainTextSize = fontSizeValue,
                     notes = viewModel.notes,
@@ -378,7 +381,7 @@ fun GameScreen(
                     positionLines = positionLines,
                     enabled = viewModel.gamePlaying && !viewModel.endGame,
                     questions = !(viewModel.gamePlaying || viewModel.endGame) && Build.VERSION.SDK_INT < Build.VERSION_CODES.R,
-                    renderNotes = renderNotes && !showAnswerPressed
+                    renderNotes = renderNotes && !viewModel.showSolution
                 )
             }
 
