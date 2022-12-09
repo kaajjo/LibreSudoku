@@ -57,7 +57,9 @@ fun GamesHistoryScreen(
     ) { innerPadding ->
         val context = LocalContext.current
         val savedGamesState by viewModel.savedGames.collectAsState(initial = emptyList())
-        if (savedGamesState.isNotEmpty()) {
+
+        val boards by viewModel.getBoards().collectAsState(initial = emptyList())
+        if (savedGamesState.isNotEmpty() && boards.isNotEmpty()) {
             Column(
                 modifier = Modifier.padding(innerPadding)
             ) {
@@ -65,8 +67,8 @@ fun GamesHistoryScreen(
                     modifier = Modifier.disableSplitMotionEvents()
                 ) {
                     itemsIndexed(savedGamesState.reversed()) { index, savedGame ->
-                        val board by viewModel.getBoardByUid(savedGame.uid).collectAsState()
-                        board?.let {
+                        val board = boards.first { board -> board.uid == savedGame.uid }
+                        board.let {
                             SudokuHistoryItem(
                                 board = savedGamesState.reversed()[index].currentBoard,
                                 savedGame = savedGame,

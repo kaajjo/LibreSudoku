@@ -9,6 +9,9 @@ interface BoardDao {
     @Query("SELECT * FROM board")
     fun getAll(): Flow<List<SudokuBoard>>
 
+    @Query("SELECT * FROM board")
+    fun getAllList(): List<SudokuBoard>
+
     @Query("SELECT * FROM board WHERE uid == :uid")
     fun get(uid: Long): SudokuBoard
 

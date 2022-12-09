@@ -8,6 +8,7 @@ class BoardRepository(
     private val boardDao: BoardDao
 ) {
     fun getAll(): Flow<List<SudokuBoard>> = boardDao.getAll()
+    fun getAllList(): List<SudokuBoard> = boardDao.getAllList()
     suspend fun get(uid: Long): SudokuBoard = boardDao.get(uid)
     suspend fun insert(boardEntity: SudokuBoard): Long = boardDao.insert(boardEntity)
     suspend fun delete(boardEntity: SudokuBoard) = boardDao.delete(boardEntity)

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
+import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.database.repository.BoardRepository
 import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
@@ -30,6 +31,17 @@ class HistoryViewModel
         viewModelScope.launch(Dispatchers.IO) {
             val board = boardRepository.get(uid)
             result.emit(board)
+        }
+        return result
+    }
+
+    fun getBoards(): StateFlow<List<SudokuBoard>> {
+        // The lazycolumn not lagging now when scrolling fast,
+        // but I don't think this is the right way to do that
+        // but better this then nothing
+        val result = MutableStateFlow<List<SudokuBoard>>(emptyList())
+        viewModelScope.launch(Dispatchers.IO) {
+            result.emit(boardRepository.getAllList())
         }
         return result
     }
