@@ -72,11 +72,11 @@ fun StatisticsScreen(
         ) {
             ChipRowDifficulty(
                 items = listOf(
-                    Pair(GameDifficulty.Unspecified, stringResource(R.string.difficulty_unspecified)),
-                    Pair(GameDifficulty.Easy, stringResource(R.string.difficulty_easy)),
-                    Pair(GameDifficulty.Moderate, stringResource(R.string.difficulty_moderate)),
-                    Pair(GameDifficulty.Hard, stringResource(R.string.difficulty_hard)),
-                    Pair(GameDifficulty.Challenge, stringResource(R.string.difficulty_challenge))
+                    GameDifficulty.Unspecified,
+                    GameDifficulty.Easy,
+                    GameDifficulty.Moderate,
+                    GameDifficulty.Hard,
+                    GameDifficulty.Challenge
                 ),
                 selected = viewModel.selectedDifficulty,
                 onSelected = { viewModel.setDifficulty(it) }
@@ -170,11 +170,11 @@ fun StatisticsScreen(
                 val context = LocalContext.current
                 StatsSectionName(
                     modifier = Modifier.padding(start = 12.dp, top = 12.dp),
-                    title = stringResource(R.string.number_best_games, 5) + if(
-                        viewModel.selectedType != GameType.Unspecified && viewModel.selectedDifficulty != GameDifficulty.Unspecified
+                    title = stringResource(R.string.number_best_games, 5) +
+                            if(viewModel.selectedType != GameType.Unspecified && viewModel.selectedDifficulty != GameDifficulty.Unspecified
                     ) {
-                        " ${viewModel.getCurrentTypeString(context).lowercase()} " +
-                                viewModel.getDifficultyString(viewModel.selectedDifficulty, context).lowercase()
+                        " ${stringResource(viewModel.selectedType.resName).lowercase()} " +
+                                stringResource(viewModel.selectedDifficulty.resName).lowercase()
                     } else {
                         ""
                     },
@@ -192,9 +192,9 @@ fun StatisticsScreen(
                         recordListState.value.take(5).forEachIndexed { index, record ->
                             RecordItem(
                                 time = record.time,
-                                difficulty = viewModel.getDifficultyString(record.difficulty, context),
+                                difficulty = stringResource(record.difficulty.resName),
                                 date = record.date.toLocalDateTime(),
-                                type = viewModel.getGameTypeString(record.type, context),
+                                type = stringResource(record.type.resName),
                                 onLongClick = {
                                     selectedIndex = index
                                     viewModel.showDeleteDialog = true
@@ -434,7 +434,7 @@ fun ChipRowType(
 @Composable
 fun ChipRowDifficulty(
     modifier: Modifier = Modifier,
-    items: List<Pair<GameDifficulty, String>>,
+    items: List<GameDifficulty>,
     selected: GameDifficulty,
     onSelected: (GameDifficulty) -> Unit
 ) {
@@ -447,14 +447,14 @@ fun ChipRowDifficulty(
                 Spacer(modifier = Modifier.width(8.dp))
             }
             val selectedColor by animateColorAsState(
-                targetValue = if(selected == item.first) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface
+                targetValue = if(selected == item) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface
             )
             ElevatedFilterChip(
-                selected = selected == item.first,
-                onClick = { onSelected(item.first) },
+                selected = selected == item,
+                onClick = { onSelected(item) },
                 label = {
                     Text(
-                        if (item.first != GameDifficulty.Unspecified) item.second else stringResource(R.string.statistics_difficulty_filter_all)
+                        if (item != GameDifficulty.Unspecified) stringResource(item.resName) else stringResource(R.string.statistics_difficulty_filter_all)
                     )
                 },
                 shape = RoundedCornerShape(16.dp),

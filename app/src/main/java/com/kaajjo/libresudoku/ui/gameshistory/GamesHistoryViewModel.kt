@@ -45,14 +45,4 @@ class HistoryViewModel
         }
         return result
     }
-
-    fun getDifficultyString(difficulty: GameDifficulty, context: Context): String {
-        val sudokuUtils = SudokuUtils()
-        return sudokuUtils.getDifficultyString(difficulty, context)
-    }
-
-    fun getGameTypeString(gameType: GameType, context: Context): String {
-        val sudokuUtils = SudokuUtils()
-        return sudokuUtils.getGameTypeString(gameType, context)
-    }
 }

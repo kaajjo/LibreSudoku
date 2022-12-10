@@ -157,29 +157,4 @@ class SudokuUtils {
             }
         }
     }
-
-    fun getDifficultyString(difficulty: GameDifficulty, context: Context): String {
-        return context.getString(
-            when(difficulty) {
-                GameDifficulty.Unspecified -> R.string.difficulty_unspecified
-                GameDifficulty.Simple -> R.string.difficulty_simple
-                GameDifficulty.Easy -> R.string.difficulty_easy
-                GameDifficulty.Moderate -> R.string.difficulty_moderate
-                GameDifficulty.Hard -> R.string.difficulty_hard
-                GameDifficulty.Challenge -> R.string.difficulty_challenge
-                GameDifficulty.Custom -> R.string.difficulty_custom
-            }
-        )
-    }
-
-    fun getGameTypeString(type: GameType, context: Context): String {
-        return context.getString(
-            when(type) {
-                GameType.Unspecified -> R.string.type_unspecified
-                GameType.Default9x9 -> R.string.type_default_9x9
-                GameType.Default12x12 -> R.string.type_default_12x12
-                GameType.Default6x6 -> R.string.type_default_6x6
-            }
-        )
-    }
 }

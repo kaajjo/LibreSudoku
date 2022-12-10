@@ -72,8 +72,8 @@ fun GamesHistoryScreen(
                             SudokuHistoryItem(
                                 board = savedGamesState.reversed()[index].currentBoard,
                                 savedGame = savedGame,
-                                difficulty = viewModel.getDifficultyString(it.difficulty, context),
-                                type = viewModel.getGameTypeString(it.type, context),
+                                difficulty = stringResource(it.difficulty.resName),
+                                type = stringResource(it.type.resName),
                                 onClick = {
                                     navController.navigate(
                                         "saved_game/${savedGame.uid}"

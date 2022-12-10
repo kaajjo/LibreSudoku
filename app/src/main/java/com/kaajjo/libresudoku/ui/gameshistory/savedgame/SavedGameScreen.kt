@@ -154,14 +154,14 @@ fun SavedGameScreen(
                     Text(
                         text = stringResource(
                             R.string.saved_game_difficulty,
-                            viewModel.getDifficultyString(viewModel.boardEntity!!.difficulty, context)
+                            stringResource(viewModel.boardEntity!!.difficulty.resName)
                         ),
                         style = textStyle
                     )
                     Text(
                         text = stringResource(
                             R.string.saved_game_type,
-                            viewModel.getGameTypeString(viewModel.boardEntity!!.type, context)
+                            stringResource(viewModel.boardEntity!!.type.resName)
                         ),
                         style = textStyle
                     )
@@ -189,93 +189,5 @@ fun SavedGameScreen(
         } else {
             EmptyScreen(stringResource(R.string.empty_screen_something_went_wrong))
         }
-    }
-}
-
-@HiltViewModel
-class SavedGameViewModel
-@Inject constructor(
-    private val boardRepository: BoardRepository,
-    private val savedGameRepository: SavedGameRepository,
-    savedStateHandle: SavedStateHandle
-) : ViewModel() {
-    private val boardUid = savedStateHandle.get<Long>("uid")
-    fun updateGame() {
-        viewModelScope.launch(Dispatchers.IO) {
-            boardEntity = boardRepository.get(boardUid ?: 0)
-            savedGame = savedGameRepository.get(boardUid ?: 0)
-
-            boardEntity?.let {  boardEntity ->
-                savedGame?.let { savedGame ->
-                    withContext(Dispatchers.Default) {
-                        val sudokuParser = SudokuParser()
-                        parsedInitialBoard = sudokuParser.parseBoard(boardEntity.initialBoard, boardEntity.type)
-                        parsedCurrentBoard = sudokuParser.parseBoard(savedGame.currentBoard, boardEntity.type)
-                    }
-                }
-            }
-        }
-    }
-
-    var causeMistakesLimit by mutableStateOf(false)
-    var correctSolution by mutableStateOf(false)
-    fun isSolved(): Boolean {
-        val sudokuParser = SudokuParser()
-
-        if(savedGame?.let {
-                it.mistakes >= 3
-            } == true) {
-            causeMistakesLimit = true
-            return true
-        }
-
-        if(boardEntity == null || savedGame == null || parsedInitialBoard.isEmpty()) return false
-        boardEntity?.let { boardEntity ->
-            val solvedBoard = sudokuParser.parseBoard(boardEntity.solvedBoard, boardEntity.type)
-            if(solvedBoard.size != parsedCurrentBoard.size) return false
-            for (i in 0 until boardEntity.type.size) {
-                for (j in 0 until boardEntity.type.size) {
-                    if (solvedBoard[i][j].value != parsedCurrentBoard[i][j].value) {
-                        return false
-                    }
-                }
-            }
-        }
-        correctSolution = true
-        return true
-    }
-    fun getProgressFilled(): Pair<Int, Int> {
-        var size = 0
-        val count = boardEntity?.let { boardEntity ->
-            boardEntity.type.let { type ->
-                size = (type.sectionWidth * type.sectionHeight)
-                    .toDouble()
-                    .pow(2.0)
-                    .toInt()
-
-                size - parsedCurrentBoard.let { board ->
-                    board.sumOf { cells -> cells.count { cell -> cell.value == 0} }
-                }
-            }
-        } ?: 0
-        return Pair(size, count)
-    }
-
-    var savedGame by mutableStateOf<SavedGame?>(null)
-
-    var boardEntity by mutableStateOf<SudokuBoard?>(null)
-
-    var parsedInitialBoard by mutableStateOf(emptyList<List<Cell>>())
-
-    var parsedCurrentBoard by mutableStateOf(emptyList<List<Cell>>())
-
-    fun getDifficultyString(difficulty: GameDifficulty, context: Context): String {
-        val sudokuUtils = SudokuUtils()
-        return sudokuUtils.getDifficultyString(difficulty, context)
-    }
-
-    fun getGameTypeString(gameType: GameType, context: Context): String {
-        val sudokuUtils = SudokuUtils()
-        return sudokuUtils.getGameTypeString(gameType, context)
     }
 }

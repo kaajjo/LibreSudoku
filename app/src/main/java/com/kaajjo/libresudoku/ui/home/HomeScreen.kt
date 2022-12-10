@@ -13,8 +13,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
-import com.kaajjo.libresudoku.core.qqwing.GameType
 import kotlinx.coroutines.runBlocking
 
 @Composable
@@ -86,25 +84,12 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             HorizontalPicker(
-                text = when(viewModel.selectedDifficulty) {
-                    GameDifficulty.Unspecified -> stringResource(R.string.difficulty_unspecified)
-                    GameDifficulty.Simple -> stringResource(R.string.difficulty_simple)
-                    GameDifficulty.Easy -> stringResource(R.string.difficulty_easy)
-                    GameDifficulty.Moderate -> stringResource(R.string.difficulty_moderate)
-                    GameDifficulty.Hard -> stringResource(R.string.difficulty_hard)
-                    GameDifficulty.Challenge -> stringResource(R.string.difficulty_challenge)
-                    GameDifficulty.Custom -> stringResource(R.string.difficulty_custom)
-                },
+                text = stringResource(viewModel.selectedDifficulty.resName),
                 onLeftClick = { viewModel.setDifficulty(-1) },
                 onRightClick = { viewModel.setDifficulty(1) }
             )
             HorizontalPicker(
-                text = when(viewModel.selectedType) {
-                    GameType.Unspecified -> stringResource(R.string.type_unspecified)
-                    GameType.Default6x6 -> stringResource(R.string.type_default_6x6)
-                    GameType.Default9x9 -> stringResource(R.string.type_default_9x9)
-                    GameType.Default12x12 -> stringResource(R.string.type_default_12x12)
-                },
+                text = stringResource(viewModel.selectedType.resName),
                 onLeftClick = { viewModel.setType(-1) },
                 onRightClick = { viewModel.setType(1) }
             )

@@ -6,10 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
-import com.kaajjo.libresudoku.core.utils.SudokuUtils
 import com.kaajjo.libresudoku.data.database.model.Record
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.repository.RecordRepository
@@ -110,25 +108,6 @@ class StatisticsViewModel
             }
         }
         return maxStreak
-    }
-
-    fun getCurrentTypeString(context: Context): String {
-        val sudokuUtils = SudokuUtils()
-        return sudokuUtils.getGameTypeString(selectedType, context)
-    }
-    fun getCurrentDifficultyString(context: Context): String {
-        val sudokuUtils = SudokuUtils()
-        return sudokuUtils.getDifficultyString(selectedDifficulty, context)
-    }
-
-    fun getDifficultyString(difficulty: GameDifficulty, context: Context): String {
-        val sudokuUtils = SudokuUtils()
-        return sudokuUtils.getDifficultyString(difficulty, context)
-    }
-
-    fun getGameTypeString(gameType: GameType, context: Context): String {
-        val sudokuUtils = SudokuUtils()
-        return sudokuUtils.getGameTypeString(gameType, context)
     }
 
     fun getWinRate(savedGames: List<SavedGame>): Float {

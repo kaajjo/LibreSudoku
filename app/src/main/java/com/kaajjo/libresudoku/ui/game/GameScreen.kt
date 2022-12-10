@@ -35,7 +35,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
-import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
@@ -298,20 +297,7 @@ fun GameScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
-                val context = LocalContext.current
-                var difficultyText by remember { mutableStateOf("") }
-                LaunchedEffect(key1 = viewModel.boardEntity) {
-                    difficultyText = when(viewModel.boardEntity.difficulty) {
-                        GameDifficulty.Unspecified -> context.getString(R.string.difficulty_unspecified)
-                        GameDifficulty.Simple -> context.getString(R.string.difficulty_simple)
-                        GameDifficulty.Easy -> context.getString(R.string.difficulty_easy)
-                        GameDifficulty.Moderate -> context.getString(R.string.difficulty_moderate)
-                        GameDifficulty.Hard -> context.getString(R.string.difficulty_hard)
-                        GameDifficulty.Challenge -> context.getString(R.string.difficulty_challenge)
-                        GameDifficulty.Custom -> context.getString(R.string.difficulty_custom)
-                    }
-                }
-                TopBoardSection(difficultyText)
+                TopBoardSection(stringResource(viewModel.boardEntity.difficulty.resName))
 
                 val mistakesLimit = viewModel.mistakesLimit.collectAsState(initial = false)
                 if(mistakesLimit.value && errorHighlight != 0) {
