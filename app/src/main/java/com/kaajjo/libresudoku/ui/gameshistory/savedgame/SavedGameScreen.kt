@@ -117,8 +117,21 @@ fun SavedGameScreen(
                             .padding(top = 8.dp)
                     ) { page ->
                         when(page) {
-                            0 -> Board(board = viewModel.parsedCurrentBoard, modifier = boardModifier, mainTextSize = fontSize, selectedCell = Cell(-1,-1), onClick = { })
-                            1 -> Board(board = viewModel.parsedInitialBoard, modifier = boardModifier, mainTextSize = fontSize, selectedCell = Cell(-1,-1), onClick = { })
+                            0 -> Board(
+                                board = viewModel.parsedCurrentBoard,
+                                notes = viewModel.notes,
+                                modifier = boardModifier,
+                                mainTextSize = fontSize,
+                                selectedCell = Cell(-1,-1) ,
+                                onClick = { }
+                            )
+                            1 -> Board(
+                                board = viewModel.parsedInitialBoard,
+                                modifier = boardModifier,
+                                mainTextSize = fontSize,
+                                selectedCell = Cell(-1,-1),
+                                onClick = { }
+                            )
                         }
                     }
                 }
@@ -150,7 +163,6 @@ fun SavedGameScreen(
                             }
                         } ?: ""
                     )
-                    val context = LocalContext.current
                     Text(
                         text = stringResource(
                             R.string.saved_game_difficulty,

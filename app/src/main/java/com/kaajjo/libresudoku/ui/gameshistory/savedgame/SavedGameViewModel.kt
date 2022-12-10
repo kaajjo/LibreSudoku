@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.Cell
+import com.kaajjo.libresudoku.core.Note
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.SudokuParser
@@ -31,6 +32,14 @@ class SavedGameViewModel
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val boardUid = savedStateHandle.get<Long>("uid")
+
+    var savedGame by mutableStateOf<SavedGame?>(null)
+    var boardEntity by mutableStateOf<SudokuBoard?>(null)
+
+    var parsedInitialBoard by mutableStateOf(emptyList<List<Cell>>())
+    var parsedCurrentBoard by mutableStateOf(emptyList<List<Cell>>())
+    var notes by mutableStateOf(emptyList<Note>())
+
     fun updateGame() {
         viewModelScope.launch(Dispatchers.IO) {
             boardEntity = boardRepository.get(boardUid ?: 0)
@@ -42,6 +51,7 @@ class SavedGameViewModel
                         val sudokuParser = SudokuParser()
                         parsedInitialBoard = sudokuParser.parseBoard(boardEntity.initialBoard, boardEntity.type)
                         parsedCurrentBoard = sudokuParser.parseBoard(savedGame.currentBoard, boardEntity.type)
+                        notes = sudokuParser.parseNotes(savedGame.notes)
                     }
                 }
             }
@@ -75,6 +85,7 @@ class SavedGameViewModel
         correctSolution = true
         return true
     }
+
     fun getProgressFilled(): Pair<Int, Int> {
         var size = 0
         val count = boardEntity?.let { boardEntity ->
@@ -91,12 +102,4 @@ class SavedGameViewModel
         } ?: 0
         return Pair(size, count)
     }
-
-    var savedGame by mutableStateOf<SavedGame?>(null)
-
-    var boardEntity by mutableStateOf<SudokuBoard?>(null)
-
-    var parsedInitialBoard by mutableStateOf(emptyList<List<Cell>>())
-
-    var parsedCurrentBoard by mutableStateOf(emptyList<List<Cell>>())
 }
