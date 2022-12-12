@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 
 @Composable
 fun HelpCard(
@@ -63,7 +64,7 @@ fun HelpCard(
     }
 }
 
-@Preview
+@LightDarkPreview
 @Composable
 fun HelpCardPreview() {
     LibreSudokuTheme {

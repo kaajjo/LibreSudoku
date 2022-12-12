@@ -1,5 +1,7 @@
 package com.kaajjo.libresudoku.ui.components.board
 
+import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.TypedValue
@@ -7,6 +9,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -20,11 +23,16 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
+import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.utils.SudokuParser
+import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.sqrt
@@ -294,7 +302,7 @@ fun Board(
             }
 
             // notes
-            if(notes != null && notes.isNotEmpty() && !questions && renderNotes) {
+            if(!notes.isNullOrEmpty() && !questions && renderNotes) {
                 val noteBounds = Rect()
                 notePaint.getTextBounds("1", 0, 1, noteBounds)
                 val noteWidthHalf = notePaint.measureText("1") / 2f
@@ -322,6 +330,31 @@ fun Board(
                     }
                 }
             }
+        }
+    }
+}
+
+@LightDarkPreview
+@Composable
+private fun BoardPreviewLight() {
+    LibreSudokuTheme {
+        Surface {
+            val sudokuParser = SudokuParser()
+            val board by remember {
+                mutableStateOf(
+                    sudokuParser.parseBoard(
+                        board = "....1........4.............7...........9........68...............5...............",
+                        gameType = GameType.Default9x9,
+                        emptySeparator = '.').toList()
+                )
+            }
+            val notes = listOf(Note(2,3,1), Note(2,3,5))
+            Board(
+                board = board,
+                notes = notes,
+                selectedCell = Cell(-1, -1),
+                onClick =  { }
+            )
         }
     }
 }

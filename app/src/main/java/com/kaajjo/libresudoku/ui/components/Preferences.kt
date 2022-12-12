@@ -1,5 +1,7 @@
 package com.kaajjo.libresudoku.ui.components
 
+import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
@@ -11,7 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -116,4 +123,62 @@ fun PreferenceRowSwitch(
             )
         },
     )
+}
+
+
+@LightDarkPreview
+@Composable
+private fun PreferenceRowPreview() {
+    LibreSudokuTheme {
+        Surface {
+            Column {
+                PreferenceRow(
+                    title = "Preference row title",
+                    subtitle = "Preference summary"
+                )
+                PreferenceRow(
+                    title = "Preference row with icon",
+                    subtitle = "Preference with icon",
+                    painter = painterResource(R.drawable.ic_settings_24)
+                )
+            }
+        }
+    }
+}
+
+@LightDarkPreview
+@Composable
+private fun PreferenceRowSwitchPreview() {
+    LibreSudokuTheme {
+        Surface {
+            Column {
+                PreferenceRowSwitch(
+                    title = "Preference row with switch",
+                    subtitle = "Preference summary",
+                    onClick = { },
+                    checked = false
+                )
+                PreferenceRowSwitch(
+                    title = "Preference row with switch and icon",
+                    subtitle = "Preference summary",
+                    painter = painterResource(R.drawable.ic_settings_24),
+                    onClick =  { },
+                    checked = false
+                )
+                PreferenceRowSwitch(
+                    title = "Preference row with switch",
+                    subtitle = "Preference summary",
+                    onClick = { },
+                    checked = true
+                )
+                PreferenceRowSwitch(
+                    title = "Preference row with switch and icon",
+                    subtitle = "Preference summary",
+                    painter = painterResource(R.drawable.ic_settings_24),
+                    onClick =  { },
+                    checked = true
+                )
+            }
+        }
+    }
 }

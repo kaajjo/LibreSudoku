@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,6 +24,8 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -118,43 +121,37 @@ fun DefaultGameKeyboard(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+
+
+@LightDarkPreview
 @Composable
-fun ToolbarItem(
-    modifier: Modifier = Modifier,
-    painter: Painter,
-    toggled: Boolean = false,
-    onClick: () -> Unit = { },
-    onLongClick: () -> Unit = { }
-) {
-    Box(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.large)
-            .background(if (toggled) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp, horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                painter = painter,
-                contentDescription = null,
-                tint = if (toggled) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
-            )
+private fun KeyboardItemPreview() {
+    LibreSudokuTheme {
+        Surface {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                KeyboardItem(
+                    number = 1,
+                    onClick = { }
+                )
+                KeyboardItem(
+                    number = 1,
+                    selected = true,
+                    onClick = { }
+                )
+                KeyboardItem(
+                    number = 1,
+                    remainingUses = 5,
+                    onClick = { }
+                )
+                KeyboardItem(
+                    number = 1,
+                    remainingUses = 5,
+                    selected = true,
+                    onClick = { }
+                )
+            }
         }
     }
-}
-
-enum class ToolBarItem {
-    Undo,
-    Hint,
-    Note,
-    Remove
 }

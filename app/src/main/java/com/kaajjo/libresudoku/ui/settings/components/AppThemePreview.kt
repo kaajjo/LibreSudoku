@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.theme.AppTheme
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 
 @Composable
 fun AppThemePreviewItem(
@@ -65,16 +66,6 @@ fun AppThemePreviewItem(
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
-            //Box(
-            //    modifier = Modifier
-            //        .fillMaxHeight()
-            //        .fillMaxWidth(0.5f)
-            //        .padding(end = 4.dp)
-            //        .background(
-            //            color = colorScheme.onSurface,
-            //            shape = shapes.small,
-            //        ),
-            //)
         }
 
 
@@ -176,27 +167,33 @@ fun AppThemePreviewItem(
     }
 }
 
-@Preview
+@LightDarkPreview
 @Composable
 fun AppThemePreviewItem_Preview() {
     LibreSudokuTheme {
-        LazyRow(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            itemsIndexed(enumValues<AppTheme>()) { index, theme ->
-                LibreSudokuTheme(
-                    appTheme = theme
+        Surface {
+            Row(
+              horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.width(100.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.width(100.dp)
-                    ) {
-                        AppThemePreviewItem(
-                            selected = index == 2,
-                            onClick =  { },
-                            colorScheme = MaterialTheme.colorScheme,
-                            shapes = MaterialTheme.shapes
-                        )
-                    }
+                    AppThemePreviewItem(
+                        selected = true,
+                        onClick = { },
+                        colorScheme = MaterialTheme.colorScheme,
+                        shapes = MaterialTheme.shapes
+                    )
+                }
+                Column(
+                    modifier = Modifier.width(100.dp)
+                ) {
+                    AppThemePreviewItem(
+                        selected = false,
+                        onClick = { },
+                        colorScheme = MaterialTheme.colorScheme,
+                        shapes = MaterialTheme.shapes
+                    )
                 }
             }
         }

@@ -5,6 +5,7 @@ import android.graphics.Rect
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -19,6 +20,11 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kaajjo.libresudoku.core.Cell
+import com.kaajjo.libresudoku.core.Note
+import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.utils.SudokuParser
+import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.sqrt
@@ -138,6 +144,18 @@ fun BoardPreview(
                     }
                 }
             }
+        }
+    }
+}
+
+@LightDarkPreview
+@Composable
+private fun BoardPreviewPreview() {
+    LibreSudokuTheme {
+        Surface {
+            BoardPreview(
+                boardString = "000010000000040000000000000700000000000900000000680000000000000005000000000000000"
+            )
         }
     }
 }
