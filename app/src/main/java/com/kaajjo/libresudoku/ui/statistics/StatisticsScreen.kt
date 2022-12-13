@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.HelpCard
+import com.kaajjo.libresudoku.ui.util.Route
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -48,7 +49,7 @@ fun StatisticsScreen(
                 scrollBehavior = scrollBehavior,
                 actions =  {
                     IconButton(onClick = {
-                        navController.navigate("history")
+                        navController.navigate(Route.HISTORY)
                     }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_history_24),

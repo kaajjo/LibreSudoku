@@ -24,6 +24,7 @@ import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.gameshistory.EmptyScreen
+import com.kaajjo.libresudoku.ui.util.Route
 import kotlinx.coroutines.launch
 import kotlin.time.toKotlinDuration
 
@@ -174,7 +175,7 @@ fun SavedGameScreen(
                             onClick = { navController.navigate(
                                 "game/${viewModel.savedGame!!.uid}/${true}"
                             ) {
-                                popUpTo("history")
+                                popUpTo(Route.HISTORY)
                             }}) {
                             Text(stringResource(R.string.action_continue))
                         }

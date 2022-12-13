@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import com.kaajjo.libresudoku.BuildConfig
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
+import com.kaajjo.libresudoku.ui.util.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +59,7 @@ fun AboutScreen(
                 title = stringResource(R.string.libraries_licenses_title),
                 painter = painterResource(R.drawable.ic_outline_info_24),
                 onClick = {
-                    navController.navigate("open_source_licenses")
+                    navController.navigate(Route.OPEN_SOURCE_LICENSES)
                 }
             )
         }

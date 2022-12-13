@@ -23,6 +23,7 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.ui.components.board.Board
+import com.kaajjo.libresudoku.ui.util.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,7 +58,7 @@ fun WelcomeScreen(
                 onFinishedClick = {
                     viewModel.setFirstLaunch()
                     navController.popBackStack()
-                    navController.navigate("home")
+                    navController.navigate(Route.HOME)
                 }
             )
         }

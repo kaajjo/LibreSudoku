@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
+import com.kaajjo.libresudoku.ui.util.Route
 
 @Composable
 fun MoreScreen(
@@ -54,14 +55,14 @@ fun MoreScreen(
             title = stringResource(R.string.app_about),
             painter = painterResource(R.drawable.ic_outline_info_24),
             onClick = {
-                navController.navigate("about")
+                navController.navigate(Route.ABOUT)
             }
         )
         PreferenceRow(
             title = stringResource(R.string.learn_screen_title),
             painter = painterResource(R.drawable.ic_outline_help_outline_24),
             onClick = {
-                navController.navigate("learn")
+                navController.navigate(Route.LEARN)
             }
         )
     }

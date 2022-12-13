@@ -40,6 +40,7 @@ import com.kaajjo.libresudoku.ui.settings.SettingsScreen
 import com.kaajjo.libresudoku.ui.statistics.StatisticsScreen
 import com.kaajjo.libresudoku.ui.theme.AppTheme
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.kaajjo.libresudoku.ui.util.Route
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -86,13 +87,13 @@ class MainActivity : AppCompatActivity() {
 
                 LaunchedEffect(navBackStackEntry) {
                     bottomBarState = when(navBackStackEntry?.destination?.route) {
-                        "statistics", "home", "more" -> true
+                        Route.STATISTICS, Route.HOME, Route.MORE -> true
                         else -> false
                     }
                 }
                 LaunchedEffect(firstLaunch) {
                     if(firstLaunch) {
-                        navController.navigate("welcome_screen")
+                        navController.navigate(Route.WELCOME_SCREEN)
                     }
                 }
                 Scaffold(
@@ -105,19 +106,19 @@ class MainActivity : AppCompatActivity() {
                 ) { paddingValues ->
                     NavHost(
                         navController = navController,
-                        startDestination = "home",
+                        startDestination = Route.HOME,
                         modifier = Modifier.padding(paddingValues)
                     ) {
-                        composable("home") { HomeScreen(navController, hiltViewModel()) }
-                        composable("more") { MoreScreen(navController) }
-                        composable("about") { AboutScreen(navController)}
-                        composable("welcome_screen") { WelcomeScreen(navController, hiltViewModel()) }
-                        composable("statistics") { StatisticsScreen(navController, hiltViewModel()) }
-                        composable("history") { GamesHistoryScreen(navController, hiltViewModel()) }
-                        composable("learn") { LearnScreen(navController) }
-                        composable("open_source_licenses") { AboutLibrariesScreen(navController) }
+                        composable(Route.HOME) { HomeScreen(navController, hiltViewModel()) }
+                        composable(Route.MORE) { MoreScreen(navController) }
+                        composable(Route.ABOUT) { AboutScreen(navController)}
+                        composable(Route.WELCOME_SCREEN) { WelcomeScreen(navController, hiltViewModel()) }
+                        composable(Route.STATISTICS) { StatisticsScreen(navController, hiltViewModel()) }
+                        composable(Route.HISTORY) { GamesHistoryScreen(navController, hiltViewModel()) }
+                        composable(Route.LEARN) { LearnScreen(navController) }
+                        composable(Route.OPEN_SOURCE_LICENSES) { AboutLibrariesScreen(navController) }
                         composable(
-                            route = "settings/?fromGame={fromGame}",
+                            route = Route.SETTINGS,
                             arguments = listOf(navArgument("fromGame") {
                                 defaultValue = false
                                 type = NavType.BoolType
@@ -127,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         composable(
-                            route = "game/{uid}/{saved}",
+                            route = Route.GAME,
                             arguments = listOf(
                                 navArgument(name = "uid") { type = NavType.LongType},
                                 navArgument(name = "saved") {
@@ -140,7 +141,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         composable(
-                            route = "saved_game/{uid}",
+                            route = Route.SAVED_GAME,
                             arguments = listOf(navArgument("uid") { type = NavType.LongType } )
                         ) {
                             SavedGameScreen(navController, hiltViewModel())
@@ -158,80 +159,52 @@ fun NavigationBar(
     navController: NavController,
     bottomBarState: Boolean
 ) {
-    var selectedScreen by remember { mutableStateOf("home") }
+    var selectedScreen by remember { mutableStateOf(Route.HOME) }
+    val navBarScreens = listOf(
+        Pair(Route.STATISTICS, R.string.nav_bar_statistics),
+        Pair(Route.HOME, R.string.nav_bar_home),
+        Pair(Route.MORE, R.string.nav_bar_more),
+    )
+    val navBarIcons = listOf(
+        painterResource(R.drawable.ic_round_info_24),
+        painterResource(R.drawable.ic_round_home_24),
+        painterResource(R.drawable.ic_round_more_horiz_24)
+    )
     AnimatedContent(
         targetState = bottomBarState
     ) { visible ->
         if (visible) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
-            LaunchedEffect(key1 = currentDestination) {
+            LaunchedEffect(currentDestination) {
                 currentDestination?.let {
                     selectedScreen = it.route ?: ""
                 }
             }
 
             NavigationBar {
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_round_info_24),
-                            contentDescription = null
-                        )
-                    },
-                    selected = selectedScreen == "statistics",
-                    onClick = {
-                        navController.navigate("statistics") {
-                            launchSingleTop = true
+                navBarScreens.forEachIndexed { index, item ->
+                    NavigationBarItem(
+                        icon = {
+                            Icon(
+                                painter = navBarIcons[index],
+                                contentDescription = null
+                            )
+                        },
+                        selected = selectedScreen == item.first,
+                        label = {
+                            Text(
+                                text = stringResource(item.second),
+                                fontWeight = FontWeight.Bold
+                            )
+                        },
+                        onClick = {
+                            navController.navigate(item.first) {
+                                launchSingleTop = true
+                            }
                         }
-                    },
-                    label = {
-                        Text(
-                            text = stringResource(id = R.string.nav_bar_statistics),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_round_home_24),
-                            contentDescription = null
-                        )
-                    },
-                    selected = selectedScreen == "home",
-                    onClick = {
-                        navController.navigate("home") {
-                            launchSingleTop = true
-                        }
-                    },
-                    label = {
-                        Text(
-                            text = stringResource(id = R.string.nav_bar_home),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_round_more_horiz_24),
-                            contentDescription = null
-                        )
-                    },
-                    selected = selectedScreen == "more",
-                    onClick = {
-                        navController.navigate("more") {
-                            launchSingleTop = true
-                        }
-                    },
-                    label = {
-                        Text(
-                            text = stringResource(id = R.string.nav_bar_more),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                )
+                    )
+                }
             }
         }
     }
@@ -241,7 +214,7 @@ fun NavigationBar(
 class MainActivityViewModel
 @Inject constructor(
     themeSettingsManager: ThemeSettingsManager,
-    val appSettingsManager: AppSettingsManager
+    appSettingsManager: AppSettingsManager
 ) : ViewModel()
 {
     val dc = themeSettingsManager.dynamicColors
