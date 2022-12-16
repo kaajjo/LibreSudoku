@@ -128,7 +128,7 @@
     <string name="history_title">История</string>
     <string name="history_no_games">Вы пока не играли</string>
     <string name="history_item_time">Время:</string>
-    <string name="history_item_id">ID игры: $d</string>
+    <string name="history_item_id">ID игры: %1$d</string>
     <string name="history_item_can_continue">Вы можете продолжить эту игру</string>
     <string name="saved_game_screen_title">Сохраненная игра</string>
     <string name="saved_game_current">Текущая</string>
@@ -172,4 +172,15 @@
     <string name="libraries_licenses_title">Open source лицензии</string>
     <string name="can_continue_label">Можно продолжить</string>
     <string name="action_show_mine_sudoku">Показать свое</string>
+    <string name="custom_sudoku_title">Кастомное судоку</string>
+    <string name="create_sudoku_title">Создать судоку</string>
+    <string name="create_set_from_string">Установить из строки</string>
+    <string name="dialog_ok">ОК</string>
+    <string name="create_save">Сохранить</string>
+    <string name="create_from_string_text">Введите судоку в виде строки. Пустые клетки обозначаются как . или 0</string>
+    <string name="create_from_string_hint">Судоку</string>
+    <string name="create_incorrect_puzzle">Неверное судоку</string>
+    <string name="multiple_solution_text">У данного судоку существует несколько решений. Верное судоку всегда имеет только одно уникальное решение</string>
+    <string name="no_solution_text">У данного судоку нет решений</string>
+    <string name="create_import_set">Установить</string>
 </resources>

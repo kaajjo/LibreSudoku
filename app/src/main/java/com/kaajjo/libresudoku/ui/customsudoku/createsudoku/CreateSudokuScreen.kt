@@ -253,7 +253,7 @@ fun CreateSudokuScreen(
                                 }
                             }
                         }) {
-                            Text("Set")
+                            Text(stringResource(R.string.create_import_set))
                         }
                     }
                 )
