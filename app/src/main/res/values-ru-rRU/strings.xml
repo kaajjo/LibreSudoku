@@ -21,7 +21,7 @@
     <string name="type_default_6x6">6x6</string>
     <string name="type_default_9x9">9x9</string>
     <string name="type_default_12x12">12x12</string>
-    <string name="type_unspecified">Неопределено</string>
+    <string name="type_unspecified">Неопределенный</string>
     <string name="settings">Настройки</string>
     <string name="more">Больше</string>
     <string name="app_about">О приложении</string>
@@ -46,7 +46,7 @@
     <string name="theme_peach">Персиковая</string>
     <string name="theme_yellow">Желтая</string>
     <string name="theme_lavender">Лавандовая</string>
-    <string name="theme_black_and_white">Черно белая</string>
+    <string name="theme_black_and_white">Черно-белая</string>
     <string name="pref_pure_black">Очень черный в темной теме</string>
     <string name="pref_gameplay">Геймплей</string>
     <string name="pref_mistakes_limit">Лимит ошибок</string>
@@ -101,8 +101,8 @@
     <string name="game_completed_text">Вы завершили эту судоку. Вы можете остаться или выйти на главный экран, чтобы начать новую игру</string>
     <string name="game_over">Конец игры</string>
     <string name="game_over_mistakes">Вы совершили 3 ошибки</string>
-    <string name="dialog_generating">Генерируем...</string>
-    <string name="dialog_solving">Решаем...</string>
+    <string name="dialog_generating">Генерируем…</string>
+    <string name="dialog_solving">Решаем…</string>
     <string name="dialog_new_game">Игра в процессе</string>
     <string name="dialog_new_game_text">У вас есть незавершенная игра, вы точно хотите начать новую?</string>
     <string name="statistics">Статистика</string>

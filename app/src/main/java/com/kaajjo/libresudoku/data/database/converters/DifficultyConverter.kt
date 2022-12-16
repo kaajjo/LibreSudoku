@@ -29,6 +29,7 @@ class GameDifficultyConverter {
             3 -> GameDifficulty.Moderate
             4 -> GameDifficulty.Hard
             5 -> GameDifficulty.Challenge
+            6 -> GameDifficulty.Custom
             else -> GameDifficulty.Unspecified
         }
     }

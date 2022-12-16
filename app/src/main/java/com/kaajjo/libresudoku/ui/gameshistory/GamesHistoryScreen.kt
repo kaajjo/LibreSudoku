@@ -55,7 +55,6 @@ fun GamesHistoryScreen(
             )
         },
     ) { innerPadding ->
-        val context = LocalContext.current
         val savedGamesState by viewModel.savedGames.collectAsState(initial = emptyList())
 
         val boards by viewModel.getBoards().collectAsState(initial = emptyList())

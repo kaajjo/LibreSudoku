@@ -5,11 +5,13 @@ import com.kaajjo.libresudoku.core.Note
 import com.kaajjo.libresudoku.core.qqwing.GameType
 
 class SudokuParser {
+    private val emptySeparators = listOf('0', '.')
+
     fun parseBoard(
         board: String,
         gameType: GameType,
         locked: Boolean = false,
-        emptySeparator: Char = '0'
+        emptySeparator: Char? = null
     ): MutableList<MutableList<Cell>> {
         if(board.isEmpty()) {
             throw BoardParseException(message = "Input string was empty")
@@ -23,10 +25,10 @@ class SudokuParser {
         }
 
         for(i in board.indices) {
-            val value: Int = if(board[i] == emptySeparator) {
-                0
+            val value = if(emptySeparator != null) {
+                if(board[i] == emptySeparator) 0 else board[i].digitToInt()
             } else {
-                board[i].digitToInt()
+                if(board[i] in emptySeparators) 0 else board[i].digitToInt()
             }
 
             listBoard[i / size][i % size].value = value
