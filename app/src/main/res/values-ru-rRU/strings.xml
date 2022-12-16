@@ -128,7 +128,7 @@
     <string name="history_title">История</string>
     <string name="history_no_games">Вы пока не играли</string>
     <string name="history_item_time">Время:</string>
-    <string name="history_item_id">ID игры:</string>
+    <string name="history_item_id">ID игры: $d</string>
     <string name="history_item_can_continue">Вы можете продолжить эту игру</string>
     <string name="saved_game_screen_title">Сохраненная игра</string>
     <string name="saved_game_current">Текущая</string>

@@ -265,16 +265,18 @@ fun Board(
             // vertical line
             for(i in 1 until size){
                 val isThickLine = i % vertThick == 0
-                drawLine(
-                    color = if(isThickLine) {
-                        foregroundColor.copy(0.8f)
-                    } else {
-                        foregroundColor.copy(0.6f)
-                    },
-                    start = Offset(0f, cellSize * i.toFloat()),
-                    end = Offset(maxWidth, cellSize * i.toFloat()),
-                    strokeWidth = if(isThickLine) 8f else 5f
-                )
+                if(maxWidth >= cellSize * i) {
+                    drawLine(
+                        color = if(isThickLine) {
+                            foregroundColor.copy(0.8f)
+                        } else {
+                            foregroundColor.copy(0.6f)
+                        },
+                        start = Offset(0f, cellSize * i.toFloat()),
+                        end = Offset(maxWidth, cellSize * i.toFloat()),
+                        strokeWidth = if(isThickLine) 8f else 5f
+                    )
+                }
             }
 
             val textBounds = Rect()

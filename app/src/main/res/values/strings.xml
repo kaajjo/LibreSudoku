@@ -160,7 +160,7 @@
     <string name="history_title">History</string>
     <string name="history_no_games">You don\'t played yet</string>
     <string name="history_item_time">Time:</string>
-    <string name="history_item_id">Game ID:</string>
+    <string name="history_item_id">Game ID: %1$d</string>
     <string name="history_item_can_continue">You can continue this game</string>
 
     <string name="saved_game_screen_title">Saved game</string>
@@ -209,4 +209,14 @@
 
     <string name="libraries_licenses_title">Open source licenses</string>
     <string name="can_continue_label">Can continue</string>
+    <string name="custom_sudoku_title">Custom sudoku</string>
+    <string name="create_sudoku_title">Create sudoku</string>
+    <string name="create_set_from_string">Set from string</string>
+    <string name="dialog_ok">OK</string>
+    <string name="create_save">Save</string>
+    <string name="create_from_string_text">Enter a puzzle in a string form. Empty cells are indicated as . or 0</string>
+    <string name="create_from_string_hint">Puzzle</string>
+    <string name="create_incorrect_puzzle">Incorrect puzzle</string>
+    <string name="multiple_solution_text">This puzzle has several solutions. The correct sudoku puzzle must have one unique solution</string>
+    <string name="no_solution_text">This puzzle has no solutions</string>
 </resources>

@@ -162,7 +162,7 @@ fun SudokuHistoryItem(
                                 String.format(" %02d:%02d", minutes, seconds)
                             }
                     )
-                    Text(stringResource(R.string.history_item_id) + " ${savedGame.uid}")
+                    Text(stringResource(R.string.history_item_id, savedGame.uid))
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))

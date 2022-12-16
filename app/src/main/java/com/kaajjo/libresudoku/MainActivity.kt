@@ -1,7 +1,6 @@
 package com.kaajjo.libresudoku
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContent
@@ -31,6 +30,8 @@ import com.kaajjo.libresudoku.ui.game.GameScreen
 import com.kaajjo.libresudoku.ui.gameshistory.GamesHistoryScreen
 import com.kaajjo.libresudoku.ui.gameshistory.savedgame.SavedGameScreen
 import com.kaajjo.libresudoku.ui.home.HomeScreen
+import com.kaajjo.libresudoku.ui.customsudoku.CustomSudokuScreen
+import com.kaajjo.libresudoku.ui.customsudoku.createsudoku.CreateSudokuScreen
 import com.kaajjo.libresudoku.ui.learn.LearnScreen
 import com.kaajjo.libresudoku.ui.more.MoreScreen
 import com.kaajjo.libresudoku.ui.more.about.AboutLibrariesScreen
@@ -117,6 +118,8 @@ class MainActivity : AppCompatActivity() {
                         composable(Route.HISTORY) { GamesHistoryScreen(navController, hiltViewModel()) }
                         composable(Route.LEARN) { LearnScreen(navController) }
                         composable(Route.OPEN_SOURCE_LICENSES) { AboutLibrariesScreen(navController) }
+                        composable(Route.CUSTOM_SUDOKU) { CustomSudokuScreen(navController, hiltViewModel() )}
+                        composable(Route.CREATE_SUDOKU) { CreateSudokuScreen(navController, hiltViewModel()) }
                         composable(
                             route = Route.SETTINGS,
                             arguments = listOf(navArgument("fromGame") {

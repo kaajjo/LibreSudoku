@@ -65,6 +65,13 @@ fun MoreScreen(
                 navController.navigate(Route.LEARN)
             }
         )
+        PreferenceRow(
+            title = stringResource(R.string.custom_sudoku_title),
+            painter = painterResource(R.drawable.outline_science_24),
+            onClick = {
+                navController.navigate(Route.CUSTOM_SUDOKU)
+            }
+        )
     }
 }
 
