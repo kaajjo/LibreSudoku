@@ -39,6 +39,7 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
+import com.kaajjo.libresudoku.ui.gameshistory.EmptyScreen
 import com.kaajjo.libresudoku.ui.util.Route
 import kotlin.math.sqrt
 
@@ -79,23 +80,29 @@ fun CustomSudokuScreen(
                 .padding(paddingValues)
         ) {
             val boards by viewModel.getBoards().collectAsState(initial = emptyList())
-            LazyColumn {
-                items(boards.reversed().filter { it.difficulty == GameDifficulty.Custom }) {
-                    SudokuItem(
-                        board = it.initialBoard,
-                        uid = it.uid,
-                        type = it.type,
-                        onClick = {
-                            navController.navigate("game/${it.uid}/true")
-                        }
-                    )
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(CircleShape)
-                            .padding(horizontal = 12.dp, vertical = 1.dp)
-                    )
+            if(boards.isNotEmpty()) {
+                LazyColumn {
+                    items(boards.reversed().filter { it.difficulty == GameDifficulty.Custom }) {
+                        SudokuItem(
+                            board = it.initialBoard,
+                            uid = it.uid,
+                            type = it.type,
+                            onClick = {
+                                navController.navigate("game/${it.uid}/true")
+                            }
+                        )
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(CircleShape)
+                                .padding(horizontal = 12.dp, vertical = 1.dp)
+                        )
+                    }
                 }
+            } else {
+                EmptyScreen(
+                    text = "You haven't added any sudoku yet"
+                )
             }
         }
     }
