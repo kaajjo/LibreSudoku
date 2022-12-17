@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.HelpCard
+import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.util.Route
 import java.time.Duration
 import java.time.LocalDateTime
@@ -68,8 +69,7 @@ fun StatisticsScreen(
                 .fillMaxSize()
                 .padding(scaffoldPadding)
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ChipRowDifficulty(
                 items = listOf(
@@ -226,15 +226,7 @@ fun StatisticsScreen(
                     )
                 }
             } else {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    NoRecordsSection(
-                        supportText = stringResource(R.string.statistics_no_records)
-                    )
-                }
+                EmptyScreen(stringResource(R.string.statistics_no_records))
             }
         }
     }

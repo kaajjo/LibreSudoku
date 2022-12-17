@@ -23,7 +23,7 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.board.Board
-import com.kaajjo.libresudoku.ui.gameshistory.EmptyScreen
+import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.util.Route
 import kotlinx.coroutines.launch
 import kotlin.time.toKotlinDuration

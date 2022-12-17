@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">LibreSudoku</string>
     <string name="nav_bar_statistics">Статистика</string>
     <string name="nav_bar_home">Главная</string>
     <string name="nav_bar_more">Больше</string>
@@ -183,4 +182,5 @@
     <string name="multiple_solution_text">У данного судоку существует несколько решений. Верное судоку всегда имеет только одно уникальное решение</string>
     <string name="no_solution_text">У данного судоку нет решений</string>
     <string name="create_import_set">Установить</string>
+    <string name="custom_sudoku_no_added">Вы пока не добавили ни одного судоку</string>
 </resources>

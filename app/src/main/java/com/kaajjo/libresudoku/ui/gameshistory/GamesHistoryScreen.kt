@@ -16,13 +16,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.kaajjo.libresudoku.data.database.model.SavedGame
+import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import kotlinx.coroutines.coroutineScope
 import kotlin.math.sqrt
@@ -96,29 +95,6 @@ fun GamesHistoryScreen(
         }
     }
 }
-
-@Composable
-fun EmptyScreen(
-    text: String,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "(っ˘̩╭╮˘̩)っ",
-            style = MaterialTheme.typography.displayMedium
-        )
-        Text(
-            text = text,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
 
 @Composable
 fun SudokuHistoryItem(

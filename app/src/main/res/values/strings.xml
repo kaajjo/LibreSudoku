@@ -220,4 +220,5 @@
     <string name="multiple_solution_text">This puzzle has mutiple solutions. The correct sudoku puzzle must have one unique solution</string>
     <string name="no_solution_text">This puzzle has no solutions</string>
     <string name="create_import_set">Set</string>
+    <string name="custom_sudoku_no_added">You haven\'t added any sudoku yet</string>
 </resources>

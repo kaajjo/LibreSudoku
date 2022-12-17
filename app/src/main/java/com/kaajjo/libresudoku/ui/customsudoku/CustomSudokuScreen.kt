@@ -39,7 +39,7 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
-import com.kaajjo.libresudoku.ui.gameshistory.EmptyScreen
+import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.util.Route
 import kotlin.math.sqrt
 
@@ -101,7 +101,7 @@ fun CustomSudokuScreen(
                 }
             } else {
                 EmptyScreen(
-                    text = "You haven't added any sudoku yet"
+                    text = stringResource(R.string.custom_sudoku_no_added)
                 )
             }
         }
