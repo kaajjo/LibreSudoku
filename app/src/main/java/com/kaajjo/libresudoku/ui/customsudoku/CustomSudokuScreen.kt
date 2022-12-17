@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,6 +27,8 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -81,22 +83,25 @@ fun CustomSudokuScreen(
         ) {
             val boards by viewModel.getBoards().collectAsState(initial = emptyList())
             if(boards.isNotEmpty()) {
+                val filteredBoards by remember { mutableStateOf(boards.reversed().filter { it.difficulty == GameDifficulty.Custom })}
                 LazyColumn {
-                    items(boards.reversed().filter { it.difficulty == GameDifficulty.Custom }) {
+                    itemsIndexed(filteredBoards) { index, item ->
                         SudokuItem(
-                            board = it.initialBoard,
-                            uid = it.uid,
-                            type = it.type,
+                            board = item.initialBoard,
+                            uid = item.uid,
+                            type = item.type,
                             onClick = {
-                                navController.navigate("game/${it.uid}/true")
+                                navController.navigate("game/${item.uid}/true")
                             }
                         )
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(CircleShape)
-                                .padding(horizontal = 12.dp, vertical = 1.dp)
-                        )
+                        if(index + 1 < filteredBoards.size) {
+                            Divider(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(CircleShape)
+                                    .padding(horizontal = 12.dp, vertical = 1.dp)
+                            )
+                        }
                     }
                 }
             } else {

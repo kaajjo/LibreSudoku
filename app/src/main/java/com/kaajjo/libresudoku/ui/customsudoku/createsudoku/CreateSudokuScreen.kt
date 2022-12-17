@@ -133,10 +133,12 @@ fun CreateSudokuScreen(
                         }
                     )
                 }
-                FilledTonalButton(onClick = {
-                    if(viewModel.saveGame()) {
-                        navController.popBackStack()
-                    }
+                FilledTonalButton(
+                    enabled = !viewModel.gameBoard.flatten().all { it.value == 0 },
+                    onClick = {
+                        if(viewModel.saveGame()) {
+                            navController.popBackStack()
+                        }
                 }) {
                     Text(stringResource(R.string.create_save))
                 }
