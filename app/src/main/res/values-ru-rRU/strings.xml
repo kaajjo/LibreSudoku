@@ -183,4 +183,6 @@
     <string name="no_solution_text">У данного судоку нет решений</string>
     <string name="create_import_set">Установить</string>
     <string name="custom_sudoku_no_added">Вы пока не добавили ни одного судоку</string>
+    <string name="custom_sudoku_delete_dialog_title">Удалить выбранное</string>
+    <string name="custom_sudoku_delete_dialog_text">Вы уверены, что хотите удалить выбранные судоку? Это действие нельзя отменить</string>
 </resources>

@@ -3,6 +3,7 @@ package com.kaajjo.libresudoku.data.database.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
@@ -12,6 +13,7 @@ import java.time.ZonedDateTime
 @Entity(
     tableName = "record",
     foreignKeys = [ForeignKey(
+        onDelete = CASCADE,
         entity = SudokuBoard::class,
         parentColumns = arrayOf("uid"),
         childColumns = arrayOf("board_uid")

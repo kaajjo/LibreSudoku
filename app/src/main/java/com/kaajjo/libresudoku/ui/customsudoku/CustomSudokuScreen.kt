@@ -1,6 +1,16 @@
 package com.kaajjo.libresudoku.ui.customsudoku
 
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +23,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -21,14 +33,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,58 +57,108 @@ import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.util.Route
 import kotlin.math.sqrt
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 fun CustomSudokuScreen(
     navController: NavController,
     viewModel: CustomSudokuViewModel
 ) {
+    val boards by viewModel.allBoards.collectAsState(initial = emptyList())
+    var filteredBoards by remember { mutableStateOf(emptyList<SudokuBoard>())}
+    LaunchedEffect(boards) {
+        filteredBoards = boards.reversed().filter { it.difficulty == GameDifficulty.Custom }
+    }
+
+    var dialogDeleteConfirmation by remember { mutableStateOf(false) }
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.custom_sudoku_title)) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_round_arrow_back_24),
-                            contentDescription = null
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
+            AnimatedContent(targetState = viewModel.inSelectionMode) {
+                if(it) {
+                    SelectionTopAppBar(
+                        selectedCount = viewModel.selectedItems.count(),
+                        onClickDeleteSelected = { dialogDeleteConfirmation = true },
+                        onClickClose = { viewModel.inSelectionMode = false },
+                        onClickSelectAll = { viewModel.addAllToSelection(filteredBoards)},
+                        onClickInverseSelection = { viewModel.inverseSelection(filteredBoards) }
+                    )
+                } else {
+                    DefaultTopAppBar(
+                        onClickNavigationIcon = { navController.popBackStack() },
+                        scrollBehavior = scrollBehavior
+                    )
+                }
+            }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate(Route.CREATE_SUDOKU) }) {
-                Icon(
-                    imageVector = Icons.Rounded.Add,
-                    contentDescription = null
-                )
+            AnimatedVisibility(
+                visible = !viewModel.inSelectionMode,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut()
+            ) {
+                FloatingActionButton(
+                    onClick = { navController.navigate(Route.CREATE_SUDOKU) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = null
+                    )
+                }
             }
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
+                .padding(top = 2.dp)
         ) {
-            val boards by viewModel.getBoards().collectAsState(initial = emptyList())
+
             if(boards.isNotEmpty()) {
-                val filteredBoards by remember { mutableStateOf(boards.reversed().filter { it.difficulty == GameDifficulty.Custom })}
                 LazyColumn {
-                    itemsIndexed(filteredBoards) { index, item ->
+                    itemsIndexed(
+                        items = filteredBoards,
+                        key = { _, item -> item.uid }
+                    ) { index, item ->
                         SudokuItem(
+                            modifier = Modifier
+                                .background(
+                                    if (viewModel.inSelectionMode && viewModel.selectedItems.contains(
+                                            item
+                                        )
+                                    ) {
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                    } else {
+                                        MaterialTheme.colorScheme.surface
+                                    }
+                                )
+                                .animateItemPlacement(spring(0.6f, 300f)),
                             board = item.initialBoard,
                             uid = item.uid,
                             type = item.type,
                             onClick = {
-                                navController.navigate("game/${item.uid}/true")
+                                if(viewModel.inSelectionMode) {
+                                    viewModel.addToSelection(item)
+                                } else {
+                                    navController.navigate("game/${item.uid}/true")
+                                }
+                            },
+                            onLongClick = {
+                                if (!viewModel.inSelectionMode) {
+                                    viewModel.clearSelection()
+                                    viewModel.inSelectionMode = true
+                                    viewModel.addToSelection(item)
+                                }
                             }
                         )
                         if(index + 1 < filteredBoards.size) {
@@ -110,21 +177,41 @@ fun CustomSudokuScreen(
                 )
             }
         }
+        LaunchedEffect(viewModel.selectedItems.count()) {
+            if(viewModel.selectedItems.isEmpty()) {
+                viewModel.inSelectionMode = false
+            }
+        }
+        if(dialogDeleteConfirmation) {
+            DeleteConfirmationDialog(
+                onClickConfirm = {
+                    viewModel.deleteSelected()
+                    dialogDeleteConfirmation = false
+                },
+                onDismiss = { dialogDeleteConfirmation = false }
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SudokuItem(
     board: String,
     uid: Long,
     type: GameType,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = { }
+    onClick: () -> Unit = { },
+    onLongClick: () -> Unit = { }
 ) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .clip(MaterialTheme.shapes.medium)
-            .clickable(onClick = onClick)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
+            .then(modifier)
     ) {
         Row(
             modifier = Modifier
@@ -154,4 +241,91 @@ fun SudokuItem(
             }
         }
     }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DefaultTopAppBar(
+    onClickNavigationIcon: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior
+) {
+    TopAppBar(title = { Text(stringResource(R.string.custom_sudoku_title)) },
+        navigationIcon = {
+            IconButton(onClick = onClickNavigationIcon) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_round_arrow_back_24),
+                    contentDescription = null
+                )
+            }
+        },
+        scrollBehavior = scrollBehavior
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SelectionTopAppBar(
+    selectedCount: Int,
+    onClickClose: () -> Unit,
+    onClickDeleteSelected: () -> Unit,
+    onClickSelectAll: () -> Unit,
+    onClickInverseSelection: () -> Unit
+) {
+    TopAppBar(
+        title = { Text(selectedCount.toString()) },
+        navigationIcon = {
+            IconButton(onClick = onClickClose) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_round_close_24),
+                    contentDescription = null
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = onClickDeleteSelected) {
+                Icon(
+                    imageVector = Icons.Rounded.Delete,
+                    contentDescription = null
+                )
+            }
+            IconButton(onClick = onClickSelectAll) {
+                Icon(
+                    painterResource(R.drawable.outline_select_all_24),
+                    contentDescription = null
+                )
+            }
+            IconButton(onClick = onClickInverseSelection) {
+                Icon(
+                    painterResource(R.drawable.outline_flip_to_back_24),
+                    contentDescription = null
+                )
+            }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp)
+        )
+    )
+}
+
+@Composable
+private fun DeleteConfirmationDialog(
+    onClickConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        title = { Text(stringResource(R.string.custom_sudoku_delete_dialog_title)) },
+        text = { Text(stringResource(R.string.custom_sudoku_delete_dialog_text))},
+        confirmButton = {
+            TextButton(onClick = onClickConfirm) {
+                Text(stringResource(R.string.dialog_yes))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.dialog_no))
+            }
+        },
+        onDismissRequest = onDismiss
+    )
 }

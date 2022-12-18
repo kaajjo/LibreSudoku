@@ -3,12 +3,14 @@ package com.kaajjo.libresudoku.data.database.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
 import java.time.Duration
 
 @Entity(
     tableName = "saved_game",
     foreignKeys = [ForeignKey(
+        onDelete = CASCADE,
         entity = SudokuBoard::class,
         parentColumns = arrayOf("uid"),
         childColumns = arrayOf("board_uid")
