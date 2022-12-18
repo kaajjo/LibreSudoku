@@ -203,61 +203,22 @@ fun CreateSudokuScreen(
             }
 
             if(importStringDialog) {
-                val focusRequester = FocusRequester()
-                LaunchedEffect(Unit) {
-                    focusRequester.requestFocus()
-                }
-                AlertDialog(
-                    title = { Text(stringResource(R.string.create_set_from_string)) },
-                    text = {
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(stringResource(R.string.create_from_string_text))
-                            OutlinedTextField(
-                                modifier = Modifier
-                                    .padding(top = 6.dp)
-                                    .focusRequester(focusRequester),
-                                value = viewModel.importStringValue,
-                                keyboardOptions = KeyboardOptions(
-                                    imeAction = ImeAction.Done
-                                ),
-                                keyboardActions = KeyboardActions(
-                                    onDone = {
-                                        viewModel.setFromString(viewModel.importStringValue).also {
-                                            viewModel.importTextFieldError = !it
-                                            if(it) {
-                                                importStringDialog = false
-                                                viewModel.importStringValue = ""
-                                            }
-                                        }
-                                    }
-                                ),
-                                isError = viewModel.importTextFieldError,
-                                onValueChange = { viewModel.importStringValue = it },
-                                label = { Text(stringResource(R.string.create_from_string_hint)) }
-                            )
-                        }
+                ImportStringSudokuDialog(
+                    textValue = viewModel.importStringValue,
+                    onTextChange = {
+                      viewModel.importStringValue = it
                     },
-                    dismissButton = {
-                        TextButton(onClick = { importStringDialog = false }) {
-                            Text(stringResource(R.string.action_cancel))
-                        }
-                    },
-                    onDismissRequest = { importStringDialog = false },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            viewModel.setFromString(viewModel.importStringValue).also {
-                                viewModel.importTextFieldError = !it
-                                if(it) {
-                                    importStringDialog = false
-                                    viewModel.importStringValue = ""
-                                }
+                    isError = viewModel.importTextFieldError,
+                    onConfirm = {
+                        viewModel.setFromString(viewModel.importStringValue.trim()).also {
+                            viewModel.importTextFieldError = !it
+                            if(it) {
+                                importStringDialog = false
+                                viewModel.importStringValue = ""
                             }
-                        }) {
-                            Text(stringResource(R.string.create_import_set))
                         }
-                    }
+                    },
+                    onDismiss = { importStringDialog = false }
                 )
             } else if(viewModel.multipleSolutionsDialog) {
                 AlertDialog(
@@ -325,4 +286,55 @@ private fun GameTypeMenu(
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ImportStringSudokuDialog(
+    textValue: String,
+    onTextChange: (String) -> Unit,
+    isError: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val focusRequester = FocusRequester()
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+    AlertDialog(
+        title = { Text(stringResource(R.string.create_set_from_string)) },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.create_from_string_text))
+                OutlinedTextField(
+                    modifier = Modifier
+                        .padding(top = 6.dp)
+                        .focusRequester(focusRequester),
+                    value = textValue,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { onConfirm() }
+                    ),
+                    isError = isError,
+                    onValueChange = onTextChange,
+                    label = { Text(stringResource(R.string.create_from_string_hint)) }
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        },
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(R.string.create_import_set))
+            }
+        }
+    )
 }
