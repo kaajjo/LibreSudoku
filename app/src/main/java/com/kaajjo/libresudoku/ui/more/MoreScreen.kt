@@ -52,10 +52,10 @@ fun MoreScreen(
             }
         )
         PreferenceRow(
-            title = stringResource(R.string.app_about),
-            painter = painterResource(R.drawable.ic_outline_info_24),
+            title = stringResource(R.string.custom_sudoku_title),
+            painter = painterResource(R.drawable.outline_science_24),
             onClick = {
-                navController.navigate(Route.ABOUT)
+                navController.navigate(Route.CUSTOM_SUDOKU)
             }
         )
         PreferenceRow(
@@ -66,10 +66,10 @@ fun MoreScreen(
             }
         )
         PreferenceRow(
-            title = stringResource(R.string.custom_sudoku_title),
-            painter = painterResource(R.drawable.outline_science_24),
+            title = stringResource(R.string.app_about),
+            painter = painterResource(R.drawable.ic_outline_info_24),
             onClick = {
-                navController.navigate(Route.CUSTOM_SUDOKU)
+                navController.navigate(Route.ABOUT)
             }
         )
     }
