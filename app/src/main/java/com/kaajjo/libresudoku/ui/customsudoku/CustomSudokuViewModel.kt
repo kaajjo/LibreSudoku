@@ -28,6 +28,8 @@ class CustomSudokuViewModel @Inject constructor(
 
     val allBoards = boardRepository.getAll(GameDifficulty.Custom)
 
+    val savedGames = savedGameRepository.getAll()
+
     fun clearSelection() = selectedItems.clear()
     fun addToSelection(board: SudokuBoard) {
         if(!selectedItems.contains(board)) {

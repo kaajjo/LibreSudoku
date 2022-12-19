@@ -185,4 +185,5 @@
     <string name="custom_sudoku_no_added">Вы пока не добавили ни одного судоку</string>
     <string name="custom_sudoku_delete_dialog_title">Удалить выбранное</string>
     <string name="custom_sudoku_delete_dialog_text">Вы уверены, что хотите удалить выбранные судоку? Это действие нельзя отменить</string>
+    <string name="game_not_started">Не начата</string>
 </resources>

@@ -57,11 +57,13 @@ import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.util.Route
 import kotlin.math.sqrt
+import kotlin.time.toKotlinDuration
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
     ExperimentalFoundationApi::class
@@ -121,11 +123,16 @@ fun CustomSudokuScreen(
         ) {
 
             if(boards.isNotEmpty()) {
+                val savedGames by viewModel.savedGames.collectAsState(initial = emptyList())
                 LazyColumn {
                     itemsIndexed(
-                        items = boards,
+                        items = boards.reversed(),
                         key = { _, item -> item.uid }
                     ) { index, item ->
+                        var savedGame by remember { mutableStateOf(savedGames.firstOrNull { it.uid == item.uid })}
+                        LaunchedEffect(savedGames){
+                            savedGame = savedGames.firstOrNull { it.uid == item.uid }
+                        }
                         SudokuItem(
                             modifier = Modifier
                                 .background(
@@ -142,6 +149,7 @@ fun CustomSudokuScreen(
                             board = item.initialBoard,
                             uid = item.uid,
                             type = item.type,
+                            savedGame = savedGame,
                             onClick = {
                                 if(viewModel.inSelectionMode) {
                                     viewModel.addToSelection(item)
@@ -196,6 +204,7 @@ fun SudokuItem(
     board: String,
     uid: Long,
     type: GameType,
+    savedGame: SavedGame?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = { },
     onLongClick: () -> Unit = { }
@@ -231,6 +240,18 @@ fun SudokuItem(
             ) {
                 Column {
                     Text(stringResource(type.resName))
+                    if(savedGame != null) {
+                        Text(
+                            stringResource(
+                                R.string.saved_game_time,
+                                savedGame.timer.toKotlinDuration().toComponents { minutes, seconds, _ ->
+                                    String.format(" %02d:%02d", minutes, seconds)
+                                }
+                            )
+                        )
+                    } else {
+                        Text(stringResource(R.string.game_not_started))
+                    }
                     Text(stringResource(R.string.history_item_id, uid))
                 }
 
