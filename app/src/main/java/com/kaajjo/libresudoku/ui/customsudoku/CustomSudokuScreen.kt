@@ -72,10 +72,6 @@ fun CustomSudokuScreen(
     viewModel: CustomSudokuViewModel
 ) {
     val boards by viewModel.allBoards.collectAsState(initial = emptyList())
-    var filteredBoards by remember { mutableStateOf(emptyList<SudokuBoard>())}
-    LaunchedEffect(boards) {
-        filteredBoards = boards.reversed().filter { it.difficulty == GameDifficulty.Custom }
-    }
 
     var dialogDeleteConfirmation by remember { mutableStateOf(false) }
 
@@ -90,8 +86,8 @@ fun CustomSudokuScreen(
                         selectedCount = viewModel.selectedItems.count(),
                         onClickDeleteSelected = { dialogDeleteConfirmation = true },
                         onClickClose = { viewModel.inSelectionMode = false },
-                        onClickSelectAll = { viewModel.addAllToSelection(filteredBoards)},
-                        onClickInverseSelection = { viewModel.inverseSelection(filteredBoards) }
+                        onClickSelectAll = { viewModel.addAllToSelection(boards)},
+                        onClickInverseSelection = { viewModel.inverseSelection(boards) }
                     )
                 } else {
                     DefaultTopAppBar(
@@ -127,7 +123,7 @@ fun CustomSudokuScreen(
             if(boards.isNotEmpty()) {
                 LazyColumn {
                     itemsIndexed(
-                        items = filteredBoards,
+                        items = boards,
                         key = { _, item -> item.uid }
                     ) { index, item ->
                         SudokuItem(
@@ -161,7 +157,7 @@ fun CustomSudokuScreen(
                                 }
                             }
                         )
-                        if(index + 1 < filteredBoards.size) {
+                        if(index + 1 < boards.size) {
                             Divider(
                                 modifier = Modifier
                                     .fillMaxWidth()

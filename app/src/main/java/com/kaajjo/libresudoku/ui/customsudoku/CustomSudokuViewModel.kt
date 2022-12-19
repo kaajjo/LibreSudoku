@@ -6,8 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.database.repository.BoardRepository
+import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,20 +19,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CustomSudokuViewModel @Inject constructor(
-    private val boardRepository: BoardRepository
+    private val boardRepository: BoardRepository,
+    private val savedGameRepository: SavedGameRepository
 ) : ViewModel() {
     var inSelectionMode by mutableStateOf(false)
 
     val selectedItems = mutableStateListOf<SudokuBoard>()
 
-    val allBoards = boardRepository.getAll()
-    fun getBoards(): StateFlow<List<SudokuBoard>> {
-        val result = MutableStateFlow<List<SudokuBoard>>(emptyList())
-        viewModelScope.launch(Dispatchers.IO) {
-            result.emit(boardRepository.getAllList())
-        }
-        return result
-    }
+    val allBoards = boardRepository.getAll(GameDifficulty.Custom)
 
     fun clearSelection() = selectedItems.clear()
     fun addToSelection(board: SudokuBoard) {

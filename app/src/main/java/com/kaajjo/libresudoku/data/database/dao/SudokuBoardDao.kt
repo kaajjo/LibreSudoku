@@ -1,6 +1,7 @@
 package com.kaajjo.libresudoku.data.database.dao
 
 import androidx.room.*
+import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import kotlinx.coroutines.flow.Flow
 
@@ -8,6 +9,9 @@ import kotlinx.coroutines.flow.Flow
 interface BoardDao {
     @Query("SELECT * FROM board")
     fun getAll(): Flow<List<SudokuBoard>>
+
+    @Query("SELECT * FROM board WHERE difficulty == :gameDifficulty")
+    fun getAll(gameDifficulty: GameDifficulty): Flow<List<SudokuBoard>>
 
     @Query("SELECT * FROM board")
     fun getAllList(): List<SudokuBoard>

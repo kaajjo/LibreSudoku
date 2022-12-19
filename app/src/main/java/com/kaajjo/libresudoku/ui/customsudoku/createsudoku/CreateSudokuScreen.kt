@@ -1,6 +1,5 @@
 package com.kaajjo.libresudoku.ui.customsudoku.createsudoku
 
-import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -46,7 +44,6 @@ import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.board.Board
-import com.kaajjo.libresudoku.ui.game.NotesMenu
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
@@ -206,7 +203,8 @@ fun CreateSudokuScreen(
                 ImportStringSudokuDialog(
                     textValue = viewModel.importStringValue,
                     onTextChange = {
-                      viewModel.importStringValue = it
+                        viewModel.importStringValue = it
+                        viewModel.importTextFieldError = false
                     },
                     isError = viewModel.importTextFieldError,
                     onConfirm = {
