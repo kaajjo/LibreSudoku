@@ -1,5 +1,8 @@
 package com.kaajjo.libresudoku.ui.gameshistory.savedgame
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -35,6 +38,8 @@ class SavedGameViewModel
     var parsedInitialBoard by mutableStateOf(emptyList<List<Cell>>())
     var parsedCurrentBoard by mutableStateOf(emptyList<List<Cell>>())
     var notes by mutableStateOf(emptyList<Note>())
+
+    var exportDialog by mutableStateOf(false)
 
     fun updateGame() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -97,5 +102,16 @@ class SavedGameViewModel
             }
         } ?: 0
         return Pair(size, count)
+    }
+
+    fun copyBoardToClipboard(context: Context): Boolean {
+        boardEntity?.let {
+            val clipBoardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            clipBoardManager.setPrimaryClip(
+                ClipData.newPlainText("Sudoku", it.initialBoard.replace('0', '.'))
+            )
+            return true
+        }
+        return false
     }
 }

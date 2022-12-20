@@ -1,15 +1,20 @@
 package com.kaajjo.libresudoku.ui.gameshistory.savedgame
 
+import android.widget.Toast
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,6 +51,33 @@ fun SavedGameScreen(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
                         )
+                    }
+                },
+                actions = {
+                    var showMenu by remember { mutableStateOf(false) }
+                    Box {
+                        IconButton(onClick = { showMenu = !showMenu }) {
+                            Icon(
+                                Icons.Default.MoreVert,
+                                contentDescription = null
+                            )
+                        }
+                        MaterialTheme(shapes = MaterialTheme.shapes.copy(extraSmall = MaterialTheme.shapes.large)) {
+                            DropdownMenu(
+                                expanded = showMenu,
+                                onDismissRequest = { showMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(stringResource(R.string.export_string_title))
+                                    },
+                                    onClick = {
+                                        viewModel.exportDialog = true
+                                        showMenu = false
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             )
@@ -185,5 +217,63 @@ fun SavedGameScreen(
         } else {
             EmptyScreen(stringResource(R.string.empty_screen_something_went_wrong))
         }
+        
+        if(viewModel.exportDialog) {
+            val context = LocalContext.current
+            viewModel.boardEntity?.let {
+                ExportDialog(
+                    onDismiss = { viewModel.exportDialog = false },
+                    boardString = it.initialBoard.replace('0', '.'),
+                    onClickCopy = {
+                        if(viewModel.copyBoardToClipboard(context)) {
+                            Toast.makeText(context, context.getString(R.string.export_string_state_copied), Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.export_string_state_error), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                )
+            }
+        }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ExportDialog(
+    onDismiss: () -> Unit,
+    boardString: String,
+    onClickCopy: () -> Unit
+) {
+    AlertDialog(
+        title = { Text(stringResource(R.string.export_string_title)) },
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        },
+        text = {
+            Column {
+                Text(stringResource(R.string.export_string_text))
+                OutlinedTextField(
+                    modifier = Modifier
+                        .padding(top = 8.dp),
+                    value = boardString,
+                    onValueChange = { },
+                    readOnly = true
+                )
+                FilledTonalButton(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .align(Alignment.CenterHorizontally),
+                    onClick = {
+                        onClickCopy()
+                        onDismiss()
+                    }
+                ) {
+                    Text(stringResource(R.string.export_string_copy))
+                }
+            }
+        }
+    )
 }

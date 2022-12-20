@@ -224,4 +224,9 @@
     <string name="custom_sudoku_delete_dialog_title">Delete selected</string>
     <string name="custom_sudoku_delete_dialog_text">Are you sure you want to delete selected sudokus? This action cannot be undone</string>
     <string name="game_not_started">Not started</string>
+    <string name="export_string_text">Select text from text field or simply click on copy button</string>
+    <string name="export_string_title">Export as string</string>
+    <string name="export_string_copy">Copy</string>
+    <string name="export_string_state_copied">Copied</string>
+    <string name="export_string_state_error">Error</string>
 </resources>

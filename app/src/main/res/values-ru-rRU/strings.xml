@@ -186,4 +186,9 @@
     <string name="custom_sudoku_delete_dialog_title">Удалить выбранное</string>
     <string name="custom_sudoku_delete_dialog_text">Вы уверены, что хотите удалить выбранные судоку? Это действие нельзя отменить</string>
     <string name="game_not_started">Не начата</string>
+    <string name="export_string_text">Выделите текст ниже или просто нажмите на кнопку скопировать</string>
+    <string name="export_string_title">Экспортировать как строку</string>
+    <string name="export_string_copy">Скопировать</string>
+    <string name="export_string_state_copied">Скопировано</string>
+    <string name="export_string_state_error">Ошибка</string>
 </resources>
