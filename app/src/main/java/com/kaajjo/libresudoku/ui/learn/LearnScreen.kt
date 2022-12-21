@@ -27,11 +27,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LearnScreen(
-    navController: NavController
+    navigateBack: () -> Unit
 ) {
     val helpNavController = rememberNavController()
     NavHost(navController = helpNavController, startDestination = "help") {
-        composable("help") { LearnScreenContent(navController, helpNavController) }
+        composable("help") { LearnScreenContent(navigateBack, helpNavController) }
         composable("app_toolbar") { ToolbarTutorialScreen(helpNavController) }
         composable("sudoku_rules") { LearnSudokuRules(helpNavController) }
         composable("sudoku_basic") { LearnBasic(helpNavController) }
@@ -43,16 +43,14 @@ fun LearnScreen(
 @Composable
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 fun LearnScreenContent(
-    navController: NavController,
+    navigateBack: () -> Unit,
     helpNavController: NavController
 ) {
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(stringResource(R.string.learn_screen_title)) },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
+                    IconButton(onClick = navigateBack) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null

@@ -53,15 +53,11 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
-import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
-import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
-import com.kaajjo.libresudoku.ui.util.Route
 import kotlin.math.sqrt
 import kotlin.time.toKotlinDuration
 
@@ -70,7 +66,9 @@ import kotlin.time.toKotlinDuration
 )
 @Composable
 fun CustomSudokuScreen(
-    navController: NavController,
+    navigateBack: () -> Unit,
+    navigateCreateSudoku: () -> Unit,
+    navigatePlayGame: (Long) -> Unit,
     viewModel: CustomSudokuViewModel
 ) {
     val boards by viewModel.allBoards.collectAsState(initial = emptyList())
@@ -93,7 +91,7 @@ fun CustomSudokuScreen(
                     )
                 } else {
                     DefaultTopAppBar(
-                        onClickNavigationIcon = { navController.popBackStack() },
+                        onClickNavigationIcon = navigateBack,
                         scrollBehavior = scrollBehavior
                     )
                 }
@@ -106,7 +104,7 @@ fun CustomSudokuScreen(
                 exit = fadeOut() + scaleOut()
             ) {
                 FloatingActionButton(
-                    onClick = { navController.navigate(Route.CREATE_SUDOKU) }
+                    onClick = navigateCreateSudoku
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Add,
@@ -154,7 +152,7 @@ fun CustomSudokuScreen(
                                 if(viewModel.inSelectionMode) {
                                     viewModel.addToSelection(item)
                                 } else {
-                                    navController.navigate("game/${item.uid}/true")
+                                    navigatePlayGame(item.uid)
                                 }
                             },
                             onLongClick = {

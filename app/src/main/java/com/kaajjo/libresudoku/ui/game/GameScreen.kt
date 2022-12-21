@@ -9,8 +9,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -22,7 +20,6 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -32,7 +29,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.ui.components.board.Board
@@ -44,7 +40,8 @@ import com.kaajjo.libresudoku.ui.onboarding.FirstGameDialog
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun GameScreen(
-    navController: NavController,
+    navigateBack: () -> Unit,
+    navigateSettings: () -> Unit,
     viewModel: GameViewModel
 ) {
     val firstGame by viewModel.firstGame.collectAsState(initial = false)
@@ -155,9 +152,7 @@ fun GameScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    navController.popBackStack()
-                }) {
+                TextButton(onClick = navigateBack) {
                     Text(stringResource(R.string.action_exit))
                 }
             },
@@ -171,9 +166,7 @@ fun GameScreen(
             title = { Text(stringResource(R.string.game_over)) },
             text = { Text(stringResource(R.string.game_over_mistakes)) },
             dismissButton = {
-                TextButton(onClick = {
-                    navController.popBackStack()
-                }) {
+                TextButton(onClick = navigateBack) {
                     Text(stringResource(R.string.action_exit))
                 }
             },
@@ -201,9 +194,7 @@ fun GameScreen(
             TopAppBar(
                 title = { Text("") },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
+                    IconButton(onClick = navigateBack) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
@@ -275,7 +266,7 @@ fun GameScreen(
                                     viewModel.giveUpDialog = true
                                 },
                                 onSettingsClick = {
-                                    navController.navigate("settings/?fromGame=true")
+                                    navigateSettings()
                                     viewModel.showMenu = false
                                 }
                             )

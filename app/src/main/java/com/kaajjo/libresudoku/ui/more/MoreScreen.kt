@@ -14,14 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
-import com.kaajjo.libresudoku.ui.util.Route
 
 @Composable
 fun MoreScreen(
-    navController: NavController
+    navigateSettings: () -> Unit,
+    navigateCustomSudoku: () -> Unit,
+    navigateLearn: () -> Unit,
+    navigateAbout: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -47,30 +48,22 @@ fun MoreScreen(
         PreferenceRow(
             title = stringResource(R.string.settings),
             painter = painterResource(R.drawable.ic_settings_24),
-            onClick = {
-                navController.navigate("settings/?fromGame=false")
-            }
+            onClick = navigateSettings
         )
         PreferenceRow(
             title = stringResource(R.string.custom_sudoku_title),
             painter = painterResource(R.drawable.outline_science_24),
-            onClick = {
-                navController.navigate(Route.CUSTOM_SUDOKU)
-            }
+            onClick = navigateCustomSudoku
         )
         PreferenceRow(
             title = stringResource(R.string.learn_screen_title),
             painter = painterResource(R.drawable.ic_outline_help_outline_24),
-            onClick = {
-                navController.navigate(Route.LEARN)
-            }
+            onClick = navigateLearn
         )
         PreferenceRow(
             title = stringResource(R.string.app_about),
             painter = painterResource(R.drawable.ic_outline_info_24),
-            onClick = {
-                navController.navigate(Route.ABOUT)
-            }
+            onClick = navigateAbout
         )
     }
 }

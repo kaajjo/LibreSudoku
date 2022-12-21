@@ -18,12 +18,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.ui.components.board.Board
-import com.kaajjo.libresudoku.ui.util.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +29,7 @@ import javax.inject.Inject
 
 @Composable
 fun WelcomeScreen(
-    navController: NavController,
+    navigateToGame: () -> Unit,
     viewModel: WelcomeViewModel
 ) {
     Column(
@@ -57,8 +55,7 @@ fun WelcomeScreen(
                 board = viewModel.previewBoard,
                 onFinishedClick = {
                     viewModel.setFirstLaunch()
-                    navController.popBackStack()
-                    navController.navigate(Route.HOME)
+                    navigateToGame()
                 }
             )
         }

@@ -23,12 +23,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.HelpCard
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
-import com.kaajjo.libresudoku.ui.util.Route
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -37,7 +35,7 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsScreen(
-    navController: NavController,
+    navigateHistory: () -> Unit,
     viewModel: StatisticsViewModel
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -49,9 +47,7 @@ fun StatisticsScreen(
                 title = { Text(stringResource(R.string.statistics)) },
                 scrollBehavior = scrollBehavior,
                 actions =  {
-                    IconButton(onClick = {
-                        navController.navigate(Route.HISTORY)
-                    }) {
+                    IconButton(onClick = navigateHistory) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_history_24),
                             contentDescription = null

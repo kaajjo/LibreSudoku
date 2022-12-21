@@ -12,12 +12,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavController
 import kotlinx.coroutines.runBlocking
 
 @Composable
 fun HomeScreen(
-    navController: NavController,
+    navigatePlayGame: (Pair<Long, Boolean>) -> Unit,
     viewModel: HomeViewModel
 ) {
     if(viewModel.showContinueGameDialog) {
@@ -72,7 +71,7 @@ fun HomeScreen(
             runBlocking {
                 viewModel.saveToDatabase()
                 val saved = if(lastGame.value != null) !lastGame.value?.completed!! else false
-                navController.navigate("game/${viewModel.insertedBoardUid}/${saved}")
+                navigatePlayGame(Pair(viewModel.insertedBoardUid, saved))
             }
         }
 
@@ -106,7 +105,7 @@ fun HomeScreen(
             }
             if(lastGame.value != null && !lastGame.value!!.completed) {
                 Button(onClick = {
-                    navController.navigate("game/${lastGame.value!!.uid}/true")
+                    navigatePlayGame(Pair(lastGame.value!!.uid, true))
                 }) {
                     Text(stringResource(R.string.action_continue))
                 }

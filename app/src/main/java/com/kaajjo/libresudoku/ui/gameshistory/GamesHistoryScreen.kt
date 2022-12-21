@@ -19,7 +19,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
@@ -30,7 +29,8 @@ import kotlin.time.toKotlinDuration
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GamesHistoryScreen(
-    navController: NavController,
+    navigateBack: () -> Unit,
+    navigateSavedGame: (Long) -> Unit,
     viewModel: HistoryViewModel
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -41,9 +41,7 @@ fun GamesHistoryScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.history_title)) },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
+                    IconButton(onClick = navigateBack) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
@@ -73,9 +71,8 @@ fun GamesHistoryScreen(
                                 difficulty = stringResource(it.difficulty.resName),
                                 type = stringResource(it.type.resName),
                                 onClick = {
-                                    navController.navigate(
-                                        "saved_game/${savedGame.uid}"
-                                    )
+                                    navigateSavedGame(savedGame.uid)
+
                                 }
                             )
                             if(index < savedGamesState.size - 1) {

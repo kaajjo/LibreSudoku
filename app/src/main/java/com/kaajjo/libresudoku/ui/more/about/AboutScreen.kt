@@ -9,25 +9,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
 import com.kaajjo.libresudoku.BuildConfig
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
-import com.kaajjo.libresudoku.ui.util.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
-    navController: NavController
+    navigateBack: () -> Unit,
+    navigateOpenSourceLicenses: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.app_about)) },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
+                    IconButton(onClick = navigateBack) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
@@ -58,9 +55,7 @@ fun AboutScreen(
             PreferenceRow(
                 title = stringResource(R.string.libraries_licenses_title),
                 painter = painterResource(R.drawable.ic_outline_info_24),
-                onClick = {
-                    navController.navigate(Route.OPEN_SOURCE_LICENSES)
-                }
+                onClick = navigateOpenSourceLicenses
             )
         }
     }

@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -29,14 +28,14 @@ import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
-import com.kaajjo.libresudoku.ui.util.Route
 import kotlinx.coroutines.launch
 import kotlin.time.toKotlinDuration
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 fun SavedGameScreen(
-    navController: NavController,
+    navigateBack: () -> Unit,
+    navigatePlayGame: (Long) -> Unit,
     viewModel: SavedGameViewModel
 ) {
     Scaffold(
@@ -44,9 +43,7 @@ fun SavedGameScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.saved_game_screen_title)) },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
+                    IconButton(onClick = navigateBack) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
@@ -204,11 +201,8 @@ fun SavedGameScreen(
                     if(viewModel.savedGame!!.canContinue) {
                         FilledTonalButton(
                             modifier = Modifier.align(Alignment.CenterHorizontally),
-                            onClick = { navController.navigate(
-                                "game/${viewModel.savedGame!!.uid}/${true}"
-                            ) {
-                                popUpTo(Route.HISTORY)
-                            }}) {
+                            onClick = { navigatePlayGame(viewModel.savedGame!!.uid) }
+                        ) {
                             Text(stringResource(R.string.action_continue))
                         }
                     }

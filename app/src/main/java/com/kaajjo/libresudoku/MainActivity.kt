@@ -110,16 +110,83 @@ class MainActivity : AppCompatActivity() {
                         startDestination = Route.HOME,
                         modifier = Modifier.padding(paddingValues)
                     ) {
-                        composable(Route.HOME) { HomeScreen(navController, hiltViewModel()) }
-                        composable(Route.MORE) { MoreScreen(navController) }
-                        composable(Route.ABOUT) { AboutScreen(navController)}
-                        composable(Route.WELCOME_SCREEN) { WelcomeScreen(navController, hiltViewModel()) }
-                        composable(Route.STATISTICS) { StatisticsScreen(navController, hiltViewModel()) }
-                        composable(Route.HISTORY) { GamesHistoryScreen(navController, hiltViewModel()) }
-                        composable(Route.LEARN) { LearnScreen(navController) }
-                        composable(Route.OPEN_SOURCE_LICENSES) { AboutLibrariesScreen(navController) }
-                        composable(Route.CUSTOM_SUDOKU) { CustomSudokuScreen(navController, hiltViewModel() )}
-                        composable(Route.CREATE_SUDOKU) { CreateSudokuScreen(navController, hiltViewModel()) }
+                        composable(Route.HOME) {
+                            HomeScreen(
+                                navigatePlayGame = {
+                                    navController.navigate("game/${it.first}/${it.second}")
+                                },
+                                hiltViewModel()
+                            )
+                        }
+
+                        composable(Route.MORE) {
+                            MoreScreen(
+                                navigateSettings = { navController.navigate("settings/?fromGame=false") },
+                                navigateCustomSudoku = { navController.navigate(Route.CUSTOM_SUDOKU) },
+                                navigateLearn = { navController.navigate(Route.LEARN) },
+                                navigateAbout = { navController.navigate(Route.ABOUT) }
+                            )
+                        }
+
+                        composable(Route.ABOUT) {
+                            AboutScreen(
+                                navigateBack = { navController.popBackStack() },
+                                navigateOpenSourceLicenses = { navController.navigate(Route.OPEN_SOURCE_LICENSES) }
+                            )
+                        }
+
+                        composable(Route.WELCOME_SCREEN) {
+                            WelcomeScreen(
+                                navigateToGame = {
+                                    navController.popBackStack()
+                                    navController.navigate(Route.HOME)
+                                },
+                                hiltViewModel()
+                            )
+                        }
+
+                        composable(Route.STATISTICS) {
+                            StatisticsScreen(
+                                navigateHistory = { navController.navigate(Route.HISTORY) },
+                                hiltViewModel()
+                            )
+                        }
+
+                        composable(Route.HISTORY) {
+                            GamesHistoryScreen(
+                                navigateBack = { navController.popBackStack() },
+                                navigateSavedGame = { uid ->
+                                    navController.navigate(
+                                        "saved_game/${uid}"
+                                    )
+                                },
+                                hiltViewModel()
+                            )
+                        }
+
+                        composable(Route.LEARN) {
+                            LearnScreen { navController.popBackStack() }
+                        }
+
+                        composable(Route.OPEN_SOURCE_LICENSES) {
+                            AboutLibrariesScreen { navController.popBackStack() }
+                        }
+
+                        composable(Route.CUSTOM_SUDOKU) {
+                            CustomSudokuScreen(
+                                navigateBack = { navController.popBackStack() },
+                                navigateCreateSudoku = { navController.navigate(Route.CREATE_SUDOKU) },
+                                navigatePlayGame = { uid -> navController.navigate("game/${uid}/true") },
+                                hiltViewModel()
+                            )
+                        }
+
+                        composable(Route.CREATE_SUDOKU) {
+                            CreateSudokuScreen(
+                                navigateBack = { navController.popBackStack() },
+                                hiltViewModel()
+                            )
+                        }
                         composable(
                             route = Route.SETTINGS,
                             arguments = listOf(navArgument("fromGame") {
@@ -127,7 +194,10 @@ class MainActivity : AppCompatActivity() {
                                 type = NavType.BoolType
                             })
                         ) {
-                            SettingsScreen(navController, hiltViewModel())
+                            SettingsScreen(
+                                navigateBack = { navController.popBackStack()},
+                                hiltViewModel()
+                            )
                         }
 
                         composable(
@@ -140,14 +210,30 @@ class MainActivity : AppCompatActivity() {
                                 }
                             )
                         ) {
-                            GameScreen(navController, hiltViewModel())
+                            GameScreen(
+                                navigateBack = { navController.popBackStack() },
+                                navigateSettings = {
+                                    navController.navigate("settings/?fromGame=true")
+                                },
+                                hiltViewModel()
+                            )
                         }
 
                         composable(
                             route = Route.SAVED_GAME,
                             arguments = listOf(navArgument("uid") { type = NavType.LongType } )
                         ) {
-                            SavedGameScreen(navController, hiltViewModel())
+                            SavedGameScreen(
+                                navigateBack = { navController.popBackStack() },
+                                navigatePlayGame = { uid ->
+                                    navController.navigate(
+                                        "game/${uid}/${true}"
+                                    ) {
+                                        popUpTo(Route.HISTORY)
+                                    }
+                                },
+                                hiltViewModel()
+                            )
                         }
                     }
                 }

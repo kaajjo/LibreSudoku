@@ -10,14 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.kaajjo.libresudoku.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutLibrariesScreen(navController: NavController) {
+fun AboutLibrariesScreen(navigateBack: () -> Unit) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier
@@ -27,9 +26,7 @@ fun AboutLibrariesScreen(navController: NavController) {
                 title = { Text(stringResource(R.string.libraries_licenses_title)) },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
+                    IconButton(onClick = navigateBack) {
                         Icon(
                             painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null

@@ -40,7 +40,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.board.Board
@@ -51,7 +50,7 @@ import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateSudokuScreen(
-    navController: NavController,
+    navigateBack: () -> Unit,
     viewModel: CreateSudokuViewModel
 ) {
     var importStringDialog by remember { mutableStateOf(false) }
@@ -62,7 +61,7 @@ fun CreateSudokuScreen(
                     Text(stringResource(R.string.create_sudoku_title))
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = navigateBack) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
@@ -134,7 +133,7 @@ fun CreateSudokuScreen(
                     enabled = !viewModel.gameBoard.flatten().all { it.value == 0 },
                     onClick = {
                         if(viewModel.saveGame()) {
-                            navController.popBackStack()
+                            navigateBack()
                         }
                 }) {
                     Text(stringResource(R.string.create_save))
