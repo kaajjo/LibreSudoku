@@ -12,12 +12,13 @@ Sudoku app built with [Jetpack Compose](https://developer.android.com/jetpack/co
 - Saves. You can continue any uncompleted game
 - Many settings and customizations such as auto erase notes, remaining uses, identical numbers highlight, app themes and more
 - Tutorials for game techniques (in progress)
+- Custom sudoku (manually or from string)
 
 ### Plans
 - Better hint system (explain the next move instead of just reveal the number)
-- 12x12
+- 12x12 (need to implement zoom and pan on canvas because cells in 12x12 is too small)
 - Full set of sudoku techniques
-- Custom sudoku from string, gallery or camera
+- Custom sudoku from gallery or camera
 - And many other things that are still in their infancy
 
 This project uses modified version of [QQWing](https://github.com/stephenostermiller/qqwing)
