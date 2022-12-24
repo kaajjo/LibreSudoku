@@ -1,7 +1,6 @@
-[![](https://img.shields.io/github/v/release/kaajjo/libre-sudoku?style=flat)](https://github.com/kaajjo/Libre-Sudoku/releases)
+[![](https://img.shields.io/github/v/release/kaajjo/libre-sudoku?style=flat)](https://github.com/kaajjo/Libre-Sudoku/releases/latest)
 # Libre-Sudoku
 Sudoku app built with [Jetpack Compose](https://developer.android.com/jetpack/compose) and [Material3](https://m3.material.io/)
-
 
 ## Features
 - Basic things such as pencil marks (notes), undo, game pauses and board reset
@@ -16,10 +15,10 @@ Sudoku app built with [Jetpack Compose](https://developer.android.com/jetpack/co
 
 ### Plans
 - Better hint system (explain the next move instead of just reveal the number)
-- 12x12 (need to implement zoom and pan on canvas because cells in 12x12 is too small)
+- 12x12 (need to implement zoom and pan on canvas because cells in 12x12 are too small)
 - Full set of sudoku techniques
 - Custom sudoku from gallery or camera
-- And many other things that are still in their infancy
+- Something else
 
 This project uses modified version of [QQWing](https://github.com/stephenostermiller/qqwing)
 ## License
