@@ -118,7 +118,7 @@
     <string name="onboard_recommendation_prefs">We recommend visiting the settings so that you can customize the app for you</string>
     <string name="action_start">Start</string>
     <string name="toolbar_undo_description">Undo. Just undo</string>
-    <string name="toolbar_notes_description">Notes mode when highlighted. Tap to highlight!</string>
+    <string name="toolbar_notes_description">Activates note mode (pencil marks)</string>
     <string name="toolbar_hint_description">Inserts the correct number into the selected cell. Can be disabled in settings</string>
     <string name="toolbar_erase_description">Removes a number or all notes from the selected cell</string>
     <string name="first_game_dialog_title">Quick tour</string>

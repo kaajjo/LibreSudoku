@@ -88,7 +88,7 @@
     <string name="toolbar_undo_description">Отмена действия. Что делает понятно из названия</string>
     <string name="toolbar_erase_description">Убирает число или все заметки из выбранной клетки</string>
     <string name="toolbar_hint_description">Вставляет верное число в выбранную клетку. Можно отключить в настройках</string>
-    <string name="toolbar_notes_description">Активирует режим заметок. При активном режиме подсвечивается, попробуйте!</string>
+    <string name="toolbar_notes_description">Активирует режим заметок</string>
     <string name="first_game_dialog_title">Быстрый обзор</string>
     <string name="first_game_dialog_got_it">Понятно</string>
     <string name="action_exit">Выйти</string>

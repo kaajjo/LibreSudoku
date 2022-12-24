@@ -107,7 +107,7 @@ fun FirstGameScreen() {
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(R.string.action_clear_notes))
+                text = stringResource(R.string.toolbar_notes_description))
         }
         ToolRow {
             ToolbarItem(
