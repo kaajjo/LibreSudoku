@@ -128,9 +128,14 @@ class CreateSudokuViewModel @Inject constructor(
         when(item) {
             ToolBarItem.Undo -> {
                 if(undoManager.count() > 0) {
-                    undoManager.getPrevState().also {
-                        gameBoard = it.board
-                    }
+                    val prevBoard = undoManager.getPrevState().board
+                    gameBoard =
+                        if(prevBoard.size == gameBoard.size) {
+                            prevBoard
+                        } else {
+                            List(gameType.size) { row -> List(gameType.size) { col -> Cell(row, col, 0)} }
+                        }
+
                     undoManager.addState(GameState(getBoardNoRef(), emptyList()))
                 }
             }
