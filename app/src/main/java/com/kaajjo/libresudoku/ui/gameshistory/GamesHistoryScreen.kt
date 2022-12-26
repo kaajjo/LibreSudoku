@@ -63,8 +63,8 @@ fun GamesHistoryScreen(
                     modifier = Modifier.disableSplitMotionEvents()
                 ) {
                     itemsIndexed(savedGamesState.reversed()) { index, savedGame ->
-                        val board = boards.first { board -> board.uid == savedGame.uid }
-                        board.let {
+                        val board = boards.firstOrNull { board -> board.uid == savedGame.uid }
+                        board?.let {
                             SudokuHistoryItem(
                                 board = savedGamesState.reversed()[index].currentBoard,
                                 savedGame = savedGame,
