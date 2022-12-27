@@ -46,7 +46,7 @@ fun MoreScreen(
         )
 
         PreferenceRow(
-            title = stringResource(R.string.settings),
+            title = stringResource(R.string.settings_title),
             painter = painterResource(R.drawable.ic_settings_24),
             onClick = navigateSettings
         )
@@ -61,7 +61,7 @@ fun MoreScreen(
             onClick = navigateLearn
         )
         PreferenceRow(
-            title = stringResource(R.string.app_about),
+            title = stringResource(R.string.about_title),
             painter = painterResource(R.drawable.ic_outline_info_24),
             onClick = navigateAbout
         )

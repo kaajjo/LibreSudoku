@@ -507,7 +507,7 @@ fun GameMenu(
                 }
             )
             DropdownMenuItem(
-                text = { Text(stringResource(R.string.settings)) },
+                text = { Text(stringResource(R.string.settings_title)) },
                 onClick = {
                     onSettingsClick()
                     onDismiss()

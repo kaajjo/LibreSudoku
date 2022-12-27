@@ -34,8 +34,8 @@ fun SettingsScreen(
     navigateBack: () -> Unit,
     viewModel: SettingsViewModel
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    // enterAlways feels laggy
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
@@ -43,7 +43,7 @@ fun SettingsScreen(
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.settings)) },
+            TopAppBar(title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
@@ -60,7 +60,6 @@ fun SettingsScreen(
         val inputMethod = viewModel.inputMethod.collectAsState(initial = 0)
         val darkTheme = viewModel.darkTheme.collectAsState(initial = 0)
         val fontSize = viewModel.fontSize.collectAsState(initial = 1)
-        val localeContext = LocalContext.current
         if(viewModel.mistakesDialog) {
             SelectionDialog(
                 title = stringResource(R.string.pref_mistakes_check),
@@ -118,7 +117,6 @@ fun SettingsScreen(
                 onDismiss = { viewModel.inputMethodDialog = false }
             )
         }  else if(viewModel.resetStatsDialog) {
-            val context = LocalContext.current
             AlertDialog(
                 title = { Text(stringResource(R.string.pref_delete_stats)) },
                 text = { Text(stringResource(R.string.pref_delete_stats_summ)) },
@@ -148,8 +146,8 @@ fun SettingsScreen(
         } else if(viewModel.languagePickDialog) {
             LanguagePicker(
                 title = stringResource(R.string.pref_app_language),
-                entries = viewModel.getLangs(localeContext),
-                selected = viewModel.getCurrentLocaleString(localeContext),
+                entries = viewModel.getLangs(context),
+                selected = viewModel.getCurrentLocaleString(context),
                 onSelect = { localeKey ->
                     val locale = if (localeKey == "")  {
                         LocaleListCompat.getEmptyLocaleList()
@@ -285,9 +283,8 @@ fun SettingsScreen(
                     },
                     onClick = { viewModel.fontSizeDialog = true }
                 )
-                val localContext = LocalContext.current
                 val currentLanguage by remember { mutableStateOf(
-                    viewModel.getCurrentLocaleString(localContext)
+                    viewModel.getCurrentLocaleString(context)
                 ) }
                 PreferenceRow(
                     title = stringResource(R.string.pref_app_language),
@@ -399,7 +396,6 @@ fun SettingsScreen(
                         viewModel.updateKeepScreenOn(!keepScreenOn.value)
                     }
                 )
-                val context = LocalContext.current
                 PreferenceRow(
                     title = stringResource(R.string.pref_reset_tipcards),
                     onClick = {

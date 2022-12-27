@@ -164,7 +164,6 @@ fun StatisticsScreen(
                         )
                     }
                 }
-                val context = LocalContext.current
                 StatsSectionName(
                     modifier = Modifier.padding(start = 12.dp, top = 12.dp),
                     title = stringResource(R.string.number_best_games, 5) +

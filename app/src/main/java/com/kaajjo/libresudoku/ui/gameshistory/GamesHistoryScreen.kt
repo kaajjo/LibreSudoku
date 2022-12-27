@@ -52,21 +52,21 @@ fun GamesHistoryScreen(
             )
         },
     ) { innerPadding ->
-        val savedGamesState by viewModel.savedGames.collectAsState(initial = emptyList())
+        val savedGames by viewModel.savedGames.collectAsState(initial = emptyList())
 
         val boards by viewModel.getBoards().collectAsState(initial = emptyList())
-        if (savedGamesState.isNotEmpty() && boards.isNotEmpty()) {
+        if (savedGames.isNotEmpty() && boards.isNotEmpty()) {
             Column(
                 modifier = Modifier.padding(innerPadding)
             ) {
                 LazyColumn(
                     modifier = Modifier.disableSplitMotionEvents()
                 ) {
-                    itemsIndexed(savedGamesState.reversed()) { index, savedGame ->
+                    itemsIndexed(savedGames.reversed()) { index, savedGame ->
                         val board = boards.firstOrNull { board -> board.uid == savedGame.uid }
                         board?.let {
                             SudokuHistoryItem(
-                                board = savedGamesState.reversed()[index].currentBoard,
+                                board = savedGames.reversed()[index].currentBoard,
                                 savedGame = savedGame,
                                 difficulty = stringResource(it.difficulty.resName),
                                 type = stringResource(it.type.resName),
@@ -75,7 +75,7 @@ fun GamesHistoryScreen(
 
                                 }
                             )
-                            if(index < savedGamesState.size - 1) {
+                            if(index < savedGames.size - 1) {
                                 Divider(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -88,7 +88,7 @@ fun GamesHistoryScreen(
                 }
             }
         } else {
-            EmptyScreen(text = stringResource(R.string.history_no_games))
+            EmptyScreen(stringResource(R.string.history_no_games))
         }
     }
 }
@@ -130,10 +130,13 @@ fun SudokuHistoryItem(
                 Column {
                     Text("$difficulty $type")
                     Text(
-                        text = stringResource(R.string.history_item_time) + savedGame.timer.toKotlinDuration()
-                            .toComponents { minutes, seconds, _ ->
-                                String.format(" %02d:%02d", minutes, seconds)
-                            }
+                        text = stringResource(
+                            R.string.history_item_time,
+                            savedGame.timer.toKotlinDuration()
+                                .toComponents { minutes, seconds, _ ->
+                                    String.format(" %02d:%02d", minutes, seconds)
+                                }
+                        )
                     )
                     Text(stringResource(R.string.history_item_id, savedGame.uid))
                 }

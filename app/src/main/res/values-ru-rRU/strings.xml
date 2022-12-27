@@ -21,9 +21,9 @@
     <string name="type_default_9x9">9x9</string>
     <string name="type_default_12x12">12x12</string>
     <string name="type_unspecified">Неопределенный</string>
-    <string name="settings">Настройки</string>
-    <string name="more">Больше</string>
-    <string name="app_about">О приложении</string>
+    <string name="settings_title">Настройки</string>
+    <string name="more_title">Больше</string>
+    <string name="about_title">О приложении</string>
     <string name="pref_appearance">Внешний вид</string>
     <string name="pref_dark_theme">Темная тема</string>
     <string name="pref_dark_theme_follow">Как в системе</string>
@@ -126,7 +126,7 @@
     <string name="statistics_no_records">У вас пока нет рекрдов</string>
     <string name="history_title">История</string>
     <string name="history_no_games">Вы пока не играли</string>
-    <string name="history_item_time">Время:</string>
+    <string name="history_item_time">Время: %1$s</string>
     <string name="history_item_id">ID игры: %1$d</string>
     <string name="history_item_can_continue">Вы можете продолжить эту игру</string>
     <string name="saved_game_screen_title">Сохраненная игра</string>
