@@ -73,7 +73,8 @@ fun StatisticsScreen(
                     GameDifficulty.Easy,
                     GameDifficulty.Moderate,
                     GameDifficulty.Hard,
-                    GameDifficulty.Challenge
+                    GameDifficulty.Challenge,
+                    GameDifficulty.Custom
                 ),
                 selected = viewModel.selectedDifficulty,
                 onSelected = { viewModel.setDifficulty(it) }
