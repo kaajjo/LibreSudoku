@@ -239,13 +239,9 @@ class GameViewModel @Inject constructor(
                 if(currCell.row == cell.row && currCell.col == cell.col && digitFirstNumber == 0) Cell(-1, -1) else cell
 
             if(currCell.row >= 0 && currCell.col >= 0) {
-                if(inputMethod == 1 || overrideInputMethodDF) {
+                if((inputMethod == 1 || overrideInputMethodDF) && digitFirstNumber > 0) {
                     if(!longTap) {
-                        if(digitFirstNumber > 0 &&
-                            (remainingUsesList.size >= digitFirstNumber &&
-                                    remainingUsesList[digitFirstNumber - 1] > 0) ||
-                            !remainingUse
-                        ) {
+                        if((remainingUsesList.size >= digitFirstNumber && remainingUsesList[digitFirstNumber - 1] > 0) || !remainingUse) {
                             processNumberInput(digitFirstNumber)
                             undoManager.addState(GameState(gameBoard, notes))
                             if(notesToggled) currCell = Cell(currCell.row, currCell.col, digitFirstNumber)
