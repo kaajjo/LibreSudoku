@@ -18,14 +18,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
+import com.kaajjo.libresudoku.ui.components.animatedComposable
 import com.kaajjo.libresudoku.ui.game.GameScreen
 import com.kaajjo.libresudoku.ui.gameshistory.GamesHistoryScreen
 import com.kaajjo.libresudoku.ui.gameshistory.savedgame.SavedGameScreen
@@ -50,7 +50,7 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var settings: AppSettingsManager
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                 val systemUiController = rememberSystemUiController()
                 systemUiController.setSystemBarsColor(MaterialTheme.colorScheme.surface)
 
-                val navController = rememberNavController()
+                val navController = rememberAnimatedNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
 
                 var bottomBarState by rememberSaveable { mutableStateOf(false) }
@@ -105,12 +105,12 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
                 ) { paddingValues ->
-                    NavHost(
+                    AnimatedNavHost(
                         navController = navController,
                         startDestination = Route.HOME,
                         modifier = Modifier.padding(paddingValues)
                     ) {
-                        composable(Route.HOME) {
+                        animatedComposable(Route.HOME) {
                             HomeScreen(
                                 navigatePlayGame = {
                                     navController.navigate("game/${it.first}/${it.second}")
@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
 
-                        composable(Route.MORE) {
+                        animatedComposable(Route.MORE) {
                             MoreScreen(
                                 navigateSettings = { navController.navigate("settings/?fromGame=false") },
                                 navigateCustomSudoku = { navController.navigate(Route.CUSTOM_SUDOKU) },
@@ -128,14 +128,14 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
 
-                        composable(Route.ABOUT) {
+                        animatedComposable(Route.ABOUT) {
                             AboutScreen(
                                 navigateBack = { navController.popBackStack() },
                                 navigateOpenSourceLicenses = { navController.navigate(Route.OPEN_SOURCE_LICENSES) }
                             )
                         }
 
-                        composable(Route.WELCOME_SCREEN) {
+                        animatedComposable(Route.WELCOME_SCREEN) {
                             WelcomeScreen(
                                 navigateToGame = {
                                     navController.popBackStack()
@@ -145,14 +145,14 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
 
-                        composable(Route.STATISTICS) {
+                        animatedComposable(Route.STATISTICS) {
                             StatisticsScreen(
                                 navigateHistory = { navController.navigate(Route.HISTORY) },
                                 hiltViewModel()
                             )
                         }
 
-                        composable(Route.HISTORY) {
+                        animatedComposable(Route.HISTORY) {
                             GamesHistoryScreen(
                                 navigateBack = { navController.popBackStack() },
                                 navigateSavedGame = { uid ->
@@ -164,15 +164,15 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
 
-                        composable(Route.LEARN) {
+                        animatedComposable(Route.LEARN) {
                             LearnScreen { navController.popBackStack() }
                         }
 
-                        composable(Route.OPEN_SOURCE_LICENSES) {
+                        animatedComposable(Route.OPEN_SOURCE_LICENSES) {
                             AboutLibrariesScreen { navController.popBackStack() }
                         }
 
-                        composable(Route.CUSTOM_SUDOKU) {
+                        animatedComposable(Route.CUSTOM_SUDOKU) {
                             CustomSudokuScreen(
                                 navigateBack = { navController.popBackStack() },
                                 navigateCreateSudoku = { navController.navigate(Route.CREATE_SUDOKU) },
@@ -181,13 +181,13 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
 
-                        composable(Route.CREATE_SUDOKU) {
+                        animatedComposable(Route.CREATE_SUDOKU) {
                             CreateSudokuScreen(
                                 navigateBack = { navController.popBackStack() },
                                 hiltViewModel()
                             )
                         }
-                        composable(
+                        animatedComposable(
                             route = Route.SETTINGS,
                             arguments = listOf(navArgument("fromGame") {
                                 defaultValue = false
@@ -200,7 +200,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
 
-                        composable(
+                        animatedComposable(
                             route = Route.GAME,
                             arguments = listOf(
                                 navArgument(name = "uid") { type = NavType.LongType},
@@ -219,7 +219,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
 
-                        composable(
+                        animatedComposable(
                             route = Route.SAVED_GAME,
                             arguments = listOf(navArgument("uid") { type = NavType.LongType } )
                         ) {
