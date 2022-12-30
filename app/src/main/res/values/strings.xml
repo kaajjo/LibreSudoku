@@ -229,4 +229,9 @@
     <string name="export_string_copy">Copy</string>
     <string name="export_string_state_copied">Copied</string>
     <string name="export_string_state_error">Error</string>
+
+    <string name="filter_all">All</string>
+    <string name="filter_completed">Completed</string>
+    <string name="filter_in_progress">In progress</string>
+    <string name="filter_not_started">Not started</string>
 </resources>

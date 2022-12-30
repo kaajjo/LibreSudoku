@@ -191,4 +191,8 @@
     <string name="export_string_copy">Скопировать</string>
     <string name="export_string_state_copied">Скопировано</string>
     <string name="export_string_state_error">Ошибка</string>
+    <string name="filter_all">Все</string>
+    <string name="filter_completed">Завершено</string>
+    <string name="filter_in_progress">В процессе</string>
+    <string name="filter_not_started">Не начато</string>
 </resources>

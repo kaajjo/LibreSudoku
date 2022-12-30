@@ -14,6 +14,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,11 +27,14 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -71,11 +75,11 @@ fun CustomSudokuScreen(
     navigatePlayGame: (Long) -> Unit,
     viewModel: CustomSudokuViewModel
 ) {
-    val boards by viewModel.allBoards.collectAsState(initial = emptyList())
+    val boards by viewModel.boards.collectAsState(initial = emptyMap())
 
     var dialogDeleteConfirmation by remember { mutableStateOf(false) }
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -86,12 +90,14 @@ fun CustomSudokuScreen(
                         selectedCount = viewModel.selectedItems.count(),
                         onClickDeleteSelected = { dialogDeleteConfirmation = true },
                         onClickClose = { viewModel.inSelectionMode = false },
-                        onClickSelectAll = { viewModel.addAllToSelection(boards)},
-                        onClickInverseSelection = { viewModel.inverseSelection(boards) }
+                        onClickSelectAll = { viewModel.addAllToSelection(boards.toList())},
+                        onClickInverseSelection = { viewModel.inverseSelection(boards.toList()) }
                     )
                 } else {
                     DefaultTopAppBar(
                         onClickNavigationIcon = navigateBack,
+                        onFilterSelected = { filter -> viewModel.currentFilter = filter },
+                        selectedFilter = viewModel.currentFilter,
                         scrollBehavior = scrollBehavior
                     )
                 }
@@ -119,18 +125,16 @@ fun CustomSudokuScreen(
                 .padding(paddingValues)
                 .padding(top = 2.dp)
         ) {
-
             if(boards.isNotEmpty()) {
-                val savedGames by viewModel.savedGames.collectAsState(initial = emptyList())
+                var filteredBoards by remember { mutableStateOf(viewModel.filterBoards(boards.toList())) }
+                LaunchedEffect(viewModel.currentFilter, boards) {
+                    filteredBoards = viewModel.filterBoards(boards.toList())
+                }
                 LazyColumn {
                     itemsIndexed(
-                        items = boards.reversed(),
-                        key = { _, item -> item.uid }
+                        items = filteredBoards,
+                        key = { _, item -> item.first.uid }
                     ) { index, item ->
-                        var savedGame by remember { mutableStateOf(savedGames.firstOrNull { it.uid == item.uid })}
-                        LaunchedEffect(savedGames){
-                            savedGame = savedGames.firstOrNull { it.uid == item.uid }
-                        }
                         SudokuItem(
                             modifier = Modifier
                                 .background(
@@ -144,15 +148,15 @@ fun CustomSudokuScreen(
                                     }
                                 )
                                 .animateItemPlacement(spring(0.6f, 300f)),
-                            board = item.initialBoard,
-                            uid = item.uid,
-                            type = item.type,
-                            savedGame = savedGame,
+                            board = item.first.initialBoard,
+                            uid = item.first.uid,
+                            type = item.first.type,
+                            savedGame = item.second,
                             onClick = {
                                 if(viewModel.inSelectionMode) {
                                     viewModel.addToSelection(item)
                                 } else {
-                                    navigatePlayGame(item.uid)
+                                    navigatePlayGame(item.first.uid)
                                 }
                             },
                             onLongClick = {
@@ -163,7 +167,7 @@ fun CustomSudokuScreen(
                                 }
                             }
                         )
-                        if(index + 1 < boards.size) {
+                        if(index + 1 < filteredBoards.size) {
                             Divider(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -263,6 +267,8 @@ fun SudokuItem(
 @Composable
 private fun DefaultTopAppBar(
     onClickNavigationIcon: () -> Unit,
+    onFilterSelected: (SudokuListFilter) -> Unit,
+    selectedFilter: SudokuListFilter,
     scrollBehavior: TopAppBarScrollBehavior
 ) {
     TopAppBar(title = { Text(stringResource(R.string.custom_sudoku_title)) },
@@ -271,6 +277,27 @@ private fun DefaultTopAppBar(
                 Icon(
                     painter = painterResource(R.drawable.ic_round_arrow_back_24),
                     contentDescription = null
+                )
+            }
+        },
+        actions = {
+            Box(
+                modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+            ) {
+                var isExpanded by remember { mutableStateOf(false) }
+                Row {
+                    IconButton(onClick = { isExpanded = true }) {
+                        Icon(
+                            painter = painterResource(R.drawable.round_filter_list_24),
+                            contentDescription = null
+                        )
+                    }
+                }
+                FilterMenu(
+                    selectedFilter = selectedFilter,
+                    isExpanded = isExpanded,
+                    onDismissRequest = { isExpanded = false },
+                    onFilterSelected = onFilterSelected
                 )
             }
         },
@@ -343,4 +370,42 @@ private fun DeleteConfirmationDialog(
         },
         onDismissRequest = onDismiss
     )
+}
+
+@Composable
+private fun FilterMenu(
+    selectedFilter: SudokuListFilter,
+    isExpanded: Boolean,
+    onFilterSelected: (SudokuListFilter) -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    MaterialTheme(shapes = MaterialTheme.shapes.copy(extraSmall = MaterialTheme.shapes.large)) {
+        DropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = onDismissRequest
+        ) {
+            enumValues<SudokuListFilter>().forEach { filter ->
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = selectedFilter == filter,
+                                onClick = {
+                                    onFilterSelected(filter)
+                                    onDismissRequest()
+                                }
+                            )
+                            Text(stringResource(filter.resName))
+                        }
+                    },
+                    onClick = {
+                        onFilterSelected(filter)
+                        onDismissRequest()
+                    }
+                )
+            }
+        }
+    }
 }
