@@ -195,4 +195,10 @@
     <string name="filter_completed">Завершено</string>
     <string name="filter_in_progress">В процессе</string>
     <string name="filter_not_started">Не начато</string>
+    <string name="sort_ascending">По возрастанию</string>
+    <string name="sort_descending">По убыванию</string>
+    <string name="sort_by_timer">Таймер</string>
+    <string name="sort_by_game_id">ID</string>
+    <string name="sort_label">Сортировка</string>
+    <string name="filter_label">Фильтр</string>
 </resources>

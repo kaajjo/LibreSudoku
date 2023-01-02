@@ -1,15 +1,46 @@
 package com.kaajjo.libresudoku.ui.gameshistory
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import com.kaajjo.libresudoku.R
-import androidx.compose.runtime.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,20 +50,29 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
+import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
+import com.kaajjo.libresudoku.data.database.model.SudokuBoard
+import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlin.math.sqrt
 import kotlin.time.toKotlinDuration
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class
+)
 @Composable
 fun GamesHistoryScreen(
     navigateBack: () -> Unit,
     navigateSavedGame: (Long) -> Unit,
     viewModel: HistoryViewModel
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier
@@ -48,41 +88,71 @@ fun GamesHistoryScreen(
                         )
                     }
                 },
+                actions = {
+                    IconButton(onClick = {
+                        coroutineScope.launch {
+                            if (!viewModel.drawerState.isVisible) {
+                                viewModel.drawerState.show()
+                            }
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Rounded.Done,
+                            contentDescription = null
+                        )
+                    }
+                },
                 scrollBehavior = scrollBehavior
             )
         },
     ) { innerPadding ->
-        val savedGames by viewModel.savedGames.collectAsState(initial = emptyList())
-
-        val boards by viewModel.getBoards().collectAsState(initial = emptyList())
-        if (savedGames.isNotEmpty() && boards.isNotEmpty()) {
+        val games by viewModel.games.collectAsState(initial = emptyMap())
+        if (games.isNotEmpty()) {
             Column(
                 modifier = Modifier.padding(innerPadding)
             ) {
-                LazyColumn(
-                    modifier = Modifier.disableSplitMotionEvents()
+                val lazyListState = rememberLazyListState()
+                var filteredAndSortedBoards by remember {
+                    mutableStateOf(
+                        emptyList<Pair<SavedGame, SudokuBoard>>()
+                    )
+                }
+                LaunchedEffect(
+                    viewModel.sortType,
+                    viewModel.sortEntry,
+                    viewModel.filterDifficulties,
+                    viewModel.filterGameTypes
                 ) {
-                    itemsIndexed(savedGames.reversed()) { index, savedGame ->
-                        val board = boards.firstOrNull { board -> board.uid == savedGame.uid }
-                        board?.let {
-                            SudokuHistoryItem(
-                                board = savedGames.reversed()[index].currentBoard,
-                                savedGame = savedGame,
-                                difficulty = stringResource(it.difficulty.resName),
-                                type = stringResource(it.type.resName),
-                                onClick = {
-                                    navigateSavedGame(savedGame.uid)
+                    filteredAndSortedBoards = viewModel.applySortAndFilter(games.toList())
+                    lazyListState.animateScrollToItem(0)
+                }
 
-                                }
-                            )
-                            if(index < savedGames.size - 1) {
-                                Divider(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clip(CircleShape)
-                                        .padding(horizontal = 12.dp, vertical = 1.dp)
-                                )
+                LazyColumn(
+                    modifier = Modifier
+                        .disableSplitMotionEvents(),
+                    state = lazyListState
+                ) {
+                    itemsIndexed(
+                        filteredAndSortedBoards,
+                        key = { _, game -> game.first.uid }
+                    ) { index, game ->
+                        SudokuHistoryItem(
+                            board = game.first.currentBoard,
+                            savedGame = game.first,
+                            difficulty = stringResource(game.second.difficulty.resName),
+                            type = stringResource(game.second.type.resName),
+                            onClick = {
+                                navigateSavedGame(game.first.uid)
+
                             }
+                        )
+                        if (index < filteredAndSortedBoards.size - 1) {
+                            Divider(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(CircleShape)
+                                    .padding(horizontal = 12.dp, vertical = 1.dp)
+                            )
                         }
                     }
                 }
@@ -91,6 +161,110 @@ fun GamesHistoryScreen(
             EmptyScreen(stringResource(R.string.history_no_games))
         }
     }
+
+    CustomModalBottomSheet(
+        drawerState = viewModel.drawerState,
+        sheetContent = {
+            Column {
+                Text(
+                    text = stringResource(R.string.sort_label),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    FilterChipWithIcon(
+                        selected = viewModel.sortType == SortType.Ascending,
+                        label = stringResource(R.string.sort_ascending),
+                        onClick = {
+                            viewModel.switchSortType()
+                        }
+                    )
+                    enumValues<SortEntry>().forEach {
+                        FilterChipWithIcon(
+                            selected = it == viewModel.sortEntry,
+                            label = stringResource(it.resName),
+                            onClick = {
+                                viewModel.selectSortEntry(it)
+                            }
+                        )
+                    }
+                }
+                Text(
+                    text = stringResource(R.string.filter_label),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf(
+                        GameDifficulty.Easy,
+                        GameDifficulty.Moderate,
+                        GameDifficulty.Hard,
+                        GameDifficulty.Challenge,
+                        GameDifficulty.Custom,
+                    ).forEach {
+                        FilterChipWithIcon(
+                            selected = viewModel.filterDifficulties.contains(it),
+                            label = stringResource(it.resName),
+                            onClick = {
+                                viewModel.selectFilter(it)
+                            }
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf(
+                        GameType.Default9x9,
+                        GameType.Default6x6,
+                    ).forEach {
+                        FilterChipWithIcon(
+                            selected = viewModel.filterGameTypes.contains(it),
+                            label = stringResource(it.resName),
+                            onClick = {
+                                viewModel.selectFilter(it)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FilterChipWithIcon(
+    selected: Boolean,
+    label: String,
+    onClick: () -> Unit
+) {
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = {
+            Text(label)
+        },
+        leadingIcon = {
+            AnimatedVisibility(selected) {
+                Icon(
+                    imageVector = Icons.Rounded.Done,
+                    contentDescription = null
+                )
+            }
+        }
+    )
 }
 
 @Composable
@@ -142,7 +316,7 @@ fun SudokuHistoryItem(
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
-                if(savedGame.canContinue) {
+                if (savedGame.canContinue) {
                     Box(
                         modifier = Modifier
                             .background(
@@ -174,8 +348,10 @@ fun Modifier.disableSplitMotionEvents() =
                         when {
                             pointerInfo.pressed && currentId == -1L -> currentId =
                                 pointerInfo.id.value
+
                             pointerInfo.pressed.not() && currentId == pointerInfo.id.value -> currentId =
                                 -1
+
                             pointerInfo.id.value != currentId && currentId != -1L -> pointerInfo.consume()
                             else -> Unit
                         }

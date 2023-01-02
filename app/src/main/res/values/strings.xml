@@ -234,4 +234,11 @@
     <string name="filter_completed">Completed</string>
     <string name="filter_in_progress">In progress</string>
     <string name="filter_not_started">Not started</string>
+
+    <string name="sort_ascending">Ascending</string>
+    <string name="sort_descending">Descending</string>
+    <string name="sort_by_timer">Timer</string>
+    <string name="sort_by_game_id">ID</string>
+    <string name="sort_label">Sort</string>
+    <string name="filter_label">Filter</string>
 </resources>

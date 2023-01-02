@@ -2,6 +2,7 @@ package com.kaajjo.libresudoku.data.database.repository
 
 import com.kaajjo.libresudoku.data.database.dao.SavedGameDao
 import com.kaajjo.libresudoku.data.database.model.SavedGame
+import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import kotlinx.coroutines.flow.Flow
 
 class SavedGameRepository(
@@ -10,6 +11,8 @@ class SavedGameRepository(
     fun getAll(): Flow<List<SavedGame>> = savedGameDao.getAll()
 
     suspend fun get(uid: Long): SavedGame? = savedGameDao.get(uid)
+
+    fun getSavedWithBoards(): Flow<Map<SavedGame, SudokuBoard>> = savedGameDao.getSavedWithBoards()
 
     fun getLast(): Flow<SavedGame?> = savedGameDao.getLast()
 
