@@ -13,6 +13,7 @@ import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
+import com.kaajjo.libresudoku.ui.customsudoku.SudokuListFilter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -33,6 +34,7 @@ class HistoryViewModel
     var sortEntry by mutableStateOf(SortEntry.GameID)
     var filterDifficulties by mutableStateOf(emptyList<GameDifficulty>())
     var filterGameTypes by mutableStateOf(emptyList<GameType>())
+    var filterByGameState by mutableStateOf(SudokuListFilter.All)
 
     fun selectFilter(filter: GameDifficulty) {
         filterDifficulties = if (!filterDifficulties.contains(filter)) {
@@ -50,6 +52,10 @@ class HistoryViewModel
         }
     }
 
+    fun selectFilter(filter: SudokuListFilter) {
+        this.filterByGameState = filter
+    }
+
     fun switchSortType() {
         sortType = if (sortType == SortType.Ascending) {
             SortType.Descending
@@ -65,6 +71,7 @@ class HistoryViewModel
     fun applySortAndFilter(games: List<Pair<SavedGame, SudokuBoard>>): List<Pair<SavedGame, SudokuBoard>> {
         var result = applyFilterDifficulties(games)
         result = applyFilterTypes(result)
+        result = applyFilterByGameState(result)
         result = applySort(result)
         return result
     }
@@ -83,6 +90,20 @@ class HistoryViewModel
         return if (filterGameTypes.isNotEmpty()) {
             games.filter {
                 filterGameTypes.contains(it.second.type)
+            }
+        } else {
+            games
+        }
+    }
+
+    private fun applyFilterByGameState(games: List<Pair<SavedGame, SudokuBoard>>): List<Pair<SavedGame, SudokuBoard>> {
+        return if (filterByGameState != SudokuListFilter.All) {
+            games.filter {
+                when (filterByGameState) {
+                    SudokuListFilter.Completed -> !it.first.canContinue
+                    SudokuListFilter.InProgress -> it.first.canContinue
+                    else -> false
+                }
             }
         } else {
             games

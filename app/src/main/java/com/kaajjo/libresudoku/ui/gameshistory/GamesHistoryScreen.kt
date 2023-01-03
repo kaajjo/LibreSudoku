@@ -58,6 +58,7 @@ import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
+import com.kaajjo.libresudoku.ui.customsudoku.SudokuListFilter
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.sqrt
@@ -121,7 +122,8 @@ fun GamesHistoryScreen(
                     viewModel.sortType,
                     viewModel.sortEntry,
                     viewModel.filterDifficulties,
-                    viewModel.filterGameTypes
+                    viewModel.filterGameTypes,
+                    viewModel.filterByGameState
                 ) {
                     filteredAndSortedBoards = viewModel.applySortAndFilter(games.toList())
                     lazyListState.animateScrollToItem(0)
@@ -231,6 +233,26 @@ fun GamesHistoryScreen(
                     ).forEach {
                         FilterChipWithIcon(
                             selected = viewModel.filterGameTypes.contains(it),
+                            label = stringResource(it.resName),
+                            onClick = {
+                                viewModel.selectFilter(it)
+                            }
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf(
+                        SudokuListFilter.All,
+                        SudokuListFilter.Completed,
+                        SudokuListFilter.InProgress,
+                    ).forEach {
+                        FilterChipWithIcon(
+                            selected = it == viewModel.filterByGameState,
                             label = stringResource(it.resName),
                             onClick = {
                                 viewModel.selectFilter(it)
