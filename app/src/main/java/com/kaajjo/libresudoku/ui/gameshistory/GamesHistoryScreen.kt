@@ -97,7 +97,7 @@ fun GamesHistoryScreen(
                         }
                     }) {
                         Icon(
-                            imageVector = Icons.Rounded.Done,
+                            painter = painterResource(R.drawable.round_filter_list_24),
                             contentDescription = null
                         )
                     }
