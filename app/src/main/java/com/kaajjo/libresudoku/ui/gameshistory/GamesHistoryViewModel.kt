@@ -13,7 +13,7 @@ import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
-import com.kaajjo.libresudoku.ui.customsudoku.SudokuListFilter
+import com.kaajjo.libresudoku.ui.customsudoku.GameStateFilter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -34,7 +34,7 @@ class HistoryViewModel
     var sortEntry by mutableStateOf(SortEntry.GameID)
     var filterDifficulties by mutableStateOf(emptyList<GameDifficulty>())
     var filterGameTypes by mutableStateOf(emptyList<GameType>())
-    var filterByGameState by mutableStateOf(SudokuListFilter.All)
+    var filterByGameState by mutableStateOf(GameStateFilter.All)
 
     fun selectFilter(filter: GameDifficulty) {
         filterDifficulties = if (!filterDifficulties.contains(filter)) {
@@ -52,7 +52,7 @@ class HistoryViewModel
         }
     }
 
-    fun selectFilter(filter: SudokuListFilter) {
+    fun selectFilter(filter: GameStateFilter) {
         this.filterByGameState = filter
     }
 
@@ -97,11 +97,11 @@ class HistoryViewModel
     }
 
     private fun applyFilterByGameState(games: List<Pair<SavedGame, SudokuBoard>>): List<Pair<SavedGame, SudokuBoard>> {
-        return if (filterByGameState != SudokuListFilter.All) {
+        return if (filterByGameState != GameStateFilter.All) {
             games.filter {
                 when (filterByGameState) {
-                    SudokuListFilter.Completed -> !it.first.canContinue
-                    SudokuListFilter.InProgress -> it.first.canContinue
+                    GameStateFilter.Completed -> !it.first.canContinue
+                    GameStateFilter.InProgress -> it.first.canContinue
                     else -> false
                 }
             }

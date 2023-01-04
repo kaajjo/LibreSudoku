@@ -1,6 +1,5 @@
 package com.kaajjo.libresudoku.ui.gameshistory
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -20,11 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -57,8 +53,9 @@ import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
+import com.kaajjo.libresudoku.ui.components.AnimatedIconFilterChip
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
-import com.kaajjo.libresudoku.ui.customsudoku.SudokuListFilter
+import com.kaajjo.libresudoku.ui.customsudoku.GameStateFilter
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.sqrt
@@ -178,7 +175,7 @@ fun GamesHistoryScreen(
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    FilterChipWithIcon(
+                    AnimatedIconFilterChip(
                         selected = viewModel.sortType == SortType.Ascending,
                         label = stringResource(R.string.sort_ascending),
                         onClick = {
@@ -186,7 +183,7 @@ fun GamesHistoryScreen(
                         }
                     )
                     enumValues<SortEntry>().forEach {
-                        FilterChipWithIcon(
+                        AnimatedIconFilterChip(
                             selected = it == viewModel.sortEntry,
                             label = stringResource(it.resName),
                             onClick = {
@@ -212,7 +209,7 @@ fun GamesHistoryScreen(
                         GameDifficulty.Challenge,
                         GameDifficulty.Custom,
                     ).forEach {
-                        FilterChipWithIcon(
+                        AnimatedIconFilterChip(
                             selected = viewModel.filterDifficulties.contains(it),
                             label = stringResource(it.resName),
                             onClick = {
@@ -231,7 +228,7 @@ fun GamesHistoryScreen(
                         GameType.Default9x9,
                         GameType.Default6x6,
                     ).forEach {
-                        FilterChipWithIcon(
+                        AnimatedIconFilterChip(
                             selected = viewModel.filterGameTypes.contains(it),
                             label = stringResource(it.resName),
                             onClick = {
@@ -247,11 +244,11 @@ fun GamesHistoryScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     listOf(
-                        SudokuListFilter.All,
-                        SudokuListFilter.Completed,
-                        SudokuListFilter.InProgress,
+                        GameStateFilter.All,
+                        GameStateFilter.Completed,
+                        GameStateFilter.InProgress,
                     ).forEach {
-                        FilterChipWithIcon(
+                        AnimatedIconFilterChip(
                             selected = it == viewModel.filterByGameState,
                             label = stringResource(it.resName),
                             onClick = {
@@ -260,30 +257,6 @@ fun GamesHistoryScreen(
                         )
                     }
                 }
-            }
-        }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun FilterChipWithIcon(
-    selected: Boolean,
-    label: String,
-    onClick: () -> Unit
-) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = {
-            Text(label)
-        },
-        leadingIcon = {
-            AnimatedVisibility(selected) {
-                Icon(
-                    imageVector = Icons.Rounded.Done,
-                    contentDescription = null
-                )
             }
         }
     )

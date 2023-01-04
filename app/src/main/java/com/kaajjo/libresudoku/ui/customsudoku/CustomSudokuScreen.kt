@@ -11,30 +11,30 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -49,6 +49,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,13 +61,17 @@ import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
-import com.kaajjo.libresudoku.ui.components.board.BoardPreview
+import com.kaajjo.libresudoku.ui.components.AnimatedIconFilterChip
+import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
+import com.kaajjo.libresudoku.ui.components.board.BoardPreview
+import kotlinx.coroutines.launch
 import kotlin.math.sqrt
 import kotlin.time.toKotlinDuration
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
-    ExperimentalFoundationApi::class
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
+    ExperimentalFoundationApi::class, ExperimentalMaterialApi::class
 )
 @Composable
 fun CustomSudokuScreen(
@@ -80,24 +85,28 @@ fun CustomSudokuScreen(
     var dialogDeleteConfirmation by remember { mutableStateOf(false) }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val coroutineScope = rememberCoroutineScope()
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AnimatedContent(targetState = viewModel.inSelectionMode) {
-                if(it) {
+                if (it) {
                     SelectionTopAppBar(
                         selectedCount = viewModel.selectedItems.count(),
                         onClickDeleteSelected = { dialogDeleteConfirmation = true },
                         onClickClose = { viewModel.inSelectionMode = false },
-                        onClickSelectAll = { viewModel.addAllToSelection(boards.toList())},
+                        onClickSelectAll = { viewModel.addAllToSelection(boards.toList()) },
                         onClickInverseSelection = { viewModel.inverseSelection(boards.toList()) }
                     )
                 } else {
                     DefaultTopAppBar(
                         onClickNavigationIcon = navigateBack,
-                        onFilterSelected = { filter -> viewModel.currentFilter = filter },
-                        selectedFilter = viewModel.currentFilter,
+                        onClickShowFilterSheet = {
+                            coroutineScope.launch {
+                                viewModel.drawerState.show()
+                            }
+                        },
                         scrollBehavior = scrollBehavior
                     )
                 }
@@ -125,7 +134,7 @@ fun CustomSudokuScreen(
                 .padding(paddingValues)
                 .padding(top = 2.dp)
         ) {
-            if(boards.isNotEmpty()) {
+            if (boards.isNotEmpty()) {
                 var filteredBoards by remember { mutableStateOf(viewModel.filterBoards(boards.toList())) }
                 LaunchedEffect(viewModel.currentFilter, boards) {
                     filteredBoards = viewModel.filterBoards(boards.toList())
@@ -153,7 +162,7 @@ fun CustomSudokuScreen(
                             type = item.first.type,
                             savedGame = item.second,
                             onClick = {
-                                if(viewModel.inSelectionMode) {
+                                if (viewModel.inSelectionMode) {
                                     viewModel.addToSelection(item)
                                 } else {
                                     navigatePlayGame(item.first.uid)
@@ -167,7 +176,7 @@ fun CustomSudokuScreen(
                                 }
                             }
                         )
-                        if(index + 1 < filteredBoards.size) {
+                        if (index + 1 < filteredBoards.size) {
                             Divider(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -184,11 +193,11 @@ fun CustomSudokuScreen(
             }
         }
         LaunchedEffect(viewModel.selectedItems.count()) {
-            if(viewModel.selectedItems.isEmpty()) {
+            if (viewModel.selectedItems.isEmpty()) {
                 viewModel.inSelectionMode = false
             }
         }
-        if(dialogDeleteConfirmation) {
+        if (dialogDeleteConfirmation) {
             DeleteConfirmationDialog(
                 onClickConfirm = {
                     viewModel.deleteSelected()
@@ -198,6 +207,32 @@ fun CustomSudokuScreen(
             )
         }
     }
+
+    CustomModalBottomSheet(
+        drawerState = viewModel.drawerState,
+        sheetContent = {
+            Text(
+                text = stringResource(R.string.filter_label),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                enumValues<GameStateFilter>().forEach {
+                    AnimatedIconFilterChip(
+                        selected = it == viewModel.currentFilter,
+                        label = stringResource(it.resName),
+                        onClick = {
+                            viewModel.selectFilter(it)
+                        }
+                    )
+                }
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -242,13 +277,14 @@ fun SudokuItem(
             ) {
                 Column {
                     Text(stringResource(type.resName))
-                    if(savedGame != null) {
+                    if (savedGame != null) {
                         Text(
                             stringResource(
                                 R.string.saved_game_time,
-                                savedGame.timer.toKotlinDuration().toComponents { minutes, seconds, _ ->
-                                    String.format(" %02d:%02d", minutes, seconds)
-                                }
+                                savedGame.timer.toKotlinDuration()
+                                    .toComponents { minutes, seconds, _ ->
+                                        String.format(" %02d:%02d", minutes, seconds)
+                                    }
                             )
                         )
                     } else {
@@ -267,11 +303,11 @@ fun SudokuItem(
 @Composable
 private fun DefaultTopAppBar(
     onClickNavigationIcon: () -> Unit,
-    onFilterSelected: (SudokuListFilter) -> Unit,
-    selectedFilter: SudokuListFilter,
+    onClickShowFilterSheet: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior
 ) {
-    TopAppBar(title = { Text(stringResource(R.string.custom_sudoku_title)) },
+    TopAppBar(
+        title = { Text(stringResource(R.string.custom_sudoku_title)) },
         navigationIcon = {
             IconButton(onClick = onClickNavigationIcon) {
                 Icon(
@@ -281,23 +317,10 @@ private fun DefaultTopAppBar(
             }
         },
         actions = {
-            Box(
-                modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
-            ) {
-                var isExpanded by remember { mutableStateOf(false) }
-                Row {
-                    IconButton(onClick = { isExpanded = true }) {
-                        Icon(
-                            painter = painterResource(R.drawable.round_filter_list_24),
-                            contentDescription = null
-                        )
-                    }
-                }
-                FilterMenu(
-                    selectedFilter = selectedFilter,
-                    isExpanded = isExpanded,
-                    onDismissRequest = { isExpanded = false },
-                    onFilterSelected = onFilterSelected
+            IconButton(onClick = onClickShowFilterSheet) {
+                Icon(
+                    painter = painterResource(R.drawable.round_filter_list_24),
+                    contentDescription = null
                 )
             }
         },
@@ -357,7 +380,7 @@ private fun DeleteConfirmationDialog(
 ) {
     AlertDialog(
         title = { Text(stringResource(R.string.custom_sudoku_delete_dialog_title)) },
-        text = { Text(stringResource(R.string.custom_sudoku_delete_dialog_text))},
+        text = { Text(stringResource(R.string.custom_sudoku_delete_dialog_text)) },
         confirmButton = {
             TextButton(onClick = onClickConfirm) {
                 Text(stringResource(R.string.dialog_yes))
@@ -370,42 +393,4 @@ private fun DeleteConfirmationDialog(
         },
         onDismissRequest = onDismiss
     )
-}
-
-@Composable
-private fun FilterMenu(
-    selectedFilter: SudokuListFilter,
-    isExpanded: Boolean,
-    onFilterSelected: (SudokuListFilter) -> Unit,
-    onDismissRequest: () -> Unit,
-) {
-    MaterialTheme(shapes = MaterialTheme.shapes.copy(extraSmall = MaterialTheme.shapes.large)) {
-        DropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = onDismissRequest
-        ) {
-            enumValues<SudokuListFilter>().forEach { filter ->
-                DropdownMenuItem(
-                    text = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = selectedFilter == filter,
-                                onClick = {
-                                    onFilterSelected(filter)
-                                    onDismissRequest()
-                                }
-                            )
-                            Text(stringResource(filter.resName))
-                        }
-                    },
-                    onClick = {
-                        onFilterSelected(filter)
-                        onDismissRequest()
-                    }
-                )
-            }
-        }
-    }
 }
