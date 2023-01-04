@@ -15,7 +15,7 @@ Sudoku app built with [Jetpack Compose](https://developer.android.com/jetpack/co
 
 ### Plans
 - Better hint system (explain the next move instead of just reveal the number)
-- 12x12 (need to implement zoom and pan on canvas because cells in 12x12 are too small)
+- 12x12
 - Full set of sudoku techniques tutorials
 - Custom sudoku from gallery or camera
 - More customizations (customize everything than can be customized🔥)
