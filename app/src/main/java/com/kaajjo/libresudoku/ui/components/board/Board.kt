@@ -185,61 +185,64 @@ fun Board(
             zoom = 1f
             offset = Offset.Zero
         }
+        val boardModifier = Modifier
+            .fillMaxSize()
+            .pointerInput(enabled, board) {
+                detectTapGestures(
+                    onTap = {
+                        if (enabled) {
+                            val totalOffset = it / zoom + offset
+                            val row = floor((totalOffset.y) / cellSize).toInt()
+                            val column = floor((totalOffset.x) / cellSize).toInt()
+                            onClick(board[row][column])
+                        }
+                    },
+                    onLongPress = {
+                        if (enabled) {
+                            val totalOffset = it / zoom + offset
+                            val row = floor((totalOffset.y) / cellSize).toInt()
+                            val column = floor((totalOffset.x) / cellSize).toInt()
+                            onLongClick(board[row][column])
+                        }
+                    }
+                )
+            }
+
+        val zoomModifier = Modifier
+            .pointerInput(enabled) {
+                detectTransformGestures(
+                    onGesture = { gestureCentroid, gesturePan, gestureZoom, _ ->
+                        if (enabled) {
+                            val oldScale = zoom
+                            val newScale = (zoom * gestureZoom).coerceIn(1f..3f)
+
+                            offset = (offset + gestureCentroid / oldScale) -
+                                    (gestureCentroid / newScale + gesturePan / oldScale)
+
+                            zoom = newScale
+                            if (offset.x < 0) {
+                                offset = Offset(0f, offset.y)
+                            } else if (maxWidth - offset.x < maxWidth / zoom) {
+                                offset = offset.copy(x = maxWidth - maxWidth / zoom)
+                            }
+                            if (offset.y < 0) {
+                                offset = Offset(offset.x, 0f)
+                            } else if (maxWidth - offset.y < maxWidth / zoom) {
+                                offset = offset.copy(y = maxWidth - maxWidth / zoom)
+                            }
+                        }
+                    }
+                )
+            }
+            .graphicsLayer {
+                translationX = -offset.x * zoom
+                translationY = -offset.y * zoom
+                scaleX = zoom
+                scaleY = zoom
+                TransformOrigin(0f, 0f).also { transformOrigin = it }
+            }
         Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .pointerInput(zoomable, enabled) {
-                    detectTransformGestures(
-                        onGesture = { gestureCentroid, gesturePan, gestureZoom, _ ->
-                            if (zoomable && enabled) {
-                                val oldScale = zoom
-                                val newScale = (zoom * gestureZoom).coerceIn(1f..3f)
-
-                                offset = (offset + gestureCentroid / oldScale) -
-                                        (gestureCentroid / newScale + gesturePan / oldScale)
-
-                                zoom = newScale
-                                if (offset.x < 0) {
-                                    offset = Offset(0f, offset.y)
-                                } else if (maxWidth - offset.x < maxWidth / zoom) {
-                                    offset = offset.copy(x = maxWidth - maxWidth / zoom)
-                                }
-                                if (offset.y < 0) {
-                                    offset = Offset(offset.x, 0f)
-                                } else if (maxWidth - offset.y < maxWidth / zoom) {
-                                    offset = offset.copy(y = maxWidth - maxWidth / zoom)
-                                }
-                            }
-                        }
-                    )
-                }
-                .pointerInput(key1 = enabled, key2 = board) {
-                    detectTapGestures(
-                        onTap = {
-                            if (enabled) {
-                                val totalOffset = it / zoom + offset
-                                val row = floor((totalOffset.y) / cellSize).toInt()
-                                val column = floor((totalOffset.x) / cellSize).toInt()
-                                onClick(board[row][column])
-                            }
-                        },
-                        onLongPress = {
-                            if (enabled) {
-                                val totalOffset = it / zoom + offset
-                                val row = floor((totalOffset.y) / cellSize).toInt()
-                                val column = floor((totalOffset.x) / cellSize).toInt()
-                                onLongClick(board[row][column])
-                            }
-                        }
-                    )
-                }
-                .graphicsLayer {
-                    translationX = -offset.x * zoom
-                    translationY = -offset.y * zoom
-                    scaleX = zoom
-                    scaleY = zoom
-                    TransformOrigin(0f, 0f).also { transformOrigin = it }
-                }
+            modifier = if(zoomable) boardModifier.then(zoomModifier) else boardModifier
         ) {
             if (selectedCell.row >= 0 && selectedCell.col >= 0) {
                 // current cell
