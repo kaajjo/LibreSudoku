@@ -1,23 +1,20 @@
 package com.kaajjo.libresudoku.core.utils
 
-import android.content.Context
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
-import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 
 class SudokuUtils {
 
     // returns range of row indexes in region of give cell
-    fun getBoxRowRange(cell: Cell, sectionHeight: Int) : IntRange {
+    fun getBoxRowRange(cell: Cell, sectionHeight: Int): IntRange {
         return cell.row - cell.row % sectionHeight until (cell.row - cell.row % sectionHeight) + sectionHeight
     }
 
     // returns range of col indexes in region of give cell
-    fun getBoxColRange(cell: Cell, sectionWidth: Int) : IntRange {
+    fun getBoxColRange(cell: Cell, sectionWidth: Int): IntRange {
         return cell.col - cell.col % sectionWidth until (cell.col - cell.col % sectionWidth) + sectionWidth
     }
 
@@ -30,19 +27,19 @@ class SudokuUtils {
     ): List<Int> {
         var candidates = List(type.size) { index -> index + 1 }
 
-        for(i in getBoxRowRange(cell, type.sectionHeight)) {
-            for(j in getBoxColRange(cell, type.sectionWidth)) {
-                if(board[i][j].value != 0 && (i != cell.row || j != cell.col)) {
+        for (i in getBoxRowRange(cell, type.sectionHeight)) {
+            for (j in getBoxColRange(cell, type.sectionWidth)) {
+                if (board[i][j].value != 0 && (i != cell.row || j != cell.col)) {
                     candidates = candidates.minus(board[i][j].value)
                 }
             }
         }
 
-        for(i in 0 until type.size) {
-            if(board[i][cell.col].value != 0 && i != cell.row) {
+        for (i in 0 until type.size) {
+            if (board[i][cell.col].value != 0 && i != cell.row) {
                 candidates = candidates.minus(board[i][cell.col].value)
             }
-            if(board[cell.row][i].value != 0 && i != cell.col) {
+            if (board[cell.row][i].value != 0 && i != cell.col) {
                 candidates = candidates.minus(board[cell.row][i].value)
             }
         }
@@ -55,20 +52,22 @@ class SudokuUtils {
         board: List<List<Cell>>,
         cell: Cell,
         type: GameType
-    ) : Boolean {
+    ): Boolean {
         val sudokuUtils = SudokuUtils()
-        for(i in sudokuUtils.getBoxRowRange(cell, type.sectionHeight)) {
-            for(j in sudokuUtils.getBoxColRange(cell, type.sectionWidth)) {
-                if(board[i][j].value != 0 && board[i][j].value == cell.value &&
-                    (i != cell.row || j != cell.col)) {
+        for (i in sudokuUtils.getBoxRowRange(cell, type.sectionHeight)) {
+            for (j in sudokuUtils.getBoxColRange(cell, type.sectionWidth)) {
+                if (board[i][j].value != 0 && board[i][j].value == cell.value &&
+                    (i != cell.row || j != cell.col)
+                ) {
                     return false
                 }
             }
         }
 
-        for(i in 0 until type.size) {
-            if((board[i][cell.col].value == cell.value && i != cell.row) ||
-                (board[cell.row][i].value == cell.value && i != cell.col)) {
+        for (i in 0 until type.size) {
+            if ((board[i][cell.col].value == cell.value && i != cell.row) ||
+                (board[cell.row][i].value == cell.value && i != cell.col)
+            ) {
                 return false
             }
         }
@@ -76,11 +75,11 @@ class SudokuUtils {
     }
 
     // returns count of given number on board
-    fun countNumberInBoard(board: List<List<Cell>>, number: Int):Int {
+    fun countNumberInBoard(board: List<List<Cell>>, number: Int): Int {
         var count = 0
         board.forEach { cells ->
             cells.forEach {
-                if(it.value == number) {
+                if (it.value == number) {
                     count++
                 }
             }
@@ -93,7 +92,7 @@ class SudokuUtils {
         var notes = emptyList<Note>()
         board.forEach { cells ->
             cells.forEach { cell ->
-                if(cell.value == 0) {
+                if (cell.value == 0) {
                     getCandidates(board, cell, type).forEach {
                         notes = notes.plus(Note(cell.row, cell.col, it))
                     }
@@ -103,21 +102,26 @@ class SudokuUtils {
         return notes
     }
 
-    fun autoEraseNotes(board: List<List<Cell>>, notes: List<Note>, cell: Cell, type: GameType): List<Note> {
+    fun autoEraseNotes(
+        board: List<List<Cell>>,
+        notes: List<Note>,
+        cell: Cell,
+        type: GameType
+    ): List<Note> {
         var newNotes = notes
 
-        for(i in getBoxRowRange(cell, type.sectionHeight)) {
-            for(j in getBoxColRange(cell, type.sectionWidth)) {
-                if(board[i][j].value == 0 && newNotes.contains(Note(i, j, cell.value))) {
+        for (i in getBoxRowRange(cell, type.sectionHeight)) {
+            for (j in getBoxColRange(cell, type.sectionWidth)) {
+                if (board[i][j].value == 0 && newNotes.contains(Note(i, j, cell.value))) {
                     newNotes = newNotes.minus(Note(i, j, cell.value))
                 }
             }
         }
-        for(i in 0 until type.size) {
-            if(board[i][cell.col].value == 0 && newNotes.contains(Note(i, cell.col, cell.value))) {
+        for (i in 0 until type.size) {
+            if (board[i][cell.col].value == 0 && newNotes.contains(Note(i, cell.col, cell.value))) {
                 newNotes = newNotes.minus(Note(i, cell.col, cell.value))
             }
-            if(board[cell.row][i].value == 0 && newNotes.contains(Note(cell.row, i, cell.value))) {
+            if (board[cell.row][i].value == 0 && newNotes.contains(Note(cell.row, i, cell.value))) {
                 newNotes = newNotes.minus(Note(cell.row, i, cell.value))
             }
         }
@@ -126,31 +130,34 @@ class SudokuUtils {
 
     // factor: 0 - small, 1 medium (default), 2 - big
     fun getFontSize(type: GameType, factor: Int): TextUnit {
-        return when(type) {
+        return when (type) {
             GameType.Unspecified -> {
-                when(factor) {
+                when (factor) {
                     1 -> 26.sp
                     2 -> 34.sp
                     else -> 22.sp
                 }
             }
+
             GameType.Default9x9 -> {
-                when(factor) {
-                    1 -> 26.sp
-                    2 -> 34.sp
+                when (factor) {
+                    1 -> 28.sp
+                    2 -> 36.sp
                     else -> 22.sp
                 }
             }
+
             GameType.Default12x12 -> {
-                when(factor) {
-                    1 -> 18.sp
-                    2 -> 22.sp
-                    else -> 14.sp
+                when (factor) {
+                    1 -> 24.sp
+                    2 -> 32.sp
+                    else -> 18.sp
                 }
             }
+
             GameType.Default6x6 -> {
-                when(factor) {
-                    1 -> 32.sp
+                when (factor) {
+                    1 -> 34.sp
                     2 -> 40.sp
                     else -> 24.sp
                 }
