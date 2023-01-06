@@ -3,10 +3,19 @@ package com.kaajjo.libresudoku.ui.components.board
 import android.graphics.Paint
 import android.graphics.Rect
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -20,9 +29,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kaajjo.libresudoku.core.Cell
-import com.kaajjo.libresudoku.core.Note
-import com.kaajjo.libresudoku.core.qqwing.GameType
-import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 import kotlin.math.ceil
@@ -35,10 +41,10 @@ fun BoardPreview(
     size: Int = 9,
     boardString: String? = null,
     board: List<List<Cell>>? = null,
-    mainTextSize: TextUnit = when(size){
+    mainTextSize: TextUnit = when (size) {
         6 -> 16.sp
         9 -> 11.sp
-        12 -> 22.sp
+        12 -> 9.sp
         else -> 22.sp
     }
 ) {
@@ -50,7 +56,7 @@ fun BoardPreview(
     ) {
         val maxWidth = constraints.maxWidth.toFloat()
 
-        var cellSize by remember { mutableStateOf( maxWidth / size.toFloat()) }
+        var cellSize by remember { mutableStateOf(maxWidth / size.toFloat()) }
         val foregroundColor = MaterialTheme.colorScheme.onSurface
 
         var vertThick by remember { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
@@ -73,16 +79,19 @@ fun BoardPreview(
             )
         }
         val width by remember { mutableStateOf(textPaint.measureText("1")) }
+        val boardStrokeWidth = with(LocalDensity.current) { 2.dp.toPx() }
+        val thinLineWidth = with(LocalDensity.current) { 1.dp.toPx() }
+        val thickLineWidth = with(LocalDensity.current) { 1.5.dp.toPx() }
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
         ) {
             drawRoundRect(
                 color = foregroundColor,
-                topLeft = Offset(0f, 0f),
+                topLeft = Offset.Zero,
                 size = Size(maxWidth, maxWidth),
                 cornerRadius = CornerRadius(10f, 10f),
-                style = Stroke(width = 6f)
+                style = Stroke(width = boardStrokeWidth)
             )
 
             for (i in 1 until size) {
@@ -95,7 +104,7 @@ fun BoardPreview(
                     },
                     start = Offset(cellSize * i.toFloat(), 0f),
                     end = Offset(cellSize * i.toFloat(), maxWidth),
-                    strokeWidth = if (isThickLine) 4f else 2f
+                    strokeWidth = if (isThickLine) thickLineWidth else thinLineWidth
                 )
             }
             for (i in 1 until size) {
@@ -108,7 +117,7 @@ fun BoardPreview(
                     },
                     start = Offset(0f, cellSize * i.toFloat()),
                     end = Offset(maxWidth, cellSize * i.toFloat()),
-                    strokeWidth = if (isThickLine) 4f else 2f
+                    strokeWidth = if (isThickLine) thickLineWidth else thinLineWidth
                 )
             }
 
@@ -116,7 +125,7 @@ fun BoardPreview(
             textPaint.getTextBounds("1", 0, 1, textBounds)
 
             drawIntoCanvas { canvas ->
-                if(board != null) {
+                if (board != null) {
                     for (i in 0 until size) {
                         for (j in 0 until size) {
                             if (board[i][j].value != 0) {
@@ -129,12 +138,12 @@ fun BoardPreview(
                             }
                         }
                     }
-                } else if(boardString != null && boardString.length == size * size) {
+                } else if (boardString != null && boardString.length == size * size) {
                     for (i in 0 until size) {
                         for (j in 0 until size) {
                             if (boardString[size * j + i] != '0') {
                                 canvas.nativeCanvas.drawText(
-                                    boardString[size * j + i].toString(),
+                                    boardString[size * j + i].uppercase(),
                                     i * cellSize + (cellSize - width) / 2f,
                                     j * cellSize + cellSize - (cellSize - textBounds.height()) / 2f,
                                     textPaint

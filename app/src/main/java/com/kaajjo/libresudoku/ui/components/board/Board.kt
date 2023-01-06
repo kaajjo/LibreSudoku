@@ -55,12 +55,13 @@ fun Board(
     mainTextSize: TextUnit = when (size) {
         6 -> 32.sp
         9 -> 26.sp
-        12 -> 18.sp
+        12 -> 24.sp
         else -> 14.sp
     },
     noteTextSize: TextUnit = when (size) {
         6 -> 18.sp
         9 -> 12.sp
+        12 -> 7.sp
         else -> 14.sp
     },
     selectedCell: Cell,
@@ -85,8 +86,10 @@ fun Board(
 
         // single cell size
         var cellSize by remember { mutableStateOf(maxWidth / size.toFloat()) }
-        // 1/3 of single cell size, used for notes
-        val cellSizeDiv by remember { mutableStateOf(cellSize / 3f) }
+        // div for notes in one row in cell
+        var cellSizeDivWidth by remember { mutableStateOf(cellSize / ceil(sqrt(size.toFloat()))) }
+        // div for note in one column in cell
+        var cellSizeDivHeight by remember { mutableStateOf(cellSize / floor(sqrt(size.toFloat()))) }
         // lines and font color
         val foregroundColor = MaterialTheme.colorScheme.onSurface
         // locked numbers
@@ -97,15 +100,17 @@ fun Board(
 
         var vertThick by remember { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
         var horThick by remember { mutableStateOf(ceil(sqrt(size.toFloat())).toInt()) }
+
         LaunchedEffect(size) {
             cellSize = maxWidth / size.toFloat()
+            cellSizeDivWidth = cellSize / ceil(sqrt(size.toFloat()))
+            cellSizeDivHeight = cellSize / floor(sqrt(size.toFloat()))
             vertThick = floor(sqrt(size.toFloat())).toInt()
             horThick = ceil(sqrt(size.toFloat())).toInt()
         }
 
         var fontSizePx = with(LocalDensity.current) { mainTextSize.toPx() }
-        val noteSizePx = with(LocalDensity.current) { noteTextSize.toPx() }
-
+        var noteSizePx = with(LocalDensity.current) { noteTextSize.toPx() }
 
         // paints
         // numbers
@@ -140,7 +145,7 @@ fun Board(
         }
 
         // notes
-        val notePaint by remember {
+        var notePaint by remember {
             mutableStateOf(
                 Paint().apply {
                     color = foregroundColor.toArgb()
@@ -151,12 +156,18 @@ fun Board(
         }
         // number font width
         var width by remember { mutableStateOf(textPaint.measureText("1")) }
+        var noteWidth by remember { mutableStateOf(notePaint.measureText("1")) }
 
         val context = LocalContext.current
-        LaunchedEffect(mainTextSize) {
+        LaunchedEffect(mainTextSize, noteTextSize) {
             fontSizePx = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP,
                 mainTextSize.value,
+                context.resources.displayMetrics
+            )
+            noteSizePx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                noteTextSize.value,
                 context.resources.displayMetrics
             )
             textPaint = Paint().apply {
@@ -164,19 +175,24 @@ fun Board(
                 isAntiAlias = true
                 textSize = fontSizePx
             }
-            width = textPaint.measureText("1")
-
+            notePaint = Paint().apply {
+                color = foregroundColor.toArgb()
+                isAntiAlias = true
+                textSize = noteSizePx
+            }
             errorTextPaint = Paint().apply {
                 color = Color(230, 67, 83).toArgb()
                 isAntiAlias = true
                 textSize = fontSizePx
             }
-
             lockedTextPaint = Paint().apply {
                 color = altForegroundColor.toArgb()
                 isAntiAlias = true
                 textSize = fontSizePx
             }
+
+            width = textPaint.measureText("1")
+            noteWidth = notePaint.measureText("1")
         }
 
         var zoom by remember { mutableStateOf(1f) }
@@ -187,7 +203,7 @@ fun Board(
         }
         val boardModifier = Modifier
             .fillMaxSize()
-            .pointerInput(enabled, board) {
+            .pointerInput(key1 = enabled, key2 = board) {
                 detectTapGestures(
                     onTap = {
                         if (enabled) {
@@ -242,7 +258,7 @@ fun Board(
                 TransformOrigin(0f, 0f).also { transformOrigin = it }
             }
         Canvas(
-            modifier = if(zoomable) boardModifier.then(zoomModifier) else boardModifier
+            modifier = if (zoomable) boardModifier.then(zoomModifier) else boardModifier
         ) {
             if (selectedCell.row >= 0 && selectedCell.col >= 0) {
                 // current cell
@@ -305,7 +321,7 @@ fun Board(
             // frame field
             drawRoundRect(
                 color = foregroundColor.copy(alpha = 0.8f),
-                topLeft = Offset(0f, 0f),
+                topLeft = Offset.Zero,
                 size = Size(maxWidth, maxWidth),
                 cornerRadius = CornerRadius(15f, 15f),
                 style = Stroke(width = 8f)
@@ -356,7 +372,7 @@ fun Board(
                                 else -> textPaint
                             }
                             canvas.nativeCanvas.drawText(
-                                if (questions) "?" else board[i][j].value.toString(),
+                                if (questions) "?" else board[i][j].value.toString(16).uppercase(),
                                 board[i][j].col * cellSize + (cellSize - width) / 2f,
                                 (board[i][j].row * cellSize + cellSize) - (cellSize - textBounds.height()) / 2f,
                                 paint
@@ -370,26 +386,20 @@ fun Board(
             if (!notes.isNullOrEmpty() && !questions && renderNotes) {
                 val noteBounds = Rect()
                 notePaint.getTextBounds("1", 0, 1, noteBounds)
-                val noteWidthHalf = notePaint.measureText("1") / 2f
+                val noteWidthHalf = noteWidth / 2f
 
                 drawIntoCanvas { canvas ->
                     notes.forEach { note ->
-                        val widthOffset = when (note.value) {
-                            1, 4, 7 -> 0
-                            2, 5, 8 -> 1
-                            3, 6, 9 -> 2
-                            else -> 0
-                        }
-                        val heightOffset = when (note.value) {
-                            1, 2, 3 -> 0
-                            4, 5, 6 -> 1
-                            7, 8, 9 -> 2
-                            else -> 0
-                        }
                         canvas.nativeCanvas.drawText(
-                            note.value.toString(),
-                            note.col * cellSize + cellSizeDiv / 2f + (cellSizeDiv * widthOffset) - noteWidthHalf,
-                            note.row * cellSize + cellSizeDiv / 2f + (cellSizeDiv * heightOffset) + noteBounds.height() / 2f,
+                            note.value.toString(16).uppercase(),
+                            note.col * cellSize + cellSizeDivWidth / 2f + (cellSizeDivWidth * getNoteRowNumber(
+                                note.value,
+                                size
+                            )) - noteWidthHalf,
+                            note.row * cellSize + cellSizeDivHeight / 2f + (cellSizeDivHeight * getNoteColumnNumber(
+                                note.value,
+                                size
+                            )) + noteBounds.height() / 2f,
                             notePaint
                         )
                     }
@@ -397,6 +407,45 @@ fun Board(
             }
         }
     }
+}
+
+private fun getNoteColumnNumber(number: Int, size: Int): Int {
+    if (size == 9 || size == 6) {
+        return when (number) {
+            1, 2, 3 -> 0
+            4, 5, 6 -> 1
+            7, 8, 9 -> 2
+            else -> 0
+        }
+    } else if (size == 12) {
+        return when (number) {
+            1, 2, 3, 4 -> 0
+            5, 6, 7, 8 -> 1
+            9, 10, 11, 12 -> 2
+            else -> 0
+        }
+    }
+    return 0
+}
+
+private fun getNoteRowNumber(number: Int, size: Int): Int {
+    if (size == 9 || size == 6) {
+        return when (number) {
+            1, 4, 7 -> 0
+            2, 5, 8 -> 1
+            3, 6, 9 -> 2
+            else -> 0
+        }
+    } else if (size == 12) {
+        return when (number) {
+            1, 5, 9 -> 0
+            2, 6, 10 -> 1
+            3, 7, 11 -> 2
+            4, 8, 12 -> 3
+            else -> 0
+        }
+    }
+    return 0
 }
 
 @LightDarkPreview
