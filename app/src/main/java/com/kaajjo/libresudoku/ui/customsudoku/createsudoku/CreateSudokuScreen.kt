@@ -146,10 +146,9 @@ fun CreateSudokuScreen(
                     viewModel.getFontSize(factor = fontSizeFactor)
                 )
             }
-            LaunchedEffect(fontSizeFactor) {
+            LaunchedEffect(fontSizeFactor, viewModel.gameType) {
                 fontSizeValue = viewModel.getFontSize(factor = fontSizeFactor)
             }
-
             Board(
                 modifier = Modifier.padding(vertical = 12.dp),
                 board = viewModel.gameBoard,
