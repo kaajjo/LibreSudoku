@@ -9,6 +9,7 @@ import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.QQWingController
+import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.database.repository.BoardRepository
 import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
@@ -53,7 +54,8 @@ class HomeViewModel
 
     private val types = listOf(
         GameType.Default9x9,
-        GameType.Default6x6
+        GameType.Default6x6,
+        GameType.Default12x12
     )
     var selectedType by mutableStateOf(types.first())
 
@@ -114,17 +116,20 @@ class HomeViewModel
     }
 
     suspend fun saveToDatabase() {
-        var boardToSave = ""
-        var solvedBoardToSave = ""
-        for(i in board.indices) {
-            boardToSave += board[i].toString()
-            solvedBoardToSave += solvedBoard[i].toString()
+        val sudokuParser = SudokuParser()
+        val newBoard = List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
+        val newSolvedBoard = List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
+        for(i in 0 until selectedType.size) {
+            for(j in 0 until selectedType.size) {
+                newBoard[i][j].value = board[j + selectedType.size * i]
+                newSolvedBoard[i][j].value = solvedBoard[j + selectedType.size * i]
+            }
         }
         insertedBoardUid = boardRepository.insert(
             SudokuBoard(
                 uid = 0,
-                initialBoard = boardToSave,
-                solvedBoard = solvedBoardToSave,
+                initialBoard = sudokuParser.boardToString(newBoard),
+                solvedBoard = sudokuParser.boardToString(newSolvedBoard),
                 difficulty = selectedDifficulty,
                 type = selectedType
             )
