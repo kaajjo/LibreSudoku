@@ -19,15 +19,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
-import com.kaajjo.libresudoku.core.qqwing.GameType
-import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
+import com.kaajjo.libresudoku.ui.components.board.Board
 import kotlinx.coroutines.launch
 import kotlin.time.toKotlinDuration
 
@@ -83,7 +81,7 @@ fun SavedGameScreen(
         LaunchedEffect(key1 = Unit) {
             viewModel.updateGame()
         }
-        if(viewModel.savedGame != null && viewModel.boardEntity != null &&
+        if (viewModel.savedGame != null && viewModel.boardEntity != null &&
             viewModel.parsedCurrentBoard.isNotEmpty() && viewModel.parsedInitialBoard.isNotEmpty()
         ) {
             Column(
@@ -91,9 +89,20 @@ fun SavedGameScreen(
                     .padding(innerPadding)
                     .fillMaxWidth()
             ) {
-                val fontSize by remember { mutableStateOf(if(viewModel.boardEntity!!.type == GameType.Default6x6) 34.sp else 28.sp) }
+                val fontSizeFactor by viewModel.fontSize.collectAsState(initial = 1)
+                var fontSizeValue by remember {
+                    mutableStateOf(
+                        viewModel.getFontSize(factor = fontSizeFactor)
+                    )
+                }
+                LaunchedEffect(fontSizeFactor) {
+                    fontSizeValue = viewModel.getFontSize(fontSizeFactor)
+                }
                 val pagerState = rememberPagerState()
-                val pages = listOf(stringResource(R.string.saved_game_current), stringResource(R.string.saved_game_initial))
+                val pages = listOf(
+                    stringResource(R.string.saved_game_current),
+                    stringResource(R.string.saved_game_initial)
+                )
                 TabRow(selectedTabIndex = pagerState.currentPage) {
                     pages.forEachIndexed { index, title ->
                         val coroutineScope = rememberCoroutineScope()
@@ -104,7 +113,13 @@ fun SavedGameScreen(
                                     pagerState.animateScrollToPage(index, 0f)
                                 }
                             },
-                            text = { Text(text = title, maxLines = 2, overflow = TextOverflow.Ellipsis) }
+                            text = {
+                                Text(
+                                    text = title,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         )
                     }
                 }
@@ -129,20 +144,21 @@ fun SavedGameScreen(
                             .wrapContentHeight()
                             .padding(top = 8.dp)
                     ) { page ->
-                        when(page) {
+                        when (page) {
                             0 -> Board(
                                 board = viewModel.parsedCurrentBoard,
                                 notes = viewModel.notes,
                                 modifier = boardModifier,
-                                mainTextSize = fontSize,
-                                selectedCell = Cell(-1,-1) ,
+                                mainTextSize = fontSizeValue,
+                                selectedCell = Cell(-1, -1),
                                 onClick = { }
                             )
+
                             1 -> Board(
                                 board = viewModel.parsedInitialBoard,
                                 modifier = boardModifier,
-                                mainTextSize = fontSize,
-                                selectedCell = Cell(-1,-1),
+                                mainTextSize = fontSizeValue,
+                                selectedCell = Cell(-1, -1),
                                 onClick = { }
                             )
                         }
@@ -163,7 +179,11 @@ fun SavedGameScreen(
                     }
                     val textStyle = MaterialTheme.typography.bodyLarge
                     Text(
-                        text = stringResource(R.string.saved_game_progress, progress.second, progress.first) ,
+                        text = stringResource(
+                            R.string.saved_game_progress,
+                            progress.second,
+                            progress.first
+                        ),
                         style = textStyle
                     )
                     Text(
@@ -192,13 +212,14 @@ fun SavedGameScreen(
                     )
                     Text(
                         text = stringResource(R.string.saved_game_time,
-                            viewModel.savedGame!!.timer.toKotlinDuration().toComponents { minutes, seconds, _ ->
-                                String.format(" %02d:%02d", minutes, seconds)
-                            }
+                            viewModel.savedGame!!.timer.toKotlinDuration()
+                                .toComponents { minutes, seconds, _ ->
+                                    String.format(" %02d:%02d", minutes, seconds)
+                                }
                         )
                     )
 
-                    if(viewModel.savedGame!!.canContinue) {
+                    if (viewModel.savedGame!!.canContinue) {
                         FilledTonalButton(
                             modifier = Modifier.align(Alignment.CenterHorizontally),
                             onClick = { navigatePlayGame(viewModel.savedGame!!.uid) }
@@ -211,18 +232,26 @@ fun SavedGameScreen(
         } else {
             EmptyScreen(stringResource(R.string.empty_screen_something_went_wrong))
         }
-        
-        if(viewModel.exportDialog) {
+
+        if (viewModel.exportDialog) {
             val context = LocalContext.current
             viewModel.boardEntity?.let {
                 ExportDialog(
                     onDismiss = { viewModel.exportDialog = false },
                     boardString = it.initialBoard.replace('0', '.'),
                     onClickCopy = {
-                        if(viewModel.copyBoardToClipboard(context)) {
-                            Toast.makeText(context, context.getString(R.string.export_string_state_copied), Toast.LENGTH_SHORT).show()
+                        if (viewModel.copyBoardToClipboard(context)) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.export_string_state_copied),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
-                            Toast.makeText(context, context.getString(R.string.export_string_state_error), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.export_string_state_error),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 )

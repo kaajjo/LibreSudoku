@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import com.kaajjo.libresudoku.R
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,12 +20,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
-import com.kaajjo.libresudoku.ui.components.HelpCard
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
+import com.kaajjo.libresudoku.ui.components.HelpCard
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -46,7 +45,7 @@ fun StatisticsScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.statistics)) },
                 scrollBehavior = scrollBehavior,
-                actions =  {
+                actions = {
                     IconButton(onClick = navigateHistory) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_history_24),
@@ -82,13 +81,14 @@ fun StatisticsScreen(
             ChipRowType(
                 types = listOf(
                     Pair(GameType.Default9x9, stringResource(R.string.type_default_9x9)),
-                    Pair(GameType.Default6x6, stringResource(R.string.type_default_6x6))
+                    Pair(GameType.Default6x6, stringResource(R.string.type_default_6x6)),
+                    Pair(GameType.Default12x12, stringResource(R.string.type_default_12x12))
                 ),
                 selected = viewModel.selectedType,
                 onSelected = { viewModel.setType(it) }
             )
 
-            if(recordListState.value.isNotEmpty()) {
+            if (recordListState.value.isNotEmpty()) {
                 var averageTime by remember {
                     mutableStateOf(
                         DateUtils.formatElapsedTime(recordListState.value.sumOf { it.time.seconds } / recordListState.value.count())
@@ -100,8 +100,13 @@ fun StatisticsScreen(
                     )
                 }
                 LaunchedEffect(recordListState.value) {
-                    averageTime = DateUtils.formatElapsedTime(recordListState.value.sumOf { it.time.seconds } / recordListState.value.count())
-                    bestTime = DateUtils.formatElapsedTime(recordListState.value.first().time.seconds)
+                    averageTime = DateUtils.formatElapsedTime(
+                        recordListState.value
+                            .sumOf { it.time.seconds } / recordListState.value.count()
+                    )
+                    bestTime = DateUtils.formatElapsedTime(
+                        recordListState.value.first().time.seconds
+                    )
 
                 }
                 StatisticsSection(
@@ -112,13 +117,21 @@ fun StatisticsScreen(
                         listOf(stringResource(R.string.average_time), averageTime),
                     )
                 )
-                if(viewModel.selectedDifficulty == GameDifficulty.Unspecified) {
+                if (viewModel.selectedDifficulty == GameDifficulty.Unspecified) {
                     val context = LocalContext.current
-                    val gamesStarted by remember { mutableStateOf(savedGameList.value.count().toString()) }
-                    val gamesCompleted by remember { mutableStateOf(savedGameList.value.count { it.completed && !it.giveUp && !it.canContinue }.toString()) }
+                    val gamesStarted by remember {
+                        mutableStateOf(savedGameList.value.count().toString())
+                    }
+                    val gamesCompleted by remember {
+                        mutableStateOf(
+                            savedGameList.value
+                                .count { it.completed && !it.giveUp && !it.canContinue }
+                                .toString()
+                        )
+                    }
                     val winRate by remember {
                         mutableStateOf(
-                            if(savedGameList.value.isNotEmpty()) {
+                            if (savedGameList.value.isNotEmpty()) {
                                 context.getString(
                                     R.string.win_rate_percentage,
                                     viewModel.getWinRate(savedGameList.value).roundToInt()
@@ -136,9 +149,10 @@ fun StatisticsScreen(
                         )
                     )
 
-                    val currentStreak by remember { mutableStateOf(
-                        viewModel.getCurrentStreak(savedGameList.value).toString()
-                    )
+                    val currentStreak by remember {
+                        mutableStateOf(
+                            viewModel.getCurrentStreak(savedGameList.value).toString()
+                        )
                     }
                     val maxStreak by remember {
                         mutableStateOf(
@@ -168,13 +182,13 @@ fun StatisticsScreen(
                 StatsSectionName(
                     modifier = Modifier.padding(start = 12.dp, top = 12.dp),
                     title = stringResource(R.string.number_best_games, 5) +
-                            if(viewModel.selectedType != GameType.Unspecified && viewModel.selectedDifficulty != GameDifficulty.Unspecified
-                    ) {
-                        " ${stringResource(viewModel.selectedType.resName).lowercase()} " +
-                                stringResource(viewModel.selectedDifficulty.resName).lowercase()
-                    } else {
-                        ""
-                    },
+                            if (viewModel.selectedType != GameType.Unspecified && viewModel.selectedDifficulty != GameDifficulty.Unspecified
+                            ) {
+                                " ${stringResource(viewModel.selectedType.resName).lowercase()} " +
+                                        stringResource(viewModel.selectedDifficulty.resName).lowercase()
+                            } else {
+                                ""
+                            },
                     painter = painterResource(R.drawable.ic_outline_star_24)
                 )
                 Box(
@@ -198,7 +212,7 @@ fun StatisticsScreen(
                                 }
                             )
                         }
-                        if(viewModel.showDeleteDialog) {
+                        if (viewModel.showDeleteDialog) {
                             ShowDeleteDialog(
                                 onDismissRequest = { viewModel.showDeleteDialog = false },
                                 onConfirm = {
@@ -264,28 +278,6 @@ fun ShowDeleteDialog(
 }
 
 @Composable
-fun NoRecordsSection(
-    modifier: Modifier = Modifier,
-    supportText: String,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = "ಥ_ಥ",
-            style = MaterialTheme.typography.displayMedium,
-            modifier = Modifier.padding(top = 64.dp)
-        )
-        Text(
-            text = supportText,
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
 fun OverallStatistics(
     modifier: Modifier = Modifier,
     statsRow: List<List<String>>
@@ -320,15 +312,15 @@ fun StatisticsSection(
         ) {
             Column(
                 modifier = Modifier.padding(12.dp)
-            ){
+            ) {
 
-                statRows.forEachIndexed{ index, arr ->
+                statRows.forEachIndexed { index, arr ->
                     StatRow(
                         startText = arr[0],
                         endText = arr[1],
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
-                    if(index + 1 != statRows.size) {
+                    if (index + 1 != statRows.size) {
                         Divider(
                             modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colorScheme.outline
@@ -375,7 +367,7 @@ fun StatRow(
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
-    ){
+    ) {
         Text(
             text = startText,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f)
@@ -398,16 +390,16 @@ fun ChipRowType(
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ){
+    ) {
         items(types) { type ->
             val selectedColor by animateColorAsState(
-                targetValue = if(type.first == selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface
+                targetValue = if (type.first == selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface
             )
             ElevatedFilterChip(
                 modifier = Modifier.padding(horizontal = 2.dp),
                 selected = type.first == selected,
                 onClick = { onSelected(type.first) },
-                label = { Text(type.second)},
+                label = { Text(type.second) },
                 shape = RoundedCornerShape(16.dp),
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = selectedColor,
@@ -430,20 +422,24 @@ fun ChipRowDifficulty(
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ){
+    ) {
         itemsIndexed(items) { index, item ->
-            if(index == 0) {
+            if (index == 0) {
                 Spacer(modifier = Modifier.width(8.dp))
             }
             val selectedColor by animateColorAsState(
-                targetValue = if(selected == item) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface
+                targetValue = if (selected == item) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface
             )
             ElevatedFilterChip(
                 selected = selected == item,
                 onClick = { onSelected(item) },
                 label = {
                     Text(
-                        if (item != GameDifficulty.Unspecified) stringResource(item.resName) else stringResource(R.string.statistics_difficulty_filter_all)
+                        if (item != GameDifficulty.Unspecified) {
+                            stringResource(item.resName)
+                        } else {
+                            stringResource(R.string.statistics_difficulty_filter_all)
+                        }
                     )
                 },
                 shape = RoundedCornerShape(16.dp),
@@ -453,7 +449,7 @@ fun ChipRowDifficulty(
                 ),
                 elevation = FilterChipDefaults.elevatedFilterChipElevation(4.dp)
             )
-            if(index == items.size - 1) {
+            if (index == items.size - 1) {
                 Spacer(modifier = Modifier.width(8.dp))
             }
         }
@@ -488,7 +484,7 @@ fun RecordItem(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
-            ){
+            ) {
                 Text(
                     text = "$difficulty $type"
                 )
@@ -497,7 +493,7 @@ fun RecordItem(
                     text = stringResource(R.string.time) + ": ${DateUtils.formatElapsedTime(time.seconds)}"
                 )
             }
-            Row{
+            Row {
                 Text(
                     text = date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"))
                 )

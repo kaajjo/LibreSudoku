@@ -112,7 +112,7 @@ fun CreateSudokuScreen(
             ) {
                 Box {
                     var gameTypeMenuExpanded by remember { mutableStateOf(false) }
-                    val dropDownIconRotation by animateFloatAsState(if(gameTypeMenuExpanded) 180f else 0f)
+                    val dropDownIconRotation by animateFloatAsState(if (gameTypeMenuExpanded) 180f else 0f)
                     TextButton(onClick = { gameTypeMenuExpanded = !gameTypeMenuExpanded }) {
                         Text(stringResource(viewModel.gameType.resName))
                         Icon(
@@ -132,10 +132,10 @@ fun CreateSudokuScreen(
                 FilledTonalButton(
                     enabled = !viewModel.gameBoard.flatten().all { it.value == 0 },
                     onClick = {
-                        if(viewModel.saveGame()) {
+                        if (viewModel.saveGame()) {
                             navigateBack()
                         }
-                }) {
+                    }) {
                     Text(stringResource(R.string.create_save))
                 }
             }
@@ -146,11 +146,15 @@ fun CreateSudokuScreen(
                     viewModel.getFontSize(factor = fontSizeFactor)
                 )
             }
+
             LaunchedEffect(fontSizeFactor, viewModel.gameType) {
                 fontSizeValue = viewModel.getFontSize(factor = fontSizeFactor)
             }
+
             Board(
                 modifier = Modifier.padding(vertical = 12.dp),
+                size = viewModel.gameType.size,
+                mainTextSize = fontSizeValue,
                 board = viewModel.gameBoard,
                 selectedCell = viewModel.currCell,
                 onClick = { cell ->
@@ -197,7 +201,7 @@ fun CreateSudokuScreen(
                 )
             }
 
-            if(importStringDialog) {
+            if (importStringDialog) {
                 ImportStringSudokuDialog(
                     textValue = viewModel.importStringValue,
                     onTextChange = {
@@ -208,7 +212,7 @@ fun CreateSudokuScreen(
                     onConfirm = {
                         viewModel.setFromString(viewModel.importStringValue.trim()).also {
                             viewModel.importTextFieldError = !it
-                            if(it) {
+                            if (it) {
                                 importStringDialog = false
                                 viewModel.importStringValue = ""
                             }
@@ -216,7 +220,7 @@ fun CreateSudokuScreen(
                     },
                     onDismiss = { importStringDialog = false }
                 )
-            } else if(viewModel.multipleSolutionsDialog) {
+            } else if (viewModel.multipleSolutionsDialog) {
                 AlertDialog(
                     title = { Text(stringResource(R.string.create_incorrect_puzzle)) },
                     text = {
@@ -231,7 +235,7 @@ fun CreateSudokuScreen(
                         }
                     }
                 )
-            } else if(viewModel.noSolutionsDialog) {
+            } else if (viewModel.noSolutionsDialog) {
                 AlertDialog(
                     title = { Text(stringResource(R.string.create_incorrect_puzzle)) },
                     text = {
@@ -262,24 +266,21 @@ private fun GameTypeMenu(
             expanded = expanded,
             onDismissRequest = onDismissRequest
         ) {
-            DropdownMenuItem(
-                text = {
-                    Text(stringResource(R.string.type_default_9x9))
-                },
-                onClick = {
-                    onClick(GameType.Default9x9)
-                    onDismissRequest()
-                }
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(stringResource(R.string.type_default_6x6))
-                },
-                onClick = {
-                    onClick(GameType.Default6x6)
-                    onDismissRequest()
-                }
-            )
+            listOf(
+                GameType.Default9x9,
+                GameType.Default6x6,
+                GameType.Default12x12,
+            ).forEach {
+                DropdownMenuItem(
+                    text = {
+                        Text(stringResource(it.resName))
+                    },
+                    onClick = {
+                        onClick(it)
+                        onDismissRequest()
+                    }
+                )
+            }
         }
     }
 }

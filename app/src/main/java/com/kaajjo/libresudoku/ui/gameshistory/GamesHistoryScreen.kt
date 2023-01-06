@@ -51,9 +51,9 @@ import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
+import com.kaajjo.libresudoku.ui.components.AnimatedIconFilterChip
 import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
-import com.kaajjo.libresudoku.ui.components.AnimatedIconFilterChip
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import com.kaajjo.libresudoku.ui.customsudoku.GameStateFilter
 import kotlinx.coroutines.coroutineScope
@@ -227,6 +227,7 @@ fun GamesHistoryScreen(
                     listOf(
                         GameType.Default9x9,
                         GameType.Default6x6,
+                        GameType.Default12x12,
                     ).forEach {
                         AnimatedIconFilterChip(
                             selected = viewModel.filterGameTypes.contains(it),

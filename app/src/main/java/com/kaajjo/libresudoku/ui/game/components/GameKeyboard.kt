@@ -1,6 +1,7 @@
 package com.kaajjo.libresudoku.ui.game.components
 
 import android.view.HapticFeedbackConstants
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -9,7 +10,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,11 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 
@@ -39,7 +39,8 @@ fun KeyboardItem(
 ) {
     val mutableInteractionSource by remember { mutableStateOf(MutableInteractionSource()) }
     val color by animateColorAsState(
-        targetValue = if(selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else Color.Transparent)
+        targetValue = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else Color.Transparent
+    )
     val localView = LocalView.current
     Box(
         modifier = modifier
@@ -67,11 +68,11 @@ fun KeyboardItem(
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = number.toString(),
+                text = number.toString(16).uppercase(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
             )
-            if(remainingUses != null) {
+            if (remainingUses != null) {
                 Text(
                     text = remainingUses.toString(),
                     fontSize = 12.sp
@@ -93,34 +94,99 @@ fun DefaultGameKeyboard(
 ) {
     var numbers by remember { mutableStateOf((1..size).toList()) }
     LaunchedEffect(key1 = size) {
-        numbers =(1..size).toList()
+        numbers = (1..size).toList()
     }
 
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        numbers.forEach { number ->
-            val hide = remainingUses != null && (remainingUses.size > number && remainingUses[number - 1] <= 0)
-            KeyboardItem(
-                modifier = itemModifier
-                    .weight(1f)
-                    .alpha(if (hide) 0f else 1f),
-                number = number,
-                onClick = { if(!hide) { onClick(number) } },
-                onLongClick = { if(!hide) { onLongClick(number) } },
-                remainingUses = if(remainingUses != null && remainingUses.size >= number) {
-                    remainingUses[number - 1]
-                } else {
-                    null
-                },
-                selected = number == selected
-            )
+    Column {
+        if (size == GameType.Default12x12.size) {
+            // double-height keyboard only for 12x12
+            val chunkedNumbers = numbers.chunked(6)
+            if (chunkedNumbers.size == 2) {
+                chunkedNumbers.forEachIndexed { index, chunked ->
+                    AnimatedVisibility(
+                        visible =
+                        (remainingUses != null && remainingUses.chunked(6)[index].any { it > 0 }) ||
+                                remainingUses == null
+                    ) {
+                        KeyboardRow {
+                            chunked.forEach { number ->
+                                val hide =
+                                    remainingUses != null && (remainingUses.size > number && remainingUses[number - 1] <= 0)
+                                KeyboardItem(
+                                    modifier = itemModifier
+                                        .weight(1f)
+                                        .alpha(if (hide) 0f else 1f),
+                                    number = number,
+                                    onClick = {
+                                        if (!hide) {
+                                            onClick(number)
+                                        }
+                                    },
+                                    onLongClick = {
+                                        if (!hide) {
+                                            onLongClick(number)
+                                        }
+                                    },
+                                    remainingUses = if (remainingUses != null && remainingUses.size >= number) {
+                                        remainingUses[number - 1]
+                                    } else {
+                                        null
+                                    },
+                                    selected = number == selected
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            KeyboardRow(modifier = modifier) {
+                numbers.forEach { number ->
+                    val hide =
+                        remainingUses != null && (remainingUses.size > number && remainingUses[number - 1] <= 0)
+                    KeyboardItem(
+                        modifier = itemModifier
+                            .weight(1f)
+                            .alpha(if (hide) 0f else 1f),
+                        number = number,
+                        onClick = {
+                            if (!hide) {
+                                onClick(number)
+                            }
+                        },
+                        onLongClick = {
+                            if (!hide) {
+                                onLongClick(number)
+                            }
+                        },
+                        remainingUses = if (remainingUses != null && remainingUses.size >= number) {
+                            remainingUses[number - 1]
+                        } else {
+                            null
+                        },
+                        selected = number == selected
+                    )
+                }
+            }
         }
     }
 }
 
+@Composable
+private fun KeyboardRow(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        content()
+    }
+}
 
 
 @LightDarkPreview
@@ -152,6 +218,37 @@ private fun KeyboardItemPreview() {
                     onClick = { }
                 )
             }
+        }
+    }
+}
+
+
+@LightDarkPreview
+@Composable
+private fun KeyboardPreview9x9() {
+    LibreSudokuTheme {
+        Surface {
+            DefaultGameKeyboard(
+                onClick = { },
+                onLongClick = { },
+                size = 9,
+                remainingUses = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
+            )
+        }
+    }
+}
+
+@LightDarkPreview
+@Composable
+private fun KeyboardPreview12x12() {
+    LibreSudokuTheme {
+        Surface {
+            DefaultGameKeyboard(
+                onClick = { },
+                onLongClick = { },
+                size = 12,
+                remainingUses = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+            )
         }
     }
 }

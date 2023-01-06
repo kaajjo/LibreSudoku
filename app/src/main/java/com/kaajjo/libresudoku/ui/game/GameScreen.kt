@@ -31,6 +31,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
+import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
@@ -358,7 +359,8 @@ fun GameScreen(
                     positionLines = positionLines,
                     enabled = viewModel.gamePlaying && !viewModel.endGame,
                     questions = !(viewModel.gamePlaying || viewModel.endGame) && Build.VERSION.SDK_INT < Build.VERSION_CODES.R,
-                    renderNotes = renderNotes && !viewModel.showSolution
+                    renderNotes = renderNotes && !viewModel.showSolution,
+                    zoomable = viewModel.boardEntity.type == GameType.Default12x12
                 )
             }
 
