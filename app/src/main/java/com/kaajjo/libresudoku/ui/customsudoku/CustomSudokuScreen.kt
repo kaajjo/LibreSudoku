@@ -136,7 +136,11 @@ fun CustomSudokuScreen(
         ) {
             if (boards.isNotEmpty()) {
                 var filteredBoards by remember { mutableStateOf(viewModel.filterBoards(boards.toList())) }
-                LaunchedEffect(viewModel.currentFilter, boards) {
+                LaunchedEffect(
+                    viewModel.selectedGameStateFilter,
+                    viewModel.selectedGameTypeFilters,
+                    boards
+                ) {
                     filteredBoards = viewModel.filterBoards(boards.toList())
                 }
                 LazyColumn {
@@ -223,10 +227,31 @@ fun CustomSudokuScreen(
             ) {
                 enumValues<GameStateFilter>().forEach {
                     AnimatedIconFilterChip(
-                        selected = it == viewModel.currentFilter,
+                        selected = it == viewModel.selectedGameStateFilter,
                         label = stringResource(it.resName),
                         onClick = {
-                            viewModel.selectFilter(it)
+                            viewModel.selectGameStateFilter(it)
+                        }
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf(
+                    GameType.Default9x9,
+                    GameType.Default6x6,
+                    GameType.Default12x12,
+                ).forEach {
+                    AnimatedIconFilterChip(
+                        selected = viewModel.selectedGameTypeFilters.contains(it),
+                        label = stringResource(it.resName),
+                        onClick = {
+                            viewModel.selectGameTypeFilter(it)
                         }
                     )
                 }

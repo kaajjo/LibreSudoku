@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
+import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.database.repository.BoardRepository
@@ -29,7 +30,8 @@ class CustomSudokuViewModel @Inject constructor(
 
     val boards = boardRepository.getSavedGamesWithBoard(GameDifficulty.Custom)
 
-    var currentFilter by mutableStateOf(GameStateFilter.All)
+    var selectedGameStateFilter by mutableStateOf(GameStateFilter.All)
+    var selectedGameTypeFilters by mutableStateOf(emptyList<GameType>())
 
     @OptIn(ExperimentalMaterialApi::class)
     var drawerState: ModalBottomSheetState = ModalBottomSheetState(
@@ -69,7 +71,17 @@ class CustomSudokuViewModel @Inject constructor(
     }
 
     fun filterBoards(items: List<Pair<SudokuBoard, SavedGame?>>): List<Pair<SudokuBoard, SavedGame?>> {
-        return when (currentFilter) {
+        var result = items
+        result = applyGameStateFilter(result, selectedGameStateFilter)
+        result = applyGameTypeFilter(result, selectedGameTypeFilters)
+        return result
+    }
+
+    private fun applyGameStateFilter(
+        items: List<Pair<SudokuBoard, SavedGame?>>,
+        filter: GameStateFilter
+    ): List<Pair<SudokuBoard, SavedGame?>> {
+        return when (filter) {
             GameStateFilter.All -> items
             GameStateFilter.Completed -> items.filter {
                 it.second?.canContinue?.not() ?: false
@@ -85,8 +97,29 @@ class CustomSudokuViewModel @Inject constructor(
         }
     }
 
-    fun selectFilter(filter: GameStateFilter) {
-        currentFilter = filter
+    private fun applyGameTypeFilter(
+        items: List<Pair<SudokuBoard, SavedGame?>>,
+        filters: List<GameType>
+    ): List<Pair<SudokuBoard, SavedGame?>> {
+        return if (filters.isNotEmpty()) {
+            items.filter {
+                filters.contains(it.first.type)
+            }
+        } else {
+            items
+        }
+    }
+
+    fun selectGameStateFilter(filter: GameStateFilter) {
+        selectedGameStateFilter = filter
+    }
+
+    fun selectGameTypeFilter(gameType: GameType) {
+        selectedGameTypeFilters = if (!selectedGameTypeFilters.contains(gameType)) {
+            selectedGameTypeFilters + gameType
+        } else {
+            selectedGameTypeFilters - gameType
+        }
     }
 }
 
