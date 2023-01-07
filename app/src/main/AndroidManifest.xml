@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LibreSudoku"
         tools:targetApi="tiramisu"
-        android:localeConfig="@xml/locales_config">
+        android:localeConfig="@xml/locales_config"
+        android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
