@@ -1,0 +1,242 @@
+<resources>
+    <string name="app_name" translatable="false">LibreSudoku</string>
+    <string name="nav_bar_statistics">Statistiques</string>
+    <string name="nav_bar_home">Accueil</string>
+    <string name="nav_bar_more">Plus</string>
+    <string name="new_game">Nouveau jeu</string>
+    <string name="dialog_new_game">Jeu en cours</string>
+    <string name="dialog_new_game_text">Vous avez une partie inachevé, voulez-vous vraiment en commencer une nouvelle?</string>
+    <string name="dialog_new_game_positive">Démarrer une nouvelle partie</string>
+    <string name="action_cancel">Annuler</string>
+    <string name="action_confirm">Oui</string>
+    <string name="action_play">Jouer</string>
+    <string name="action_continue">Continuer</string>
+    <string name="action_delete">Supprimer</string>
+
+    <string name="difficulty_unspecified">Non spécifié</string>
+    <string name="difficulty_simple">Simple</string>
+    <string name="difficulty_easy">facile</string>
+    <string name="difficulty_moderate">Modéré</string>
+    <string name="difficulty_hard">Difficile</string>
+    <string name="difficulty_challenge">Challenge</string>
+    <string name="difficulty_custom">Personnalisé</string>
+
+    <string name="type_default_6x6">6x6</string>
+    <string name="type_default_9x9">9x9</string>
+    <string name="type_default_12x12">12x12</string>
+    <string name="type_unspecified">Non défini</string>
+
+    <string name="settings_title">Paramètres</string>
+    <string name="more_title">Plus</string>
+    <string name="about_title">À propos</string>
+
+    <string name="pref_appearance">Apparence</string>
+    <string name="pref_dark_theme">Thème sombre</string>
+    <string name="pref_dark_theme_follow">Identique au système</string>
+    <string name="pref_dark_theme_off">Non</string>
+    <string name="pref_dark_theme_on">Oui</string>
+
+    <string name="pref_board_font_size">Taille de la police du plateau</string>
+    <string name="pref_board_font_size_small">Petite</string>
+    <string name="pref_board_font_size_medium">Moyenne</string>
+    <string name="pref_board_font_size_large">Large</string>
+
+    <string name="pref_input">Méthode de saisie</string>
+    <string name="pref_input_cell_first">Cellule en premier</string>
+    <string name="pref_input_digit_first">Chiffre en premier</string>
+
+    <string name="pref_delete_stats">Supprimer toutes les statistiques</string>
+    <string name="pref_delete_stats_summ">Cette action supprimera toutes vos statistiques, vos parties sauvegardées et vos records. Cette action ne peut être annulée.</string>
+    <string name="action_deleted">Supprimé</string>
+
+    <string name="pref_app_theme">Thème de l\'application</string>
+
+    <string name="theme_dynamic">Dynamique</string>
+    <string name="theme_green">Vert</string>
+    <string name="theme_peach">Pêche</string>
+    <string name="theme_yellow">Jaune</string>
+    <string name="theme_lavender">Lavande</string>
+    <string name="theme_black_and_white">Noir et blanc</string>
+
+    <string name="pref_pure_black">Thème noir pur</string>
+    <string name="pref_gameplay">Jouabilité</string>
+
+    <string name="pref_mistakes_limit">Limite d\'erreurs</string>
+    <string name="pref_mistakes_limit_summ">3 erreurs et c\'est fini</string>
+
+    <string name="pref_disable_hints">Désactiver les conseils</string>
+    <string name="pref_disable_hints_summ">Vous n\'aimez pas les indices? Alors, supprimez-les!</string>
+
+    <string name="pref_show_timer">Afficher la minuterie</string>
+    <string name="pref_reset_timer">Remise à zéro de la minuterie lors de la réinitialisation du jeu</string>
+
+    <string name="pref_assistance">Assistance</string>
+    <string name="pref_mistakes_check">Vérification des erreurs</string>
+    <string name="pref_mistakes_check_off">Non</string>
+    <string name="pref_mistakes_check_violations">Violations des règles</string>
+    <string name="pref_mistakes_check_final">Avec solution finale</string>
+
+    <string name="pref_highlight_identical">Mise en surbrillance des nombres identiques</string>
+    <string name="pref_highlight_identical_summ">Lorsque vous sélectionnez un numéro sur le plateau, les cellules avec les mêmes nombres seront mises en surbrillance</string>
+
+    <string name="pref_remaining_uses">Utilisations restantes</string>
+    <string name="pref_remaining_uses_summ">Le nombre d\'utilisations restantes du nombre sera affiché sur le clavier</string>
+
+    <string name="pref_position_lines">Lignes de positionnement</string>
+    <string name="pref_position_lines_summ">La ligne et la colonne de la cellule sélectionnée seront mises en surbrillance</string>
+
+    <string name="pref_auto_erase_notes">Effacement automatique des notes</string>
+
+    <string name="pref_other">Autre</string>
+    <string name="pref_keep_screen_on">Maintenir l\'écran allumé</string>
+
+    <string name="pref_reset_tipcards">Réinitialiser toutes les fiches de conseils</string>
+    <string name="pref_tipcards_reset">Les fiches de conseils ont été remises à zéro!</string>
+
+    <string name="pref_app_language">Langue de l\'application</string>
+    <string name="pref_app_language_default">Défaut</string>
+
+    <string name="about_version">Version</string>
+    <string name="about_github_project">Le projet sur GitHub</string>
+
+    <string name="action_give_up">Abandonner</string>
+    <string name="action_reset_game">Réinitialiser le jeu</string>
+    <string name="dialog_yes">Oui</string>
+    <string name="dialog_no">Non</string>
+
+    <string name="action_show_notes">Afficher les notes</string>
+    <string name="action_clear_notes">Effacer les notes</string>
+    <string name="action_compute_notes">Calculer les notes</string>
+    <string name="action_show_solution">Afficher la solution</string>
+    <string name="action_show_mine_sudoku">Afficher le mien</string>
+
+    <string name="onboard_title">Bienvenue</string>
+    <string name="intro_what_is_sudoku">Un sudoku classique ressemble à ceci</string>
+    <string name="intro_rules">Le but du jeu est de remplir toutes les cellules avec des nombres de 1 à 9. Pour que les nombres ne se répètent dans aucune colonne, ligne ou bloc plus petit (3x3)</string>
+    <string name="onboard_recommendation_prefs">Nous vous recommandons de visiter les paramètres afin que vous puissiez personnaliser l\'application</string>
+    <string name="action_start">Début</string>
+    <string name="toolbar_undo_description">Annuler. Annuler simplement</string>
+    <string name="toolbar_notes_description">Active le mode note (icone de crayon)</string>
+    <string name="toolbar_hint_description">Insère le nombre correct dans la cellule sélectionnée. Peut être désactivé dans les paramètres</string>
+    <string name="toolbar_erase_description">Supprime un nombre ou toutes les notes de la cellule sélectionnée</string>
+    <string name="first_game_dialog_title">Visite rapide</string>
+    <string name="first_game_dialog_got_it">J\'ai compris</string>
+    <string name="action_exit">Sortir</string>
+    <string name="action_stay">Rester</string>
+    <string name="mistakes_number_out_of">Erreurs %1$d/%2$d</string>
+    <string name="reset_game_text">Voulez-vous réinitialiser le puzzle actuel?</string>
+    <string name="give_up_text">Voulez-vous abandonner? Une fois que vous abandonnez, vous pouvez voir la solution, mais le jeu sera terminé.</string>
+    <string name="game_completed">Jeu terminé</string>
+    <string name="game_completed_text">Vous avez terminé le jeu. Vous pouvez rester ou le quitter vers l\'écran principal pour commencer une nouvelle partie</string>
+    <string name="game_over">Fin de la partie</string>
+    <string name="game_over_mistakes">Vous avez fait 3 erreurs</string>
+
+    <string name="dialog_generating">Génération en cours…</string>
+    <string name="dialog_solving">En cours de résolution…</string>
+
+    <string name="statistics">Statistiques</string>
+    <string name="games_started">Jeux commencés</string>
+    <string name="games_completed">Jeux terminés</string>
+    <string name="win_rate">Taux de réussite</string>
+    <string name="win_streak">Série de victoires</string>
+    <string name="current_streak">Série actuelle</string>
+    <string name="best_streak">Meilleure série</string>
+    <string name="number_best_games">%1$d meilleurs jeux</string>
+    <string name="games">Jeux</string>
+    <string name="time">Temps</string>
+    <string name="delete_question">Supprimer?</string>
+    <string name="delete_record_dialog">Voulez-vous supprimer votre enregistrement %1$d? Cela ne peut pas être annulé</string>
+    <string name="statistics_difficulty_filter_all">Tout</string>
+    <string name="average_time">Temps moyen</string>
+    <string name="best_time">Meilleur temps</string>
+    <string name="win_rate_percentage">%1$d%%</string>
+    <string name="tip_card_win_streak_summ">Une série de victoires est remise à zéro lorsque vous perdez (limite d\'erreurs), abandonnez ou commencez une nouvelle partie sans avoir terminé la précédente, alors faites attention</string>
+    <string name="tip_card_records_list_title">Liste des records</string>
+    <string name="tip_card_records_list_summ">Cette liste contient vos 5 meilleurs records, ou moins, en fonction du nombre de fois que vous avez joué. Vous pouvez supprimer des enregistrements que vous n\'aimez pas en appuyant longuement dessus</string>
+    <string name="statistics_no_records">Vous n\'avez pas encore de records</string>
+
+    <string name="history_title">Historique</string>
+    <string name="history_no_games">Vous n\'avez pas encore joué</string>
+    <string name="history_item_time">Temps: %1$s</string>
+    <string name="history_item_id">ID de jeu: %1$d</string>
+    <string name="history_item_can_continue">Vous pouvez continuer cette partie</string>
+
+    <string name="saved_game_screen_title">Partie sauvegardée</string>
+    <string name="saved_game_current">Actuel</string>
+    <string name="saved_game_initial">Initial</string>
+    <string name="saved_game_progress">Progrès %1$d/%2$d</string>
+    <string name="empty_screen_something_went_wrong">Oups, quelque chose s\'est mal passé…</string>
+    <string name="saved_game_difficulty">Difficulté: %1$s</string>
+    <string name="saved_game_type">Type: %1$s</string>
+    <string name="saved_game_time">Temps: %1$s</string>
+    <string name="saved_game_completed">La partie a été terminée</string>
+    <string name="saved_game_give_up">La partie n\'a pas été terminée, vous avez abandonné</string>
+    <string name="saved_game_in_progress">En cours</string>
+    <string name="saved_game_mistakes_limit">La partie n\'a pas été terminé, vous avez dépassé la limite d\'erreurs</string>
+
+    <string name="learn_screen_title">Découvrir</string>
+    <string name="learn_tab_sudoku">Sudoku</string>
+    <string name="learn_tab_app">App</string>
+    <string name="learn_app_toolbar">Barre d'outils</string>
+    <string name="learn_app_toolbar_desc">Un panneau situé sous le clavier</string>
+    <string name="learn_app_toolbar_notes_menu">Vous pouvez appuyer longuement sur le bouton Notes pour ouvrir le menu des notes, où vous pouvez effectuer des opérations telles que l\'effacement ou le calcul des notes et la modification de la visibilité des notes.</string>
+
+    <string name="learn_sudoku_rules">Règles du Sudoku</string>
+
+    <string name="sudoku_rules_mistakes">Il y a une erreur ici, pouvez-vous la repérer? Peut-être même deux</string>
+    <string name="sudoku_rules_mistakes_highlight">Mettre en évidence les erreurs</string>
+    <string name="sudoku_rules_mistakes_explanation">La première erreur est deux 2 dans le sixième bloc. Vous souvenez-vous de la règle selon laquelle il ne peut pas y avoir de numéros en double dans un bloc? La deuxième erreur est le chiffre 6 en ligne 2, colonne 8 (R2C8) car il y a déjà un 6 dans cette colonne en R5C8 (Row 5 Column 8)</string>
+    <string name="naked_pairs_title">Paires nues</string>
+    <string name="naked_pairs_explanation">Il y a deux cellules qui partagent les deux mêmes marques. Pour le moment, nous ne pouvons pas dire lequel est le 2 et lequel est le 3\nMais parce que les règles du Sudoku nous disent que chaque bloc n\'a qu\'un seul "2" et un seul "3", nous pouvons supposer que l\'un d'eux est le 2 et l\'autre est le 3</string>
+    <string name="naked_pairs_end">Maintenant, cela ne nous aiderait pas s\'il n\'y avait pas d\'autres marques "2" ou "3" dans ce bloc. Mais puisqu\'il y en a, on peut les supprimer! Les autres cellules du bloc ne peuvent pas être des "2" ou "3"</string>
+
+    <string name="learn_basic_title">Basique</string>
+    <string name="learn_basic_1">Choisissons le bloc numéro 7. Il y a déjà quatre cellules remplies ici</string>
+    <string name="learn_basic_2">Examinons maintenant le chiffre 8. Le chiffre 8 de la ligne 4, colonne 3 (R4C3), bloque toute la colonne de notre bloc. Donc le chiffre 8 ne peut pas rester là</string>
+    <string name="learn_basic_3">De plus, le chiffre 8 dans R7C5 bloque toute la rangée de notre bloc</string>
+    <string name="learn_basic_4">Et il ne nous reste qu'une seule cellule dans laquelle le chiffre 8 peut se trouver</string>
+    <string name="learn_basic_5">La même logique s'applique aux lignes et aux colonnes, regardez la première ligne. Ici, le chiffre 4 dans R7C3 bloque la troisième colonne de notre rangée. Le nombre 4 dans R3C5 bloque deux colonnes à la fois (4 et 6), car il ne peut y avoir d\'autres quatre dans le même bloc. R6C7 bloque la colonne numéro 7</string>
+    <string name="learn_basic_6">En conséquence, il ne nous reste qu\'une seule cellule dans laquelle le chiffre 4 peut figurer. C\'est la cellule R1C3</string>
+
+    <string name="learn_hidden_pairs_title">Paires cachées</string>
+    <string name="learn_hidden_pairs_1">Les paires cachées sont presque les mêmes que les paires nues, la seule différence étant qu\'elles sont cachées parmi les autres. Ces deux cellules ont quelque chose en commun, à savoir qu\'elles peuvent contenir les chiffres 6 et 9, et ce sont les deux seules cases ici où elles peuvent figurer</string>
+    <string name="learn_hidden_pairs_2">De cela, vous pouvez conclure que ces deux cellules ne contiendront que ces deux chiffres, et pas d\'autres. Vous pouvez donc supprimer les marques inutiles de ces cellules. Comme pour les paires nues, cela fonctionne avec les colonnes et les lignes de la même manière</string>
+    <string name="page_previous">Précédent</string>
+    <string name="page_next">Suivant</string>
+    <string name="no_value_default" translatable="false">--</string>
+
+    <string name="libraries_licenses_title">Licences open source</string>
+    <string name="can_continue_label">Peut continuer</string>
+    <string name="custom_sudoku_title">Sudoku personnalisé</string>
+    <string name="create_sudoku_title">Créer un sudoku</string>
+    <string name="create_set_from_string">Définir à partir d\'une chaîne</string>
+    <string name="dialog_ok">OK</string>
+    <string name="create_save">Sauver</string>
+    <string name="create_from_string_text">Entrez un casse-tête sous forme de chaîne. Les cellules vides sont indiquées par . ou 0</string>
+    <string name="create_from_string_hint">Casse-tête</string>
+    <string name="create_incorrect_puzzle">Casse-tête incorrect</string>
+    <string name="multiple_solution_text">Ce puzzle a des solutions multiples. Le casse-tête sudoku correct doit avoir une unique solution</string>
+    <string name="no_solution_text">Ce casse-tête n\'a pas de solution</string>
+    <string name="create_import_set">Définir</string>
+    <string name="custom_sudoku_no_added">Vous n\'avez pas encore ajouté de sudoku</string>
+    <string name="custom_sudoku_delete_dialog_title">Supprimer la sélection</string>
+    <string name="custom_sudoku_delete_dialog_text">Voulez-vous vraiment supprimer les sudokus sélectionnés? Cette action ne peut pas être annulée</string>
+    <string name="game_not_started">Non commencé</string>
+    <string name="export_string_text">Sélectionnez le texte du champ texte ou cliquez simplement sur le bouton Copier</string>
+    <string name="export_string_title">Exportation en tant que chaîne de caractères</string>
+    <string name="export_string_copy">Copie</string>
+    <string name="export_string_state_copied">Copié</string>
+    <string name="export_string_state_error">Erreur</string>
+
+    <string name="filter_all">Tout</string>
+    <string name="filter_completed">Complété</string>
+    <string name="filter_in_progress">En cours</string>
+    <string name="filter_not_started">Non commencé</string>
+
+    <string name="sort_ascending">Ascendant</string>
+    <string name="sort_descending">Descendant</string>
+    <string name="sort_by_timer">Minuterie</string>
+    <string name="sort_by_game_id">ID</string>
+    <string name="sort_label">Trier</string>
+    <string name="filter_label">Filtre</string>
+</resources>
