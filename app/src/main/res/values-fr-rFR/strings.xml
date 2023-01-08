@@ -194,8 +194,8 @@
     <string name="learn_basic_1">Choisissons le bloc numéro 7. Il y a déjà quatre cellules remplies ici</string>
     <string name="learn_basic_2">Examinons maintenant le chiffre 8. Le chiffre 8 de la ligne 4, colonne 3 (R4C3), bloque toute la colonne de notre bloc. Donc le chiffre 8 ne peut pas rester là</string>
     <string name="learn_basic_3">De plus, le chiffre 8 dans R7C5 bloque toute la rangée de notre bloc</string>
-    <string name="learn_basic_4">Et il ne nous reste qu'une seule cellule dans laquelle le chiffre 8 peut se trouver</string>
-    <string name="learn_basic_5">La même logique s'applique aux lignes et aux colonnes, regardez la première ligne. Ici, le chiffre 4 dans R7C3 bloque la troisième colonne de notre rangée. Le nombre 4 dans R3C5 bloque deux colonnes à la fois (4 et 6), car il ne peut y avoir d\'autres quatre dans le même bloc. R6C7 bloque la colonne numéro 7</string>
+    <string name="learn_basic_4">Et il ne nous reste qu\'une seule cellule dans laquelle le chiffre 8 peut se trouver</string>
+    <string name="learn_basic_5">La même logique s\'applique aux lignes et aux colonnes, regardez la première ligne. Ici, le chiffre 4 dans R7C3 bloque la troisième colonne de notre rangée. Le nombre 4 dans R3C5 bloque deux colonnes à la fois (4 et 6), car il ne peut y avoir d\'autres quatre dans le même bloc. R6C7 bloque la colonne numéro 7</string>
     <string name="learn_basic_6">En conséquence, il ne nous reste qu\'une seule cellule dans laquelle le chiffre 4 peut figurer. C\'est la cellule R1C3</string>
 
     <string name="learn_hidden_pairs_title">Paires cachées</string>
@@ -212,7 +212,7 @@
     <string name="create_set_from_string">Définir à partir d\'une chaîne</string>
     <string name="dialog_ok">OK</string>
     <string name="create_save">Sauver</string>
-    <string name="create_from_string_text">Entrez un casse-tête sous forme de chaîne. Les cellules vides sont indiquées par . ou 0</string>
+    <string name="create_from_string_text">Entrez un casse-tête sous forme de chaîne. Les cellules vides sont indiquées par un "." ou un "0"</string>
     <string name="create_from_string_hint">Casse-tête</string>
     <string name="create_incorrect_puzzle">Casse-tête incorrect</string>
     <string name="multiple_solution_text">Ce puzzle a des solutions multiples. Le casse-tête sudoku correct doit avoir une unique solution</string>
