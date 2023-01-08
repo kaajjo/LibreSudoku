@@ -177,7 +177,7 @@
     <string name="learn_screen_title">Découvrir</string>
     <string name="learn_tab_sudoku">Sudoku</string>
     <string name="learn_tab_app">App</string>
-    <string name="learn_app_toolbar">Barre d'outils</string>
+    <string name="learn_app_toolbar">Barre d\'outils</string>
     <string name="learn_app_toolbar_desc">Un panneau situé sous le clavier</string>
     <string name="learn_app_toolbar_notes_menu">Vous pouvez appuyer longuement sur le bouton Notes pour ouvrir le menu des notes, où vous pouvez effectuer des opérations telles que l\'effacement ou le calcul des notes et la modification de la visibilité des notes.</string>
 
