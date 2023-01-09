@@ -15,7 +15,7 @@
 
     <string name="difficulty_unspecified">Non spécifié</string>
     <string name="difficulty_simple">Simple</string>
-    <string name="difficulty_easy">facile</string>
+    <string name="difficulty_easy">Facile</string>
     <string name="difficulty_moderate">Modéré</string>
     <string name="difficulty_hard">Difficile</string>
     <string name="difficulty_challenge">Challenge</string>
@@ -187,7 +187,7 @@
     <string name="sudoku_rules_mistakes_highlight">Mettre en évidence les erreurs</string>
     <string name="sudoku_rules_mistakes_explanation">La première erreur est deux 2 dans le sixième bloc. Vous souvenez-vous de la règle selon laquelle il ne peut pas y avoir de numéros en double dans un bloc? La deuxième erreur est le chiffre 6 en ligne 2, colonne 8 (R2C8) car il y a déjà un 6 dans cette colonne en R5C8 (Row 5 Column 8)</string>
     <string name="naked_pairs_title">Paires nues</string>
-    <string name="naked_pairs_explanation">Il y a deux cellules qui partagent les deux mêmes marques. Pour le moment, nous ne pouvons pas dire lequel est le 2 et lequel est le 3\nMais parce que les règles du Sudoku nous disent que chaque bloc n\'a qu\'un seul "2" et un seul "3", nous pouvons supposer que l\'un d'eux est le 2 et l\'autre est le 3</string>
+    <string name="naked_pairs_explanation">Il y a deux cellules qui partagent les deux mêmes marques. Pour le moment, nous ne pouvons pas dire lequel est le 2 et lequel est le 3\nMais parce que les règles du Sudoku nous disent que chaque bloc n\'a qu\'un seul "2" et un seul "3", nous pouvons supposer que l\'un d\'eux est le 2 et l\'autre est le 3</string>
     <string name="naked_pairs_end">Maintenant, cela ne nous aiderait pas s\'il n\'y avait pas d\'autres marques "2" ou "3" dans ce bloc. Mais puisqu\'il y en a, on peut les supprimer! Les autres cellules du bloc ne peuvent pas être des "2" ou "3"</string>
 
     <string name="learn_basic_title">Basique</string>
