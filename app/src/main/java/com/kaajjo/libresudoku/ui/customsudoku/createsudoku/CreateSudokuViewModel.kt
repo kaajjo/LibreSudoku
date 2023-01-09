@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.Cell
+import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.QQWingController
@@ -20,6 +21,8 @@ import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -30,7 +33,13 @@ class CreateSudokuViewModel @Inject constructor(
     private val boardRepository: BoardRepository
 ) : ViewModel() {
     val highlightIdentical = appSettingsManager.highlightIdentical
-    val inputMethod = appSettingsManager.inputMethod
+    private val inputMethod = appSettingsManager.inputMethod
+        .stateIn(
+            viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = PreferencesConstants.DEFAULT_INPUT_METHOD
+        )
+
     val fontSize = appSettingsManager.fontSize
 
     var multipleSolutionsDialog by mutableStateOf(false)
@@ -52,11 +61,10 @@ class CreateSudokuViewModel @Inject constructor(
     private fun getBoardNoRef(): List<List<Cell>> =
         gameBoard.map { items -> items.map { item -> item.copy() } }
 
-    fun getFontSize(type: GameType = gameType, factor: Int): TextUnit {
-        return sudokuUtils.getFontSize(type, factor)
-    }
+    fun getFontSize(type: GameType = gameType, factor: Int): TextUnit =
+        sudokuUtils.getFontSize(type, factor)
 
-    fun processInput(inputMethod: Int, cell: Cell): Boolean {
+    fun processInput(cell: Cell): Boolean {
         currCell =
             if (currCell.row == cell.row && currCell.col == cell.col && digitFirstNumber == 0) {
                 Cell(-1, -1)
@@ -65,7 +73,7 @@ class CreateSudokuViewModel @Inject constructor(
             }
 
         return if (currCell.row >= 0 && currCell.col >= 0) {
-            if ((inputMethod == 1 || overrideInputMethodDF) && digitFirstNumber > 0) {
+            if ((inputMethod.value == 1 || overrideInputMethodDF) && digitFirstNumber > 0) {
                 processNumberInput(digitFirstNumber)
                 undoManager.addState(GameState(getBoardNoRef(), emptyList()))
             }
@@ -75,19 +83,19 @@ class CreateSudokuViewModel @Inject constructor(
         }
     }
 
-    fun processInputKeyboard(number: Int, inputMethod: Int, longTap: Boolean = false) {
+    fun processInputKeyboard(number: Int, longTap: Boolean = false) {
         if (!longTap) {
-            if (inputMethod == 0) {
+            if (inputMethod.value == 0) {
                 overrideInputMethodDF = false
                 digitFirstNumber = 0
                 processNumberInput(number)
                 undoManager.addState(GameState(getBoardNoRef(), emptyList()))
-            } else if (inputMethod == 1) {
+            } else if (inputMethod.value == 1) {
                 digitFirstNumber = if (digitFirstNumber == number) 0 else number
                 currCell = Cell(-1, -1, digitFirstNumber)
             }
         } else {
-            if (inputMethod == 0) {
+            if (inputMethod.value == 0) {
                 overrideInputMethodDF = true
                 digitFirstNumber = if (digitFirstNumber == number) 0 else number
                 currCell = Cell(-1, -1, digitFirstNumber)

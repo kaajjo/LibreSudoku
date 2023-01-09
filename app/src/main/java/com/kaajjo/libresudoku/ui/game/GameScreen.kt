@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -31,6 +30,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
+import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
@@ -45,6 +45,8 @@ fun GameScreen(
     navigateSettings: () -> Unit,
     viewModel: GameViewModel
 ) {
+    val localView = LocalView.current // vibration
+
     val firstGame by viewModel.firstGame.collectAsState(initial = false)
     if(firstGame) {
         viewModel.pauseTimer()
@@ -55,7 +57,7 @@ fun GameScreen(
             }
         )
     }
-    val keepScreenOn by viewModel.keepScreenOn.collectAsState(initial = false)
+    val keepScreenOn by viewModel.keepScreenOn.collectAsState(initial = PreferencesConstants.DEFAULT_KEEP_SCREEN_ON)
     if(keepScreenOn) {
         KeepScreenOn()
     }
@@ -79,12 +81,16 @@ fun GameScreen(
         targetValue = restartButtonAngleState,
         animationSpec = tween(durationMillis = 250)
     )
+
     LaunchedEffect(Unit) {
         if(!viewModel.endGame && !viewModel.gameCompleted) {
             viewModel.startTimer()
         }
     }
-    val resetTimer by viewModel.resetTimerOnRestart.collectAsState(initial = true)
+
+    val resetTimer by viewModel.resetTimerOnRestart.collectAsState(initial = PreferencesConstants.DEFAULT_GAME_RESET_TIMER)
+
+    // dialogs
     if(viewModel.restartDialog) {
         viewModel.pauseTimer()
         AlertDialog(
@@ -185,15 +191,17 @@ fun GameScreen(
             },
         )
     }
+
     LaunchedEffect(viewModel.gameCompleted) {
         if(viewModel.gameCompleted) {
             viewModel.onGameComplete()
         }
     }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("") },
+                title = { },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
@@ -282,7 +290,7 @@ fun GameScreen(
                 .padding(scaffoldPadding)
                 .padding(start = 12.dp, end = 12.dp, top = 48.dp)
         ) {
-            val errorHighlight by viewModel.mistakesMethod.collectAsState(initial = 1)
+            val errorHighlight by viewModel.mistakesMethod.collectAsState(initial = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES)
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -291,33 +299,31 @@ fun GameScreen(
             ){
                 TopBoardSection(stringResource(viewModel.boardEntity.difficulty.resName))
 
-                val mistakesLimit = viewModel.mistakesLimit.collectAsState(initial = false)
-                if(mistakesLimit.value && errorHighlight != 0) {
+                val mistakesLimit by viewModel.mistakesLimit.collectAsState(initial = PreferencesConstants.DEFAULT_MISTAKES_LIMIT)
+                if(mistakesLimit && errorHighlight != 0) {
                     TopBoardSection(stringResource(R.string.mistakes_number_out_of, viewModel.mistakesCount, 3))
                 }
 
-                val timerEnabled = viewModel.timerEnabled.collectAsState(initial = false)
-                if(timerEnabled.value) {
+                val timerEnabled by viewModel.timerEnabled.collectAsState(initial = PreferencesConstants.DEFAULT_SHOW_TIMER)
+                if(timerEnabled) {
                     TopBoardSection(viewModel.timeText)
                 }
             }
 
             var renderNotes by remember { mutableStateOf(true) }
-            val inputMethod = viewModel.inputMethod.collectAsState(initial = 1)
-            val configuration = LocalConfiguration.current
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(configuration.screenWidthDp.dp)
                     .padding(vertical = 12.dp)
             ) {
-                val remainingUse by viewModel.remainingUse.collectAsState(initial = true)
-                val highlightIdentical by viewModel.identicalHighlight.collectAsState(initial = true)
-                val positionLines by viewModel.positionLines.collectAsState(initial = true)
+                val remainingUse by viewModel.remainingUse.collectAsState(initial = PreferencesConstants.DEFAULT_REMAINING_USES)
+                val highlightIdentical by viewModel.identicalHighlight.collectAsState(initial = PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL)
+                val positionLines by viewModel.positionLines.collectAsState(initial = PreferencesConstants.DEFAULT_POSITION_LINES)
                 val boardBlur by animateDpAsState(targetValue = if(viewModel.gamePlaying || viewModel.endGame) 0.dp else 10.dp)
                 val scale by animateFloatAsState(targetValue = if(viewModel.gamePlaying || viewModel.endGame) 1f else 0.90f)
 
-                val fontSizeFactor by viewModel.fontSize.collectAsState(initial = 1)
+                val fontSizeFactor by viewModel.fontSize.collectAsState(initial = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
                 var fontSizeValue by remember {
                     mutableStateOf(
                         viewModel.getFontSize(factor = fontSizeFactor)
@@ -327,7 +333,6 @@ fun GameScreen(
                     fontSizeValue = viewModel.getFontSize(factor = fontSizeFactor)
                 }
 
-                val localView = LocalView.current // vibration
                 Board(
                     modifier = Modifier
                         .blur(boardBlur)
@@ -339,14 +344,12 @@ fun GameScreen(
                     selectedCell = viewModel.currCell,
                     onClick = { cell ->
                         viewModel.processInput(
-                            inputMethod = inputMethod.value,
                             cell = cell,
                             remainingUse = remainingUse,
                         )
                     },
                     onLongClick = { cell ->
                         if(viewModel.processInput(
-                                inputMethod = inputMethod.value,
                                 cell = cell,
                                 remainingUse = remainingUse,
                                 longTap = true
@@ -365,20 +368,16 @@ fun GameScreen(
             }
 
             AnimatedVisibility(visible = !viewModel.endGame) {
-                val remainingUse = viewModel.remainingUse.collectAsState(initial = true)
+                val remainingUse by viewModel.remainingUse.collectAsState(initial = PreferencesConstants.DEFAULT_REMAINING_USES)
                 DefaultGameKeyboard(
                     size = viewModel.size,
-                    remainingUses = if(remainingUse.value) viewModel.remainingUsesList else null,
+                    remainingUses = if(remainingUse) viewModel.remainingUsesList else null,
                     onClick = {
-                        viewModel.processInputKeyboard(
-                            number = it,
-                            inputMethod = inputMethod.value
-                        )
+                        viewModel.processInputKeyboard(number = it)
                     },
                     onLongClick = {
                         viewModel.processInputKeyboard(
                             number = it,
-                            inputMethod = inputMethod.value,
                             longTap = true
                         )
                     },
@@ -394,8 +393,8 @@ fun GameScreen(
                     painter = painterResource(R.drawable.ic_round_undo_24),
                     onClick = { viewModel.toolbarClick(ToolBarItem.Undo) }
                 )
-                val hintsDisabled = viewModel.disableHints.collectAsState(initial = false)
-                if (!hintsDisabled.value) {
+                val hintsDisabled by viewModel.disableHints.collectAsState(initial = PreferencesConstants.DEFAULT_HINTS_DISABLED)
+                if (!hintsDisabled) {
                     ToolbarItem(
                         modifier = Modifier.weight(1f),
                         painter = painterResource(R.drawable.ic_lightbulb_stars_24),
@@ -406,7 +405,6 @@ fun GameScreen(
                 Box(
                     modifier = Modifier.weight(1f)
                 ) {
-                    val localView = LocalView.current
                     NotesMenu(
                         expanded = viewModel.showNotesMenu,
                         onDismiss = { viewModel.showNotesMenu = false },

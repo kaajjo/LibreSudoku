@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.kaajjo.libresudoku.core.PreferencesConstants
 import kotlinx.coroutines.flow.map
 import javax.inject.Singleton
 
@@ -59,7 +60,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val mistakesLimit = dataStore.data.map { preferences ->
-        preferences[mistakesLimitKey] ?: false
+        preferences[mistakesLimitKey] ?: PreferencesConstants.DEFAULT_MISTAKES_LIMIT
     }
 
     suspend fun setHintsDisabled(disabled: Boolean) {
@@ -68,7 +69,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val hintsDisabled = dataStore.data.map { preferences ->
-        preferences[hintsDisabledKey] ?: false
+        preferences[hintsDisabledKey] ?: PreferencesConstants.DEFAULT_HINTS_DISABLED
     }
 
     suspend fun setTimer(enabled: Boolean) {
@@ -77,7 +78,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val timerEnabled = dataStore.data.map { preferences ->
-        preferences[timerKey] ?: true
+        preferences[timerKey] ?: PreferencesConstants.DEFAULT_SHOW_TIMER
     }
 
     suspend fun setResetTimer(enabled: Boolean) {
@@ -86,7 +87,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val resetTimerEnabled = dataStore.data.map { preferences ->
-        preferences[resetTimerKey] ?: true
+        preferences[resetTimerKey] ?: PreferencesConstants.DEFAULT_GAME_RESET_TIMER
     }
 
     suspend fun setHighlightMistakes(value: Int) {
@@ -95,7 +96,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val highlightMistakes = dataStore.data.map { preferences ->
-        preferences[highlightMistakesKey] ?: 1
+        preferences[highlightMistakesKey] ?: PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES
     }
 
     suspend fun setSameValuesHighlight(enabled: Boolean) {
@@ -104,7 +105,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val highlightIdentical = dataStore.data.map { preferences ->
-        preferences[highlightIdenticalKey] ?: true
+        preferences[highlightIdenticalKey] ?: PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL
     }
 
     suspend fun setRemainingUse(enabled: Boolean) {
@@ -113,7 +114,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val remainingUse = dataStore.data.map { preferences ->
-        preferences[remainingUseKey] ?: true
+        preferences[remainingUseKey] ?: PreferencesConstants.DEFAULT_REMAINING_USES
     }
 
     suspend fun setPositionLines(enabled: Boolean) {
@@ -122,7 +123,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val positionLines = dataStore.data.map { preferences ->
-        preferences[positionLinesKey] ?: true
+        preferences[positionLinesKey] ?: PreferencesConstants.DEFAULT_POSITION_LINES
     }
 
     suspend fun setAutoEraseNotes(enabled: Boolean) {
@@ -131,7 +132,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val autoEraseNotes = dataStore.data.map { preferences ->
-        preferences[autoEraseNotesKey] ?: true
+        preferences[autoEraseNotesKey] ?: PreferencesConstants.DEFAULT_AUTO_ERASE_NOTES
     }
 
     suspend fun setInputMethod(value: Int) {
@@ -140,7 +141,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val inputMethod = dataStore.data.map { preferences ->
-        preferences[inputMethodKey] ?: 1
+        preferences[inputMethodKey] ?: PreferencesConstants.DEFAULT_INPUT_METHOD
     }
 
     suspend fun setFontSize(value: Int) {
@@ -149,7 +150,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val fontSize = dataStore.data.map { preferences ->
-        preferences[fontSizeKey] ?: 1
+        preferences[fontSizeKey] ?: PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR
     }
 
     suspend fun setKeepScreenOn(enabled: Boolean) {
@@ -158,7 +159,7 @@ class AppSettingsManager(context: Context) {
         }
     }
     val keepScreenOn = dataStore.data.map { preferences ->
-        preferences[keepScreenOnKey] ?: false
+        preferences[keepScreenOnKey] ?: PreferencesConstants.DEFAULT_KEEP_SCREEN_ON
     }
 
     suspend fun setFirstGame(value: Boolean) {

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.ui.theme.AppTheme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.map
@@ -30,7 +31,7 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
         }
     }
     val dynamicColors = dataStore.data.map { preferences ->
-        preferences[dynamicColorsKey] ?: true
+        preferences[dynamicColorsKey] ?: PreferencesConstants.DEFAULT_DYNAMIC_COLORS
     }
 
     suspend fun setDarkTheme(value: Int) {
@@ -39,7 +40,7 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
         }
     }
     val darkTheme = dataStore.data.map { preferences ->
-        preferences[darkThemeKey] ?: 0
+        preferences[darkThemeKey] ?: PreferencesConstants.DEFAULT_DARK_THEME
     }
 
     suspend fun setAmoledBlack(enabled: Boolean) {
@@ -48,22 +49,22 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
         }
     }
     val amoledBlack = dataStore.data.map { preferences ->
-        preferences[amoledBlackKey] ?: false
+        preferences[amoledBlackKey] ?: PreferencesConstants.DEFAULT_AMOLED_BLACK
     }
 
     suspend fun setCurrentTheme(appTheme: AppTheme) {
         val stringTheme = when(appTheme) {
-            AppTheme.Green -> "green"
-            AppTheme.Pink -> "pink"
-            AppTheme.Yellow -> "yellow"
-            AppTheme.Lavender -> "lavender"
-            AppTheme.BlackAndWhite -> "black_and_white"
+            AppTheme.Green -> PreferencesConstants.GREEN_THEME_KEY
+            AppTheme.Peach -> PreferencesConstants.PEACH_THEME_KEY
+            AppTheme.Yellow -> PreferencesConstants.YELLOW_THEME_KEY
+            AppTheme.Lavender -> PreferencesConstants.LAVENDER_THEME_KEY
+            AppTheme.BlackAndWhite -> PreferencesConstants.BLACK_AND_WHITE_THEME_KEY
         }
         dataStore.edit { settings ->
             settings[currentThemeKey] = stringTheme
         }
     }
     val currentTheme = dataStore.data.map { preferences ->
-        preferences[currentThemeKey] ?: "green"
+        preferences[currentThemeKey] ?: PreferencesConstants.DEFAULT_SELECTED_THEME
     }
 }

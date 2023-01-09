@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
+import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.GameState
 import com.kaajjo.libresudoku.core.utils.SudokuParser
@@ -105,16 +106,13 @@ class GameViewModel @Inject constructor(
     val identicalHighlight = appSettingsManager.highlightIdentical
 
     // mistakes checking method
-    var mistakesMethod = appSettingsManager.highlightMistakes
-    private var mistakesMethodValue = mistakesMethod.stateIn(viewModelScope, SharingStarted.Eagerly, 1)
+    var mistakesMethod = appSettingsManager.highlightMistakes.stateIn(viewModelScope, SharingStarted.Eagerly, PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES)
 
     var positionLines = appSettingsManager.positionLines
 
-    var mistakesLimit = appSettingsManager.mistakesLimit
-    var mistakesLimitValue = mistakesLimit.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    var mistakesLimit = appSettingsManager.mistakesLimit.stateIn(viewModelScope, SharingStarted.Eagerly, PreferencesConstants.DEFAULT_MISTAKES_LIMIT)
 
-    private val autoEraseNotes = appSettingsManager.autoEraseNotes
-    private var autoEraseNotesValue = autoEraseNotes.stateIn(viewModelScope, SharingStarted.Eagerly, true)
+    private var autoEraseNotes = appSettingsManager.autoEraseNotes.stateIn(viewModelScope, SharingStarted.Eagerly, PreferencesConstants.DEFAULT_AUTO_ERASE_NOTES)
 
     var resetTimerOnRestart = appSettingsManager.resetTimerEnabled
 
@@ -141,9 +139,15 @@ class GameViewModel @Inject constructor(
 
     // Selected number for digit first method
     var digitFirstNumber by mutableStateOf(0)
-    val inputMethod = appSettingsManager.inputMethod
+    private val inputMethod = appSettingsManager.inputMethod
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = PreferencesConstants.DEFAULT_INPUT_METHOD
+        )
+
     // temporarily use digit first method when true
-    var overrideInputMethodDF by mutableStateOf(false)
+    private var overrideInputMethodDF by mutableStateOf(false)
 
     // show/hide solution (when give up)
     var showSolution by mutableStateOf(false)
@@ -189,7 +193,7 @@ class GameViewModel @Inject constructor(
             return new
         }
         // checking for mistakes
-        if(mistakesMethodValue.value == 1) {
+        if(mistakesMethod.value == 1) {
             // rule violations
             new[row][col].error = !sudokuUtils.isValidCellDynamic(new, new[row][col], boardEntity.type)
             new.forEach { cells ->
@@ -199,14 +203,14 @@ class GameViewModel @Inject constructor(
                     }
                 }
             }
-        } else if(mistakesMethodValue.value == 2) {
+        } else if(mistakesMethod.value == 2) {
             // check with final solution
             new = isValidCell(new, new[row][col])
         }
 
         currCell.error = currCell.value == 0
         // updating mistakes limit
-        if(mistakesLimitValue.value && new[row][col].error) {
+        if(mistakesLimit.value && new[row][col].error) {
             mistakesCount++
             if(mistakesCount >= 3) {
                 mistakesLimitDialog = true
@@ -218,7 +222,7 @@ class GameViewModel @Inject constructor(
 
         gameCompleted = isCompleted(new)
 
-        if(autoEraseNotesValue.value) {
+        if(autoEraseNotes.value) {
             notes = autoEraseNotes(new, currCell)
         }
 
@@ -233,13 +237,13 @@ class GameViewModel @Inject constructor(
         return uses
     }
 
-    fun processInput(inputMethod: Int, cell: Cell, remainingUse: Boolean, longTap: Boolean = false): Boolean {
+    fun processInput(cell: Cell, remainingUse: Boolean, longTap: Boolean = false): Boolean {
         if(gamePlaying) {
             currCell =
                 if(currCell.row == cell.row && currCell.col == cell.col && digitFirstNumber == 0) Cell(-1, -1) else cell
 
             if(currCell.row >= 0 && currCell.col >= 0) {
-                if((inputMethod == 1 || overrideInputMethodDF) && digitFirstNumber > 0) {
+                if((inputMethod.value == 1 || overrideInputMethodDF) && digitFirstNumber > 0) {
                     if(!longTap) {
                         if((remainingUsesList.size >= digitFirstNumber && remainingUsesList[digitFirstNumber - 1] > 0) || !remainingUse) {
                             processNumberInput(digitFirstNumber)
@@ -261,20 +265,20 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun processInputKeyboard(number: Int, inputMethod: Int, longTap: Boolean = false) {
+    fun processInputKeyboard(number: Int, longTap: Boolean = false) {
         if(gamePlaying) {
             if(!longTap) {
-                if(inputMethod == 0) {
+                if(inputMethod.value == 0) {
                     overrideInputMethodDF = false
                     digitFirstNumber = 0
                     processNumberInput(number)
                     undoManager.addState(GameState(gameBoard, notes))
-                } else if(inputMethod == 1){
+                } else if(inputMethod.value == 1){
                     digitFirstNumber = if(digitFirstNumber == number) 0 else number
                     currCell = Cell(-1,-1, digitFirstNumber)
                 }
             } else {
-                if(inputMethod == 0) {
+                if(inputMethod.value == 0) {
                     overrideInputMethodDF = true
                     digitFirstNumber = if(digitFirstNumber == number) 0 else number
                     currCell = Cell(-1,-1, digitFirstNumber)
@@ -500,7 +504,7 @@ class GameViewModel @Inject constructor(
                     gameBoard[i][j].locked = initialBoard[i][j].locked
 
                     if(gameBoard[i][j].value != 0 && !gameBoard[i][j].locked) {
-                        if(mistakesMethodValue.value == 1) {
+                        if(mistakesMethod.value == 1) {
                             gameBoard[i][j].error =
                                 !sudokuUtils.isValidCellDynamic(
                                     board = gameBoard,

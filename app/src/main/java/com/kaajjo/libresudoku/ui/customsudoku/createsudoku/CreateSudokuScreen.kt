@@ -41,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
@@ -104,8 +105,7 @@ fun CreateSudokuScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 12.dp)
         ) {
-            val inputMethod by viewModel.inputMethod.collectAsState(initial = 1)
-            val highlightIdentical by viewModel.highlightIdentical.collectAsState(initial = true)
+            val highlightIdentical by viewModel.highlightIdentical.collectAsState(initial = PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -140,7 +140,7 @@ fun CreateSudokuScreen(
                 }
             }
 
-            val fontSizeFactor by viewModel.fontSize.collectAsState(initial = 1)
+            val fontSizeFactor by viewModel.fontSize.collectAsState(initial = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
             var fontSizeValue by remember {
                 mutableStateOf(
                     viewModel.getFontSize(factor = fontSizeFactor)
@@ -158,10 +158,7 @@ fun CreateSudokuScreen(
                 board = viewModel.gameBoard,
                 selectedCell = viewModel.currCell,
                 onClick = { cell ->
-                    viewModel.processInput(
-                        inputMethod = inputMethod,
-                        cell = cell
-                    )
+                    viewModel.processInput(cell = cell)
                 },
                 identicalNumbersHighlight = highlightIdentical
             )
@@ -169,15 +166,11 @@ fun CreateSudokuScreen(
                 size = viewModel.gameType.size,
                 remainingUses = null,
                 onClick = {
-                    viewModel.processInputKeyboard(
-                        number = it,
-                        inputMethod = inputMethod
-                    )
+                    viewModel.processInputKeyboard(number = it)
                 },
                 onLongClick = {
                     viewModel.processInputKeyboard(
                         number = it,
-                        inputMethod = inputMethod,
                         longTap = true
                     )
                 },

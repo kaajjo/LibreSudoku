@@ -24,6 +24,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
+import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.board.Board
 import kotlinx.coroutines.launch
@@ -89,7 +90,7 @@ fun SavedGameScreen(
                     .padding(innerPadding)
                     .fillMaxWidth()
             ) {
-                val fontSizeFactor by viewModel.fontSize.collectAsState(initial = 1)
+                val fontSizeFactor by viewModel.fontSize.collectAsState(initial = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
                 var fontSizeValue by remember {
                     mutableStateOf(
                         viewModel.getFontSize(factor = fontSizeFactor)

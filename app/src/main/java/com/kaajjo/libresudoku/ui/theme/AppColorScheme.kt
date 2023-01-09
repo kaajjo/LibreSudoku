@@ -9,7 +9,7 @@ class AppColorScheme {
     fun getTheme(appTheme: AppTheme, dark: Boolean = false): ColorScheme {
         return when(appTheme) {
             AppTheme.Green -> if(dark) greenDark else greenLight
-            AppTheme.Pink -> if(dark) pinkDark else pinkLight
+            AppTheme.Peach -> if(dark) pinkDark else pinkLight
             AppTheme.Yellow -> if(dark) yellowDark else yellowLight
             AppTheme.Lavender -> if(dark) lavenderDark else lavenderLight
             AppTheme.BlackAndWhite -> if(dark) blackAndWhiteDark else blackAndWhiteLight
@@ -318,7 +318,7 @@ class AppColorScheme {
 
 enum class AppTheme {
     Green,
-    Pink,
+    Peach,
     Yellow,
     Lavender,
     BlackAndWhite

@@ -23,6 +23,7 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.ui.components.animatedComposable
@@ -57,10 +58,10 @@ class MainActivity : AppCompatActivity() {
             val mainViewModel: MainActivityViewModel = hiltViewModel()
 
             val dynamicColors = mainViewModel.dc.collectAsState(initial = isSystemInDarkTheme())
-            val darkTheme = mainViewModel.darkTheme.collectAsState(initial = 0)
-            val amoledBlack = mainViewModel.amoledBlack.collectAsState(initial = false)
+            val darkTheme = mainViewModel.darkTheme.collectAsState(initial = PreferencesConstants.DEFAULT_DARK_THEME)
+            val amoledBlack = mainViewModel.amoledBlack.collectAsState(initial = PreferencesConstants.DEFAULT_AMOLED_BLACK)
             val firstLaunch by mainViewModel.firstLaunch.collectAsState(initial = false)
-            val currentTheme = mainViewModel.currentTheme.collectAsState(initial = "green")
+            val currentTheme = mainViewModel.currentTheme.collectAsState(initial = PreferencesConstants.DEFAULT_SELECTED_THEME)
             LibreSudokuTheme(
                 darkTheme = when(darkTheme.value) {
                     1 -> false
@@ -70,11 +71,11 @@ class MainActivity : AppCompatActivity() {
                 dynamicColor = dynamicColors.value,
                 amoled = amoledBlack.value,
                 appTheme = when(currentTheme.value) {
-                    "green" -> AppTheme.Green
-                    "pink" -> AppTheme.Pink
-                    "yellow" -> AppTheme.Yellow
-                    "lavender" -> AppTheme.Lavender
-                    "black_and_white" -> AppTheme.BlackAndWhite
+                    PreferencesConstants.GREEN_THEME_KEY -> AppTheme.Green
+                    PreferencesConstants.PEACH_THEME_KEY -> AppTheme.Peach
+                    PreferencesConstants.YELLOW_THEME_KEY -> AppTheme.Yellow
+                    PreferencesConstants.LAVENDER_THEME_KEY -> AppTheme.Lavender
+                    PreferencesConstants.BLACK_AND_WHITE_THEME_KEY -> AppTheme.BlackAndWhite
                     else -> AppTheme.Green
                 }
             ) {
