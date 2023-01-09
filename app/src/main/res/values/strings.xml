@@ -97,6 +97,7 @@
     <string name="pref_app_language_default">Default</string>
     <string name="en" translatable="false">English</string>
     <string name="ru" translatable="false">Русский</string>
+    <string name="fr" translatable="false">Français</string>
 
     <string name="about_version">Version</string>
     <string name="about_github_project">Project on GitHub</string>
