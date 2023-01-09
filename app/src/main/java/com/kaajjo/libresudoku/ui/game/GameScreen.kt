@@ -349,11 +349,7 @@ fun GameScreen(
                         )
                     },
                     onLongClick = { cell ->
-                        if(viewModel.processInput(
-                                cell = cell,
-                                remainingUse = remainingUse,
-                                longTap = true
-                            )) {
+                        if(viewModel.processInput(cell, remainingUse, longTap = true)) {
                             localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                         }
                     },
@@ -429,8 +425,15 @@ fun GameScreen(
                 ToolbarItem(
                     modifier = Modifier.weight(1f),
                     painter = painterResource(R.drawable.ic_eraser_24),
+                    toggled = viewModel.eraseButtonToggled,
                     onClick = {
                         viewModel.toolbarClick(ToolBarItem.Remove)
+                    },
+                    onLongClick = {
+                        if(viewModel.gamePlaying) {
+                            localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                            viewModel.toggleEraseButton()
+                        }
                     }
                 )
             }

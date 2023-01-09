@@ -152,6 +152,9 @@ class GameViewModel @Inject constructor(
     // show/hide solution (when give up)
     var showSolution by mutableStateOf(false)
 
+    // when true, tapping on any cell will clear it
+    var eraseButtonToggled by mutableStateOf(false)
+
     private fun clearNotesAtCell(notes: List<Note>, row: Int = currCell.row, col: Int = currCell.col) : List<Note> {
         return notes.minus(
             notes.filter { note ->
@@ -254,6 +257,12 @@ class GameViewModel @Inject constructor(
                         setNote(digitFirstNumber)
                         undoManager.addState(GameState(gameBoard, notes))
                     }
+                } else if(eraseButtonToggled) {
+                    val oldCell = currCell
+                    processNumberInput(0)
+                    if(oldCell.value != 0 && !oldCell.locked) {
+                        undoManager.addState(GameState(gameBoard, notes))
+                    }
                 }
                 remainingUsesList = countRemainingUses(gameBoard)
                 return true
@@ -284,6 +293,7 @@ class GameViewModel @Inject constructor(
                     currCell = Cell(-1,-1, digitFirstNumber)
                 }
             }
+            eraseButtonToggled = false
         }
     }
 
@@ -368,8 +378,15 @@ class GameViewModel @Inject constructor(
                     useHint()
                 }
 
-                ToolBarItem.Note -> { notesToggled = !notesToggled }
+                ToolBarItem.Note -> {
+                    notesToggled = !notesToggled
+                    eraseButtonToggled = false
+                }
                 ToolBarItem.Remove -> {
+                    if(inputMethod.value == 1 || eraseButtonToggled) {
+                        toggleEraseButton()
+                        return
+                    }
                     if(currCell.row >= 0 && currCell.col >= 0 && !currCell.locked) {
                         val prevValue = gameBoard[currCell.row][currCell.col].value
                         val notesInCell =  notes.count { note -> note.row == currCell.row && note.col == currCell.col }
@@ -567,5 +584,12 @@ class GameViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             appSettingsManager.setFirstGame(false)
         }
+    }
+
+    fun toggleEraseButton() {
+        notesToggled = false
+        currCell = Cell(-1, -1, 0)
+        digitFirstNumber = -1
+        eraseButtonToggled = !eraseButtonToggled
     }
 }
