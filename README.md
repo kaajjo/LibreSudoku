@@ -24,6 +24,10 @@ Sudoku app built with [Jetpack Compose](https://developer.android.com/jetpack/co
 ### Project plans
 - Improve project architecture. I'm still new to android and compose, so there are maybe some not so good approaches aches and I really want to fix them
 
+## Translation
+You can help translate LibreSudoku into your language on [Hosted Weblate](https://hosted.weblate.org/engage/libresudoku/)\
+[![Translation status](https://hosted.weblate.org/widgets/libresudoku/-/multi-auto.svg)](https://hosted.weblate.org/engage/libresudoku/)
+
 ## Credits
 This project uses modified version of [QQWing](https://github.com/stephenostermiller/qqwing) - sudoku puzzle generator and solver\
 Some of the UI elements were inspired by [Tachiyomi](https://github.com/tachiyomiorg/tachiyomi)
