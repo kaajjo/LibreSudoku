@@ -70,12 +70,12 @@ fun KeyboardItem(
             Text(
                 text = number.toString(16).uppercase(),
                 fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
+                fontSize = 20.sp
             )
             if (remainingUses != null) {
                 Text(
                     text = remainingUses.toString(),
-                    fontSize = 12.sp
+                    fontSize = 14.sp
                 )
             }
         }
@@ -97,7 +97,9 @@ fun DefaultGameKeyboard(
         numbers = (1..size).toList()
     }
 
-    Column {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
         if (size == GameType.Default12x12.size) {
             // double-height keyboard only for 12x12
             val chunkedNumbers = numbers.chunked(6)
@@ -181,7 +183,7 @@ private fun KeyboardRow(
         modifier = Modifier
             .fillMaxWidth()
             .then(modifier),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         content()

@@ -79,9 +79,9 @@ fun BoardPreview(
             )
         }
         val width by remember { mutableStateOf(textPaint.measureText("1")) }
-        val boardStrokeWidth = with(LocalDensity.current) { 2.dp.toPx() }
-        val thinLineWidth = with(LocalDensity.current) { 1.dp.toPx() }
-        val thickLineWidth = with(LocalDensity.current) { 1.5.dp.toPx() }
+        val boardStrokeWidth = with(LocalDensity.current) { 1.1.dp.toPx() }
+        val thinLineWidth = with(LocalDensity.current) { 0.6.dp.toPx() }
+        val thickLineWidth = with(LocalDensity.current) { 1.1.dp.toPx() }
         Canvas(
             modifier = Modifier
                 .fillMaxSize()

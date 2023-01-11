@@ -90,10 +90,12 @@ fun Board(
         var cellSizeDivWidth by remember { mutableStateOf(cellSize / ceil(sqrt(size.toFloat()))) }
         // div for note in one column in cell
         var cellSizeDivHeight by remember { mutableStateOf(cellSize / floor(sqrt(size.toFloat()))) }
-        // lines and font color
+
         val foregroundColor = MaterialTheme.colorScheme.onSurface
+        val thickLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.65f)
+        val thinLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.4f)
         // locked numbers
-        val altForegroundColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f)
+        val altForegroundColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f)
 
         // highlight (cells)
         val highlightColor = MaterialTheme.colorScheme.outline
@@ -111,6 +113,9 @@ fun Board(
 
         var fontSizePx = with(LocalDensity.current) { mainTextSize.toPx() }
         var noteSizePx = with(LocalDensity.current) { noteTextSize.toPx() }
+
+        val thinLineWidth = with(LocalDensity.current) { 1.3.dp.toPx() }
+        val thickLineWidth = with(LocalDensity.current) { 1.3.dp.toPx() }
 
         // paints
         // numbers
@@ -154,9 +159,6 @@ fun Board(
                 }
             )
         }
-        // number font width
-        var width by remember { mutableStateOf(textPaint.measureText("1")) }
-        var noteWidth by remember { mutableStateOf(notePaint.measureText("1")) }
 
         val context = LocalContext.current
         LaunchedEffect(mainTextSize, noteTextSize) {
@@ -189,10 +191,8 @@ fun Board(
                 color = altForegroundColor.toArgb()
                 isAntiAlias = true
                 textSize = fontSizePx
+                //typeface = Typeface.create(Typeface.DEFAULT, 700, false)
             }
-
-            width = textPaint.measureText("1")
-            noteWidth = notePaint.measureText("1")
         }
 
         var zoom by remember { mutableStateOf(1f) }
@@ -320,25 +320,21 @@ fun Board(
 
             // frame field
             drawRoundRect(
-                color = foregroundColor.copy(alpha = 0.8f),
+                color = thickLineColor,
                 topLeft = Offset.Zero,
                 size = Size(maxWidth, maxWidth),
                 cornerRadius = CornerRadius(15f, 15f),
-                style = Stroke(width = 8f)
+                style = Stroke(width = thickLineWidth)
             )
 
             // horizontal line
             for (i in 1 until size) {
                 val isThickLine = i % horThick == 0
                 drawLine(
-                    color = if (isThickLine) {
-                        foregroundColor.copy(0.8f)
-                    } else {
-                        foregroundColor.copy(0.6f)
-                    },
+                    color = if (isThickLine) thickLineColor else thinLineColor,
                     start = Offset(cellSize * i.toFloat(), 0f),
                     end = Offset(cellSize * i.toFloat(), maxWidth),
-                    strokeWidth = if (isThickLine) 8f else 5f
+                    strokeWidth = if (isThickLine) thickLineWidth else thinLineWidth
                 )
             }
             // vertical line
@@ -346,20 +342,14 @@ fun Board(
                 val isThickLine = i % vertThick == 0
                 if (maxWidth >= cellSize * i) {
                     drawLine(
-                        color = if (isThickLine) {
-                            foregroundColor.copy(0.8f)
-                        } else {
-                            foregroundColor.copy(0.6f)
-                        },
+                        color = if (isThickLine) thickLineColor else thinLineColor,
                         start = Offset(0f, cellSize * i.toFloat()),
                         end = Offset(maxWidth, cellSize * i.toFloat()),
-                        strokeWidth = if (isThickLine) 8f else 5f
+                        strokeWidth = if (isThickLine) thickLineWidth else thinLineWidth
                     )
                 }
             }
 
-            val textBounds = Rect()
-            textPaint.getTextBounds("1", 0, 1, textBounds)
 
             // numbers
             drawIntoCanvas { canvas ->
@@ -371,10 +361,17 @@ fun Board(
                                 board[i][j].locked -> lockedTextPaint
                                 else -> textPaint
                             }
+
+                            val textToDraw =
+                                if (questions) "?" else board[i][j].value.toString(16).uppercase()
+                            val textBounds = Rect()
+                            textPaint.getTextBounds(textToDraw, 0, 1, textBounds)
+                            val textWidth = paint.measureText(textToDraw)
+
                             canvas.nativeCanvas.drawText(
-                                if (questions) "?" else board[i][j].value.toString(16).uppercase(),
-                                board[i][j].col * cellSize + (cellSize - width) / 2f,
-                                (board[i][j].row * cellSize + cellSize) - (cellSize - textBounds.height()) / 2f,
+                                textToDraw,
+                                board[i][j].col * cellSize + (cellSize - textWidth) / 2f,
+                                board[i][j].row * cellSize + (cellSize + textBounds.height()) / 2f,
                                 paint
                             )
                         }
@@ -386,16 +383,17 @@ fun Board(
             if (!notes.isNullOrEmpty() && !questions && renderNotes) {
                 val noteBounds = Rect()
                 notePaint.getTextBounds("1", 0, 1, noteBounds)
-                val noteWidthHalf = noteWidth / 2f
 
                 drawIntoCanvas { canvas ->
                     notes.forEach { note ->
+                        val textToDraw = note.value.toString(16).uppercase()
+                        val noteTextMeasure = notePaint.measureText(textToDraw)
                         canvas.nativeCanvas.drawText(
-                            note.value.toString(16).uppercase(),
+                            textToDraw,
                             note.col * cellSize + cellSizeDivWidth / 2f + (cellSizeDivWidth * getNoteRowNumber(
                                 note.value,
                                 size
-                            )) - noteWidthHalf,
+                            )) - noteTextMeasure / 2f,
                             note.row * cellSize + cellSizeDivHeight / 2f + (cellSizeDivHeight * getNoteColumnNumber(
                                 note.value,
                                 size
