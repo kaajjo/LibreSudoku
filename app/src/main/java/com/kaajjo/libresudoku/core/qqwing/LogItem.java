@@ -20,6 +20,7 @@ package com.kaajjo.libresudoku.core.qqwing;
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 // @formatter:on
+
 /**
  * While solving the puzzle, log steps taken in a log item. This is useful for
  * later printing out the solve history or gathering statistics about how hard

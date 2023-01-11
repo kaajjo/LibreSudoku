@@ -46,7 +46,15 @@ class CreateSudokuViewModel @Inject constructor(
     var noSolutionsDialog by mutableStateOf(false)
 
     var gameType by mutableStateOf(GameType.Default9x9)
-    var gameBoard by mutableStateOf(List(gameType.size) { row -> List(gameType.size) { col -> Cell(row, col, 0)} })
+    var gameBoard by mutableStateOf(List(gameType.size) { row ->
+        List(gameType.size) { col ->
+            Cell(
+                row,
+                col,
+                0
+            )
+        }
+    })
     var currCell by mutableStateOf(Cell(-1, -1, 0))
 
     var importStringValue by mutableStateOf("")

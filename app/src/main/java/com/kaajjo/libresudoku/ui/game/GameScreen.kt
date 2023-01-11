@@ -48,7 +48,7 @@ fun GameScreen(
     val localView = LocalView.current // vibration
 
     val firstGame by viewModel.firstGame.collectAsState(initial = false)
-    if(firstGame) {
+    if (firstGame) {
         viewModel.pauseTimer()
         FirstGameDialog(
             onFinished = {
@@ -58,7 +58,7 @@ fun GameScreen(
         )
     }
     val keepScreenOn by viewModel.keepScreenOn.collectAsState(initial = PreferencesConstants.DEFAULT_KEEP_SCREEN_ON)
-    if(keepScreenOn) {
+    if (keepScreenOn) {
         KeepScreenOn()
     }
 
@@ -66,13 +66,15 @@ fun GameScreen(
     // https://stackoverflow.com/questions/66546962/jetpack-compose-how-do-i-refresh-a-screen-when-app-returns-to-foreground/66807899#66807899
     OnLifecycleEvent { _, event ->
         when (event) {
-            Lifecycle.Event.ON_RESUME -> { if(viewModel.gamePlaying) viewModel.startTimer() }
+            Lifecycle.Event.ON_RESUME -> {
+                if (viewModel.gamePlaying) viewModel.startTimer()
+            }
             Lifecycle.Event.ON_PAUSE -> {
                 viewModel.pauseTimer()
                 viewModel.currCell = Cell(-1, -1, 0)
             }
             Lifecycle.Event.ON_DESTROY -> viewModel.pauseTimer()
-            else -> { }
+            else -> {}
         }
     }
 
@@ -83,7 +85,7 @@ fun GameScreen(
     )
 
     LaunchedEffect(Unit) {
-        if(!viewModel.endGame && !viewModel.gameCompleted) {
+        if (!viewModel.endGame && !viewModel.gameCompleted) {
             viewModel.startTimer()
         }
     }
@@ -91,11 +93,11 @@ fun GameScreen(
     val resetTimer by viewModel.resetTimerOnRestart.collectAsState(initial = PreferencesConstants.DEFAULT_GAME_RESET_TIMER)
 
     // dialogs
-    if(viewModel.restartDialog) {
+    if (viewModel.restartDialog) {
         viewModel.pauseTimer()
         AlertDialog(
             title = { Text(stringResource(R.string.action_reset_game)) },
-            text = { Text(stringResource(R.string.reset_game_text))},
+            text = { Text(stringResource(R.string.reset_game_text)) },
             dismissButton = {
                 TextButton(onClick = {
                     viewModel.restartDialog = false
@@ -119,7 +121,7 @@ fun GameScreen(
                 viewModel.startTimer()
             }
         )
-    } else if(viewModel.giveUpDialog) {
+    } else if (viewModel.giveUpDialog) {
         viewModel.pauseTimer()
         AlertDialog(
             title = { Text(stringResource(R.string.action_give_up)) },
@@ -146,7 +148,7 @@ fun GameScreen(
                 viewModel.startTimer()
             },
         )
-    } else if(viewModel.gameCompleted) {
+    } else if (viewModel.gameCompleted) {
         AlertDialog(
             title = { Text(stringResource(R.string.game_completed)) },
             text = { Text(stringResource(R.string.game_completed_text)) },
@@ -168,7 +170,7 @@ fun GameScreen(
                 viewModel.endGame = true
             }
         )
-    } else if(viewModel.mistakesLimitDialog) {
+    } else if (viewModel.mistakesLimitDialog) {
         AlertDialog(
             title = { Text(stringResource(R.string.game_over)) },
             text = { Text(stringResource(R.string.game_over_mistakes)) },
@@ -193,7 +195,7 @@ fun GameScreen(
     }
 
     LaunchedEffect(viewModel.gameCompleted) {
-        if(viewModel.gameCompleted) {
+        if (viewModel.gameCompleted) {
             viewModel.onGameComplete()
         }
     }
@@ -212,14 +214,14 @@ fun GameScreen(
                 },
                 actions = {
                     AnimatedVisibility(visible = viewModel.endGame && (viewModel.mistakesCount >= 3 || viewModel.giveUp)) {
-                        Row (
+                        Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             FilledTonalButton(
                                 onClick = { viewModel.showSolution = !viewModel.showSolution }
                             ) {
                                 AnimatedContent(
-                                    if(viewModel.showSolution) stringResource(R.string.action_show_mine_sudoku)
+                                    if (viewModel.showSolution) stringResource(R.string.action_show_mine_sudoku)
                                     else stringResource(R.string.action_show_solution)
                                 ) {
                                     Text(it)
@@ -269,7 +271,7 @@ fun GameScreen(
                             }
                             GameMenu(
                                 expanded = viewModel.showMenu,
-                                onDismiss = { viewModel.showMenu = false},
+                                onDismiss = { viewModel.showMenu = false },
                                 onGiveUpClick = {
                                     viewModel.pauseTimer()
                                     viewModel.giveUpDialog = true
@@ -296,16 +298,22 @@ fun GameScreen(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
-            ){
+            ) {
                 TopBoardSection(stringResource(viewModel.boardEntity.difficulty.resName))
 
                 val mistakesLimit by viewModel.mistakesLimit.collectAsState(initial = PreferencesConstants.DEFAULT_MISTAKES_LIMIT)
-                if(mistakesLimit && errorHighlight != 0) {
-                    TopBoardSection(stringResource(R.string.mistakes_number_out_of, viewModel.mistakesCount, 3))
+                if (mistakesLimit && errorHighlight != 0) {
+                    TopBoardSection(
+                        stringResource(
+                            R.string.mistakes_number_out_of,
+                            viewModel.mistakesCount,
+                            3
+                        )
+                    )
                 }
 
                 val timerEnabled by viewModel.timerEnabled.collectAsState(initial = PreferencesConstants.DEFAULT_SHOW_TIMER)
-                if(timerEnabled) {
+                if (timerEnabled) {
                     TopBoardSection(viewModel.timeText)
                 }
             }
@@ -320,8 +328,8 @@ fun GameScreen(
                 val remainingUse by viewModel.remainingUse.collectAsState(initial = PreferencesConstants.DEFAULT_REMAINING_USES)
                 val highlightIdentical by viewModel.identicalHighlight.collectAsState(initial = PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL)
                 val positionLines by viewModel.positionLines.collectAsState(initial = PreferencesConstants.DEFAULT_POSITION_LINES)
-                val boardBlur by animateDpAsState(targetValue = if(viewModel.gamePlaying || viewModel.endGame) 0.dp else 10.dp)
-                val scale by animateFloatAsState(targetValue = if(viewModel.gamePlaying || viewModel.endGame) 1f else 0.90f)
+                val boardBlur by animateDpAsState(targetValue = if (viewModel.gamePlaying || viewModel.endGame) 0.dp else 10.dp)
+                val scale by animateFloatAsState(targetValue = if (viewModel.gamePlaying || viewModel.endGame) 1f else 0.90f)
 
                 val fontSizeFactor by viewModel.fontSize.collectAsState(initial = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
                 var fontSizeValue by remember {
@@ -337,7 +345,7 @@ fun GameScreen(
                     modifier = Modifier
                         .blur(boardBlur)
                         .scale(scale, scale),
-                    board = if(!viewModel.showSolution) viewModel.gameBoard else viewModel.solvedBoard,
+                    board = if (!viewModel.showSolution) viewModel.gameBoard else viewModel.solvedBoard,
                     size = viewModel.size,
                     mainTextSize = fontSizeValue,
                     notes = viewModel.notes,
@@ -349,7 +357,7 @@ fun GameScreen(
                         )
                     },
                     onLongClick = { cell ->
-                        if(viewModel.processInput(cell, remainingUse, longTap = true)) {
+                        if (viewModel.processInput(cell, remainingUse, longTap = true)) {
                             localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                         }
                     },
@@ -367,7 +375,7 @@ fun GameScreen(
                 val remainingUse by viewModel.remainingUse.collectAsState(initial = PreferencesConstants.DEFAULT_REMAINING_USES)
                 DefaultGameKeyboard(
                     size = viewModel.size,
-                    remainingUses = if(remainingUse) viewModel.remainingUsesList else null,
+                    remainingUses = if (remainingUse) viewModel.remainingUsesList else null,
                     onClick = {
                         viewModel.processInputKeyboard(number = it)
                     },
@@ -414,7 +422,7 @@ fun GameScreen(
                         toggled = viewModel.notesToggled,
                         onClick = { viewModel.toolbarClick(ToolBarItem.Note) },
                         onLongClick = {
-                            if(viewModel.gamePlaying) {
+                            if (viewModel.gamePlaying) {
                                 localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                                 viewModel.showNotesMenu = true
                             }
@@ -430,7 +438,7 @@ fun GameScreen(
                         viewModel.toolbarClick(ToolBarItem.Remove)
                     },
                     onLongClick = {
-                        if(viewModel.gamePlaying) {
+                        if (viewModel.gamePlaying) {
                             localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                             viewModel.toggleEraseButton()
                         }
@@ -479,7 +487,7 @@ fun NotesMenu(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(stringResource(R.string.action_show_notes))
-                        Checkbox(checked = renderNotes, onCheckedChange = { onRenderNotesClick() } )
+                        Checkbox(checked = renderNotes, onCheckedChange = { onRenderNotesClick() })
                     }
                 },
                 onClick = onRenderNotesClick
@@ -528,7 +536,7 @@ fun TopBoardSection(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Text(
             text = text,
             modifier = Modifier.padding(horizontal = 4.dp)

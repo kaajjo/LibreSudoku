@@ -1,6 +1,7 @@
 package com.kaajjo.libresudoku.ui.learn.learnsudoku
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,7 +30,8 @@ fun LearnNakedPairs(
                 sudokuParser.parseBoard(
                     board = ".......................................9........68...............................",
                     gameType = GameType.Default9x9,
-                    emptySeparator = '.').toList()
+                    emptySeparator = '.'
+                ).toList()
             )
         }
         var notes by remember {
@@ -63,35 +65,72 @@ fun LearnNakedPairs(
             stringResource(R.string.naked_pairs_end),
         )
         val stepsCell = listOf(
-            listOf(Cell(4,4),Cell(4,5))
+            listOf(Cell(4, 4), Cell(4, 5))
         )
         var step by remember { mutableStateOf(0) }
         LaunchedEffect(key1 = step) {
-            when(step) {
+            when (step) {
                 0 -> {
-                    notes = listOf(Note(3,3,1),Note(3,3,2),Note(3,3,4),Note(3,3,5),Note(3,4,1),Note(3,4,2),Note(3,4,4),Note(3,4,5),Note(3,4,7),Note(3,5,2),Note(3,5,4),Note(3,5,5),Note(3,5,7),Note(4,4,2),Note(4,4,3),Note(4,5,2),Note(4,5,3),Note(5,5,2),Note(5,5,3),Note(5,5,5))
+                    notes = listOf(
+                        Note(3, 3, 1),
+                        Note(3, 3, 2),
+                        Note(3, 3, 4),
+                        Note(3, 3, 5),
+                        Note(3, 4, 1),
+                        Note(3, 4, 2),
+                        Note(3, 4, 4),
+                        Note(3, 4, 5),
+                        Note(3, 4, 7),
+                        Note(3, 5, 2),
+                        Note(3, 5, 4),
+                        Note(3, 5, 5),
+                        Note(3, 5, 7),
+                        Note(4, 4, 2),
+                        Note(4, 4, 3),
+                        Note(4, 5, 2),
+                        Note(4, 5, 3),
+                        Note(5, 5, 2),
+                        Note(5, 5, 3),
+                        Note(5, 5, 5)
+                    )
                 }
                 1 -> {
-                    notes = listOf(Note(3,3,1),Note(3,3,4),Note(3,3,5),Note(3,4,1),Note(3,4,4),Note(3,4,5),Note(3,4,7),Note(3,5,4),Note(3,5,5),Note(3,5,7),Note(4,4,2),Note(4,4,3),Note(4,5,2),Note(4,5,3),Note(5,5,5))
+                    notes = listOf(
+                        Note(3, 3, 1),
+                        Note(3, 3, 4),
+                        Note(3, 3, 5),
+                        Note(3, 4, 1),
+                        Note(3, 4, 4),
+                        Note(3, 4, 5),
+                        Note(3, 4, 7),
+                        Note(3, 5, 4),
+                        Note(3, 5, 5),
+                        Note(3, 5, 7),
+                        Note(4, 4, 2),
+                        Note(4, 4, 3),
+                        Note(4, 5, 2),
+                        Note(4, 5, 3),
+                        Note(5, 5, 5)
+                    )
                 }
             }
         }
 
-        Column (
+        Column(
             modifier = Modifier.padding(horizontal = 12.dp)
         ) {
             Board(
                 board = board,
                 notes = notes,
-                cellsToHighlight = if(step < stepsCell.size) stepsCell[step] else null,
+                cellsToHighlight = if (step < stepsCell.size) stepsCell[step] else null,
                 onClick = { },
-                selectedCell = Cell(-1,-1)
+                selectedCell = Cell(-1, -1)
             )
             TutorialBottomContent(
                 steps = steps,
                 step = step,
-                onPreviousClick = { if(step > 0) step-- },
-                onNextClick = { if(step < (steps.size - 1)) step++ }
+                onPreviousClick = { if (step > 0) step-- },
+                onNextClick = { if (step < (steps.size - 1)) step++ }
             )
         }
     }

@@ -28,7 +28,10 @@ fun LibreSudokuTheme(
 
             // additional theme with amoled black
             when {
-                darkTheme && amoled -> dynamicDarkColorScheme(context).copy(background = Color.Black, surface = Color.Black)
+                darkTheme && amoled -> dynamicDarkColorScheme(context).copy(
+                    background = Color.Black,
+                    surface = Color.Black
+                )
                 darkTheme && !amoled -> dynamicDarkColorScheme(context)
                 else -> dynamicLightColorScheme(context)
             }

@@ -25,7 +25,8 @@ class AppModule {
     // records
     @Singleton
     @Provides
-    fun provideRecordRepository(recordDao: RecordDao): RecordRepository = RecordRepository(recordDao)
+    fun provideRecordRepository(recordDao: RecordDao): RecordRepository =
+        RecordRepository(recordDao)
 
     @Singleton
     @Provides
@@ -45,7 +46,8 @@ class AppModule {
     // saved games
     @Singleton
     @Provides
-    fun provideSavedGameRepository(savedGameDao: SavedGameDao): SavedGameRepository = SavedGameRepository(savedGameDao)
+    fun provideSavedGameRepository(savedGameDao: SavedGameDao): SavedGameRepository =
+        SavedGameRepository(savedGameDao)
 
     @Singleton
     @Provides
@@ -55,12 +57,14 @@ class AppModule {
     // settings datastore
     @Provides
     @Singleton
-    fun provideAppSettingsManager(@ApplicationContext context: Context) = AppSettingsManager(context)
+    fun provideAppSettingsManager(@ApplicationContext context: Context) =
+        AppSettingsManager(context)
 
     // appTheme datastore
     @Provides
     @Singleton
-    fun provideThemeSettingsManager(@ApplicationContext context: Context) = ThemeSettingsManager(context)
+    fun provideThemeSettingsManager(@ApplicationContext context: Context) =
+        ThemeSettingsManager(context)
 
     @Singleton
     @Provides

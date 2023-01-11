@@ -1,11 +1,7 @@
 package com.kaajjo.libresudoku.data.database
 
 import android.content.Context
-import androidx.room.AutoMigration
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.kaajjo.libresudoku.data.database.converters.DurationConverter
 import com.kaajjo.libresudoku.data.database.converters.GameDifficultyConverter
 import com.kaajjo.libresudoku.data.database.converters.GameTypeConverter
@@ -13,14 +9,14 @@ import com.kaajjo.libresudoku.data.database.converters.ZonedDateTimeConverter
 import com.kaajjo.libresudoku.data.database.dao.BoardDao
 import com.kaajjo.libresudoku.data.database.dao.RecordDao
 import com.kaajjo.libresudoku.data.database.dao.SavedGameDao
-import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.database.model.Record
 import com.kaajjo.libresudoku.data.database.model.SavedGame
+import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 
 @Database(
     entities = [Record::class, SudokuBoard::class, SavedGame::class],
     version = 2,
-    autoMigrations = [ AutoMigration(from = 1, to = 2)]
+    autoMigrations = [AutoMigration(from = 1, to = 2)]
 )
 @TypeConverters(
     DurationConverter::class,
@@ -36,8 +32,8 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         private var INSTANCE: AppDatabase? = null
 
-        fun getInstance(context: Context) : AppDatabase {
-            if(INSTANCE == null) {
+        fun getInstance(context: Context): AppDatabase {
+            if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(
                     context,
                     AppDatabase::class.java,

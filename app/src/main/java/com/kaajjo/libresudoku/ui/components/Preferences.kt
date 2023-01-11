@@ -1,7 +1,5 @@
 package com.kaajjo.libresudoku.ui.components
 
-import android.content.res.Configuration
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
@@ -14,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
@@ -31,7 +28,7 @@ fun PreferenceRow(
     subtitle: String? = null,
     action: @Composable (() -> Unit)? = null
 ) {
-    val height = if(subtitle != null) 72.dp else 56.dp
+    val height = if (subtitle != null) 72.dp else 56.dp
 
     val titleStyle = MaterialTheme.typography.bodyLarge
     val subtitleTextStyle = MaterialTheme.typography.bodyMedium.copy(
@@ -162,7 +159,7 @@ private fun PreferenceRowSwitchPreview() {
                     title = "Preference row with switch and icon",
                     subtitle = "Preference summary",
                     painter = painterResource(R.drawable.ic_settings_24),
-                    onClick =  { },
+                    onClick = { },
                     checked = false
                 )
                 PreferenceRowSwitch(
@@ -175,7 +172,7 @@ private fun PreferenceRowSwitchPreview() {
                     title = "Preference row with switch and icon",
                     subtitle = "Preference summary",
                     painter = painterResource(R.drawable.ic_settings_24),
-                    onClick =  { },
+                    onClick = { },
                     checked = true
                 )
             }

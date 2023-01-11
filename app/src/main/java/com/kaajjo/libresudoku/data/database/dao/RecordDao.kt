@@ -17,9 +17,11 @@ interface RecordDao {
     @Query("SELECT * FROM record")
     fun getAll(): Flow<List<Record>>
 
-    @Query("SELECT * FROM record " +
-            "WHERE type == :type and difficulty == :difficulty " +
-            "ORDER BY time ASC")
+    @Query(
+        "SELECT * FROM record " +
+                "WHERE type == :type and difficulty == :difficulty " +
+                "ORDER BY time ASC"
+    )
     fun getAll(difficulty: GameDifficulty, type: GameType): Flow<List<Record>>
 
     @Query("SELECT * FROM record ORDER BY time ASC")

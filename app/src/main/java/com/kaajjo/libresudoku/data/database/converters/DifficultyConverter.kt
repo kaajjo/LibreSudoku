@@ -9,7 +9,7 @@ import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 class GameDifficultyConverter {
     @TypeConverter
     fun fromDifficulty(gameDifficulty: GameDifficulty): Int {
-        return when(gameDifficulty) {
+        return when (gameDifficulty) {
             GameDifficulty.Unspecified -> 0
             GameDifficulty.Simple -> 1
             GameDifficulty.Easy -> 2
@@ -22,7 +22,7 @@ class GameDifficultyConverter {
 
     @TypeConverter
     fun toDifficulty(value: Int): GameDifficulty {
-        return when(value) {
+        return when (value) {
             0 -> GameDifficulty.Unspecified
             1 -> GameDifficulty.Simple
             2 -> GameDifficulty.Easy

@@ -18,30 +18,43 @@ class AppSettingsManager(context: Context) {
 
     // first app launch
     private val firstLaunchKey = booleanPreferencesKey("first_launch")
+
     // input method (0 -> cell first, 1 -> digit first)
     private val inputMethodKey = intPreferencesKey("input_method")
+
     // mistakes limit
     private val mistakesLimitKey = booleanPreferencesKey("mistakes_limit")
+
     // disable hint button
     private val hintsDisabledKey = booleanPreferencesKey("hints_disabled")
+
     // show timer
     private val timerKey = booleanPreferencesKey("timer")
+
     // game reset resets timer
     private val resetTimerKey = booleanPreferencesKey("timer_reset")
+
     // highlight mistakes
     private val highlightMistakesKey = intPreferencesKey("mistakes_highlight")
+
     // highlight same numbers
     private val highlightIdenticalKey = booleanPreferencesKey("same_values_highlight")
+
     // count and show remaining uses for numbers
     private val remainingUseKey = booleanPreferencesKey("remaining_use")
+
     // highlight current position with horizontal and vertical lines
     private val positionLinesKey = booleanPreferencesKey("position_lines")
+
     // auto erase notes
     private val autoEraseNotesKey = booleanPreferencesKey("notes_auto_erase")
+
     // font size (0 - small, 1 - medium (default), 2 - big)
     private val fontSizeKey = intPreferencesKey("font_size")
+
     // keep screen on
     private val keepScreenOnKey = booleanPreferencesKey("keep_screen_on")
+
     // first game
     private val firstGameKey = booleanPreferencesKey("first_game")
 
@@ -50,6 +63,7 @@ class AppSettingsManager(context: Context) {
             settings[firstLaunchKey] = value
         }
     }
+
     val firstLaunch = dataStore.data.map { preferences ->
         preferences[firstLaunchKey] ?: true
     }
@@ -59,6 +73,7 @@ class AppSettingsManager(context: Context) {
             settings[mistakesLimitKey] = enabled
         }
     }
+
     val mistakesLimit = dataStore.data.map { preferences ->
         preferences[mistakesLimitKey] ?: PreferencesConstants.DEFAULT_MISTAKES_LIMIT
     }
@@ -68,6 +83,7 @@ class AppSettingsManager(context: Context) {
             settings[hintsDisabledKey] = disabled
         }
     }
+
     val hintsDisabled = dataStore.data.map { preferences ->
         preferences[hintsDisabledKey] ?: PreferencesConstants.DEFAULT_HINTS_DISABLED
     }
@@ -77,6 +93,7 @@ class AppSettingsManager(context: Context) {
             settings[timerKey] = enabled
         }
     }
+
     val timerEnabled = dataStore.data.map { preferences ->
         preferences[timerKey] ?: PreferencesConstants.DEFAULT_SHOW_TIMER
     }
@@ -86,6 +103,7 @@ class AppSettingsManager(context: Context) {
             settings[resetTimerKey] = enabled
         }
     }
+
     val resetTimerEnabled = dataStore.data.map { preferences ->
         preferences[resetTimerKey] ?: PreferencesConstants.DEFAULT_GAME_RESET_TIMER
     }
@@ -95,6 +113,7 @@ class AppSettingsManager(context: Context) {
             settings[highlightMistakesKey] = value
         }
     }
+
     val highlightMistakes = dataStore.data.map { preferences ->
         preferences[highlightMistakesKey] ?: PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES
     }
@@ -104,6 +123,7 @@ class AppSettingsManager(context: Context) {
             settings[highlightIdenticalKey] = enabled
         }
     }
+
     val highlightIdentical = dataStore.data.map { preferences ->
         preferences[highlightIdenticalKey] ?: PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL
     }
@@ -113,6 +133,7 @@ class AppSettingsManager(context: Context) {
             settings[remainingUseKey] = enabled
         }
     }
+
     val remainingUse = dataStore.data.map { preferences ->
         preferences[remainingUseKey] ?: PreferencesConstants.DEFAULT_REMAINING_USES
     }
@@ -122,6 +143,7 @@ class AppSettingsManager(context: Context) {
             settings[positionLinesKey] = enabled
         }
     }
+
     val positionLines = dataStore.data.map { preferences ->
         preferences[positionLinesKey] ?: PreferencesConstants.DEFAULT_POSITION_LINES
     }
@@ -131,6 +153,7 @@ class AppSettingsManager(context: Context) {
             settings[autoEraseNotesKey] = enabled
         }
     }
+
     val autoEraseNotes = dataStore.data.map { preferences ->
         preferences[autoEraseNotesKey] ?: PreferencesConstants.DEFAULT_AUTO_ERASE_NOTES
     }
@@ -140,6 +163,7 @@ class AppSettingsManager(context: Context) {
             settings[inputMethodKey] = value
         }
     }
+
     val inputMethod = dataStore.data.map { preferences ->
         preferences[inputMethodKey] ?: PreferencesConstants.DEFAULT_INPUT_METHOD
     }
@@ -149,6 +173,7 @@ class AppSettingsManager(context: Context) {
             settings[fontSizeKey] = value
         }
     }
+
     val fontSize = dataStore.data.map { preferences ->
         preferences[fontSizeKey] ?: PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR
     }
@@ -158,6 +183,7 @@ class AppSettingsManager(context: Context) {
             settings[keepScreenOnKey] = enabled
         }
     }
+
     val keepScreenOn = dataStore.data.map { preferences ->
         preferences[keepScreenOnKey] ?: PreferencesConstants.DEFAULT_KEEP_SCREEN_ON
     }
@@ -167,6 +193,7 @@ class AppSettingsManager(context: Context) {
             settings[firstGameKey] = value
         }
     }
+
     val firstGame = dataStore.data.map { preferences ->
         preferences[firstGameKey] ?: true
     }

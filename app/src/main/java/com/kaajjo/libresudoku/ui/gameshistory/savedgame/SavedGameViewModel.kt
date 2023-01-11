@@ -57,8 +57,10 @@ class SavedGameViewModel
                 savedGame?.let { savedGame ->
                     withContext(Dispatchers.Default) {
                         val sudokuParser = SudokuParser()
-                        parsedInitialBoard = sudokuParser.parseBoard(boardEntity.initialBoard, boardEntity.type)
-                        parsedCurrentBoard = sudokuParser.parseBoard(savedGame.currentBoard, boardEntity.type)
+                        parsedInitialBoard =
+                            sudokuParser.parseBoard(boardEntity.initialBoard, boardEntity.type)
+                        parsedCurrentBoard =
+                            sudokuParser.parseBoard(savedGame.currentBoard, boardEntity.type)
                         notes = sudokuParser.parseNotes(savedGame.notes)
                     }
                 }

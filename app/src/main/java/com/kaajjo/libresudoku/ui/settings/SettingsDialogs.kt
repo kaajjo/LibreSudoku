@@ -2,17 +2,12 @@ package com.kaajjo.libresudoku.ui.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.LocalElevationOverlay
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -56,8 +51,7 @@ fun SelectionDialog(
                                         onSelect(index)
                                         onDismiss()
                                     }
-                                    .padding(start = 12.dp, end = 12.dp)
-                                ,
+                                    .padding(start = 12.dp, end = 12.dp),
                                 verticalAlignment = CenterVertically
                             ) {
                                 RadioButton(

@@ -2,8 +2,6 @@ package com.kaajjo.libresudoku.core.qqwing
 
 import android.os.Process
 import android.util.Log
-import kotlin.jvm.JvmOverloads
-import java.lang.Exception
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger

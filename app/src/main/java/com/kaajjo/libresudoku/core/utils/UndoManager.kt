@@ -11,16 +11,16 @@ class UndoManager(private val initState: GameState) {
     fun addState(gameState: GameState) {
         states = states.plus(gameState)
         undone = false
-        if(states.count() > 50) {
+        if (states.count() > 50) {
             states = states.takeLast(50)
         }
     }
 
-    fun getPrevState() : GameState {
-        if(states.count() <= 1) {
+    fun getPrevState(): GameState {
+        if (states.count() <= 1) {
             return initState
         }
-        if(!undone) {
+        if (!undone) {
             states = states.dropLast(1)
         }
         val state = states.last()
@@ -29,7 +29,7 @@ class UndoManager(private val initState: GameState) {
         return state
     }
 
-    fun count() : Int = states.count()
+    fun count(): Int = states.count()
     fun clear() {
         states = emptyList()
     }

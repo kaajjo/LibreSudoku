@@ -1,6 +1,5 @@
 package com.kaajjo.libresudoku.ui.statistics
 
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -57,9 +56,9 @@ class StatisticsViewModel
     fun setType(type: GameType) {
         selectedType = type
 
-        if(selectedType == GameType.Unspecified) {
+        if (selectedType == GameType.Unspecified) {
             selectedDifficulty = GameDifficulty.Unspecified
-        } else if(selectedType != GameType.Unspecified && selectedDifficulty == GameDifficulty.Unspecified) {
+        } else if (selectedType != GameType.Unspecified && selectedDifficulty == GameDifficulty.Unspecified) {
             selectedDifficulty = GameDifficulty.Easy
         }
 
@@ -67,7 +66,7 @@ class StatisticsViewModel
     }
 
     private fun loadRecords(all: Boolean) {
-        recordList = if(all) {
+        recordList = if (all) {
             recordRepository.getAllSortByTime()
         } else {
             recordRepository.getAll(selectedDifficulty, selectedType)
@@ -89,8 +88,8 @@ class StatisticsViewModel
     fun getCurrentStreak(games: List<SavedGame>): Int {
         var currentStreak = 0
         games.forEach { game ->
-            if(game.completed) {
-                currentStreak = if(!game.giveUp && !game.canContinue) currentStreak + 1 else 0
+            if (game.completed) {
+                currentStreak = if (!game.giveUp && !game.canContinue) currentStreak + 1 else 0
             }
         }
         return currentStreak
@@ -100,9 +99,9 @@ class StatisticsViewModel
         var maxStreak = 0
         var currentStreak = 0
         games.forEach { game ->
-            if(game.completed && !game.canContinue) {
-                currentStreak = if(!game.giveUp) currentStreak + 1 else 0
-                if(currentStreak > maxStreak){
+            if (game.completed && !game.canContinue) {
+                currentStreak = if (!game.giveUp) currentStreak + 1 else 0
+                if (currentStreak > maxStreak) {
                     maxStreak = currentStreak
                 }
             }
