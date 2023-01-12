@@ -27,12 +27,12 @@ import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.ui.components.animatedComposable
+import com.kaajjo.libresudoku.ui.customsudoku.CustomSudokuScreen
+import com.kaajjo.libresudoku.ui.customsudoku.createsudoku.CreateSudokuScreen
 import com.kaajjo.libresudoku.ui.game.GameScreen
 import com.kaajjo.libresudoku.ui.gameshistory.GamesHistoryScreen
 import com.kaajjo.libresudoku.ui.gameshistory.savedgame.SavedGameScreen
 import com.kaajjo.libresudoku.ui.home.HomeScreen
-import com.kaajjo.libresudoku.ui.customsudoku.CustomSudokuScreen
-import com.kaajjo.libresudoku.ui.customsudoku.createsudoku.CreateSudokuScreen
 import com.kaajjo.libresudoku.ui.learn.LearnScreen
 import com.kaajjo.libresudoku.ui.more.MoreScreen
 import com.kaajjo.libresudoku.ui.more.about.AboutLibrariesScreen
@@ -51,6 +51,7 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var settings: AppSettingsManager
+
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,19 +59,22 @@ class MainActivity : AppCompatActivity() {
             val mainViewModel: MainActivityViewModel = hiltViewModel()
 
             val dynamicColors = mainViewModel.dc.collectAsState(initial = isSystemInDarkTheme())
-            val darkTheme = mainViewModel.darkTheme.collectAsState(initial = PreferencesConstants.DEFAULT_DARK_THEME)
-            val amoledBlack = mainViewModel.amoledBlack.collectAsState(initial = PreferencesConstants.DEFAULT_AMOLED_BLACK)
+            val darkTheme =
+                mainViewModel.darkTheme.collectAsState(initial = PreferencesConstants.DEFAULT_DARK_THEME)
+            val amoledBlack =
+                mainViewModel.amoledBlack.collectAsState(initial = PreferencesConstants.DEFAULT_AMOLED_BLACK)
             val firstLaunch by mainViewModel.firstLaunch.collectAsState(initial = false)
-            val currentTheme = mainViewModel.currentTheme.collectAsState(initial = PreferencesConstants.DEFAULT_SELECTED_THEME)
+            val currentTheme =
+                mainViewModel.currentTheme.collectAsState(initial = PreferencesConstants.DEFAULT_SELECTED_THEME)
             LibreSudokuTheme(
-                darkTheme = when(darkTheme.value) {
+                darkTheme = when (darkTheme.value) {
                     1 -> false
                     2 -> true
                     else -> isSystemInDarkTheme()
                 },
                 dynamicColor = dynamicColors.value,
                 amoled = amoledBlack.value,
-                appTheme = when(currentTheme.value) {
+                appTheme = when (currentTheme.value) {
                     PreferencesConstants.GREEN_THEME_KEY -> AppTheme.Green
                     PreferencesConstants.PEACH_THEME_KEY -> AppTheme.Peach
                     PreferencesConstants.YELLOW_THEME_KEY -> AppTheme.Yellow
@@ -88,13 +92,13 @@ class MainActivity : AppCompatActivity() {
                 var bottomBarState by rememberSaveable { mutableStateOf(false) }
 
                 LaunchedEffect(navBackStackEntry) {
-                    bottomBarState = when(navBackStackEntry?.destination?.route) {
+                    bottomBarState = when (navBackStackEntry?.destination?.route) {
                         Route.STATISTICS, Route.HOME, Route.MORE -> true
                         else -> false
                     }
                 }
                 LaunchedEffect(firstLaunch) {
-                    if(firstLaunch) {
+                    if (firstLaunch) {
                         navController.navigate(Route.WELCOME_SCREEN)
                     }
                 }
@@ -196,7 +200,7 @@ class MainActivity : AppCompatActivity() {
                             })
                         ) {
                             SettingsScreen(
-                                navigateBack = { navController.popBackStack()},
+                                navigateBack = { navController.popBackStack() },
                                 hiltViewModel()
                             )
                         }
@@ -204,7 +208,7 @@ class MainActivity : AppCompatActivity() {
                         animatedComposable(
                             route = Route.GAME,
                             arguments = listOf(
-                                navArgument(name = "uid") { type = NavType.LongType},
+                                navArgument(name = "uid") { type = NavType.LongType },
                                 navArgument(name = "saved") {
                                     type = NavType.BoolType
                                     defaultValue = false
@@ -222,7 +226,7 @@ class MainActivity : AppCompatActivity() {
 
                         animatedComposable(
                             route = Route.SAVED_GAME,
-                            arguments = listOf(navArgument("uid") { type = NavType.LongType } )
+                            arguments = listOf(navArgument("uid") { type = NavType.LongType })
                         ) {
                             SavedGameScreen(
                                 navigateBack = { navController.popBackStack() },
@@ -305,8 +309,7 @@ class MainActivityViewModel
 @Inject constructor(
     themeSettingsManager: ThemeSettingsManager,
     appSettingsManager: AppSettingsManager
-) : ViewModel()
-{
+) : ViewModel() {
     val dc = themeSettingsManager.dynamicColors
     val darkTheme = themeSettingsManager.darkTheme
     val amoledBlack = themeSettingsManager.amoledBlack

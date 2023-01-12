@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -31,7 +30,7 @@ class SettingsViewModel
     private val tipCardsDataStore: TipCardsDataStore,
     private val appDatabase: AppDatabase,
     savedStateHandle: SavedStateHandle
-): ViewModel() {
+) : ViewModel() {
     @Inject
     lateinit var appThemeDataStore: ThemeSettingsManager
 
@@ -47,6 +46,7 @@ class SettingsViewModel
     val darkTheme by lazy {
         appThemeDataStore.darkTheme
     }
+
     fun updateDarkTheme(value: Int) =
         viewModelScope.launch(Dispatchers.IO) {
             appThemeDataStore.setDarkTheme(value)
@@ -55,13 +55,16 @@ class SettingsViewModel
     val dynamicColors by lazy {
         appThemeDataStore.dynamicColors
     }
+
     fun updateDynamicColors(enabled: Boolean) =
         viewModelScope.launch {
             appThemeDataStore.setDynamicColors(enabled)
         }
+
     val amoledBlack by lazy {
         appThemeDataStore.amoledBlack
     }
+
     fun updateAmoledBlack(enabled: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             appThemeDataStore.setAmoledBlack(enabled)
@@ -88,9 +91,10 @@ class SettingsViewModel
 
     val highlightIdentical = settingsDataManager.highlightIdentical
     fun updateHighlightIdentical(enabled: Boolean) =
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             settingsDataManager.setSameValuesHighlight(enabled)
         }
+
     val disableHints = settingsDataManager.hintsDisabled
     fun updateHintDisabled(disabled: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -156,6 +160,7 @@ class SettingsViewModel
     val currentTheme by lazy {
         appThemeDataStore.currentTheme
     }
+
     fun updateCurrentTheme(theme: AppTheme) {
         viewModelScope.launch(Dispatchers.IO) {
             appThemeDataStore.setCurrentTheme(theme)
@@ -175,7 +180,7 @@ class SettingsViewModel
             Log.d("lang", "${it.key} ${it.value}")
         }
         val locales = AppCompatDelegate.getApplicationLocales()
-        if(locales == LocaleListCompat.getEmptyLocaleList()) {
+        if (locales == LocaleListCompat.getEmptyLocaleList()) {
             return context.getString(R.string.pref_app_language_default)
         }
         return getDisplayName(locales.toLanguageTags())

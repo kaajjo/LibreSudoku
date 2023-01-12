@@ -7,10 +7,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 
 @Composable
@@ -36,8 +35,8 @@ fun HelpCard(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
-                ){
-                    if(painter != null){
+                ) {
+                    if (painter != null) {
                         Icon(
                             painter = painter,
                             contentDescription = null

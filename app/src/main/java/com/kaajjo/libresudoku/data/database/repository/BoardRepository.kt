@@ -11,12 +11,16 @@ class BoardRepository(
 ) {
     fun getAll(): Flow<List<SudokuBoard>> = boardDao.getAll()
 
-    fun getAll(gameDifficulty: GameDifficulty): Flow<List<SudokuBoard>> = boardDao.getAll(gameDifficulty)
+    fun getAll(gameDifficulty: GameDifficulty): Flow<List<SudokuBoard>> =
+        boardDao.getAll(gameDifficulty)
+
     fun getAllList(): List<SudokuBoard> = boardDao.getAllList()
 
-    fun getSavedGamesWithBoard(): Flow<Map<SudokuBoard, SavedGame?>> = boardDao.getBoardsWithSavedGames()
+    fun getSavedGamesWithBoard(): Flow<Map<SudokuBoard, SavedGame?>> =
+        boardDao.getBoardsWithSavedGames()
 
-    fun getSavedGamesWithBoard(difficulty: GameDifficulty): Flow<Map<SudokuBoard, SavedGame?>> = boardDao.getBoardsWithSavedGames(difficulty)
+    fun getSavedGamesWithBoard(difficulty: GameDifficulty): Flow<Map<SudokuBoard, SavedGame?>> =
+        boardDao.getBoardsWithSavedGames(difficulty)
 
     suspend fun get(uid: Long): SudokuBoard = boardDao.get(uid)
     suspend fun insert(boardEntity: SudokuBoard): Long = boardDao.insert(boardEntity)

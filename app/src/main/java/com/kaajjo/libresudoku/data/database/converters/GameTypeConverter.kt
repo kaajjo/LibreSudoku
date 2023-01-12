@@ -9,7 +9,7 @@ import com.kaajjo.libresudoku.core.qqwing.GameType
 class GameTypeConverter {
     @TypeConverter
     fun fromType(gameType: GameType): Int {
-        return when(gameType) {
+        return when (gameType) {
             GameType.Unspecified -> 0
             GameType.Default9x9 -> 1
             GameType.Default12x12 -> 2
@@ -19,7 +19,7 @@ class GameTypeConverter {
 
     @TypeConverter
     fun toType(value: Int): GameType {
-        return when(value) {
+        return when (value) {
             0 -> GameType.Unspecified
             1 -> GameType.Default9x9
             2 -> GameType.Default12x12

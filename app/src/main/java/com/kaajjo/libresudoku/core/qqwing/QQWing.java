@@ -49,36 +49,42 @@ public class QQWing {
 
     public static int SEC_GROUP_SIZE = (ROW_COL_SEC_SIZE * GRID_SIZE_ROW);
 
-    public static  int BOARD_SIZE = (ROW_COL_SEC_SIZE * ROW_COL_SEC_SIZE);
+    public static int BOARD_SIZE = (ROW_COL_SEC_SIZE * ROW_COL_SEC_SIZE);
 
     public static int POSSIBILITY_SIZE = (BOARD_SIZE * ROW_COL_SEC_SIZE);
 
     private static Random random = new Random();
-
+    /**
+     * A list of moves used to solve the puzzle. This list contains all moves,
+     * even on solve branches that did not lead to a solution.
+     */
+    private final ArrayList<LogItem> solveHistory = new ArrayList<LogItem>();
+    /**
+     * A list of moves used to solve the puzzle. This list contains only the
+     * moves needed to solve the puzzle, but doesn't contain information about
+     * bad guesses.
+     */
+    private final ArrayList<LogItem> solveInstructions = new ArrayList<LogItem>();
     /**
      * The last round of solving
      */
     private int lastSolveRound;
-
     /**
      * The 81 integers that make up a sudoku puzzle. Givens are 1-9, unknowns
      * are 0. Once initialized, this puzzle remains as is. The answer is worked
      * out in "solution".
      */
     private int[] puzzle = new int[BOARD_SIZE];
-
     /**
      * The 81 integers that make up a sudoku puzzle. The solution is built here,
      * after completion all will be 1-9.
      */
     private int[] solution = new int[BOARD_SIZE];
-
     /**
      * Recursion depth at which each of the numbers in the solution were placed.
      * Useful for backing out solve branches that don't lead to a solution.
      */
     private int[] solutionRound = new int[BOARD_SIZE];
-
     /**
      * The 729 integers that make up a the possible values for a Sudoku puzzle.
      * (9 possibilities for each of 81 squares). If possibilities[i] is zero,
@@ -88,43 +94,25 @@ public class QQWing {
      * possibility.
      */
     private int[] possibilities = new int[POSSIBILITY_SIZE];
-
     /**
      * An array the size of the board (81) containing each of the numbers 0-n
      * exactly once. This array may be shuffled so that operations that need to
      * look at each cell can do so in a random order.
      */
     private int[] randomBoardArray = fillIncrementing(new int[BOARD_SIZE]);
-
     /**
      * An array with one element for each position (9), in some random order to
      * be used when trying each position in turn during guesses.
      */
     private int[] randomPossibilityArray = fillIncrementing(new int[ROW_COL_SEC_SIZE]);
-
     /**
      * Whether or not to record history
      */
     private boolean recordHistory = false;
-
     /**
      * Whether or not to print history as it happens
      */
     private boolean logHistory = false;
-
-    /**
-     * A list of moves used to solve the puzzle. This list contains all moves,
-     * even on solve branches that did not lead to a solution.
-     */
-    private final ArrayList<LogItem> solveHistory = new ArrayList<LogItem>();
-
-    /**
-     * A list of moves used to solve the puzzle. This list contains only the
-     * moves needed to solve the puzzle, but doesn't contain information about
-     * bad guesses.
-     */
-    private final ArrayList<LogItem> solveInstructions = new ArrayList<LogItem>();
-
     /**
      * The style with which to print puzzles and solutions
      */
@@ -165,11 +153,121 @@ public class QQWing {
         randomPossibilityArray = fillIncrementing(new int[ROW_COL_SEC_SIZE]);
     }
 
-    private static int[] fillIncrementing(int[] arr){
+    private static int[] fillIncrementing(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
             arr[i] = i;
         }
         return arr;
+    }
+
+    /**
+     * Shuffle the values in an array of integers.
+     */
+    private static void shuffleArray(int[] array, int size) {
+        for (int i = 0; i < size; i++) {
+            int tailSize = size - i;
+            int randTailPos = Math.abs(random.nextInt()) % tailSize + i;
+            int temp = array[i];
+            array[i] = array[randTailPos];
+            array[randTailPos] = temp;
+        }
+    }
+
+    private static Symmetry getRandomSymmetry() {
+        Symmetry[] values = Symmetry.values();
+        // not the first and last value which are NONE and RANDOM
+        return values[(Math.abs(random.nextInt()) % (values.length - 1)) + 1];
+    }
+
+    /**
+     * Given the index of a cell (0-80) calculate the column (0-8) in which that
+     * cell resides.
+     * Checked!
+     */
+    static int cellToColumn(int cell) {
+        return cell % ROW_COL_SEC_SIZE;
+    }
+
+    /**
+     * Given the index of a cell (0-80) calculate the row (0-8) in which it
+     * resides.
+     * Checked!
+     */
+    static int cellToRow(int cell) {
+        return cell / ROW_COL_SEC_SIZE;
+    }
+
+    /**
+     * Given the index of a cell (0-80) calculate the section (0-8) in which it
+     * resides.
+     * Checked!
+     */
+    static int cellToSection(int cell) {
+        return ((cell / SEC_GROUP_SIZE * GRID_SIZE_ROW)
+                + (cellToColumn(cell) / GRID_SIZE_COL));
+    }
+
+    /**
+     * Given the index of a cell (0-80) calculate the cell (0-80) that is the
+     * upper left start cell of that section.
+     * Checked!
+     */
+    static int cellToSectionStartCell(int cell) {
+        return ((cell / SEC_GROUP_SIZE * SEC_GROUP_SIZE)
+                + (cellToColumn(cell) / GRID_SIZE_COL * GRID_SIZE_COL));
+    }
+
+    /**
+     * Given a row (0-8) calculate the first cell (0-80) of that row.
+     * Checked!
+     */
+    static int rowToFirstCell(int row) {
+        return ROW_COL_SEC_SIZE * row;
+    }
+
+    /**
+     * Given a column (0-8) calculate the first cell (0-80) of that column.
+     * Checked!
+     */
+    static int columnToFirstCell(int column) {
+        return column;
+    }
+
+    /**
+     * Given a section (0-8) calculate the first cell (0-80) of that section.
+     * Checked!
+     */
+    static int sectionToFirstCell(int section) {
+        return ((section % GRID_SIZE_ROW * GRID_SIZE_COL)
+                + (section / GRID_SIZE_ROW * SEC_GROUP_SIZE));
+    }
+
+    /**
+     * Given a value for a cell (0-8) and a cell number (0-80) calculate the
+     * offset into the possibility array (0-728).
+     * Checked!
+     */
+    static int getPossibilityIndex(int valueIndex, int cell) {
+        return valueIndex + (ROW_COL_SEC_SIZE * cell);
+    }
+
+    /**
+     * Given a row (0-8) and a column (0-8) calculate the cell (0-80).
+     * Checked!
+     */
+    static int rowColumnToCell(int row, int column) {
+        return (row * ROW_COL_SEC_SIZE) + column;
+    }
+
+    /**
+     * Given a section (0-8) and an offset into that section (0-8) calculate the
+     * cell (0-80)
+     * Checked!
+     */
+    static int sectionToCell(int section, int offset) {
+        return (sectionToFirstCell(section)
+                + ((offset / GRID_SIZE_COL) * ROW_COL_SEC_SIZE)
+                + (offset % GRID_SIZE_COL));
     }
 
     /**
@@ -218,7 +316,8 @@ public class QQWing {
                 int value = puzzle[position];
                 if (possibilities[valPos] != 0) return false;
                 mark(position, round, value);
-                if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.GIVEN, value, position));
+                if (logHistory || recordHistory)
+                    addHistoryItem(new LogItem(round, LogType.GIVEN, value, position));
             }
         }
 
@@ -250,7 +349,7 @@ public class QQWing {
                     return GameDifficulty.Moderate;
                 break;
             default:
-                if(getHiddenSingleCount() > 10)
+                if (getHiddenSingleCount() > 10)
                     return GameDifficulty.Moderate;
         }
         switch (gameType) {
@@ -259,7 +358,7 @@ public class QQWing {
                     return GameDifficulty.Easy;
                 break;
             case Default9x9:
-                if(getSingleCount() > 35)
+                if (getSingleCount() > 35)
                     return GameDifficulty.Easy;
                 break;
             default:
@@ -599,7 +698,7 @@ public class QQWing {
      * return true if the puzzle has a solution
      * and only a single solution
      */
-    public boolean hasUniqueSolution(){
+    public boolean hasUniqueSolution() {
         return countSolutionsLimited() == 1;
     }
 
@@ -619,7 +718,7 @@ public class QQWing {
      * when you are interested in knowing if the
      * puzzle has zero, one, or multiple solutions.
      */
-    public int countSolutionsLimited(){
+    public int countSolutionsLimited() {
         return countSolutions(true);
     }
 
@@ -710,7 +809,7 @@ public class QQWing {
     }
 
     private int findPositionWithFewestPossibilities() {
-        int minPossibilities = ROW_COL_SEC_SIZE+1;
+        int minPossibilities = ROW_COL_SEC_SIZE + 1;
         int bestPosition = 0;
         for (int i = 0; i < BOARD_SIZE; i++) {
             int position = randomBoardArray[i];
@@ -738,7 +837,8 @@ public class QQWing {
             if (possibilities[valPos] == 0) {
                 if (localGuessCount == guessNumber) {
                     int value = valIndex + 1;
-                    if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.GUESS, value, position));
+                    if (logHistory || recordHistory)
+                        addHistoryItem(new LogItem(round, LogType.GUESS, value, position));
                     mark(position, round, value);
                     return true;
                 }
@@ -803,7 +903,8 @@ public class QQWing {
                         }
                     }
                     if (doneSomething) {
-                        if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.COLUMN_BOX, valIndex + 1, colStart));
+                        if (logHistory || recordHistory)
+                            addHistoryItem(new LogItem(round, LogType.COLUMN_BOX, valIndex + 1, colStart));
                         return true;
                     }
                 }
@@ -811,7 +912,6 @@ public class QQWing {
         }
         return false;
     }
-
 
     private boolean rowBoxReduction(int round) {
         for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
@@ -852,7 +952,8 @@ public class QQWing {
                         }
                     }
                     if (doneSomething) {
-                        if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.ROW_BOX, valIndex + 1, rowStart));
+                        if (logHistory || recordHistory)
+                            addHistoryItem(new LogItem(round, LogType.ROW_BOX, valIndex + 1, rowStart));
                         return true;
                     }
                 }
@@ -896,7 +997,8 @@ public class QQWing {
                         }
                     }
                     if (doneSomething) {
-                        if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.POINTING_PAIR_TRIPLE_ROW, valIndex + 1, rowStart));
+                        if (logHistory || recordHistory)
+                            addHistoryItem(new LogItem(round, LogType.POINTING_PAIR_TRIPLE_ROW, valIndex + 1, rowStart));
                         return true;
                     }
                 }
@@ -940,7 +1042,8 @@ public class QQWing {
                         }
                     }
                     if (doneSomething) {
-                        if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.POINTING_PAIR_TRIPLE_COLUMN, valIndex + 1, colStart));
+                        if (logHistory || recordHistory)
+                            addHistoryItem(new LogItem(round, LogType.POINTING_PAIR_TRIPLE_COLUMN, valIndex + 1, colStart));
                         return true;
                     }
                 }
@@ -1040,7 +1143,8 @@ public class QQWing {
                                 }
                             }
                             if (doneSomething) {
-                                if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.HIDDEN_PAIR_COLUMN, valIndex + 1, rowColumnToCell(r1, column)));
+                                if (logHistory || recordHistory)
+                                    addHistoryItem(new LogItem(round, LogType.HIDDEN_PAIR_COLUMN, valIndex + 1, rowColumnToCell(r1, column)));
                                 return true;
                             }
                         }
@@ -1106,7 +1210,8 @@ public class QQWing {
                                 }
                             }
                             if (doneSomething) {
-                                if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.HIDDEN_PAIR_SECTION, valIndex + 1, sectionToCell(section, si1)));
+                                if (logHistory || recordHistory)
+                                    addHistoryItem(new LogItem(round, LogType.HIDDEN_PAIR_SECTION, valIndex + 1, sectionToCell(section, si1)));
                                 return true;
                             }
                         }
@@ -1172,7 +1277,8 @@ public class QQWing {
                                 }
                             }
                             if (doneSomething) {
-                                if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.HIDDEN_PAIR_ROW, valIndex + 1, rowColumnToCell(row, c1)));
+                                if (logHistory || recordHistory)
+                                    addHistoryItem(new LogItem(round, LogType.HIDDEN_PAIR_ROW, valIndex + 1, rowColumnToCell(row, c1)));
                                 return true;
                             }
                         }
@@ -1204,7 +1310,8 @@ public class QQWing {
                                     }
                                 }
                                 if (doneSomething) {
-                                    if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.NAKED_PAIR_ROW, 0, position));
+                                    if (logHistory || recordHistory)
+                                        addHistoryItem(new LogItem(round, LogType.NAKED_PAIR_ROW, 0, position));
                                     return true;
                                 }
                             }
@@ -1217,7 +1324,8 @@ public class QQWing {
                                     }
                                 }
                                 if (doneSomething) {
-                                    if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.NAKED_PAIR_COLUMN, 0, position));
+                                    if (logHistory || recordHistory)
+                                        addHistoryItem(new LogItem(round, LogType.NAKED_PAIR_COLUMN, 0, position));
                                     return true;
                                 }
                             }
@@ -1233,7 +1341,8 @@ public class QQWing {
                                     }
                                 }
                                 if (doneSomething) {
-                                    if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.NAKED_PAIR_SECTION, 0, position));
+                                    if (logHistory || recordHistory)
+                                        addHistoryItem(new LogItem(round, LogType.NAKED_PAIR_SECTION, 0, position));
                                     return true;
                                 }
                             }
@@ -1267,7 +1376,8 @@ public class QQWing {
                 }
                 if (count == 1) {
                     int value = valIndex + 1;
-                    if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.HIDDEN_SINGLE_ROW, value, lastPosition));
+                    if (logHistory || recordHistory)
+                        addHistoryItem(new LogItem(round, LogType.HIDDEN_SINGLE_ROW, value, lastPosition));
                     mark(lastPosition, round, value);
                     return true;
                 }
@@ -1298,7 +1408,8 @@ public class QQWing {
                 }
                 if (count == 1) {
                     int value = valIndex + 1;
-                    if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.HIDDEN_SINGLE_COLUMN, value, lastPosition));
+                    if (logHistory || recordHistory)
+                        addHistoryItem(new LogItem(round, LogType.HIDDEN_SINGLE_COLUMN, value, lastPosition));
                     mark(lastPosition, round, value);
                     return true;
                 }
@@ -1332,7 +1443,8 @@ public class QQWing {
                 }
                 if (count == 1) {
                     int value = valIndex + 1;
-                    if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.HIDDEN_SINGLE_SECTION, value, lastPosition));
+                    if (logHistory || recordHistory)
+                        addHistoryItem(new LogItem(round, LogType.HIDDEN_SINGLE_SECTION, value, lastPosition));
                     mark(lastPosition, round, value);
                     return true;
                 }
@@ -1361,7 +1473,8 @@ public class QQWing {
                 }
                 if (count == 1) {
                     mark(position, round, lastValue);
-                    if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.SINGLE, lastValue, position));
+                    if (logHistory || recordHistory)
+                        addHistoryItem(new LogItem(round, LogType.SINGLE, lastValue, position));
                     return true;
                 }
             }
@@ -1374,18 +1487,21 @@ public class QQWing {
      * and section for the position and remove the value from the possibilities.
      *
      * @param position Position into the board (0-80)
-     * @param round Round to mark for rollback purposes
-     * @param value The value to go in the square at the given position
-     * Checked!
+     * @param round    Round to mark for rollback purposes
+     * @param value    The value to go in the square at the given position
+     *                 Checked!
      */
     private void mark(int position, int round, int value) {
-        if (solution[position] != 0) throw new IllegalArgumentException("Marking position that already has been marked.");
-        if (solutionRound[position] != 0) throw new IllegalArgumentException("Marking position that was marked another round.");
+        if (solution[position] != 0)
+            throw new IllegalArgumentException("Marking position that already has been marked.");
+        if (solutionRound[position] != 0)
+            throw new IllegalArgumentException("Marking position that was marked another round.");
         int valIndex = value - 1;
         solution[position] = value;
 
         int possInd = getPossibilityIndex(valIndex, position);
-        if (possibilities[possInd] != 0) throw new IllegalArgumentException("Marking impossible position.");
+        if (possibilities[possInd] != 0)
+            throw new IllegalArgumentException("Marking impossible position.");
 
         // Take this value out of the possibilities for everything in the row
         solutionRound[position] = round;
@@ -1518,115 +1634,5 @@ public class QQWing {
             if ((v.get(i)).getType() == type) count++;
         }
         return count;
-    }
-
-    /**
-     * Shuffle the values in an array of integers.
-     */
-    private static void shuffleArray(int[] array, int size) {
-        for (int i = 0; i < size; i++) {
-            int tailSize = size - i;
-            int randTailPos = Math.abs(random.nextInt()) % tailSize + i;
-            int temp = array[i];
-            array[i] = array[randTailPos];
-            array[randTailPos] = temp;
-        }
-    }
-
-    private static Symmetry getRandomSymmetry() {
-        Symmetry[] values = Symmetry.values();
-        // not the first and last value which are NONE and RANDOM
-        return values[(Math.abs(random.nextInt()) % (values.length - 1)) + 1];
-    }
-
-    /**
-     * Given the index of a cell (0-80) calculate the column (0-8) in which that
-     * cell resides.
-     * Checked!
-     */
-    static int cellToColumn(int cell) {
-        return cell % ROW_COL_SEC_SIZE;
-    }
-
-    /**
-     * Given the index of a cell (0-80) calculate the row (0-8) in which it
-     * resides.
-     * Checked!
-     */
-    static int cellToRow(int cell) {
-        return cell / ROW_COL_SEC_SIZE;
-    }
-
-    /**
-     * Given the index of a cell (0-80) calculate the section (0-8) in which it
-     * resides.
-     * Checked!
-     */
-    static int cellToSection(int cell) {
-        return ((cell / SEC_GROUP_SIZE * GRID_SIZE_ROW)
-                + (cellToColumn(cell) / GRID_SIZE_COL));
-    }
-
-    /**
-     * Given the index of a cell (0-80) calculate the cell (0-80) that is the
-     * upper left start cell of that section.
-     * Checked!
-     */
-    static int cellToSectionStartCell(int cell) {
-        return ((cell / SEC_GROUP_SIZE * SEC_GROUP_SIZE)
-                + (cellToColumn(cell) / GRID_SIZE_COL * GRID_SIZE_COL));
-    }
-
-    /**
-     * Given a row (0-8) calculate the first cell (0-80) of that row.
-     * Checked!
-     */
-    static int rowToFirstCell(int row) {
-        return ROW_COL_SEC_SIZE * row;
-    }
-
-    /**
-     * Given a column (0-8) calculate the first cell (0-80) of that column.
-     * Checked!
-     */
-    static int columnToFirstCell(int column) {
-        return column;
-    }
-
-    /**
-     * Given a section (0-8) calculate the first cell (0-80) of that section.
-     * Checked!
-     */
-    static int sectionToFirstCell(int section) {
-        return ((section % GRID_SIZE_ROW * GRID_SIZE_COL)
-                + (section / GRID_SIZE_ROW * SEC_GROUP_SIZE));
-    }
-
-    /**
-     * Given a value for a cell (0-8) and a cell number (0-80) calculate the
-     * offset into the possibility array (0-728).
-     * Checked!
-     */
-    static int getPossibilityIndex(int valueIndex, int cell) {
-        return valueIndex + (ROW_COL_SEC_SIZE * cell);
-    }
-
-    /**
-     * Given a row (0-8) and a column (0-8) calculate the cell (0-80).
-     * Checked!
-     */
-    static int rowColumnToCell(int row, int column) {
-        return (row * ROW_COL_SEC_SIZE) + column;
-    }
-
-    /**
-     * Given a section (0-8) and an offset into that section (0-8) calculate the
-     * cell (0-80)
-     * Checked!
-     */
-    static int sectionToCell(int section, int offset) {
-        return (sectionToFirstCell(section)
-                + ((offset / GRID_SIZE_COL) * ROW_COL_SEC_SIZE)
-                + (offset % GRID_SIZE_COL));
     }
 }

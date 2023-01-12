@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -25,7 +24,7 @@ fun LearnRowItem(
     onLongClick: () -> Unit = { },
     painter: Painter = painterResource(R.drawable.ic_outline_help_outline_24)
 ) {
-    val height = if(subtitle != null) 72.dp else 56.dp
+    val height = if (subtitle != null) 72.dp else 56.dp
 
     val titleStyle = MaterialTheme.typography.bodyLarge
     val subtitleTextStyle = MaterialTheme.typography.bodyMedium.copy(

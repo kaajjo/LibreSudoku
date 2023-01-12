@@ -18,10 +18,13 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
 
     // material you colors
     private val dynamicColorsKey = booleanPreferencesKey("dynamic_colors")
+
     // 0 - system default, 1 - off, 2 - on
     private val darkThemeKey = intPreferencesKey("dark_theme")
+
     // amoled black theme, 0 - disabled, 1 enabled
     private val amoledBlackKey = booleanPreferencesKey("amoled_black")
+
     // current app theme
     private val currentThemeKey = stringPreferencesKey("current_theme")
 
@@ -30,6 +33,7 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
             settings[dynamicColorsKey] = enabled
         }
     }
+
     val dynamicColors = dataStore.data.map { preferences ->
         preferences[dynamicColorsKey] ?: PreferencesConstants.DEFAULT_DYNAMIC_COLORS
     }
@@ -39,6 +43,7 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
             settings[darkThemeKey] = value
         }
     }
+
     val darkTheme = dataStore.data.map { preferences ->
         preferences[darkThemeKey] ?: PreferencesConstants.DEFAULT_DARK_THEME
     }
@@ -48,12 +53,13 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
             settings[amoledBlackKey] = enabled
         }
     }
+
     val amoledBlack = dataStore.data.map { preferences ->
         preferences[amoledBlackKey] ?: PreferencesConstants.DEFAULT_AMOLED_BLACK
     }
 
     suspend fun setCurrentTheme(appTheme: AppTheme) {
-        val stringTheme = when(appTheme) {
+        val stringTheme = when (appTheme) {
             AppTheme.Green -> PreferencesConstants.GREEN_THEME_KEY
             AppTheme.Peach -> PreferencesConstants.PEACH_THEME_KEY
             AppTheme.Yellow -> PreferencesConstants.YELLOW_THEME_KEY
@@ -64,6 +70,7 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
             settings[currentThemeKey] = stringTheme
         }
     }
+
     val currentTheme = dataStore.data.map { preferences ->
         preferences[currentThemeKey] ?: PreferencesConstants.DEFAULT_SELECTED_THEME
     }

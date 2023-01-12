@@ -3,11 +3,11 @@ package com.kaajjo.libresudoku.ui.learn.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
-import com.kaajjo.libresudoku.R
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
+import com.kaajjo.libresudoku.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +29,8 @@ fun TutorialBase(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(title) },
+            TopAppBar(
+                title = { Text(title) },
                 navigationIcon = navigationIcon
             )
         }

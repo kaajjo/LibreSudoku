@@ -50,6 +50,7 @@ fun FirstGameDialog(
         }
     }
 }
+
 @Composable
 fun FirstGameScreen() {
     Column(
@@ -58,17 +59,18 @@ fun FirstGameScreen() {
             .padding(vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val toolbarWeight  by remember { mutableStateOf(0.35f) }
+        val toolbarWeight by remember { mutableStateOf(0.35f) }
         ToolRow {
             ToolbarItem(
                 modifier = Modifier.weight(toolbarWeight),
                 painter = painterResource(R.drawable.ic_round_undo_24),
-                onClick = {  }
+                onClick = { }
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(R.string.toolbar_undo_description))
+                text = stringResource(R.string.toolbar_undo_description)
+            )
         }
         ToolRow {
             ToolbarItem(
@@ -79,7 +81,8 @@ fun FirstGameScreen() {
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(R.string.toolbar_hint_description))
+                text = stringResource(R.string.toolbar_hint_description)
+            )
         }
         ToolRow {
             var notesMenu by remember { mutableStateOf(false) }
@@ -91,10 +94,10 @@ fun FirstGameScreen() {
                 NotesMenu(
                     expanded = notesMenu,
                     onDismiss = { notesMenu = false },
-                    onComputeNotesClick = {  },
-                    onClearNotesClick = {  },
+                    onComputeNotesClick = { },
+                    onClearNotesClick = { },
                     renderNotes = renderNotes,
-                    onRenderNotesClick = {  renderNotes = !renderNotes })
+                    onRenderNotesClick = { renderNotes = !renderNotes })
                 ToolbarItem(
                     toggled = noteToggled,
                     painter = painterResource(R.drawable.ic_round_edit_24),
@@ -107,7 +110,8 @@ fun FirstGameScreen() {
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(R.string.toolbar_notes_description))
+                text = stringResource(R.string.toolbar_notes_description)
+            )
         }
         ToolRow {
             ToolbarItem(
@@ -118,17 +122,19 @@ fun FirstGameScreen() {
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(R.string.toolbar_erase_description))
+                text = stringResource(R.string.toolbar_erase_description)
+            )
         }
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
+
 @Composable
 private fun ToolRow(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
-    Row (
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 6.dp),

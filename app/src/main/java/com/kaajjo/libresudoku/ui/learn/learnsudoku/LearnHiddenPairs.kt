@@ -27,46 +27,103 @@ fun LearnHiddenPairs(
         val sudokuParser = SudokuParser()
         val board by remember {
             mutableStateOf(
-                sudokuParser.parseBoard("..............................3.1.......2........................................", GameType.Default9x9, emptySeparator = '.').toList()
+                sudokuParser.parseBoard(
+                    "..............................3.1.......2........................................",
+                    GameType.Default9x9,
+                    emptySeparator = '.'
+                ).toList()
             )
         }
-        var notes by remember { mutableStateOf(
-            listOf(Note(3,4,4), Note(3,4,5), Note(3,4,8), Note(4,3,4), Note(4,3,5), Note(4,3,7), Note(4,5,4), Note(4,5,5), Note(5,3, 6), Note(5,3, 7), Note(5,3, 8), Note(5,3,9), Note(5,4,7), Note(5,4,8), Note(5,5,6), Note(5,5,8), Note(5,5,9),)
-        )}
+        var notes by remember {
+            mutableStateOf(
+                listOf(
+                    Note(3, 4, 4),
+                    Note(3, 4, 5),
+                    Note(3, 4, 8),
+                    Note(4, 3, 4),
+                    Note(4, 3, 5),
+                    Note(4, 3, 7),
+                    Note(4, 5, 4),
+                    Note(4, 5, 5),
+                    Note(5, 3, 6),
+                    Note(5, 3, 7),
+                    Note(5, 3, 8),
+                    Note(5, 3, 9),
+                    Note(5, 4, 7),
+                    Note(5, 4, 8),
+                    Note(5, 5, 6),
+                    Note(5, 5, 8),
+                    Note(5, 5, 9),
+                )
+            )
+        }
         val steps = listOf(
             stringResource(R.string.learn_hidden_pairs_1),
             stringResource(R.string.learn_hidden_pairs_2)
         )
         val stepsCell = listOf(
-            listOf(Cell(5,3),Cell(5,5))
+            listOf(Cell(5, 3), Cell(5, 5))
         )
         var step by remember { mutableStateOf(0) }
         LaunchedEffect(key1 = step) {
-            when(step) {
+            when (step) {
                 0 -> {
-                    notes =  listOf(Note(3,4,4),Note(3,4,5),Note(3,4,8),Note(4,3,4),Note(4,3,5),Note(4,3,7),Note(4,5,4),Note(4,5,5),Note(5,3, 6),Note(5,3, 7),Note(5,3, 8),Note(5,3,9),Note(5,4,7),Note(5,4,8),Note(5,5,6),Note(5,5,8),Note(5,5,9))
+                    notes = listOf(
+                        Note(3, 4, 4),
+                        Note(3, 4, 5),
+                        Note(3, 4, 8),
+                        Note(4, 3, 4),
+                        Note(4, 3, 5),
+                        Note(4, 3, 7),
+                        Note(4, 5, 4),
+                        Note(4, 5, 5),
+                        Note(5, 3, 6),
+                        Note(5, 3, 7),
+                        Note(5, 3, 8),
+                        Note(5, 3, 9),
+                        Note(5, 4, 7),
+                        Note(5, 4, 8),
+                        Note(5, 5, 6),
+                        Note(5, 5, 8),
+                        Note(5, 5, 9)
+                    )
                 }
                 1 -> {
-                    notes =  listOf(Note(3,4,4),Note(3,4,5),Note(3,4,8),Note(4,3,4),Note(4,3,5),Note(4,3,7),Note(4,5,4),Note(4,5,5),Note(5,3, 6),Note(5,3,9),Note(5,4,7),Note(5,4,8),Note(5,5,6),Note(5,5,9))
+                    notes = listOf(
+                        Note(3, 4, 4),
+                        Note(3, 4, 5),
+                        Note(3, 4, 8),
+                        Note(4, 3, 4),
+                        Note(4, 3, 5),
+                        Note(4, 3, 7),
+                        Note(4, 5, 4),
+                        Note(4, 5, 5),
+                        Note(5, 3, 6),
+                        Note(5, 3, 9),
+                        Note(5, 4, 7),
+                        Note(5, 4, 8),
+                        Note(5, 5, 6),
+                        Note(5, 5, 9)
+                    )
                 }
             }
         }
 
-        Column (
+        Column(
             modifier = Modifier.padding(horizontal = 12.dp)
         ) {
             Board(
                 board = board,
-                notes =  notes,
-                cellsToHighlight = if(step < stepsCell.size) stepsCell[step] else null,
+                notes = notes,
+                cellsToHighlight = if (step < stepsCell.size) stepsCell[step] else null,
                 onClick = { },
-                selectedCell = Cell(-1,-1)
+                selectedCell = Cell(-1, -1)
             )
             TutorialBottomContent(
                 steps = steps,
                 step = step,
-                onPreviousClick = { if(step > 0) step-- },
-                onNextClick = { if(step < (steps.size - 1)) step++ }
+                onPreviousClick = { if (step > 0) step-- },
+                onNextClick = { if (step < (steps.size - 1)) step++ }
             )
         }
     }

@@ -61,7 +61,8 @@ class HomeViewModel
 
     fun generate() {
         val size = selectedType.size
-        puzzle = MutableList(selectedType.size) { row -> MutableList(size) { col -> Cell(row, col, 0) } }
+        puzzle =
+            MutableList(selectedType.size) { row -> MutableList(size) { col -> Cell(row, col, 0) } }
 
         generated = false
         isGenerating = true
@@ -69,8 +70,8 @@ class HomeViewModel
             val controller = QQWingController()
             intPuzzle = controller.generate(selectedType, selectedDifficulty)
             board = intPuzzle.toMutableList()
-            for(i in 0 until size) {
-                for(j in 0 until size) {
+            for (i in 0 until size) {
+                for (j in 0 until size) {
                     puzzle[i][j].value = intPuzzle[i * size + j]
                 }
             }
@@ -84,14 +85,15 @@ class HomeViewModel
     fun solve() {
         isSolving = true
         val size = selectedType.size
-        solvedPuzzle = MutableList(selectedType.size) { row -> MutableList(size) { col -> Cell(row, col, 0) } }
+        solvedPuzzle =
+            MutableList(selectedType.size) { row -> MutableList(size) { col -> Cell(row, col, 0) } }
 
         val thread = Thread {
             val controller = QQWingController()
             intPuzzle = controller.solve(intPuzzle, selectedType)
             solvedBoard = intPuzzle.toMutableList()
-            for(i in 0 until size) {
-                for(j in 0 until size) {
+            for (i in 0 until size) {
+                for (j in 0 until size) {
                     solvedPuzzle[i][j].value = intPuzzle[i * size + j]
                 }
             }
@@ -103,24 +105,26 @@ class HomeViewModel
 
     fun setDifficulty(diff: Int) {
         val indexToSet = difficulties.indexOf(selectedDifficulty) + diff
-        if(indexToSet >= 0 && indexToSet < difficulties.count()) {
+        if (indexToSet >= 0 && indexToSet < difficulties.count()) {
             selectedDifficulty = difficulties[indexToSet]
         }
     }
 
     fun setType(diff: Int) {
         val indexToSet = types.indexOf(selectedType) + diff
-        if(indexToSet >= 0 && indexToSet < types.count()) {
+        if (indexToSet >= 0 && indexToSet < types.count()) {
             selectedType = types[indexToSet]
         }
     }
 
     suspend fun saveToDatabase() {
         val sudokuParser = SudokuParser()
-        val newBoard = List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
-        val newSolvedBoard = List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
-        for(i in 0 until selectedType.size) {
-            for(j in 0 until selectedType.size) {
+        val newBoard =
+            List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
+        val newSolvedBoard =
+            List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
+        for (i in 0 until selectedType.size) {
+            for (j in 0 until selectedType.size) {
                 newBoard[i][j].value = board[j + selectedType.size * i]
                 newSolvedBoard[i][j].value = solvedBoard[j + selectedType.size * i]
             }
@@ -139,7 +143,7 @@ class HomeViewModel
     fun giveUpLastGame() {
         viewModelScope.launch(Dispatchers.IO) {
             lastSavedValue.value?.let {
-                if(!it.completed) {
+                if (!it.completed) {
                     savedGameRepository.update(
                         it.copy(
                             completed = true,

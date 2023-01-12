@@ -12,7 +12,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TipCardsDataStore @Inject constructor(@ApplicationContext context: Context){
+class TipCardsDataStore @Inject constructor(@ApplicationContext context: Context) {
     private val Context.createDataStore: DataStore<Preferences> by preferencesDataStore(name = "tip_card")
     private val dataStore = context.createDataStore
 
@@ -24,6 +24,7 @@ class TipCardsDataStore @Inject constructor(@ApplicationContext context: Context
             settings[recordCardKey] = enabled
         }
     }
+
     val recordCard = dataStore.data.map { preferences ->
         preferences[recordCardKey] ?: true
     }
@@ -33,6 +34,7 @@ class TipCardsDataStore @Inject constructor(@ApplicationContext context: Context
             settings[streakCardKey] = enabled
         }
     }
+
     val streakCard = dataStore.data.map { preferences ->
         preferences[streakCardKey] ?: true
     }

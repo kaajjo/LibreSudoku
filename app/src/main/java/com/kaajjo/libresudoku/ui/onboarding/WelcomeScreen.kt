@@ -103,7 +103,7 @@ fun FirstPage(
 class WelcomeViewModel
 @Inject constructor(
     private val settingsDataManager: AppSettingsManager
-): ViewModel() {
+) : ViewModel() {
     var selectedCell by mutableStateOf(Cell(-1, -1, 0))
 
     val previewBoard = listOf(

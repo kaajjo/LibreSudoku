@@ -85,7 +85,13 @@ fun LearnScreenContent(
                                 pagerState.animateScrollToPage(index, 0f)
                             }
                         },
-                        text = { Text(text = title, maxLines = 2, overflow = TextOverflow.Ellipsis) }
+                        text = {
+                            Text(
+                                text = title,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     )
                 }
             }
@@ -96,7 +102,7 @@ fun LearnScreenContent(
                 state = pagerState,
                 verticalAlignment = Alignment.Top
             ) { page ->
-                when(page) {
+                when (page) {
                     0 -> LearnSudokuScreen(helpNavController)
                     1 -> LearnAppScreen(helpNavController)
                     else -> LearnSudokuScreen(helpNavController)
