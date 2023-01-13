@@ -1,8 +1,5 @@
 package com.kaajjo.libresudoku.ui.gameshistory.savedgame
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -111,18 +108,6 @@ class SavedGameViewModel
             }
         } ?: 0
         return Pair(size, count)
-    }
-
-    fun copyBoardToClipboard(context: Context): Boolean {
-        boardEntity?.let {
-            val clipBoardManager =
-                context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            clipBoardManager.setPrimaryClip(
-                ClipData.newPlainText("Sudoku", it.initialBoard.replace('0', '.'))
-            )
-            return true
-        }
-        return false
     }
 
     fun getFontSize(factor: Int): TextUnit {

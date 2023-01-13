@@ -1,5 +1,6 @@
 package com.kaajjo.libresudoku.ui.gameshistory.savedgame
 
+import android.os.Build.VERSION.SDK_INT
 import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
@@ -10,9 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -232,21 +235,24 @@ fun SavedGameScreen(
 
         if (viewModel.exportDialog) {
             val context = LocalContext.current
+            val clipboardManager = LocalClipboardManager.current
             viewModel.boardEntity?.let {
                 ExportDialog(
                     onDismiss = { viewModel.exportDialog = false },
                     boardString = it.initialBoard.replace('0', '.'),
                     onClickCopy = {
-                        if (viewModel.copyBoardToClipboard(context)) {
+                        clipboardManager.setText(
+                            AnnotatedString(
+                                it.initialBoard
+                                    .replace('0', '.')
+                                    .uppercase()
+                            )
+                        )
+                        // Android 13 and higher have its own notification when copying
+                        if (SDK_INT < 33) {
                             Toast.makeText(
                                 context,
-                                context.getString(R.string.export_string_state_copied),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.export_string_state_error),
+                                R.string.export_string_state_copied,
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
