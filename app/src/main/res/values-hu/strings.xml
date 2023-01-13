@@ -1,2 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="nav_bar_home">Kezdőlap</string>
+    <string name="nav_bar_more">Több</string>
+    <string name="new_game">Új játék</string>
+    <string name="dialog_new_game">Játék folyamatban</string>
+    <string name="dialog_new_game_positive">Elkezdés</string>
+    <string name="action_cancel">Vissza</string>
+    <string name="action_confirm">Igen</string>
+    <string name="action_play">Játék</string>
+    <string name="difficulty_unspecified">Meghatározatlan</string>
+    <string name="difficulty_easy">Könnyű</string>
+    <string name="difficulty_moderate">Közepes</string>
+    <string name="difficulty_hard">Nehéz</string>
+    <string name="difficulty_custom">Egyedi</string>
+    <string name="type_default_6x6">6x6</string>
+    <string name="type_default_9x9">9x9</string>
+    <string name="type_unspecified">Meghatározatlan</string>
+    <string name="more_title">Több</string>
+    <string name="about_title">Az appról</string>
+    <string name="pref_appearance">Megjelenés</string>
+    <string name="pref_dark_theme">Sötét téma</string>
+    <string name="pref_dark_theme_off">Ki</string>
+    <string name="pref_board_font_size">Tábla betűmérete</string>
+    <string name="pref_board_font_size_small">Kicsi</string>
+    <string name="pref_board_font_size_medium">Közepes</string>
+    <string name="pref_board_font_size_large">Nagy</string>
+    <string name="pref_input">Beviteli módszer</string>
+    <string name="pref_input_cell_first">Cella először</string>
+    <string name="pref_delete_stats">Statisztika visszalítása</string>
+    <string name="action_deleted">Törölt</string>
+    <string name="pref_app_theme">App téma</string>
+    <string name="theme_dynamic">Dinamikus</string>
+    <string name="theme_green">Zöld</string>
+    <string name="theme_yellow">Sárga</string>
+    <string name="pref_pure_black">Teljesen sötét téma</string>
+    <string name="pref_gameplay">Játékmenet</string>
+    <string name="pref_disable_hints">Tippek kikapcsolása</string>
+    <string name="nav_bar_statistics">Statisztika</string>
+    <string name="dialog_new_game_text">Nem fejezted be a játékot, tényleg szeretnél egy újat elkezdeni\?</string>
+    <string name="action_delete">Törlés</string>
+    <string name="action_continue">Folytatás</string>
+    <string name="difficulty_simple">Egyszerű</string>
+    <string name="difficulty_challenge">Kihívás</string>
+    <string name="type_default_12x12">12x12</string>
+    <string name="settings_title">Beállítások</string>
+    <string name="pref_dark_theme_follow">Rendszertéma</string>
+    <string name="pref_dark_theme_on">Be</string>
+    <string name="pref_input_digit_first">Szám először</string>
+    <string name="pref_delete_stats_summ">Ez a művelet törli minden statisztikádat, a mentett játékaidat és eredményeidet, és ez visszavonhatatlan</string>
+    <string name="theme_peach">Barack</string>
+    <string name="theme_lavender">Levendula</string>
+    <string name="theme_black_and_white">Fekete és fehér</string>
+    <string name="pref_mistakes_limit">Hibalimit</string>
+    <string name="pref_mistakes_limit_summ">3 hiba és vesztettél</string>
+</resources>
