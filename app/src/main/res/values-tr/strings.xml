@@ -1,2 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="dialog_new_game_text">Bitmemiş bir oyununuz var, yeni bir başlangıç yapmak istiyor musunuz\?</string>
+    <string name="nav_bar_more">Daha fazla</string>
+    <string name="new_game">Yeni oyun</string>
+    <string name="dialog_new_game">Oyun devam ediyor</string>
+    <string name="dialog_new_game_positive">Yeni başlat</string>
+    <string name="action_confirm">Evet</string>
+    <string name="action_play">Oyna</string>
+    <string name="action_continue">Devam et</string>
+    <string name="action_delete">Sil</string>
+    <string name="difficulty_unspecified">Belirtilmemiş</string>
+    <string name="difficulty_moderate">Orta</string>
+    <string name="difficulty_hard">Zor</string>
+    <string name="nav_bar_statistics">İstatistikler</string>
+    <string name="action_cancel">İptal et</string>
+    <string name="difficulty_easy">Kolay</string>
+    <string name="difficulty_simple">Basit</string>
+    <string name="difficulty_challenge">Meydan okuma</string>
+    <string name="difficulty_custom">Özel</string>
+    <string name="type_unspecified">Belirtilmemiş</string>
+    <string name="settings_title">Ayarlar</string>
+    <string name="more_title">Daha fazla</string>
+    <string name="about_title">Hakkında</string>
+    <string name="pref_appearance">Görünüm</string>
+    <string name="pref_dark_theme">Koyu tema</string>
+    <string name="pref_dark_theme_follow">Sistemi izle</string>
+    <string name="pref_dark_theme_off">Kapalı</string>
+    <string name="pref_dark_theme_on">Açık</string>
+    <string name="pref_board_font_size">Pano yazı tipi boyutu</string>
+    <string name="pref_board_font_size_small">Küçük</string>
+    <string name="pref_board_font_size_large">Büyük</string>
+    <string name="pref_input">Giriş yöntemi</string>
+    <string name="pref_board_font_size_medium">Orta</string>
+</resources>
