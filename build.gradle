@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        compose_version = '1.4.0-alpha03'
-        room_version = "2.4.3"
+        compose_version = '1.4.0-alpha04'
+        room_version = "2.5.0"
         latestAboutLibsRelease = '10.5.2'
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
