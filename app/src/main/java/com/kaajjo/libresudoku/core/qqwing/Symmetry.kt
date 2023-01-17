@@ -1,4 +1,4 @@
-package com.kaajjo.libresudoku.core.qqwing;
+package com.kaajjo.libresudoku.core.qqwing
 
 // @formatter:off
 /*
@@ -20,10 +20,18 @@ package com.kaajjo.libresudoku.core.qqwing;
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 // @formatter:on
+enum class Symmetry {
+    NONE, ROTATE90, ROTATE180, MIRROR, FLIP, RANDOM;
 
-public enum PrintStyle {
-    ONE_LINE,
-    COMPACT,
-    READABLE,
-    CSV
+    companion object {
+        operator fun get(s: String?): Symmetry? {
+            var s = s ?: return null
+            return try {
+                s = s.uppercase()
+                valueOf(s)
+            } catch (aix: IllegalArgumentException) {
+                null
+            }
+        }
+    }
 }
