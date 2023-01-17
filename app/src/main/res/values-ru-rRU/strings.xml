@@ -202,4 +202,5 @@
     <string name="sort_by_game_id">ID</string>
     <string name="sort_label">Сортировка</string>
     <string name="filter_label">Фильтр</string>
+    <string name="help_translate">Помочь с переводом</string>
 </resources>
