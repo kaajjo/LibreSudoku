@@ -11,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -85,9 +84,7 @@ class MainActivity : AppCompatActivity() {
                 }
             ) {
                 val systemUiController = rememberSystemUiController()
-                SideEffect {
-                    systemUiController.setSystemBarsColor(Color.Transparent)
-                }
+                systemUiController.setSystemBarsColor(MaterialTheme.colorScheme.surface)
 
                 val navController = rememberAnimatedNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
