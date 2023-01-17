@@ -314,7 +314,7 @@ private fun DefaultTopAppBar(
         actions = {
             IconButton(onClick = onClickShowFilterSheet) {
                 Icon(
-                    painter = painterResource(R.drawable.round_filter_list_24),
+                    painter = painterResource(R.drawable.ic_round_filter_list_24),
                     contentDescription = null
                 )
             }
@@ -351,13 +351,13 @@ private fun SelectionTopAppBar(
             }
             IconButton(onClick = onClickSelectAll) {
                 Icon(
-                    painterResource(R.drawable.outline_select_all_24),
+                    painterResource(R.drawable.ic_outline_select_all_24),
                     contentDescription = null
                 )
             }
             IconButton(onClick = onClickInverseSelection) {
                 Icon(
-                    painterResource(R.drawable.outline_flip_to_back_24),
+                    painterResource(R.drawable.ic_outline_flip_to_back_24),
                     contentDescription = null
                 )
             }

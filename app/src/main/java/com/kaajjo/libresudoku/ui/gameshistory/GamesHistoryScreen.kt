@@ -78,7 +78,7 @@ fun GamesHistoryScreen(
                         }
                     }) {
                         Icon(
-                            painter = painterResource(R.drawable.round_filter_list_24),
+                            painter = painterResource(R.drawable.ic_round_filter_list_24),
                             contentDescription = null
                         )
                     }

@@ -52,7 +52,7 @@ fun MoreScreen(
         )
         PreferenceRow(
             title = stringResource(R.string.custom_sudoku_title),
-            painter = painterResource(R.drawable.outline_science_24),
+            painter = painterResource(R.drawable.ic_outline_science_24),
             onClick = navigateCustomSudoku
         )
         PreferenceRow(

@@ -76,7 +76,7 @@ fun AboutScreen(
 
             PreferenceRow(
                 title = stringResource(R.string.help_translate),
-                painter = painterResource(R.drawable.round_translate_24),
+                painter = painterResource(R.drawable.ic_round_translate_24),
                 onClick = {
                     uriHandler.openUri("https://hosted.weblate.org/engage/libresudoku/")
                 }
