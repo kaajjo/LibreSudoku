@@ -52,13 +52,13 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
      * are 0. Once initialized, this puzzle remains as is. The answer is worked
      * out in "solution".
      */
-    private var puzzle = IntArray(BOARD_SIZE)
+    var puzzle = IntArray(BOARD_SIZE)
 
     /**
      * The 81 integers that make up a sudoku puzzle. The solution is built here,
      * after completion all will be 1-9.
      */
-    private var solution = IntArray(BOARD_SIZE)
+    var solution = IntArray(BOARD_SIZE)
 
     /**
      * Recursion depth at which each of the numbers in the solution were placed.
@@ -104,7 +104,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
      */
     private var printStyle = PrintStyle.READABLE
     private var gameType = GameType.Unspecified
-    private var difficulty = GameDifficulty.Unspecified
+    var difficulty = GameDifficulty.Unspecified
 
     /**
      * Create a new Sudoku board
@@ -188,6 +188,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
     /**
      * Get the gameDifficulty rating.
      */
+    @JvmName("getDifficulty1")
     fun getDifficulty(): GameDifficulty {
         if (getGuessCount() > 0) return GameDifficulty.Challenge
         if (getBoxLineReductionCount() > 0) return GameDifficulty.Hard
@@ -1573,6 +1574,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return puzzleToString(puzzle)
     }
 
+    @JvmName("getPuzzle1")
     fun getPuzzle(): IntArray {
         return puzzle.clone()
     }
@@ -1588,6 +1590,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return puzzleToString(solution)
     }
 
+    @JvmName("getSolution1")
     fun getSolution(): IntArray {
         return solution.clone()
     }
