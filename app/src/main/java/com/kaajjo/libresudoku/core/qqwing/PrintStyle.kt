@@ -1,4 +1,4 @@
-package com.kaajjo.libresudoku.core.qqwing;
+package com.kaajjo.libresudoku.core.qqwing
 
 // @formatter:off
 /*
@@ -20,10 +20,6 @@ package com.kaajjo.libresudoku.core.qqwing;
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 // @formatter:on
-
-public enum PrintStyle {
-    ONE_LINE,
-    COMPACT,
-    READABLE,
-    CSV
+enum class PrintStyle {
+    ONE_LINE, COMPACT, READABLE, CSV
 }

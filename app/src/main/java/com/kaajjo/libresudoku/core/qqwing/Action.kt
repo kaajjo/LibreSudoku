@@ -1,7 +1,5 @@
-package com.kaajjo.libresudoku.core.qqwing;
+package com.kaajjo.libresudoku.core.qqwing
 
-public enum Action {
-    NONE,
-    GENERATE,
-    SOLVE
+enum class Action {
+    NONE, GENERATE, SOLVE
 }

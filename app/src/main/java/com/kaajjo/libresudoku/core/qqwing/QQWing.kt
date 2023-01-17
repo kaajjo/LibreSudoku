@@ -1,4 +1,6 @@
-package com.kaajjo.libresudoku.core.qqwing;
+package com.kaajjo.libresudoku.core.qqwing
+
+import java.util.*
 
 // @formatter:off
 /*
@@ -22,69 +24,48 @@ package com.kaajjo.libresudoku.core.qqwing;
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 // @formatter:on
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
 /**
  * The board containing all the memory structures and methods for solving or
  * generating sudoku puzzles.
  */
-public class QQWing {
-
-    public static final String QQWING_VERSION = "1.3.4";
-
-    private static final String NL = System.getProperties().getProperty("line.separator");
-
-    //public static final int GRID_SIZE = 3;
-
-    public static int GRID_SIZE_ROW = 3;
-
-    public static int GRID_SIZE_COL = 3;
-
-    public static int ROW_COL_SEC_SIZE = (GRID_SIZE_ROW * GRID_SIZE_COL);
-
-    public static int SEC_GROUP_SIZE = (ROW_COL_SEC_SIZE * GRID_SIZE_ROW);
-
-    public static int BOARD_SIZE = (ROW_COL_SEC_SIZE * ROW_COL_SEC_SIZE);
-
-    public static int POSSIBILITY_SIZE = (BOARD_SIZE * ROW_COL_SEC_SIZE);
-
-    private static Random random = new Random();
+class QQWing(type: GameType, difficulty: GameDifficulty) {
     /**
      * A list of moves used to solve the puzzle. This list contains all moves,
      * even on solve branches that did not lead to a solution.
      */
-    private final ArrayList<LogItem> solveHistory = new ArrayList<LogItem>();
+    private val solveHistory = ArrayList<LogItem?>()
+
     /**
      * A list of moves used to solve the puzzle. This list contains only the
      * moves needed to solve the puzzle, but doesn't contain information about
      * bad guesses.
      */
-    private final ArrayList<LogItem> solveInstructions = new ArrayList<LogItem>();
+    private val solveInstructions = ArrayList<LogItem?>()
+
     /**
      * The last round of solving
      */
-    private int lastSolveRound;
+    private var lastSolveRound = 0
+
     /**
      * The 81 integers that make up a sudoku puzzle. Givens are 1-9, unknowns
      * are 0. Once initialized, this puzzle remains as is. The answer is worked
      * out in "solution".
      */
-    private int[] puzzle = new int[BOARD_SIZE];
+    private var puzzle = IntArray(BOARD_SIZE)
+
     /**
      * The 81 integers that make up a sudoku puzzle. The solution is built here,
      * after completion all will be 1-9.
      */
-    private int[] solution = new int[BOARD_SIZE];
+    private var solution = IntArray(BOARD_SIZE)
+
     /**
      * Recursion depth at which each of the numbers in the solution were placed.
      * Useful for backing out solve branches that don't lead to a solution.
      */
-    private int[] solutionRound = new int[BOARD_SIZE];
+    private var solutionRound = IntArray(BOARD_SIZE)
+
     /**
      * The 729 integers that make up a the possible values for a Sudoku puzzle.
      * (9 possibilities for each of 81 squares). If possibilities[i] is zero,
@@ -93,295 +74,155 @@ public class QQWing {
      * round (recursion level) at which it was determined that it could not be a
      * possibility.
      */
-    private int[] possibilities = new int[POSSIBILITY_SIZE];
+    private var possibilities = IntArray(POSSIBILITY_SIZE)
+
     /**
      * An array the size of the board (81) containing each of the numbers 0-n
      * exactly once. This array may be shuffled so that operations that need to
      * look at each cell can do so in a random order.
      */
-    private int[] randomBoardArray = fillIncrementing(new int[BOARD_SIZE]);
+    private var randomBoardArray = fillIncrementing(IntArray(BOARD_SIZE))
+
     /**
      * An array with one element for each position (9), in some random order to
      * be used when trying each position in turn during guesses.
      */
-    private int[] randomPossibilityArray = fillIncrementing(new int[ROW_COL_SEC_SIZE]);
+    private var randomPossibilityArray = fillIncrementing(IntArray(ROW_COL_SEC_SIZE))
+
     /**
      * Whether or not to record history
      */
-    private boolean recordHistory = false;
+    private var recordHistory = false
+
     /**
      * Whether or not to print history as it happens
      */
-    private boolean logHistory = false;
+    private var logHistory = false
+
     /**
      * The style with which to print puzzles and solutions
      */
-    private PrintStyle printStyle = PrintStyle.READABLE;
-
-    private GameType gameType = GameType.Unspecified;
-    private GameDifficulty difficulty = GameDifficulty.Unspecified;
+    private var printStyle = PrintStyle.READABLE
+    private var gameType = GameType.Unspecified
+    private var difficulty = GameDifficulty.Unspecified
 
     /**
      * Create a new Sudoku board
      */
-    public QQWing(GameType type, GameDifficulty difficulty) {
-        gameType = type;
-        this.difficulty = difficulty;
-
-        GRID_SIZE_ROW = type.getSectionHeight();    // 3    // 2
-
-        GRID_SIZE_COL = type.getSectionWidth();     // 3    // 3
-
-        ROW_COL_SEC_SIZE = (GRID_SIZE_ROW * GRID_SIZE_COL); //  3*3 = 9     // 6
-
-        SEC_GROUP_SIZE = (ROW_COL_SEC_SIZE * GRID_SIZE_ROW);    // 9 * 3 = 27 ? // 12
-
-        BOARD_SIZE = (ROW_COL_SEC_SIZE * ROW_COL_SEC_SIZE);     // 9 * 9 = 81   // 36
-
-        POSSIBILITY_SIZE = (BOARD_SIZE * ROW_COL_SEC_SIZE);     // 81 * 9
-
-        puzzle = new int[BOARD_SIZE];
-
-        solution = new int[BOARD_SIZE];
-
-        solutionRound = new int[BOARD_SIZE];
-
-        possibilities = new int[POSSIBILITY_SIZE];
-
-        randomBoardArray = fillIncrementing(new int[BOARD_SIZE]);
-
-        randomPossibilityArray = fillIncrementing(new int[ROW_COL_SEC_SIZE]);
-    }
-
-    private static int[] fillIncrementing(int[] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = i;
-        }
-        return arr;
-    }
-
-    /**
-     * Shuffle the values in an array of integers.
-     */
-    private static void shuffleArray(int[] array, int size) {
-        for (int i = 0; i < size; i++) {
-            int tailSize = size - i;
-            int randTailPos = Math.abs(random.nextInt()) % tailSize + i;
-            int temp = array[i];
-            array[i] = array[randTailPos];
-            array[randTailPos] = temp;
-        }
-    }
-
-    private static Symmetry getRandomSymmetry() {
-        Symmetry[] values = Symmetry.values();
-        // not the first and last value which are NONE and RANDOM
-        return values[(Math.abs(random.nextInt()) % (values.length - 1)) + 1];
-    }
-
-    /**
-     * Given the index of a cell (0-80) calculate the column (0-8) in which that
-     * cell resides.
-     * Checked!
-     */
-    static int cellToColumn(int cell) {
-        return cell % ROW_COL_SEC_SIZE;
-    }
-
-    /**
-     * Given the index of a cell (0-80) calculate the row (0-8) in which it
-     * resides.
-     * Checked!
-     */
-    static int cellToRow(int cell) {
-        return cell / ROW_COL_SEC_SIZE;
-    }
-
-    /**
-     * Given the index of a cell (0-80) calculate the section (0-8) in which it
-     * resides.
-     * Checked!
-     */
-    static int cellToSection(int cell) {
-        return ((cell / SEC_GROUP_SIZE * GRID_SIZE_ROW)
-                + (cellToColumn(cell) / GRID_SIZE_COL));
-    }
-
-    /**
-     * Given the index of a cell (0-80) calculate the cell (0-80) that is the
-     * upper left start cell of that section.
-     * Checked!
-     */
-    static int cellToSectionStartCell(int cell) {
-        return ((cell / SEC_GROUP_SIZE * SEC_GROUP_SIZE)
-                + (cellToColumn(cell) / GRID_SIZE_COL * GRID_SIZE_COL));
-    }
-
-    /**
-     * Given a row (0-8) calculate the first cell (0-80) of that row.
-     * Checked!
-     */
-    static int rowToFirstCell(int row) {
-        return ROW_COL_SEC_SIZE * row;
-    }
-
-    /**
-     * Given a column (0-8) calculate the first cell (0-80) of that column.
-     * Checked!
-     */
-    static int columnToFirstCell(int column) {
-        return column;
-    }
-
-    /**
-     * Given a section (0-8) calculate the first cell (0-80) of that section.
-     * Checked!
-     */
-    static int sectionToFirstCell(int section) {
-        return ((section % GRID_SIZE_ROW * GRID_SIZE_COL)
-                + (section / GRID_SIZE_ROW * SEC_GROUP_SIZE));
-    }
-
-    /**
-     * Given a value for a cell (0-8) and a cell number (0-80) calculate the
-     * offset into the possibility array (0-728).
-     * Checked!
-     */
-    static int getPossibilityIndex(int valueIndex, int cell) {
-        return valueIndex + (ROW_COL_SEC_SIZE * cell);
-    }
-
-    /**
-     * Given a row (0-8) and a column (0-8) calculate the cell (0-80).
-     * Checked!
-     */
-    static int rowColumnToCell(int row, int column) {
-        return (row * ROW_COL_SEC_SIZE) + column;
-    }
-
-    /**
-     * Given a section (0-8) and an offset into that section (0-8) calculate the
-     * cell (0-80)
-     * Checked!
-     */
-    static int sectionToCell(int section, int offset) {
-        return (sectionToFirstCell(section)
-                + ((offset / GRID_SIZE_COL) * ROW_COL_SEC_SIZE)
-                + (offset % GRID_SIZE_COL));
+    init {
+        gameType = type
+        this.difficulty = difficulty
+        GRID_SIZE_ROW = type.sectionHeight // 3    // 2
+        GRID_SIZE_COL = type.sectionWidth // 3    // 3
+        ROW_COL_SEC_SIZE = GRID_SIZE_ROW * GRID_SIZE_COL //  3*3 = 9     // 6
+        SEC_GROUP_SIZE = ROW_COL_SEC_SIZE * GRID_SIZE_ROW // 9 * 3 = 27 ? // 12
+        BOARD_SIZE = ROW_COL_SEC_SIZE * ROW_COL_SEC_SIZE // 9 * 9 = 81   // 36
+        POSSIBILITY_SIZE = BOARD_SIZE * ROW_COL_SEC_SIZE // 81 * 9
+        puzzle = IntArray(BOARD_SIZE)
+        solution = IntArray(BOARD_SIZE)
+        solutionRound = IntArray(BOARD_SIZE)
+        possibilities = IntArray(POSSIBILITY_SIZE)
+        randomBoardArray = fillIncrementing(IntArray(BOARD_SIZE))
+        randomPossibilityArray = fillIncrementing(IntArray(ROW_COL_SEC_SIZE))
     }
 
     /**
      * Get the number of cells that are set in the puzzle (as opposed to figured
      * out in the solution
      */
-    public int getGivenCount() {
-        int count = 0;
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            if (puzzle[i] != 0) count++;
+    val givenCount: Int
+        get() {
+            var count = 0
+            for (i in 0 until BOARD_SIZE) {
+                if (puzzle[i] != 0) count++
+            }
+            return count
         }
-        return count;
-    }
 
     /**
      * Set the board to the given puzzle. The given puzzle must be an array of
      * 81 integers.
      */
-    public boolean setPuzzle(int[] initPuzzle) {
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            puzzle[i] = (initPuzzle == null) ? 0 : initPuzzle[i];
+    fun setPuzzle(initPuzzle: IntArray?): Boolean {
+        for (i in 0 until BOARD_SIZE) {
+            puzzle[i] = initPuzzle?.get(i) ?: 0
         }
-        return reset();
+        return reset()
     }
 
-    public void setRandom(int seed) {
-        random = new Random(seed);
+    fun setRandom(seed: Int) {
+        random = Random(seed.toLong())
     }
 
     /**
      * Reset the board to its initial state with only the givens. This method
      * clears any solution, resets statistics, and clears any history messages.
      */
-    private boolean reset() {
-        Arrays.fill(solution, 0);
-        Arrays.fill(solutionRound, 0);
-        Arrays.fill(possibilities, 0);
-        solveHistory.clear();
-        solveInstructions.clear();
-
-        int round = 1;
-        for (int position = 0; position < BOARD_SIZE; position++) {
+    private fun reset(): Boolean {
+        Arrays.fill(solution, 0)
+        Arrays.fill(solutionRound, 0)
+        Arrays.fill(possibilities, 0)
+        solveHistory.clear()
+        solveInstructions.clear()
+        val round = 1
+        for (position in 0 until BOARD_SIZE) {
             if (puzzle[position] > 0) {
-                int valIndex = puzzle[position] - 1;
-                int valPos = getPossibilityIndex(valIndex, position);
-                int value = puzzle[position];
-                if (possibilities[valPos] != 0) return false;
-                mark(position, round, value);
-                if (logHistory || recordHistory)
-                    addHistoryItem(new LogItem(round, LogType.GIVEN, value, position));
+                val valIndex = puzzle[position] - 1
+                val valPos = getPossibilityIndex(valIndex, position)
+                val value = puzzle[position]
+                if (possibilities[valPos] != 0) return false
+                mark(position, round, value)
+                if (logHistory || recordHistory) addHistoryItem(
+                    LogItem(
+                        round,
+                        LogType.GIVEN,
+                        value,
+                        position
+                    )
+                )
             }
         }
-
-        return true;
+        return true
     }
 
     /**
      * Get the gameDifficulty rating.
      */
-    public GameDifficulty getDifficulty() {
-        if (getGuessCount() > 0) return GameDifficulty.Challenge;
-        if (getBoxLineReductionCount() > 0) return GameDifficulty.Hard;
-        if (getPointingPairTripleCount() > 0) return GameDifficulty.Hard;
-        if (getHiddenPairCount() > 0) return GameDifficulty.Moderate;
-        if (getNakedPairCount() > 0) return GameDifficulty.Moderate;
-
-        switch (gameType) {
-            case Default6x6:
-                if (getHiddenSingleCount() > 0)
-                    return GameDifficulty.Moderate;
-                break;
-            case Default9x9:
-                if (getHiddenSingleCount() > 10) {
-                    return GameDifficulty.Moderate;
-                }
-                break;
-            case Default12x12:
-                if (getHiddenSingleCount() > 20)
-                    return GameDifficulty.Moderate;
-                break;
-            default:
-                if (getHiddenSingleCount() > 10)
-                    return GameDifficulty.Moderate;
+    fun getDifficulty(): GameDifficulty {
+        if (getGuessCount() > 0) return GameDifficulty.Challenge
+        if (getBoxLineReductionCount() > 0) return GameDifficulty.Hard
+        if (getPointingPairTripleCount() > 0) return GameDifficulty.Hard
+        if (getHiddenPairCount() > 0) return GameDifficulty.Moderate
+        if (getNakedPairCount() > 0) return GameDifficulty.Moderate
+        when (gameType) {
+            GameType.Default6x6 -> if (getHiddenSingleCount() > 0) return GameDifficulty.Moderate
+            GameType.Default9x9 -> if (getHiddenSingleCount() > 10) {
+                return GameDifficulty.Moderate
+            }
+            GameType.Default12x12 -> if (getHiddenSingleCount() > 20) return GameDifficulty.Moderate
+            else -> if (getHiddenSingleCount() > 10) return GameDifficulty.Moderate
         }
-        switch (gameType) {
-            case Default6x6:
-                if (getSingleCount() > 10)
-                    return GameDifficulty.Easy;
-                break;
-            case Default9x9:
-                if (getSingleCount() > 35)
-                    return GameDifficulty.Easy;
-                break;
-            default:
-                if (getSingleCount() > 20)
-                    return GameDifficulty.Easy;
+        when (gameType) {
+            GameType.Default6x6 -> if (getSingleCount() > 10) return GameDifficulty.Easy
+            GameType.Default9x9 -> if (getSingleCount() > 35) return GameDifficulty.Easy
+            else -> if (getSingleCount() > 20) return GameDifficulty.Easy
         }
-
-        return GameDifficulty.Unspecified;
+        return GameDifficulty.Unspecified
     }
 
     /**
      * Get the gameDifficulty rating.
      */
-    public String getDifficultyAsString() {
-        return getDifficulty().name();
+    fun getDifficultyAsString(): String {
+        return getDifficulty().name
     }
 
     /**
      * Get the number of cells for which the solution was determined because
      * there was only one possible value for that cell.
      */
-    public int getSingleCount() {
-        return getLogCount(solveInstructions, LogType.SINGLE);
+    fun getSingleCount(): Int {
+        return getLogCount(solveInstructions, LogType.SINGLE)
     }
 
     /**
@@ -389,324 +230,348 @@ public class QQWing {
      * that cell had the only possibility for some value in the row, column, or
      * section.
      */
-    public int getHiddenSingleCount() {
-        return (getLogCount(solveInstructions, LogType.HIDDEN_SINGLE_ROW) +
-                getLogCount(solveInstructions, LogType.HIDDEN_SINGLE_COLUMN) + getLogCount(solveInstructions, LogType.HIDDEN_SINGLE_SECTION));
+    fun getHiddenSingleCount(): Int {
+        return getLogCount(solveInstructions, LogType.HIDDEN_SINGLE_ROW) +
+                getLogCount(solveInstructions, LogType.HIDDEN_SINGLE_COLUMN) + getLogCount(
+            solveInstructions,
+            LogType.HIDDEN_SINGLE_SECTION
+        )
     }
 
     /**
      * Get the number of naked pair reductions that were performed in solving
      * this puzzle.
      */
-    public int getNakedPairCount() {
-        return (getLogCount(solveInstructions, LogType.NAKED_PAIR_ROW) +
-                getLogCount(solveInstructions, LogType.NAKED_PAIR_COLUMN) + getLogCount(solveInstructions, LogType.NAKED_PAIR_SECTION));
+    fun getNakedPairCount(): Int {
+        return getLogCount(solveInstructions, LogType.NAKED_PAIR_ROW) +
+                getLogCount(solveInstructions, LogType.NAKED_PAIR_COLUMN) + getLogCount(
+            solveInstructions,
+            LogType.NAKED_PAIR_SECTION
+        )
     }
 
     /**
      * Get the number of hidden pair reductions that were performed in solving
      * this puzzle.
      */
-    public int getHiddenPairCount() {
-        return (getLogCount(solveInstructions, LogType.HIDDEN_PAIR_ROW) +
-                getLogCount(solveInstructions, LogType.HIDDEN_PAIR_COLUMN) + getLogCount(solveInstructions, LogType.HIDDEN_PAIR_SECTION));
+    fun getHiddenPairCount(): Int {
+        return getLogCount(solveInstructions, LogType.HIDDEN_PAIR_ROW) +
+                getLogCount(solveInstructions, LogType.HIDDEN_PAIR_COLUMN) + getLogCount(
+            solveInstructions,
+            LogType.HIDDEN_PAIR_SECTION
+        )
     }
 
     /**
      * Get the number of pointing pair/triple reductions that were performed in
      * solving this puzzle.
      */
-    public int getPointingPairTripleCount() {
-        return (getLogCount(solveInstructions, LogType.POINTING_PAIR_TRIPLE_ROW) + getLogCount(solveInstructions, LogType.POINTING_PAIR_TRIPLE_COLUMN));
+    fun getPointingPairTripleCount(): Int {
+        return getLogCount(solveInstructions, LogType.POINTING_PAIR_TRIPLE_ROW) + getLogCount(
+            solveInstructions,
+            LogType.POINTING_PAIR_TRIPLE_COLUMN
+        )
     }
 
     /**
      * Get the number of box/line reductions that were performed in solving this
      * puzzle.
      */
-    public int getBoxLineReductionCount() {
-        return (getLogCount(solveInstructions, LogType.ROW_BOX) + getLogCount(solveInstructions, LogType.COLUMN_BOX));
+    fun getBoxLineReductionCount(): Int {
+        return getLogCount(solveInstructions, LogType.ROW_BOX) + getLogCount(
+            solveInstructions,
+            LogType.COLUMN_BOX
+        )
     }
 
     /**
      * Get the number lucky guesses in solving this puzzle.
      */
-    public int getGuessCount() {
-        return getLogCount(solveInstructions, LogType.GUESS);
+    fun getGuessCount(): Int {
+        return getLogCount(solveInstructions, LogType.GUESS)
     }
 
     /**
      * Get the number of backtracks (unlucky guesses) required when solving this
      * puzzle.
      */
-    public int getBacktrackCount() {
-        return getLogCount(solveHistory, LogType.ROLLBACK);
+    fun getBacktrackCount(): Int {
+        return getLogCount(solveHistory, LogType.ROLLBACK)
     }
 
-    private void shuffleRandomArrays() {
-        shuffleArray(randomBoardArray, BOARD_SIZE);
-        shuffleArray(randomPossibilityArray, ROW_COL_SEC_SIZE);
+    private fun shuffleRandomArrays() {
+        shuffleArray(randomBoardArray, BOARD_SIZE)
+        shuffleArray(randomPossibilityArray, ROW_COL_SEC_SIZE)
     }
 
-    private void clearPuzzle() {
+    private fun clearPuzzle() {
         // Clear any existing puzzle
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            puzzle[i] = 0;
+        for (i in 0 until BOARD_SIZE) {
+            puzzle[i] = 0
         }
-        reset();
+        reset()
     }
 
-    public boolean generatePuzzle() {
-        return generatePuzzleSymmetry(Symmetry.NONE);
+    fun generatePuzzle(): Boolean {
+        return generatePuzzleSymmetry(Symmetry.NONE)
     }
 
-    public boolean generatePuzzleSymmetry(Symmetry symmetry) {
-
-        if (symmetry == Symmetry.RANDOM) symmetry = getRandomSymmetry();
+    fun generatePuzzleSymmetry(symmetry: Symmetry): Boolean {
+        var symmetry = symmetry
+        if (symmetry == Symmetry.RANDOM) symmetry = randomSymmetry
 
         // Don't record history while generating.
-        boolean recHistory = recordHistory;
-        setRecordHistory(false);
-        boolean lHistory = logHistory;
-        setLogHistory(false);
-
-        clearPuzzle();
+        val recHistory = recordHistory
+        setRecordHistory(false)
+        val lHistory = logHistory
+        setLogHistory(false)
+        clearPuzzle()
 
         // Start by getting the randomness in order so that
         // each puzzle will be different from the last.
-        shuffleRandomArrays();
+        shuffleRandomArrays()
 
         // Now solve the puzzle the whole way. The solve
         // uses random algorithms, so we should have a
         // really randomly totally filled sudoku
         // Even when starting from an empty grid
-        solve();
-
+        solve()
         if (symmetry == Symmetry.NONE) {
             // Rollback any square for which it is obvious that
             // the square doesn't contribute to a unique solution
             // (ie, squares that were filled by logic rather
             // than by guess)
-            rollbackNonGuesses();
+            rollbackNonGuesses()
         }
 
         // Record all marked squares as the puzzle so
         // that we can call countSolutions without losing it.
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            puzzle[i] = solution[i];
+        for (i in 0 until BOARD_SIZE) {
+            puzzle[i] = solution[i]
         }
 
         // Rerandomize everything so that we test squares
         // in a different order than they were added.
-        shuffleRandomArrays();
+        shuffleRandomArrays()
 
         // Remove one value at a time and see if
         // the puzzle still has only one solution.
         // If it does, leave it out the point because
         // it is not needed.
-        for (int i = 0; i < BOARD_SIZE; i++) {
+        for (i in 0 until BOARD_SIZE) {
             // check all the positions, but in shuffled order
-            int position = randomBoardArray[i];
+            val position = randomBoardArray[i]
             if (puzzle[position] > 0) {
-                int positionsym1 = -1;
-                int positionsym2 = -1;
-                int positionsym3 = -1;
-                switch (symmetry) {
-                    case ROTATE90:
-                        positionsym2 = rowColumnToCell(ROW_COL_SEC_SIZE - 1 - cellToColumn(position), cellToRow(position));
-                        positionsym3 = rowColumnToCell(cellToColumn(position), ROW_COL_SEC_SIZE - 1 - cellToRow(position));
-                    case ROTATE180:
-                        positionsym1 = rowColumnToCell(ROW_COL_SEC_SIZE - 1 - cellToRow(position), ROW_COL_SEC_SIZE - 1 - cellToColumn(position));
-                        break;
-                    case MIRROR:
-                        positionsym1 = rowColumnToCell(cellToRow(position), ROW_COL_SEC_SIZE - 1 - cellToColumn(position));
-                        break;
-                    case FLIP:
-                        positionsym1 = rowColumnToCell(ROW_COL_SEC_SIZE - 1 - cellToRow(position), cellToColumn(position));
-                        break;
-                    default:
-                        break;
+                var positionsym1 = -1
+                var positionsym2 = -1
+                var positionsym3 = -1
+                when (symmetry) {
+                    Symmetry.ROTATE90 -> {
+                        positionsym2 = rowColumnToCell(
+                            ROW_COL_SEC_SIZE - 1 - cellToColumn(position),
+                            cellToRow(position)
+                        )
+                        positionsym3 = rowColumnToCell(
+                            cellToColumn(position),
+                            ROW_COL_SEC_SIZE - 1 - cellToRow(position)
+                        )
+                        positionsym1 = rowColumnToCell(
+                            ROW_COL_SEC_SIZE - 1 - cellToRow(position),
+                            ROW_COL_SEC_SIZE - 1 - cellToColumn(position)
+                        )
+                    }
+                    Symmetry.ROTATE180 -> positionsym1 = rowColumnToCell(
+                        ROW_COL_SEC_SIZE - 1 - cellToRow(position),
+                        ROW_COL_SEC_SIZE - 1 - cellToColumn(position)
+                    )
+                    Symmetry.MIRROR -> positionsym1 = rowColumnToCell(
+                        cellToRow(position),
+                        ROW_COL_SEC_SIZE - 1 - cellToColumn(position)
+                    )
+                    Symmetry.FLIP -> positionsym1 = rowColumnToCell(
+                        ROW_COL_SEC_SIZE - 1 - cellToRow(position),
+                        cellToColumn(position)
+                    )
+                    else -> {}
                 }
                 // try backing out the value and
                 // counting solutions to the puzzle
-                int savedValue = puzzle[position];
-                puzzle[position] = 0;
-                int savedSym1 = 0;
+                val savedValue = puzzle[position]
+                puzzle[position] = 0
+                var savedSym1 = 0
                 if (positionsym1 >= 0) {
-                    savedSym1 = puzzle[positionsym1];
-                    puzzle[positionsym1] = 0;
+                    savedSym1 = puzzle[positionsym1]
+                    puzzle[positionsym1] = 0
                 }
-                int savedSym2 = 0;
+                var savedSym2 = 0
                 if (positionsym2 >= 0) {
-                    savedSym2 = puzzle[positionsym2];
-                    puzzle[positionsym2] = 0;
+                    savedSym2 = puzzle[positionsym2]
+                    puzzle[positionsym2] = 0
                 }
-                int savedSym3 = 0;
+                var savedSym3 = 0
                 if (positionsym3 >= 0) {
-                    savedSym3 = puzzle[positionsym3];
-                    puzzle[positionsym3] = 0;
+                    savedSym3 = puzzle[positionsym3]
+                    puzzle[positionsym3] = 0
                 }
-                reset();
+                reset()
                 if (countSolutions(2, true) > 1) {
                     // Put it back in, it is needed
-                    puzzle[position] = savedValue;
-                    if (positionsym1 >= 0 && savedSym1 != 0) puzzle[positionsym1] = savedSym1;
-                    if (positionsym2 >= 0 && savedSym2 != 0) puzzle[positionsym2] = savedSym2;
-                    if (positionsym3 >= 0 && savedSym3 != 0) puzzle[positionsym3] = savedSym3;
+                    puzzle[position] = savedValue
+                    if (positionsym1 >= 0 && savedSym1 != 0) puzzle[positionsym1] = savedSym1
+                    if (positionsym2 >= 0 && savedSym2 != 0) puzzle[positionsym2] = savedSym2
+                    if (positionsym3 >= 0 && savedSym3 != 0) puzzle[positionsym3] = savedSym3
                 }
             }
         }
 
         // Clear all solution info, leaving just the puzzle.
-        reset();
+        reset()
 
         // Restore recording history.
-        setRecordHistory(recHistory);
-        setLogHistory(lHistory);
-
-        return true;
+        setRecordHistory(recHistory)
+        setLogHistory(lHistory)
+        return true
     }
 
-    private void rollbackNonGuesses() {
+    private fun rollbackNonGuesses() {
         // Guesses are odd rounds
         // Non-guesses are even rounds
-        for (int i = 2; i <= lastSolveRound; i += 2) {
-            rollbackRound(i);
-
-            // Some hack to make easy levels on 12x12 .. because the generator wasn't able to create some
-            //if(difficulty == GameDifficulty.Easy && gameType == GameType.Default_12x12) {
-            //    i += 2; // skip every 2nd round to find "easy" levels more frequent. Still takes about 20 Seconds.
-            //}
+        var i = 2
+        while (i <= lastSolveRound) {
+            rollbackRound(i)
+            i += 2
         }
     }
 
-    public void setPrintStyle(PrintStyle ps) {
-        printStyle = ps;
+    fun setPrintStyle(ps: PrintStyle) {
+        printStyle = ps
     }
 
-    public void setRecordHistory(boolean recHistory) {
-        recordHistory = recHistory;
+    fun setRecordHistory(recHistory: Boolean) {
+        recordHistory = recHistory
     }
 
-    public void setLogHistory(boolean logHist) {
-        logHistory = logHist;
+    fun setLogHistory(logHist: Boolean) {
+        logHistory = logHist
     }
 
-    private void addHistoryItem(LogItem l) {
+    private fun addHistoryItem(l: LogItem) {
+        var l: LogItem? = l
         if (logHistory) {
-            l.print();
-            System.out.println();
+            l!!.print()
+            println()
         }
         if (recordHistory) {
-            solveHistory.add(l); // ->push_back(l);
-            solveInstructions.add(l); // ->push_back(l);
+            solveHistory.add(l) // ->push_back(l);
+            solveInstructions.add(l) // ->push_back(l);
         } else {
-            l = null;
+            l = null
         }
     }
 
-    private void printHistory(ArrayList<LogItem> v) {
-        System.out.print(historyToString(v));
+    private fun printHistory(v: ArrayList<LogItem?>) {
+        print(historyToString(v))
     }
 
-    private String historyToString(ArrayList<LogItem> v) {
-        StringBuilder sb = new StringBuilder();
+    private fun historyToString(v: ArrayList<LogItem?>): String {
+        val sb = StringBuilder()
         if (!recordHistory) {
-            sb.append("History was not recorded.").append(NL);
+            sb.append("History was not recorded.").append(NL)
             if (printStyle == PrintStyle.CSV) {
-                sb.append(" -- ").append(NL);
+                sb.append(" -- ").append(NL)
             } else {
-                sb.append(NL);
+                sb.append(NL)
             }
         }
-        for (int i = 0; i < v.size(); i++) {
-            sb.append(i + 1 + ". ").append(NL);
-            (v.get(i)).print();
+        for (i in v.indices) {
+            sb.append((i + 1).toString() + ". ").append(NL)
+            v[i]!!.print()
             if (printStyle == PrintStyle.CSV) {
-                sb.append(" -- ").append(NL);
+                sb.append(" -- ").append(NL)
             } else {
-                sb.append(NL);
+                sb.append(NL)
             }
         }
         if (printStyle == PrintStyle.CSV) {
-            sb.append(",").append(NL);
+            sb.append(",").append(NL)
         } else {
-            sb.append(NL);
+            sb.append(NL)
         }
-        return sb.toString();
+        return sb.toString()
     }
 
-    public void printSolveInstructions() {
-        System.out.print(getSolveInstructionsString());
+    fun printSolveInstructions() {
+        print(getSolveInstructionsString())
     }
 
-    public String getSolveInstructionsString() {
-        if (isSolved()) {
-            return historyToString(solveInstructions);
+    fun getSolveInstructionsString(): String {
+        return if (isSolved()) {
+            historyToString(solveInstructions)
         } else {
-            return "No solve instructions - Puzzle is not possible to solve.";
-        }
-    }
-
-    public List<LogItem> getSolveInstructions() {
-        if (isSolved()) {
-            return Collections.unmodifiableList(solveInstructions);
-        } else {
-            return Collections.emptyList();
+            "No solve instructions - Puzzle is not possible to solve."
         }
     }
 
-    public void printSolveHistory() {
-        printHistory(solveHistory);
+    fun getSolveInstructions(): List<LogItem?> {
+        return if (isSolved()) {
+            Collections.unmodifiableList(solveInstructions)
+        } else {
+            emptyList<LogItem>()
+        }
     }
 
-    public String getSolveHistoryString() {
-        return historyToString(solveHistory);
+    fun printSolveHistory() {
+        printHistory(solveHistory)
     }
 
-    public List<LogItem> getSolveHistory() {
-        return Collections.unmodifiableList(solveHistory);
+    fun getSolveHistoryString(): String {
+        return historyToString(solveHistory)
     }
 
-    public boolean solve() {
-        reset();
-        shuffleRandomArrays();
-        return solve(2);
+    fun getSolveHistory(): List<LogItem?> {
+        return Collections.unmodifiableList(solveHistory)
     }
 
-    private boolean solve(int round) {
-        lastSolveRound = round;
+    fun solve(): Boolean {
+        reset()
+        shuffleRandomArrays()
+        return solve(2)
+    }
+
+    private fun solve(round: Int): Boolean {
+        lastSolveRound = round
         while (singleSolveMove(round)) {
-            if (isSolved()) return true;
-            if (isImpossible()) return false;
+            if (isSolved()) return true
+            if (isImpossible()) return false
         }
-
-        int nextGuessRound = round + 1;
-        int nextRound = round + 2;
-        for (int guessNumber = 0; guess(nextGuessRound, guessNumber); guessNumber++) {
+        val nextGuessRound = round + 1
+        val nextRound = round + 2
+        var guessNumber = 0
+        while (guess(nextGuessRound, guessNumber)) {
             if (isImpossible() || !solve(nextRound)) {
-                rollbackRound(nextRound);
-                rollbackRound(nextGuessRound);
+                rollbackRound(nextRound)
+                rollbackRound(nextGuessRound)
             } else {
-                return true;
+                return true
             }
+            guessNumber++
         }
-        return false;
+        return false
     }
 
     /**
      * return true if the puzzle has a solution
      * and only a single solution
      */
-    public boolean hasUniqueSolution() {
-        return countSolutionsLimited() == 1;
+    fun hasUniqueSolution(): Boolean {
+        return countSolutionsLimited() == 1
     }
 
     /**
      * Count the number of solutions to the puzzle
      */
-    public int countSolutions() {
-        return countSolutions(false);
+    fun countSolutions(): Int {
+        return countSolutions(false)
     }
 
     /**
@@ -718,632 +583,713 @@ public class QQWing {
      * when you are interested in knowing if the
      * puzzle has zero, one, or multiple solutions.
      */
-    public int countSolutionsLimited() {
-        return countSolutions(true);
+    fun countSolutionsLimited(): Int {
+        return countSolutions(true)
     }
 
-    private int countSolutions(boolean limitToTwo) {
+    private fun countSolutions(limitToTwo: Boolean): Int {
         // Don't record history while generating.
-        boolean recHistory = recordHistory;
-        setRecordHistory(false);
-        boolean lHistory = logHistory;
-        setLogHistory(false);
-
-        reset();
-        int solutionCount = countSolutions(2, limitToTwo);
+        val recHistory = recordHistory
+        setRecordHistory(false)
+        val lHistory = logHistory
+        setLogHistory(false)
+        reset()
+        val solutionCount = countSolutions(2, limitToTwo)
 
         // Restore recording history.
-        setRecordHistory(recHistory);
-        setLogHistory(lHistory);
-
-        return solutionCount;
+        setRecordHistory(recHistory)
+        setLogHistory(lHistory)
+        return solutionCount
     }
 
-    private int countSolutions(int round, boolean limitToTwo) {
+    private fun countSolutions(round: Int, limitToTwo: Boolean): Int {
         while (singleSolveMove(round)) {
             if (isSolved()) {
-                rollbackRound(round);
-                return 1;
+                rollbackRound(round)
+                return 1
             }
             if (isImpossible()) {
-                rollbackRound(round);
-                return 0;
+                rollbackRound(round)
+                return 0
             }
         }
-
-        int solutions = 0;
-        int nextRound = round + 1;
-        for (int guessNumber = 0; guess(nextRound, guessNumber); guessNumber++) {
-            solutions += countSolutions(nextRound, limitToTwo);
+        var solutions = 0
+        val nextRound = round + 1
+        var guessNumber = 0
+        while (guess(nextRound, guessNumber)) {
+            solutions += countSolutions(nextRound, limitToTwo)
             if (limitToTwo && solutions >= 2) {
-                rollbackRound(round);
-                return solutions;
+                rollbackRound(round)
+                return solutions
             }
+            guessNumber++
         }
-        rollbackRound(round);
-        return solutions;
+        rollbackRound(round)
+        return solutions
     }
 
-    private void rollbackRound(int round) {
-        if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogType.ROLLBACK));
-        for (int i = 0; i < BOARD_SIZE; i++) {
+    private fun rollbackRound(round: Int) {
+        if (logHistory || recordHistory) addHistoryItem(LogItem(round, LogType.ROLLBACK))
+        for (i in 0 until BOARD_SIZE) {
             if (solutionRound[i] == round) {
-                solutionRound[i] = 0;
-                solution[i] = 0;
+                solutionRound[i] = 0
+                solution[i] = 0
             }
         }
-        for (int i = 0; i < POSSIBILITY_SIZE; i++) {
+        for (i in 0 until POSSIBILITY_SIZE) {
             if (possibilities[i] == round) {
-                possibilities[i] = 0;
+                possibilities[i] = 0
             }
         }
-        while (solveInstructions.size() > 0 && (solveInstructions.get(solveInstructions.size() - 1)).getRound() == round) {
-            int i = solveInstructions.size() - 1;
-            solveInstructions.remove(i);
+        while (solveInstructions.size > 0 && solveInstructions[solveInstructions.size - 1]!!.round == round) {
+            val i = solveInstructions.size - 1
+            solveInstructions.removeAt(i)
         }
     }
 
-    public boolean isSolved() {
-        for (int i = 0; i < BOARD_SIZE; i++) {
+    fun isSolved(): Boolean {
+        for (i in 0 until BOARD_SIZE) {
             if (solution[i] == 0) {
-                return false;
+                return false
             }
         }
-        return true;
+        return true
     }
 
-    private boolean isImpossible() {
-        for (int position = 0; position < BOARD_SIZE; position++) {
+    private fun isImpossible(): Boolean {
+        for (position in 0 until BOARD_SIZE) {
             if (solution[position] == 0) {
-                int count = 0;
-                for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-                    int valPos = getPossibilityIndex(valIndex, position);
-                    if (possibilities[valPos] == 0) count++;
+                var count = 0
+                for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+                    val valPos = getPossibilityIndex(valIndex, position)
+                    if (possibilities[valPos] == 0) count++
                 }
                 if (count == 0) {
-                    return true;
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
 
-    private int findPositionWithFewestPossibilities() {
-        int minPossibilities = ROW_COL_SEC_SIZE + 1;
-        int bestPosition = 0;
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            int position = randomBoardArray[i];
+    private fun findPositionWithFewestPossibilities(): Int {
+        var minPossibilities = ROW_COL_SEC_SIZE + 1
+        var bestPosition = 0
+        for (i in 0 until BOARD_SIZE) {
+            val position = randomBoardArray[i]
             if (solution[position] == 0) {
-                int count = 0;
-                for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-                    int valPos = getPossibilityIndex(valIndex, position);
-                    if (possibilities[valPos] == 0) count++;
+                var count = 0
+                for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+                    val valPos = getPossibilityIndex(valIndex, position)
+                    if (possibilities[valPos] == 0) count++
                 }
                 if (count < minPossibilities) {
-                    minPossibilities = count;
-                    bestPosition = position;
+                    minPossibilities = count
+                    bestPosition = position
                 }
             }
         }
-        return bestPosition;
+        return bestPosition
     }
 
-    private boolean guess(int round, int guessNumber) {
-        int localGuessCount = 0;
-        int position = findPositionWithFewestPossibilities();
-        for (int i = 0; i < ROW_COL_SEC_SIZE; i++) {
-            int valIndex = randomPossibilityArray[i];
-            int valPos = getPossibilityIndex(valIndex, position);
+    private fun guess(round: Int, guessNumber: Int): Boolean {
+        var localGuessCount = 0
+        val position = findPositionWithFewestPossibilities()
+        for (i in 0 until ROW_COL_SEC_SIZE) {
+            val valIndex = randomPossibilityArray[i]
+            val valPos = getPossibilityIndex(valIndex, position)
             if (possibilities[valPos] == 0) {
                 if (localGuessCount == guessNumber) {
-                    int value = valIndex + 1;
-                    if (logHistory || recordHistory)
-                        addHistoryItem(new LogItem(round, LogType.GUESS, value, position));
-                    mark(position, round, value);
-                    return true;
+                    val value = valIndex + 1
+                    if (logHistory || recordHistory) addHistoryItem(
+                        LogItem(
+                            round,
+                            LogType.GUESS,
+                            value,
+                            position
+                        )
+                    )
+                    mark(position, round, value)
+                    return true
                 }
-                localGuessCount++;
+                localGuessCount++
             }
         }
-        return false;
+        return false
     }
 
-    private boolean singleSolveMove(int round) {
-        if (onlyPossibilityForCell(round)) return true;
-        if (onlyValueInSection(round)) return true;
-        if (onlyValueInRow(round)) return true;
-        if (onlyValueInColumn(round)) return true;
-        if (handleNakedPairs(round)) return true;
-        if (pointingRowReduction(round)) return true;
-        if (pointingColumnReduction(round)) return true;
-        if (rowBoxReduction(round)) return true;
-        if (colBoxReduction(round)) return true;
-        if (hiddenPairInRow(round)) return true;
-        if (hiddenPairInColumn(round)) return true;
-        return hiddenPairInSection(round);
+    private fun singleSolveMove(round: Int): Boolean {
+        if (onlyPossibilityForCell(round)) return true
+        if (onlyValueInSection(round)) return true
+        if (onlyValueInRow(round)) return true
+        if (onlyValueInColumn(round)) return true
+        if (handleNakedPairs(round)) return true
+        if (pointingRowReduction(round)) return true
+        if (pointingColumnReduction(round)) return true
+        if (rowBoxReduction(round)) return true
+        if (colBoxReduction(round)) return true
+        if (hiddenPairInRow(round)) return true
+        return if (hiddenPairInColumn(round)) true else hiddenPairInSection(round)
     }
 
-    private boolean colBoxReduction(int round) {
-        for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-            for (int col = 0; col < ROW_COL_SEC_SIZE; col++) {
-                int colStart = columnToFirstCell(col);
-                boolean inOneBox = true;
-                int colBox = -1;
+    private fun colBoxReduction(round: Int): Boolean {
+        for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+            for (col in 0 until ROW_COL_SEC_SIZE) {
+                val colStart = columnToFirstCell(col)
+                var inOneBox = true
+                var colBox = -1
                 // this part is checked!
-                for (int i = 0; i < GRID_SIZE_COL; i++) {
-                    for (int j = 0; j < GRID_SIZE_ROW; j++) {
-                        int row = i * GRID_SIZE_ROW + j;
-                        int position = rowColumnToCell(row, col);
-                        int valPos = getPossibilityIndex(valIndex, position);
+                for (i in 0 until GRID_SIZE_COL) {
+                    for (j in 0 until GRID_SIZE_ROW) {
+                        val row = i * GRID_SIZE_ROW + j
+                        val position = rowColumnToCell(row, col)
+                        val valPos = getPossibilityIndex(valIndex, position)
                         if (possibilities[valPos] == 0) {
                             if (colBox == -1 || colBox == i) {
-                                colBox = i;
+                                colBox = i
                             } else {
-                                inOneBox = false;
+                                inOneBox = false
                             }
                         }
                     }
                 }
                 if (inOneBox && colBox != -1) {
-                    boolean doneSomething = false;
-                    int row = GRID_SIZE_ROW * colBox;
-                    int secStart = cellToSectionStartCell(rowColumnToCell(row, col));
-                    int secStartRow = cellToRow(secStart);
-                    int secStartCol = cellToColumn(secStart);
-                    for (int i = 0; i < GRID_SIZE_COL; i++) {
-                        for (int j = 0; j < GRID_SIZE_ROW; j++) {
-                            int row2 = secStartRow + j;
-                            int col2 = secStartCol + i;
-                            int position = rowColumnToCell(row2, col2);
-                            int valPos = getPossibilityIndex(valIndex, position);
+                    var doneSomething = false
+                    val row = GRID_SIZE_ROW * colBox
+                    val secStart = cellToSectionStartCell(rowColumnToCell(row, col))
+                    val secStartRow = cellToRow(secStart)
+                    val secStartCol = cellToColumn(secStart)
+                    for (i in 0 until GRID_SIZE_COL) {
+                        for (j in 0 until GRID_SIZE_ROW) {
+                            val row2 = secStartRow + j
+                            val col2 = secStartCol + i
+                            val position = rowColumnToCell(row2, col2)
+                            val valPos = getPossibilityIndex(valIndex, position)
                             if (col != col2 && possibilities[valPos] == 0) {
-                                possibilities[valPos] = round;
-                                doneSomething = true;
+                                possibilities[valPos] = round
+                                doneSomething = true
                             }
                         }
                     }
                     if (doneSomething) {
-                        if (logHistory || recordHistory)
-                            addHistoryItem(new LogItem(round, LogType.COLUMN_BOX, valIndex + 1, colStart));
-                        return true;
+                        if (logHistory || recordHistory) addHistoryItem(
+                            LogItem(
+                                round,
+                                LogType.COLUMN_BOX,
+                                valIndex + 1,
+                                colStart
+                            )
+                        )
+                        return true
                     }
                 }
             }
         }
-        return false;
+        return false
     }
 
-    private boolean rowBoxReduction(int round) {
-        for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-            for (int row = 0; row < ROW_COL_SEC_SIZE; row++) {
-                int rowStart = rowToFirstCell(row);
-                boolean inOneBox = true;
-                int rowBox = -1;
-                for (int i = 0; i < GRID_SIZE_ROW; i++) {
-                    for (int j = 0; j < GRID_SIZE_COL; j++) {
-                        int column = i * GRID_SIZE_COL + j;
-                        int position = rowColumnToCell(row, column);
-                        int valPos = getPossibilityIndex(valIndex, position);
+    private fun rowBoxReduction(round: Int): Boolean {
+        for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+            for (row in 0 until ROW_COL_SEC_SIZE) {
+                val rowStart = rowToFirstCell(row)
+                var inOneBox = true
+                var rowBox = -1
+                for (i in 0 until GRID_SIZE_ROW) {
+                    for (j in 0 until GRID_SIZE_COL) {
+                        val column = i * GRID_SIZE_COL + j
+                        val position = rowColumnToCell(row, column)
+                        val valPos = getPossibilityIndex(valIndex, position)
                         if (possibilities[valPos] == 0) {
                             if (rowBox == -1 || rowBox == i) {
-                                rowBox = i;
+                                rowBox = i
                             } else {
-                                inOneBox = false;
+                                inOneBox = false
                             }
                         }
                     }
                 }
                 if (inOneBox && rowBox != -1) {
-                    boolean doneSomething = false;
-                    int column = GRID_SIZE_COL * rowBox;
-                    int secStart = cellToSectionStartCell(rowColumnToCell(row, column));
-                    int secStartRow = cellToRow(secStart);
-                    int secStartCol = cellToColumn(secStart);
-                    for (int i = 0; i < GRID_SIZE_ROW; i++) {
-                        for (int j = 0; j < GRID_SIZE_COL; j++) {
-                            int row2 = secStartRow + i;
-                            int col2 = secStartCol + j;
-                            int position = rowColumnToCell(row2, col2);
-                            int valPos = getPossibilityIndex(valIndex, position);
+                    var doneSomething = false
+                    val column = GRID_SIZE_COL * rowBox
+                    val secStart = cellToSectionStartCell(rowColumnToCell(row, column))
+                    val secStartRow = cellToRow(secStart)
+                    val secStartCol = cellToColumn(secStart)
+                    for (i in 0 until GRID_SIZE_ROW) {
+                        for (j in 0 until GRID_SIZE_COL) {
+                            val row2 = secStartRow + i
+                            val col2 = secStartCol + j
+                            val position = rowColumnToCell(row2, col2)
+                            val valPos = getPossibilityIndex(valIndex, position)
                             if (row != row2 && possibilities[valPos] == 0) {
-                                possibilities[valPos] = round;
-                                doneSomething = true;
+                                possibilities[valPos] = round
+                                doneSomething = true
                             }
                         }
                     }
                     if (doneSomething) {
-                        if (logHistory || recordHistory)
-                            addHistoryItem(new LogItem(round, LogType.ROW_BOX, valIndex + 1, rowStart));
-                        return true;
+                        if (logHistory || recordHistory) addHistoryItem(
+                            LogItem(
+                                round,
+                                LogType.ROW_BOX,
+                                valIndex + 1,
+                                rowStart
+                            )
+                        )
+                        return true
                     }
                 }
             }
         }
-        return false;
+        return false
     }
 
     // CHECKED!
-    private boolean pointingRowReduction(int round) {
-        for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-            for (int section = 0; section < ROW_COL_SEC_SIZE; section++) {
-                int secStart = sectionToFirstCell(section);
-                boolean inOneRow = true;
-                int boxRow = -1;
-                for (int j = 0; j < GRID_SIZE_ROW; j++) {
-                    for (int i = 0; i < GRID_SIZE_COL; i++) {
-                        int secVal = secStart + i + (ROW_COL_SEC_SIZE * j);
-                        int valPos = getPossibilityIndex(valIndex, secVal);
+    private fun pointingRowReduction(round: Int): Boolean {
+        for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+            for (section in 0 until ROW_COL_SEC_SIZE) {
+                val secStart = sectionToFirstCell(section)
+                var inOneRow = true
+                var boxRow = -1
+                for (j in 0 until GRID_SIZE_ROW) {
+                    for (i in 0 until GRID_SIZE_COL) {
+                        val secVal = secStart + i + ROW_COL_SEC_SIZE * j
+                        val valPos = getPossibilityIndex(valIndex, secVal)
                         if (possibilities[valPos] == 0) {
                             if (boxRow == -1 || boxRow == j) {
-                                boxRow = j;
+                                boxRow = j
                             } else {
-                                inOneRow = false;
+                                inOneRow = false
                             }
                         }
                     }
                 }
                 if (inOneRow && boxRow != -1) {
-                    boolean doneSomething = false;
-                    int row = cellToRow(secStart) + boxRow;
-                    int rowStart = rowToFirstCell(row);
-
-                    for (int i = 0; i < ROW_COL_SEC_SIZE; i++) {
-                        int position = rowStart + i;
-                        int section2 = cellToSection(position);
-                        int valPos = getPossibilityIndex(valIndex, position);
+                    var doneSomething = false
+                    val row = cellToRow(secStart) + boxRow
+                    val rowStart = rowToFirstCell(row)
+                    for (i in 0 until ROW_COL_SEC_SIZE) {
+                        val position = rowStart + i
+                        val section2 = cellToSection(position)
+                        val valPos = getPossibilityIndex(valIndex, position)
                         if (section != section2 && possibilities[valPos] == 0) {
-                            possibilities[valPos] = round;
-                            doneSomething = true;
+                            possibilities[valPos] = round
+                            doneSomething = true
                         }
                     }
                     if (doneSomething) {
-                        if (logHistory || recordHistory)
-                            addHistoryItem(new LogItem(round, LogType.POINTING_PAIR_TRIPLE_ROW, valIndex + 1, rowStart));
-                        return true;
+                        if (logHistory || recordHistory) addHistoryItem(
+                            LogItem(
+                                round,
+                                LogType.POINTING_PAIR_TRIPLE_ROW,
+                                valIndex + 1,
+                                rowStart
+                            )
+                        )
+                        return true
                     }
                 }
             }
         }
-        return false;
+        return false
     }
 
     // CHECKED! .. pretty sure this is correct now
-    private boolean pointingColumnReduction(int round) {
-        for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-            for (int section = 0; section < ROW_COL_SEC_SIZE; section++) {
-                int secStart = sectionToFirstCell(section);
-                boolean inOneCol = true;
-                int boxCol = -1;
-                for (int i = 0; i < GRID_SIZE_COL; i++) {
-                    for (int j = 0; j < GRID_SIZE_ROW; j++) {
-                        int secVal = secStart + i + (ROW_COL_SEC_SIZE * j);
-                        int valPos = getPossibilityIndex(valIndex, secVal);
+    private fun pointingColumnReduction(round: Int): Boolean {
+        for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+            for (section in 0 until ROW_COL_SEC_SIZE) {
+                val secStart = sectionToFirstCell(section)
+                var inOneCol = true
+                var boxCol = -1
+                for (i in 0 until GRID_SIZE_COL) {
+                    for (j in 0 until GRID_SIZE_ROW) {
+                        val secVal = secStart + i + ROW_COL_SEC_SIZE * j
+                        val valPos = getPossibilityIndex(valIndex, secVal)
                         if (possibilities[valPos] == 0) {
                             if (boxCol == -1 || boxCol == i) {
-                                boxCol = i;
+                                boxCol = i
                             } else {
-                                inOneCol = false;
+                                inOneCol = false
                             }
                         }
                     }
                 }
                 if (inOneCol && boxCol != -1) {
-                    boolean doneSomething = false;
-                    int col = cellToColumn(secStart) + boxCol;
-                    int colStart = columnToFirstCell(col);
-
-                    for (int i = 0; i < ROW_COL_SEC_SIZE; i++) {
-                        int position = colStart + (ROW_COL_SEC_SIZE * i);
-                        int section2 = cellToSection(position);
-                        int valPos = getPossibilityIndex(valIndex, position);
+                    var doneSomething = false
+                    val col = cellToColumn(secStart) + boxCol
+                    val colStart = columnToFirstCell(col)
+                    for (i in 0 until ROW_COL_SEC_SIZE) {
+                        val position = colStart + ROW_COL_SEC_SIZE * i
+                        val section2 = cellToSection(position)
+                        val valPos = getPossibilityIndex(valIndex, position)
                         if (section != section2 && possibilities[valPos] == 0) {
-                            possibilities[valPos] = round;
-                            doneSomething = true;
+                            possibilities[valPos] = round
+                            doneSomething = true
                         }
                     }
                     if (doneSomething) {
-                        if (logHistory || recordHistory)
-                            addHistoryItem(new LogItem(round, LogType.POINTING_PAIR_TRIPLE_COLUMN, valIndex + 1, colStart));
-                        return true;
+                        if (logHistory || recordHistory) addHistoryItem(
+                            LogItem(
+                                round,
+                                LogType.POINTING_PAIR_TRIPLE_COLUMN,
+                                valIndex + 1,
+                                colStart
+                            )
+                        )
+                        return true
                     }
                 }
             }
         }
-        return false;
+        return false
     }
 
     // CHECKED!
-    private int countPossibilities(int position) {
-        int count = 0;
-        for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-            int valPos = getPossibilityIndex(valIndex, position);
-            if (possibilities[valPos] == 0) count++;
+    private fun countPossibilities(position: Int): Int {
+        var count = 0
+        for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+            val valPos = getPossibilityIndex(valIndex, position)
+            if (possibilities[valPos] == 0) count++
         }
-        return count;
+        return count
     }
 
     // CHECKED!
-    private boolean arePossibilitiesSame(int position1, int position2) {
-        for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-            int valPos1 = getPossibilityIndex(valIndex, position1);
-            int valPos2 = getPossibilityIndex(valIndex, position2);
+    private fun arePossibilitiesSame(position1: Int, position2: Int): Boolean {
+        for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+            val valPos1 = getPossibilityIndex(valIndex, position1)
+            val valPos2 = getPossibilityIndex(valIndex, position2)
             if ((possibilities[valPos1] == 0 || possibilities[valPos2] == 0) && (possibilities[valPos1] != 0 || possibilities[valPos2] != 0)) {
-                return false;
+                return false
             }
         }
-        return true;
+        return true
     }
 
     // CHECKED!
-    private boolean removePossibilitiesInOneFromTwo(int position1, int position2, int round) {
-        boolean doneSomething = false;
-        for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-            int valPos1 = getPossibilityIndex(valIndex, position1);
-            int valPos2 = getPossibilityIndex(valIndex, position2);
+    private fun removePossibilitiesInOneFromTwo(
+        position1: Int,
+        position2: Int,
+        round: Int
+    ): Boolean {
+        var doneSomething = false
+        for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+            val valPos1 = getPossibilityIndex(valIndex, position1)
+            val valPos2 = getPossibilityIndex(valIndex, position2)
             if (possibilities[valPos1] == 0 && possibilities[valPos2] == 0) {
-                possibilities[valPos2] = round;
-                doneSomething = true;
+                possibilities[valPos2] = round
+                doneSomething = true
             }
         }
-        return doneSomething;
+        return doneSomething
     }
 
     // CHECKED!
-    private boolean hiddenPairInColumn(int round) {
-        for (int column = 0; column < ROW_COL_SEC_SIZE; column++) {
-            for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-                int r1 = -1;
-                int r2 = -1;
-                int valCount = 0;
-                for (int row = 0; row < ROW_COL_SEC_SIZE; row++) {
-                    int position = rowColumnToCell(row, column);
-                    int valPos = getPossibilityIndex(valIndex, position);
+    private fun hiddenPairInColumn(round: Int): Boolean {
+        for (column in 0 until ROW_COL_SEC_SIZE) {
+            for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+                var r1 = -1
+                var r2 = -1
+                var valCount = 0
+                for (row in 0 until ROW_COL_SEC_SIZE) {
+                    val position = rowColumnToCell(row, column)
+                    val valPos = getPossibilityIndex(valIndex, position)
                     if (possibilities[valPos] == 0) {
                         if (r1 == -1 || r1 == row) {
-                            r1 = row;
+                            r1 = row
                         } else if (r2 == -1 || r2 == row) {
-                            r2 = row;
+                            r2 = row
                         }
-                        valCount++;
+                        valCount++
                     }
                 }
                 if (valCount == 2) {
-                    for (int valIndex2 = valIndex + 1; valIndex2 < ROW_COL_SEC_SIZE; valIndex2++) {
-                        int r3 = -1;
-                        int r4 = -1;
-                        int valCount2 = 0;
-                        for (int row = 0; row < ROW_COL_SEC_SIZE; row++) {
-                            int position = rowColumnToCell(row, column);
-                            int valPos = getPossibilityIndex(valIndex2, position);
+                    for (valIndex2 in valIndex + 1 until ROW_COL_SEC_SIZE) {
+                        var r3 = -1
+                        var r4 = -1
+                        var valCount2 = 0
+                        for (row in 0 until ROW_COL_SEC_SIZE) {
+                            val position = rowColumnToCell(row, column)
+                            val valPos = getPossibilityIndex(valIndex2, position)
                             if (possibilities[valPos] == 0) {
                                 if (r3 == -1 || r3 == row) {
-                                    r3 = row;
+                                    r3 = row
                                 } else if (r4 == -1 || r4 == row) {
-                                    r4 = row;
+                                    r4 = row
                                 }
-                                valCount2++;
+                                valCount2++
                             }
                         }
                         if (valCount2 == 2 && r1 == r3 && r2 == r4) {
-                            boolean doneSomething = false;
-                            for (int valIndex3 = 0; valIndex3 < ROW_COL_SEC_SIZE; valIndex3++) {
+                            var doneSomething = false
+                            for (valIndex3 in 0 until ROW_COL_SEC_SIZE) {
                                 if (valIndex3 != valIndex && valIndex3 != valIndex2) {
-                                    int position1 = rowColumnToCell(r1, column);
-                                    int position2 = rowColumnToCell(r2, column);
-                                    int valPos1 = getPossibilityIndex(valIndex3, position1);
-                                    int valPos2 = getPossibilityIndex(valIndex3, position2);
+                                    val position1 = rowColumnToCell(r1, column)
+                                    val position2 = rowColumnToCell(r2, column)
+                                    val valPos1 = getPossibilityIndex(valIndex3, position1)
+                                    val valPos2 = getPossibilityIndex(valIndex3, position2)
                                     if (possibilities[valPos1] == 0) {
-                                        possibilities[valPos1] = round;
-                                        doneSomething = true;
+                                        possibilities[valPos1] = round
+                                        doneSomething = true
                                     }
                                     if (possibilities[valPos2] == 0) {
-                                        possibilities[valPos2] = round;
-                                        doneSomething = true;
+                                        possibilities[valPos2] = round
+                                        doneSomething = true
                                     }
                                 }
                             }
                             if (doneSomething) {
-                                if (logHistory || recordHistory)
-                                    addHistoryItem(new LogItem(round, LogType.HIDDEN_PAIR_COLUMN, valIndex + 1, rowColumnToCell(r1, column)));
-                                return true;
+                                if (logHistory || recordHistory) addHistoryItem(
+                                    LogItem(
+                                        round,
+                                        LogType.HIDDEN_PAIR_COLUMN,
+                                        valIndex + 1,
+                                        rowColumnToCell(r1, column)
+                                    )
+                                )
+                                return true
                             }
                         }
                     }
                 }
             }
         }
-        return false;
+        return false
     }
 
     // CHECKED!
-    private boolean hiddenPairInSection(int round) {
-        for (int section = 0; section < ROW_COL_SEC_SIZE; section++) {
-            for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-                int si1 = -1;
-                int si2 = -1;
-                int valCount = 0;
-                for (int secInd = 0; secInd < ROW_COL_SEC_SIZE; secInd++) {
-                    int position = sectionToCell(section, secInd);
-                    int valPos = getPossibilityIndex(valIndex, position);
+    private fun hiddenPairInSection(round: Int): Boolean {
+        for (section in 0 until ROW_COL_SEC_SIZE) {
+            for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+                var si1 = -1
+                var si2 = -1
+                var valCount = 0
+                for (secInd in 0 until ROW_COL_SEC_SIZE) {
+                    val position = sectionToCell(section, secInd)
+                    val valPos = getPossibilityIndex(valIndex, position)
                     if (possibilities[valPos] == 0) {
                         if (si1 == -1 || si1 == secInd) {
-                            si1 = secInd;
+                            si1 = secInd
                         } else if (si2 == -1 || si2 == secInd) {
-                            si2 = secInd;
+                            si2 = secInd
                         }
-                        valCount++;
+                        valCount++
                     }
                 }
                 if (valCount == 2) {
-                    for (int valIndex2 = valIndex + 1; valIndex2 < ROW_COL_SEC_SIZE; valIndex2++) {
-                        int si3 = -1;
-                        int si4 = -1;
-                        int valCount2 = 0;
-                        for (int secInd = 0; secInd < ROW_COL_SEC_SIZE; secInd++) {
-                            int position = sectionToCell(section, secInd);
-                            int valPos = getPossibilityIndex(valIndex2, position);
+                    for (valIndex2 in valIndex + 1 until ROW_COL_SEC_SIZE) {
+                        var si3 = -1
+                        var si4 = -1
+                        var valCount2 = 0
+                        for (secInd in 0 until ROW_COL_SEC_SIZE) {
+                            val position = sectionToCell(section, secInd)
+                            val valPos = getPossibilityIndex(valIndex2, position)
                             if (possibilities[valPos] == 0) {
                                 if (si3 == -1 || si3 == secInd) {
-                                    si3 = secInd;
+                                    si3 = secInd
                                 } else if (si4 == -1 || si4 == secInd) {
-                                    si4 = secInd;
+                                    si4 = secInd
                                 }
-                                valCount2++;
+                                valCount2++
                             }
                         }
                         if (valCount2 == 2 && si1 == si3 && si2 == si4) {
-                            boolean doneSomething = false;
-                            for (int valIndex3 = 0; valIndex3 < ROW_COL_SEC_SIZE; valIndex3++) {
+                            var doneSomething = false
+                            for (valIndex3 in 0 until ROW_COL_SEC_SIZE) {
                                 if (valIndex3 != valIndex && valIndex3 != valIndex2) {
-                                    int position1 = sectionToCell(section, si1);
-                                    int position2 = sectionToCell(section, si2);
-                                    int valPos1 = getPossibilityIndex(valIndex3, position1);
-                                    int valPos2 = getPossibilityIndex(valIndex3, position2);
+                                    val position1 = sectionToCell(section, si1)
+                                    val position2 = sectionToCell(section, si2)
+                                    val valPos1 = getPossibilityIndex(valIndex3, position1)
+                                    val valPos2 = getPossibilityIndex(valIndex3, position2)
                                     if (possibilities[valPos1] == 0) {
-                                        possibilities[valPos1] = round;
-                                        doneSomething = true;
+                                        possibilities[valPos1] = round
+                                        doneSomething = true
                                     }
                                     if (possibilities[valPos2] == 0) {
-                                        possibilities[valPos2] = round;
-                                        doneSomething = true;
+                                        possibilities[valPos2] = round
+                                        doneSomething = true
                                     }
                                 }
                             }
                             if (doneSomething) {
-                                if (logHistory || recordHistory)
-                                    addHistoryItem(new LogItem(round, LogType.HIDDEN_PAIR_SECTION, valIndex + 1, sectionToCell(section, si1)));
-                                return true;
+                                if (logHistory || recordHistory) addHistoryItem(
+                                    LogItem(
+                                        round,
+                                        LogType.HIDDEN_PAIR_SECTION,
+                                        valIndex + 1,
+                                        sectionToCell(section, si1)
+                                    )
+                                )
+                                return true
                             }
                         }
                     }
                 }
             }
         }
-        return false;
+        return false
     }
 
     // CHECKED!
-    private boolean hiddenPairInRow(int round) {
-        for (int row = 0; row < ROW_COL_SEC_SIZE; row++) {
-            for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-                int c1 = -1;
-                int c2 = -1;
-                int valCount = 0;
-                for (int column = 0; column < ROW_COL_SEC_SIZE; column++) {
-                    int position = rowColumnToCell(row, column);
-                    int valPos = getPossibilityIndex(valIndex, position);
+    private fun hiddenPairInRow(round: Int): Boolean {
+        for (row in 0 until ROW_COL_SEC_SIZE) {
+            for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+                var c1 = -1
+                var c2 = -1
+                var valCount = 0
+                for (column in 0 until ROW_COL_SEC_SIZE) {
+                    val position = rowColumnToCell(row, column)
+                    val valPos = getPossibilityIndex(valIndex, position)
                     if (possibilities[valPos] == 0) {
                         if (c1 == -1 || c1 == column) {
-                            c1 = column;
+                            c1 = column
                         } else if (c2 == -1 || c2 == column) {
-                            c2 = column;
+                            c2 = column
                         }
-                        valCount++;
+                        valCount++
                     }
                 }
                 if (valCount == 2) {
-                    for (int valIndex2 = valIndex + 1; valIndex2 < ROW_COL_SEC_SIZE; valIndex2++) {
-                        int c3 = -1;
-                        int c4 = -1;
-                        int valCount2 = 0;
-                        for (int column = 0; column < ROW_COL_SEC_SIZE; column++) {
-                            int position = rowColumnToCell(row, column);
-                            int valPos = getPossibilityIndex(valIndex2, position);
+                    for (valIndex2 in valIndex + 1 until ROW_COL_SEC_SIZE) {
+                        var c3 = -1
+                        var c4 = -1
+                        var valCount2 = 0
+                        for (column in 0 until ROW_COL_SEC_SIZE) {
+                            val position = rowColumnToCell(row, column)
+                            val valPos = getPossibilityIndex(valIndex2, position)
                             if (possibilities[valPos] == 0) {
                                 if (c3 == -1 || c3 == column) {
-                                    c3 = column;
+                                    c3 = column
                                 } else if (c4 == -1 || c4 == column) {
-                                    c4 = column;
+                                    c4 = column
                                 }
-                                valCount2++;
+                                valCount2++
                             }
                         }
                         if (valCount2 == 2 && c1 == c3 && c2 == c4) {
-                            boolean doneSomething = false;
-                            for (int valIndex3 = 0; valIndex3 < ROW_COL_SEC_SIZE; valIndex3++) {
+                            var doneSomething = false
+                            for (valIndex3 in 0 until ROW_COL_SEC_SIZE) {
                                 if (valIndex3 != valIndex && valIndex3 != valIndex2) {
-                                    int position1 = rowColumnToCell(row, c1);
-                                    int position2 = rowColumnToCell(row, c2);
-                                    int valPos1 = getPossibilityIndex(valIndex3, position1);
-                                    int valPos2 = getPossibilityIndex(valIndex3, position2);
+                                    val position1 = rowColumnToCell(row, c1)
+                                    val position2 = rowColumnToCell(row, c2)
+                                    val valPos1 = getPossibilityIndex(valIndex3, position1)
+                                    val valPos2 = getPossibilityIndex(valIndex3, position2)
                                     if (possibilities[valPos1] == 0) {
-                                        possibilities[valPos1] = round;
-                                        doneSomething = true;
+                                        possibilities[valPos1] = round
+                                        doneSomething = true
                                     }
                                     if (possibilities[valPos2] == 0) {
-                                        possibilities[valPos2] = round;
-                                        doneSomething = true;
+                                        possibilities[valPos2] = round
+                                        doneSomething = true
                                     }
                                 }
                             }
                             if (doneSomething) {
-                                if (logHistory || recordHistory)
-                                    addHistoryItem(new LogItem(round, LogType.HIDDEN_PAIR_ROW, valIndex + 1, rowColumnToCell(row, c1)));
-                                return true;
+                                if (logHistory || recordHistory) addHistoryItem(
+                                    LogItem(
+                                        round,
+                                        LogType.HIDDEN_PAIR_ROW,
+                                        valIndex + 1,
+                                        rowColumnToCell(row, c1)
+                                    )
+                                )
+                                return true
                             }
                         }
                     }
                 }
             }
         }
-        return false;
+        return false
     }
 
     // CHECKED!
-    private boolean handleNakedPairs(int round) {
-        for (int position = 0; position < BOARD_SIZE; position++) {
-            int possibilities = countPossibilities(position);
+    private fun handleNakedPairs(round: Int): Boolean {
+        for (position in 0 until BOARD_SIZE) {
+            val possibilities = countPossibilities(position)
             if (possibilities == 2) {
-                int row = cellToRow(position);
-                int column = cellToColumn(position);
-                int section = cellToSectionStartCell(position);
-                for (int position2 = position; position2 < BOARD_SIZE; position2++) {
+                val row = cellToRow(position)
+                val column = cellToColumn(position)
+                val section = cellToSectionStartCell(position)
+                for (position2 in position until BOARD_SIZE) {
                     if (position != position2) {
-                        int possibilities2 = countPossibilities(position2);
+                        val possibilities2 = countPossibilities(position2)
                         if (possibilities2 == 2 && arePossibilitiesSame(position, position2)) {
                             if (row == cellToRow(position2)) {
-                                boolean doneSomething = false;
-                                for (int column2 = 0; column2 < ROW_COL_SEC_SIZE; column2++) {
-                                    int position3 = rowColumnToCell(row, column2);
-                                    if (position3 != position && position3 != position2 && removePossibilitiesInOneFromTwo(position, position3, round)) {
-                                        doneSomething = true;
+                                var doneSomething = false
+                                for (column2 in 0 until ROW_COL_SEC_SIZE) {
+                                    val position3 = rowColumnToCell(row, column2)
+                                    if (position3 != position && position3 != position2 && removePossibilitiesInOneFromTwo(
+                                            position,
+                                            position3,
+                                            round
+                                        )
+                                    ) {
+                                        doneSomething = true
                                     }
                                 }
                                 if (doneSomething) {
-                                    if (logHistory || recordHistory)
-                                        addHistoryItem(new LogItem(round, LogType.NAKED_PAIR_ROW, 0, position));
-                                    return true;
+                                    if (logHistory || recordHistory) addHistoryItem(
+                                        LogItem(
+                                            round,
+                                            LogType.NAKED_PAIR_ROW,
+                                            0,
+                                            position
+                                        )
+                                    )
+                                    return true
                                 }
                             }
                             if (column == cellToColumn(position2)) {
-                                boolean doneSomething = false;
-                                for (int row2 = 0; row2 < ROW_COL_SEC_SIZE; row2++) {
-                                    int position3 = rowColumnToCell(row2, column);
-                                    if (position3 != position && position3 != position2 && removePossibilitiesInOneFromTwo(position, position3, round)) {
-                                        doneSomething = true;
+                                var doneSomething = false
+                                for (row2 in 0 until ROW_COL_SEC_SIZE) {
+                                    val position3 = rowColumnToCell(row2, column)
+                                    if (position3 != position && position3 != position2 && removePossibilitiesInOneFromTwo(
+                                            position,
+                                            position3,
+                                            round
+                                        )
+                                    ) {
+                                        doneSomething = true
                                     }
                                 }
                                 if (doneSomething) {
-                                    if (logHistory || recordHistory)
-                                        addHistoryItem(new LogItem(round, LogType.NAKED_PAIR_COLUMN, 0, position));
-                                    return true;
+                                    if (logHistory || recordHistory) addHistoryItem(
+                                        LogItem(
+                                            round,
+                                            LogType.NAKED_PAIR_COLUMN,
+                                            0,
+                                            position
+                                        )
+                                    )
+                                    return true
                                 }
                             }
                             if (section == cellToSectionStartCell(position2)) {
-                                boolean doneSomething = false;
-                                int secStart = cellToSectionStartCell(position);
-                                for (int i = 0; i < GRID_SIZE_COL; i++) {
-                                    for (int j = 0; j < GRID_SIZE_ROW; j++) {
-                                        int position3 = secStart + i + (ROW_COL_SEC_SIZE * j);
-                                        if (position3 != position && position3 != position2 && removePossibilitiesInOneFromTwo(position, position3, round)) {
-                                            doneSomething = true;
+                                var doneSomething = false
+                                val secStart = cellToSectionStartCell(position)
+                                for (i in 0 until GRID_SIZE_COL) {
+                                    for (j in 0 until GRID_SIZE_ROW) {
+                                        val position3 = secStart + i + ROW_COL_SEC_SIZE * j
+                                        if (position3 != position && position3 != position2 && removePossibilitiesInOneFromTwo(
+                                                position,
+                                                position3,
+                                                round
+                                            )
+                                        ) {
+                                            doneSomething = true
                                         }
                                     }
                                 }
                                 if (doneSomething) {
-                                    if (logHistory || recordHistory)
-                                        addHistoryItem(new LogItem(round, LogType.NAKED_PAIR_SECTION, 0, position));
-                                    return true;
+                                    if (logHistory || recordHistory) addHistoryItem(
+                                        LogItem(
+                                            round,
+                                            LogType.NAKED_PAIR_SECTION,
+                                            0,
+                                            position
+                                        )
+                                    )
+                                    return true
                                 }
                             }
                         }
@@ -1351,7 +1297,7 @@ public class QQWing {
                 }
             }
         }
-        return false;
+        return false
     }
 
     /**
@@ -1361,29 +1307,35 @@ public class QQWing {
      * "hidden single"
      * CHECKED!
      */
-    private boolean onlyValueInRow(int round) {
-        for (int row = 0; row < ROW_COL_SEC_SIZE; row++) {
-            for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-                int count = 0;
-                int lastPosition = 0;
-                for (int col = 0; col < ROW_COL_SEC_SIZE; col++) {
-                    int position = (row * ROW_COL_SEC_SIZE) + col;
-                    int valPos = getPossibilityIndex(valIndex, position);
+    private fun onlyValueInRow(round: Int): Boolean {
+        for (row in 0 until ROW_COL_SEC_SIZE) {
+            for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+                var count = 0
+                var lastPosition = 0
+                for (col in 0 until ROW_COL_SEC_SIZE) {
+                    val position = row * ROW_COL_SEC_SIZE + col
+                    val valPos = getPossibilityIndex(valIndex, position)
                     if (possibilities[valPos] == 0) {
-                        count++;
-                        lastPosition = position;
+                        count++
+                        lastPosition = position
                     }
                 }
                 if (count == 1) {
-                    int value = valIndex + 1;
-                    if (logHistory || recordHistory)
-                        addHistoryItem(new LogItem(round, LogType.HIDDEN_SINGLE_ROW, value, lastPosition));
-                    mark(lastPosition, round, value);
-                    return true;
+                    val value = valIndex + 1
+                    if (logHistory || recordHistory) addHistoryItem(
+                        LogItem(
+                            round,
+                            LogType.HIDDEN_SINGLE_ROW,
+                            value,
+                            lastPosition
+                        )
+                    )
+                    mark(lastPosition, round, value)
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
 
     /**
@@ -1393,29 +1345,35 @@ public class QQWing {
      * called a "hidden single"
      * CHECKED!
      */
-    private boolean onlyValueInColumn(int round) {
-        for (int col = 0; col < ROW_COL_SEC_SIZE; col++) {
-            for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-                int count = 0;
-                int lastPosition = 0;
-                for (int row = 0; row < ROW_COL_SEC_SIZE; row++) {
-                    int position = rowColumnToCell(row, col);
-                    int valPos = getPossibilityIndex(valIndex, position);
+    private fun onlyValueInColumn(round: Int): Boolean {
+        for (col in 0 until ROW_COL_SEC_SIZE) {
+            for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+                var count = 0
+                var lastPosition = 0
+                for (row in 0 until ROW_COL_SEC_SIZE) {
+                    val position = rowColumnToCell(row, col)
+                    val valPos = getPossibilityIndex(valIndex, position)
                     if (possibilities[valPos] == 0) {
-                        count++;
-                        lastPosition = position;
+                        count++
+                        lastPosition = position
                     }
                 }
                 if (count == 1) {
-                    int value = valIndex + 1;
-                    if (logHistory || recordHistory)
-                        addHistoryItem(new LogItem(round, LogType.HIDDEN_SINGLE_COLUMN, value, lastPosition));
-                    mark(lastPosition, round, value);
-                    return true;
+                    val value = valIndex + 1
+                    if (logHistory || recordHistory) addHistoryItem(
+                        LogItem(
+                            round,
+                            LogType.HIDDEN_SINGLE_COLUMN,
+                            value,
+                            lastPosition
+                        )
+                    )
+                    mark(lastPosition, round, value)
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
 
     /**
@@ -1425,32 +1383,38 @@ public class QQWing {
      * called a "hidden single"
      * Checked!
      */
-    private boolean onlyValueInSection(int round) {
-        for (int sec = 0; sec < ROW_COL_SEC_SIZE; sec++) {
-            int secPos = sectionToFirstCell(sec);
-            for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-                int count = 0;
-                int lastPosition = 0;
-                for (int i = 0; i < GRID_SIZE_COL; i++) {
-                    for (int j = 0; j < GRID_SIZE_ROW; j++) {
-                        int position = secPos + i + ROW_COL_SEC_SIZE * j;
-                        int valPos = getPossibilityIndex(valIndex, position);
+    private fun onlyValueInSection(round: Int): Boolean {
+        for (sec in 0 until ROW_COL_SEC_SIZE) {
+            val secPos = sectionToFirstCell(sec)
+            for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+                var count = 0
+                var lastPosition = 0
+                for (i in 0 until GRID_SIZE_COL) {
+                    for (j in 0 until GRID_SIZE_ROW) {
+                        val position = secPos + i + ROW_COL_SEC_SIZE * j
+                        val valPos = getPossibilityIndex(valIndex, position)
                         if (possibilities[valPos] == 0) {
-                            count++;
-                            lastPosition = position;
+                            count++
+                            lastPosition = position
                         }
                     }
                 }
                 if (count == 1) {
-                    int value = valIndex + 1;
-                    if (logHistory || recordHistory)
-                        addHistoryItem(new LogItem(round, LogType.HIDDEN_SINGLE_SECTION, value, lastPosition));
-                    mark(lastPosition, round, value);
-                    return true;
+                    val value = valIndex + 1
+                    if (logHistory || recordHistory) addHistoryItem(
+                        LogItem(
+                            round,
+                            LogType.HIDDEN_SINGLE_SECTION,
+                            value,
+                            lastPosition
+                        )
+                    )
+                    mark(lastPosition, round, value)
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
 
     /**
@@ -1459,27 +1423,33 @@ public class QQWing {
      * This type of cell is often called a "single"
      * Checked!
      */
-    private boolean onlyPossibilityForCell(int round) {
-        for (int position = 0; position < BOARD_SIZE; position++) {
+    private fun onlyPossibilityForCell(round: Int): Boolean {
+        for (position in 0 until BOARD_SIZE) {
             if (solution[position] == 0) {
-                int count = 0;
-                int lastValue = 0;
-                for (int valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-                    int valPos = getPossibilityIndex(valIndex, position);
+                var count = 0
+                var lastValue = 0
+                for (valIndex in 0 until ROW_COL_SEC_SIZE) {
+                    val valPos = getPossibilityIndex(valIndex, position)
                     if (possibilities[valPos] == 0) {
-                        count++;
-                        lastValue = valIndex + 1;
+                        count++
+                        lastValue = valIndex + 1
                     }
                 }
                 if (count == 1) {
-                    mark(position, round, lastValue);
-                    if (logHistory || recordHistory)
-                        addHistoryItem(new LogItem(round, LogType.SINGLE, lastValue, position));
-                    return true;
+                    mark(position, round, lastValue)
+                    if (logHistory || recordHistory) addHistoryItem(
+                        LogItem(
+                            round,
+                            LogType.SINGLE,
+                            lastValue,
+                            position
+                        )
+                    )
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
 
     /**
@@ -1489,62 +1459,60 @@ public class QQWing {
      * @param position Position into the board (0-80)
      * @param round    Round to mark for rollback purposes
      * @param value    The value to go in the square at the given position
-     *                 Checked!
+     * Checked!
      */
-    private void mark(int position, int round, int value) {
-        if (solution[position] != 0)
-            throw new IllegalArgumentException("Marking position that already has been marked.");
-        if (solutionRound[position] != 0)
-            throw new IllegalArgumentException("Marking position that was marked another round.");
-        int valIndex = value - 1;
-        solution[position] = value;
-
-        int possInd = getPossibilityIndex(valIndex, position);
-        if (possibilities[possInd] != 0)
-            throw new IllegalArgumentException("Marking impossible position.");
+    private fun mark(position: Int, round: Int, value: Int) {
+        require(solution[position] == 0) { "Marking position that already has been marked." }
+        require(solutionRound[position] == 0) { "Marking position that was marked another round." }
+        var valIndex = value - 1
+        solution[position] = value
+        val possInd = getPossibilityIndex(valIndex, position)
+        require(possibilities[possInd] == 0) { "Marking impossible position." }
 
         // Take this value out of the possibilities for everything in the row
-        solutionRound[position] = round;
-        int rowStart = cellToRow(position) * ROW_COL_SEC_SIZE;
-        for (int col = 0; col < ROW_COL_SEC_SIZE; col++) {
-            int rowVal = rowStart + col;
-            int valPos = getPossibilityIndex(valIndex, rowVal);
+        solutionRound[position] = round
+        val rowStart = cellToRow(position) * ROW_COL_SEC_SIZE
+        for (col in 0 until ROW_COL_SEC_SIZE) {
+            val rowVal = rowStart + col
+            val valPos = getPossibilityIndex(valIndex, rowVal)
             // System.out.println("Row Start: "+rowStart+" Row Value: "+rowVal+" Value Position: "+valPos);
             if (possibilities[valPos] == 0) {
-                possibilities[valPos] = round;
+                possibilities[valPos] = round
             }
         }
 
         // Take this value out of the possibilities for everything in the column
-        int colStart = cellToColumn(position);
-        for (int i = 0; i < ROW_COL_SEC_SIZE; i++) {
-            int colVal = colStart + (ROW_COL_SEC_SIZE * i);
-            int valPos = getPossibilityIndex(valIndex, colVal);
+        val colStart = cellToColumn(position)
+        for (i in 0 until ROW_COL_SEC_SIZE) {
+            val colVal = colStart + ROW_COL_SEC_SIZE * i
+            val valPos = getPossibilityIndex(valIndex, colVal)
             // System.out.println("Col Start: "+colStart+" Col Value: "+colVal+" Value Position: "+valPos);
             if (possibilities[valPos] == 0) {
-                possibilities[valPos] = round;
+                possibilities[valPos] = round
             }
         }
 
         // Take this value out of the possibilities for everything in section
-        int secStart = cellToSectionStartCell(position);
-        for (int i = 0; i < GRID_SIZE_COL; i++) {
-            for (int j = 0; j < GRID_SIZE_ROW; j++) {
-                int secVal = secStart + i + (ROW_COL_SEC_SIZE * j);
-                int valPos = getPossibilityIndex(valIndex, secVal);
+        val secStart = cellToSectionStartCell(position)
+        for (i in 0 until GRID_SIZE_COL) {
+            for (j in 0 until GRID_SIZE_ROW) {
+                val secVal = secStart + i + ROW_COL_SEC_SIZE * j
+                val valPos = getPossibilityIndex(valIndex, secVal)
                 // System.out.println("Sec Start: "+secStart+" Sec Value: "+secVal+" Value Position: "+valPos);
                 if (possibilities[valPos] == 0) {
-                    possibilities[valPos] = round;
+                    possibilities[valPos] = round
                 }
             }
         }
 
         // This position itself is determined, it should have possibilities.
-        for (valIndex = 0; valIndex < ROW_COL_SEC_SIZE; valIndex++) {
-            int valPos = getPossibilityIndex(valIndex, position);
+        valIndex = 0
+        while (valIndex < ROW_COL_SEC_SIZE) {
+            val valPos = getPossibilityIndex(valIndex, position)
             if (possibilities[valPos] == 0) {
-                possibilities[valPos] = round;
+                possibilities[valPos] = round
             }
+            valIndex++
         }
     }
 
@@ -1552,87 +1520,216 @@ public class QQWing {
      * print the given BOARD_SIZEd array of ints as a sudoku puzzle. Use print
      * options from member variables.
      */
-    private void print(int[] sudoku) {
-        System.out.print(puzzleToString(sudoku));
+    private fun print(sudoku: IntArray) {
+        print(puzzleToString(sudoku))
     }
 
-    private String puzzleToString(int[] sudoku) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < BOARD_SIZE; i++) {
+    private fun puzzleToString(sudoku: IntArray): String {
+        val sb = StringBuilder()
+        for (i in 0 until BOARD_SIZE) {
             if (printStyle == PrintStyle.READABLE) {
-                sb.append(" ");
+                sb.append(" ")
             }
             if (sudoku[i] == 0) {
-                sb.append('.');
+                sb.append('.')
             } else {
-                sb.append(sudoku[i]);
+                sb.append(sudoku[i])
             }
             if (i == BOARD_SIZE - 1) {
                 if (printStyle == PrintStyle.CSV) {
-                    sb.append(",");
+                    sb.append(",")
                 } else {
-                    sb.append(NL);
+                    sb.append(NL)
                 }
                 if (printStyle == PrintStyle.READABLE || printStyle == PrintStyle.COMPACT) {
-                    sb.append(NL);
+                    sb.append(NL)
                 }
             } else if (i % ROW_COL_SEC_SIZE == ROW_COL_SEC_SIZE - 1) {
                 if (printStyle == PrintStyle.READABLE || printStyle == PrintStyle.COMPACT) {
-                    sb.append(NL);
+                    sb.append(NL)
                 }
                 if (i % SEC_GROUP_SIZE == SEC_GROUP_SIZE - 1) {
                     if (printStyle == PrintStyle.READABLE) {
-                        sb.append("-------|-------|-------").append(NL);
+                        sb.append("-------|-------|-------").append(NL)
                     }
                 }
             } else if (i % GRID_SIZE_ROW == GRID_SIZE_ROW - 1) {
                 if (printStyle == PrintStyle.READABLE) {
-                    sb.append(" |");
+                    sb.append(" |")
                 }
             }
         }
-        return sb.toString();
+        return sb.toString()
     }
 
     /**
      * Print the sudoku puzzle.
      */
-    public void printPuzzle() {
-        print(puzzle);
+    fun printPuzzle() {
+        print(puzzle)
     }
 
-    public String getPuzzleString() {
-        return puzzleToString(puzzle);
+    fun getPuzzleString(): String {
+        return puzzleToString(puzzle)
     }
 
-    public int[] getPuzzle() {
-        return puzzle.clone();
+    fun getPuzzle(): IntArray {
+        return puzzle.clone()
     }
 
     /**
      * Print the sudoku solution.
      */
-    public void printSolution() {
-        print(solution);
+    fun printSolution() {
+        print(solution)
     }
 
-    public String getSolutionString() {
-        return puzzleToString(solution);
+    fun getSolutionString(): String {
+        return puzzleToString(solution)
     }
 
-    public int[] getSolution() {
-        return solution.clone();
+    fun getSolution(): IntArray {
+        return solution.clone()
     }
 
     /**
      * Given a vector of LogItems, determine how many log items in the vector
      * are of the specified type.
      */
-    private int getLogCount(ArrayList<LogItem> v, LogType type) {
-        int count = 0;
-        for (int i = 0; i < v.size(); i++) {
-            if ((v.get(i)).getType() == type) count++;
+    private fun getLogCount(v: ArrayList<LogItem?>, type: LogType): Int {
+        var count = 0
+        for (i in v.indices) {
+            if (v[i]!!.type == type) count++
         }
-        return count;
+        return count
+    }
+
+    companion object {
+        const val QQWING_VERSION = "1.3.4"
+        private val NL = System.getProperties().getProperty("line.separator")
+
+        //public static final int GRID_SIZE = 3;
+        var GRID_SIZE_ROW = 3
+        var GRID_SIZE_COL = 3
+        var ROW_COL_SEC_SIZE = GRID_SIZE_ROW * GRID_SIZE_COL
+        var SEC_GROUP_SIZE = ROW_COL_SEC_SIZE * GRID_SIZE_ROW
+        var BOARD_SIZE = ROW_COL_SEC_SIZE * ROW_COL_SEC_SIZE
+        var POSSIBILITY_SIZE = BOARD_SIZE * ROW_COL_SEC_SIZE
+        private var random = Random()
+        private fun fillIncrementing(arr: IntArray): IntArray {
+            for (i in arr.indices) {
+                arr[i] = i
+            }
+            return arr
+        }
+
+        /**
+         * Shuffle the values in an array of integers.
+         */
+        private fun shuffleArray(array: IntArray, size: Int) {
+            for (i in 0 until size) {
+                val tailSize = size - i
+                val randTailPos = Math.abs(random.nextInt()) % tailSize + i
+                val temp = array[i]
+                array[i] = array[randTailPos]
+                array[randTailPos] = temp
+            }
+        }
+
+        // not the first and last value which are NONE and RANDOM
+        private val randomSymmetry: Symmetry
+            get() {
+                val values = Symmetry.values()
+                // not the first and last value which are NONE and RANDOM
+                return values[Math.abs(random.nextInt()) % (values.size - 1) + 1]
+            }
+
+        /**
+         * Given the index of a cell (0-80) calculate the column (0-8) in which that
+         * cell resides.
+         * Checked!
+         */
+        @JvmStatic
+        fun cellToColumn(cell: Int): Int {
+            return cell % ROW_COL_SEC_SIZE
+        }
+
+        /**
+         * Given the index of a cell (0-80) calculate the row (0-8) in which it
+         * resides.
+         * Checked!
+         */
+        @JvmStatic
+        fun cellToRow(cell: Int): Int {
+            return cell / ROW_COL_SEC_SIZE
+        }
+
+        /**
+         * Given the index of a cell (0-80) calculate the section (0-8) in which it
+         * resides.
+         * Checked!
+         */
+        fun cellToSection(cell: Int): Int {
+            return cell / SEC_GROUP_SIZE * GRID_SIZE_ROW + cellToColumn(cell) / GRID_SIZE_COL
+        }
+
+        /**
+         * Given the index of a cell (0-80) calculate the cell (0-80) that is the
+         * upper left start cell of that section.
+         * Checked!
+         */
+        fun cellToSectionStartCell(cell: Int): Int {
+            return cell / SEC_GROUP_SIZE * SEC_GROUP_SIZE + cellToColumn(cell) / GRID_SIZE_COL * GRID_SIZE_COL
+        }
+
+        /**
+         * Given a row (0-8) calculate the first cell (0-80) of that row.
+         * Checked!
+         */
+        fun rowToFirstCell(row: Int): Int {
+            return ROW_COL_SEC_SIZE * row
+        }
+
+        /**
+         * Given a column (0-8) calculate the first cell (0-80) of that column.
+         * Checked!
+         */
+        fun columnToFirstCell(column: Int): Int {
+            return column
+        }
+
+        /**
+         * Given a section (0-8) calculate the first cell (0-80) of that section.
+         * Checked!
+         */
+        fun sectionToFirstCell(section: Int): Int {
+            return section % GRID_SIZE_ROW * GRID_SIZE_COL + section / GRID_SIZE_ROW * SEC_GROUP_SIZE
+        }
+
+        /**
+         * Given a value for a cell (0-8) and a cell number (0-80) calculate the
+         * offset into the possibility array (0-728).
+         * Checked!
+         */
+        fun getPossibilityIndex(valueIndex: Int, cell: Int): Int {
+            return valueIndex + ROW_COL_SEC_SIZE * cell
+        }
+
+        /**
+         * Given a row (0-8) and a column (0-8) calculate the cell (0-80).
+         * Checked!
+         */
+        fun rowColumnToCell(row: Int, column: Int): Int {
+            return row * ROW_COL_SEC_SIZE + column
+        }
+
+        /**
+         * Given a section (0-8) and an offset into that section (0-8) calculate the
+         * cell (0-80)
+         * Checked!
+         */
+        fun sectionToCell(section: Int, offset: Int): Int {
+            return sectionToFirstCell(section) + offset / GRID_SIZE_COL * ROW_COL_SEC_SIZE + offset % GRID_SIZE_COL
+        }
     }
 }
