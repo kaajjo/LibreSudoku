@@ -1,4 +1,5 @@
 [![](https://img.shields.io/github/v/release/kaajjo/libre-sudoku?style=flat)](https://github.com/kaajjo/Libre-Sudoku/releases/latest)
+[![Translation status](https://hosted.weblate.org/widgets/libresudoku/-/svg-badge.svg)](https://hosted.weblate.org/engage/libresudoku/)
 # Libre-Sudoku
 Sudoku app built with [Jetpack Compose](https://developer.android.com/jetpack/compose) and [Material3](https://m3.material.io/)
 
