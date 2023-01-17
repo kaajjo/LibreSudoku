@@ -286,7 +286,7 @@ class GameViewModel @Inject constructor(
                             if (notesToggled) currCell =
                                 Cell(currCell.row, currCell.col, digitFirstNumber)
                         }
-                    } else if(!currCell.locked) {
+                    } else if (!currCell.locked) {
                         gameBoard = setValueCell(0)
                         setNote(digitFirstNumber)
                         undoManager.addState(GameState(gameBoard, notes))
