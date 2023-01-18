@@ -6,8 +6,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun LibreSudokuTheme(
@@ -24,14 +26,12 @@ fun LibreSudokuTheme(
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
 
-            // default implementation: if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-
-            // additional theme with amoled black
             when {
                 darkTheme && amoled -> dynamicDarkColorScheme(context).copy(
                     background = Color.Black,
                     surface = Color.Black
                 )
+
                 darkTheme && !amoled -> dynamicDarkColorScheme(context)
                 else -> dynamicLightColorScheme(context)
             }
@@ -41,17 +41,20 @@ fun LibreSudokuTheme(
         darkTheme -> currentTheme
         else -> currentTheme
     }
-    //val view = LocalView.current
-    //if (!view.isInEditMode) {
-    //    SideEffect {
-    //        (view.context as Activity).window.statusBarColor = if(darkTheme) Color.Black.toArgb() else Color.White.toArgb()
-    //        ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = !darkTheme
-    //    }
-    //}
+    val systemUiController = rememberSystemUiController()
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = {
+            SideEffect {
+                systemUiController.setSystemBarsColor(
+                    color = Color.Transparent,
+                    darkIcons = !darkTheme
+                )
+            }
+
+            content()
+        }
     )
 }

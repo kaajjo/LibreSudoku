@@ -35,7 +35,8 @@ fun WelcomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .padding(WindowInsets.statusBars.asPaddingValues()),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
