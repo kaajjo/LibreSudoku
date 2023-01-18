@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import androidx.navigation.navOptions
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -99,7 +100,14 @@ class MainActivity : AppCompatActivity() {
                 }
                 LaunchedEffect(firstLaunch) {
                     if (firstLaunch) {
-                        navController.navigate(Route.WELCOME_SCREEN)
+                        navController.navigate(
+                            route = Route.WELCOME_SCREEN,
+                            navOptions = navOptions {
+                                popUpTo(Route.HOME) {
+                                    inclusive = true
+                                }
+                            }
+                        )
                     }
                 }
                 Scaffold(
