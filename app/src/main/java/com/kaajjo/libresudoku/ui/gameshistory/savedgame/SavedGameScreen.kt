@@ -239,7 +239,9 @@ fun SavedGameScreen(
             viewModel.boardEntity?.let {
                 ExportDialog(
                     onDismiss = { viewModel.exportDialog = false },
-                    boardString = it.initialBoard.replace('0', '.'),
+                    boardString = it.initialBoard
+                        .replace('0', '.')
+                        .uppercase(),
                     onClickCopy = {
                         clipboardManager.setText(
                             AnnotatedString(
