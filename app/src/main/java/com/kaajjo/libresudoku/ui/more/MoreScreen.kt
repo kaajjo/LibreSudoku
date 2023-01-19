@@ -1,11 +1,9 @@
 package com.kaajjo.libresudoku.ui.more
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
@@ -35,7 +33,7 @@ fun MoreScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(WindowInsets.statusBars.asPaddingValues()),
+                .statusBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(

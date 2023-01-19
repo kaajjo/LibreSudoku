@@ -51,11 +51,6 @@ class QQWingController {
      * accepted with a probability of 100%
      * @return the generated sudoku
      */
-    /**
-     * Generate a new sudoku based on a given seed regardless of outcome difficulty
-     * @param seed the seed based on which the sudoku should be calculated
-     * @return the generated sudoku
-     */
     @JvmOverloads
     fun generateFromSeed(
         seed: Int,
@@ -95,15 +90,6 @@ class QQWingController {
         opts.threads = 1
         opts.gameType = gameType
         doAction()
-        /*if (isImpossible) {
-
-        }
-        val board = List(gameType.size) { row -> List(gameType.size) { col -> Cell(row, col, 0) } }
-        for(i in board.indices) {
-            for( j in board.indices) {
-                board[i][j].value = solution[i * gameType.size + j]
-            }
-        }*/
         return solution
     }
 
@@ -251,6 +237,6 @@ class QQWingController {
 
     companion object {
         private val microseconds: Long
-            private get() = Date().time * 1000
+            get() = Date().time * 1000
     }
 }

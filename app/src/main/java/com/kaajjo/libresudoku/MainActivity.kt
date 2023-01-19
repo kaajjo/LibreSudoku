@@ -63,23 +63,20 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val mainViewModel: MainActivityViewModel = hiltViewModel()
 
-            val dynamicColors = mainViewModel.dc.collectAsState(initial = isSystemInDarkTheme())
-            val darkTheme =
-                mainViewModel.darkTheme.collectAsState(initial = PreferencesConstants.DEFAULT_DARK_THEME)
-            val amoledBlack =
-                mainViewModel.amoledBlack.collectAsState(initial = PreferencesConstants.DEFAULT_AMOLED_BLACK)
-            val firstLaunch by mainViewModel.firstLaunch.collectAsState(initial = false)
-            val currentTheme =
-                mainViewModel.currentTheme.collectAsState(initial = PreferencesConstants.DEFAULT_SELECTED_THEME)
+            val dynamicColors by mainViewModel.dc.collectAsState(isSystemInDarkTheme())
+            val darkTheme by mainViewModel.darkTheme.collectAsState(PreferencesConstants.DEFAULT_DARK_THEME)
+            val amoledBlack by mainViewModel.amoledBlack.collectAsState(PreferencesConstants.DEFAULT_AMOLED_BLACK)
+            val firstLaunch by mainViewModel.firstLaunch.collectAsState(false)
+            val currentTheme by mainViewModel.currentTheme.collectAsState(PreferencesConstants.DEFAULT_SELECTED_THEME)
             LibreSudokuTheme(
-                darkTheme = when (darkTheme.value) {
+                darkTheme = when (darkTheme) {
                     1 -> false
                     2 -> true
                     else -> isSystemInDarkTheme()
                 },
-                dynamicColor = dynamicColors.value,
-                amoled = amoledBlack.value,
-                appTheme = when (currentTheme.value) {
+                dynamicColor = dynamicColors,
+                amoled = amoledBlack,
+                appTheme = when (currentTheme) {
                     PreferencesConstants.GREEN_THEME_KEY -> AppTheme.Green
                     PreferencesConstants.PEACH_THEME_KEY -> AppTheme.Peach
                     PreferencesConstants.YELLOW_THEME_KEY -> AppTheme.Yellow
