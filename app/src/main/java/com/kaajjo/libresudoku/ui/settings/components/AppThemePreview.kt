@@ -1,5 +1,11 @@
 package com.kaajjo.libresudoku.ui.settings.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppThemePreviewItem(
     modifier: Modifier = Modifier,
@@ -52,11 +59,15 @@ fun AppThemePreviewItem(
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (selected) {
+            AnimatedVisibility(
+                visible = selected,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut()
+            ) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = colorScheme.primary
                 )
             }
         }
