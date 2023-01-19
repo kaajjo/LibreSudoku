@@ -15,7 +15,17 @@ Sudoku app built with [Jetpack Compose](https://developer.android.com/jetpack/co
 - Tutorials for game techniques (in progress)
 - Custom sudoku (manually or from string). Supported game types: 9x9, 6x6, 12x12
 
-### App plans
+## Screenshots
+<div>
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="25%" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" width="25%" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" width="25%" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.jpg" width="25%" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.jpg" width="25%" />
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.jpg" width="25%" />
+</div>
+
+## App plans
 - Better hint system (explain the next move instead of just reveal the number)
 - Full set of sudoku techniques tutorials
 - Custom sudoku from gallery or camera
