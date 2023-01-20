@@ -1,17 +1,28 @@
 package com.kaajjo.libresudoku.ui.settings
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.ui.util.isScrolledToEnd
+import com.kaajjo.libresudoku.ui.util.isScrolledToStart
 
 @Composable
 fun SelectionDialog(
@@ -21,66 +32,50 @@ fun SelectionDialog(
     onSelect: (Int) -> Unit,
     onDismiss: () -> Unit
 ) {
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = RoundedCornerShape(28.dp),
-            color = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        selections.forEachIndexed { index, text ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        onSelect(index)
-                                        onDismiss()
-                                    }
-                                    .padding(start = 12.dp, end = 12.dp),
-                                verticalAlignment = CenterVertically
-                            ) {
-                                RadioButton(
-                                    selected = selected == index,
-                                    onClick = {
-                                        onSelect(index)
-                                        onDismiss()
-                                    }
-                                )
-                                Text(text)
-                            }
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Column(
+    AlertDialog(
+        title = {
+            Column(Modifier.fillMaxWidth()) {
+                Text(
+                    text = title,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
+        },
+        text = {
+            Column {
+                selections.forEachIndexed { index, text ->
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
-                        horizontalAlignment = Alignment.End,
-
-                        ) {
-                        TextButton(onClick = onDismiss) {
-                            Text(stringResource(R.string.action_cancel))
-                        }
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable {
+                                onSelect(index)
+                                onDismiss()
+                            },
+                        verticalAlignment = CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selected == index,
+                            onClick = {
+                                onSelect(index)
+                                onDismiss()
+                            }
+                        )
+                        Text(
+                            text = text,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 }
             }
+        },
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel))
+            }
         }
-    }
+    )
 }
 
 @Composable
@@ -91,64 +86,52 @@ fun LanguagePicker(
     onSelect: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = RoundedCornerShape(28.dp),
-            color = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp)
-                    )
+    AlertDialog(
+        title = {
+            Column(Modifier.fillMaxWidth()) {
+                Text(
+                    text = title,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
+        },
+        text = {
+            Box {
+                val lazyListState = rememberLazyListState()
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                if (!lazyListState.isScrolledToStart()) Divider(Modifier.align(Alignment.TopCenter))
+                if (!lazyListState.isScrolledToEnd()) Divider(Modifier.align(Alignment.BottomCenter))
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        entries.forEach { locale ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        onSelect(locale.key)
-                                        onDismiss()
-                                    }
-                                    .padding(start = 12.dp, end = 12.dp),
-                                verticalAlignment = CenterVertically
-                            ) {
-                                RadioButton(
-                                    selected = selected == locale.value,
-                                    onClick = {
-                                        onSelect(locale.key)
-                                        onDismiss()
-                                    }
-                                )
-                                Text(locale.value)
-                            }
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
-                        horizontalAlignment = Alignment.End,
-
+                LazyColumn(state = lazyListState) {
+                    items(entries.toList()) { locale ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.small)
+                                .clickable {
+                                    onSelect(locale.first)
+                                    onDismiss()
+                                },
+                            verticalAlignment = CenterVertically
                         ) {
-                        TextButton(onClick = onDismiss) {
-                            Text(stringResource(R.string.action_cancel))
+                            RadioButton(
+                                selected = selected == locale.second,
+                                onClick = { }
+                            )
+                            Text(
+                                text = locale.second,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
                         }
                     }
                 }
             }
+        },
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel))
+            }
         }
-    }
+    )
 }
