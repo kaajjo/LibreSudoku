@@ -1,8 +1,14 @@
 package com.kaajjo.libresudoku.data.datastore
 
 import android.content.Context
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.ui.theme.AppTheme
@@ -35,7 +41,8 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
     }
 
     val dynamicColors = dataStore.data.map { preferences ->
-        preferences[dynamicColorsKey] ?: PreferencesConstants.DEFAULT_DYNAMIC_COLORS
+        // return dynamic theme true only if an android version >= 12
+        preferences[dynamicColorsKey] ?: (SDK_INT >= VERSION_CODES.S)
     }
 
     suspend fun setDarkTheme(value: Int) {
