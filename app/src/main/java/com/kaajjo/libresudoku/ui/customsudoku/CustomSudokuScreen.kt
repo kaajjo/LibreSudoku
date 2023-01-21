@@ -1,5 +1,6 @@
 package com.kaajjo.libresudoku.ui.customsudoku
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.*
@@ -50,6 +51,9 @@ fun CustomSudokuScreen(
     navigatePlayGame: (Long) -> Unit,
     viewModel: CustomSudokuViewModel
 ) {
+    BackHandler(enabled = viewModel.inSelectionMode) {
+        viewModel.inSelectionMode = false
+    }
     val boards by viewModel.boards.collectAsState(initial = emptyMap())
 
     var dialogDeleteConfirmation by remember { mutableStateOf(false) }
