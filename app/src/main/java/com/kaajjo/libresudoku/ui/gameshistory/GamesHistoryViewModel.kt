@@ -12,7 +12,7 @@ import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
-import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
+import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import com.kaajjo.libresudoku.ui.customsudoku.GameStateFilter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -23,7 +23,7 @@ class HistoryViewModel
     savedGameRepository: SavedGameRepository
 ) : ViewModel(
 ) {
-    val games = savedGameRepository.getSavedWithBoards()
+    val games = savedGameRepository.getWithBoards()
 
     @OptIn(ExperimentalMaterialApi::class)
     var drawerState: ModalBottomSheetState = ModalBottomSheetState(

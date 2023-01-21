@@ -18,10 +18,10 @@ import com.kaajjo.libresudoku.core.utils.UndoManager
 import com.kaajjo.libresudoku.data.database.model.Record
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
-import com.kaajjo.libresudoku.data.database.repository.BoardRepository
-import com.kaajjo.libresudoku.data.database.repository.RecordRepository
-import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
+import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.domain.repository.RecordRepository
+import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

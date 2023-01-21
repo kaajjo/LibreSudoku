@@ -9,9 +9,9 @@ import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.Record
 import com.kaajjo.libresudoku.data.database.model.SavedGame
-import com.kaajjo.libresudoku.data.database.repository.RecordRepository
-import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
 import com.kaajjo.libresudoku.data.datastore.TipCardsDataStore
+import com.kaajjo.libresudoku.domain.repository.RecordRepository
+import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

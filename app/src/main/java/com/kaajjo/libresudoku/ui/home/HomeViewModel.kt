@@ -11,8 +11,8 @@ import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.QQWingController
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
-import com.kaajjo.libresudoku.data.database.repository.BoardRepository
-import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
+import com.kaajjo.libresudoku.domain.repository.BoardRepository
+import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted

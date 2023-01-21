@@ -6,11 +6,14 @@ import com.kaajjo.libresudoku.data.database.AppDatabase
 import com.kaajjo.libresudoku.data.database.dao.BoardDao
 import com.kaajjo.libresudoku.data.database.dao.RecordDao
 import com.kaajjo.libresudoku.data.database.dao.SavedGameDao
-import com.kaajjo.libresudoku.data.database.repository.BoardRepository
-import com.kaajjo.libresudoku.data.database.repository.RecordRepository
-import com.kaajjo.libresudoku.data.database.repository.SavedGameRepository
+import com.kaajjo.libresudoku.data.database.repository.BoardRepositoryImpl
+import com.kaajjo.libresudoku.data.database.repository.RecordRepositoryImpl
+import com.kaajjo.libresudoku.data.database.repository.SavedGameRepositoryImpl
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
+import com.kaajjo.libresudoku.domain.repository.BoardRepository
+import com.kaajjo.libresudoku.domain.repository.RecordRepository
+import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,7 +29,7 @@ class AppModule {
     @Singleton
     @Provides
     fun provideRecordRepository(recordDao: RecordDao): RecordRepository =
-        RecordRepository(recordDao)
+        RecordRepositoryImpl(recordDao)
 
     @Singleton
     @Provides
@@ -36,7 +39,7 @@ class AppModule {
     // boards
     @Singleton
     @Provides
-    fun provideBoardRepository(boardDao: BoardDao): BoardRepository = BoardRepository(boardDao)
+    fun provideBoardRepository(boardDao: BoardDao): BoardRepository = BoardRepositoryImpl(boardDao)
 
     @Singleton
     @Provides
@@ -47,7 +50,7 @@ class AppModule {
     @Singleton
     @Provides
     fun provideSavedGameRepository(savedGameDao: SavedGameDao): SavedGameRepository =
-        SavedGameRepository(savedGameDao)
+        SavedGameRepositoryImpl(savedGameDao)
 
     @Singleton
     @Provides

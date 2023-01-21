@@ -16,7 +16,7 @@ import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
 import com.kaajjo.libresudoku.core.utils.UndoManager
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
-import com.kaajjo.libresudoku.data.database.repository.BoardRepository
+import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel

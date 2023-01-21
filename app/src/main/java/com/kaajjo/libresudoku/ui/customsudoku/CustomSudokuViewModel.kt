@@ -14,7 +14,7 @@ import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
-import com.kaajjo.libresudoku.data.database.repository.BoardRepository
+import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ class CustomSudokuViewModel @Inject constructor(
 
     val selectedItems = mutableStateListOf<Pair<SudokuBoard, SavedGame?>>()
 
-    val boards = boardRepository.getSavedGamesWithBoard(GameDifficulty.Custom)
+    val boards = boardRepository.getWithSavedGames(GameDifficulty.Custom)
 
     var selectedGameStateFilter by mutableStateOf(GameStateFilter.All)
     var selectedGameTypeFilters by mutableStateOf(emptyList<GameType>())
