@@ -1,0 +1,12 @@
+New:
+12x12 with zoom and pan
+Filtering and sorting
+Add translations for French, Czech, Hungarian, Norwegian Bokmål, Portuguese (Brazil), Turkish.
+
+Bug fixes:
+Broken dark theme on MIUI
+App language doesn't save after relaunch on Android <= 12
+
+And many more bug fixes and UI/UX improvements
+
+Full changelogs are available at GitHub
