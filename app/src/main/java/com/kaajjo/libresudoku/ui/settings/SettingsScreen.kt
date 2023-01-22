@@ -453,8 +453,8 @@ fun SettingsCategory(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.75f),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary,
         )
     }
 }
