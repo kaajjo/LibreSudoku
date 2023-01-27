@@ -1,7 +1,11 @@
 package com.kaajjo.libresudoku.data.database
 
 import android.content.Context
-import androidx.room.*
+import androidx.room.AutoMigration
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.kaajjo.libresudoku.data.database.converters.DurationConverter
 import com.kaajjo.libresudoku.data.database.converters.GameDifficultyConverter
 import com.kaajjo.libresudoku.data.database.converters.GameTypeConverter
@@ -9,14 +13,18 @@ import com.kaajjo.libresudoku.data.database.converters.ZonedDateTimeConverter
 import com.kaajjo.libresudoku.data.database.dao.BoardDao
 import com.kaajjo.libresudoku.data.database.dao.RecordDao
 import com.kaajjo.libresudoku.data.database.dao.SavedGameDao
+import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.data.database.model.Record
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 
 @Database(
-    entities = [Record::class, SudokuBoard::class, SavedGame::class],
-    version = 2,
-    autoMigrations = [AutoMigration(from = 1, to = 2)]
+    entities = [Record::class, SudokuBoard::class, SavedGame::class, Folder::class],
+    version = 3,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3)
+    ]
 )
 @TypeConverters(
     DurationConverter::class,
