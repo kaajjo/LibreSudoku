@@ -24,6 +24,7 @@ fun MoreScreen(
     navigateCustomSudoku: () -> Unit,
     navigateLearn: () -> Unit,
     navigateAbout: () -> Unit,
+    navigateImport: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -57,6 +58,11 @@ fun MoreScreen(
             title = stringResource(R.string.custom_sudoku_title),
             painter = painterResource(R.drawable.ic_outline_science_24),
             onClick = navigateCustomSudoku
+        )
+        PreferenceRow(
+            title = stringResource(R.string.title_folders),
+            painter = painterResource(R.drawable.ic_outline_science_24),
+            onClick = navigateImport
         )
         PreferenceRow(
             title = stringResource(R.string.learn_screen_title),
