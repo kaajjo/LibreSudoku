@@ -241,4 +241,34 @@
     <string name="filter_label">Filter</string>
 
     <string name="help_translate">Help translate</string>
+    <string name="title_folders">Folders</string>
+
+    <string name="create_folder">Create folder</string>
+    <string name="delete_folder">Delete folder</string>
+    <string name="folder_name">Folder: %1$s</string>
+    <plurals name="number_puzzles_to_import">
+        <item quantity="one">%1$d puzzle to import</item>
+        <item quantity="two">%1$d puzzles to import</item>
+        <item quantity="few">%1$d puzzles to import</item>
+        <item quantity="many">%1$d puzzles to import</item>
+        <item quantity="other">%1$d puzzles to import</item>
+    </plurals>
+
+    <plurals name="puzzles_in_folder">
+        <item quantity="zero">Empty</item>
+        <item quantity="one">%1$d puzzle</item>
+        <item quantity="two">%1$d puzzles</item>
+        <item quantity="few">%1$d puzzles</item>
+        <item quantity="many">%1$d puzzles</item>
+        <item quantity="other">%1$d puzzles</item>
+    </plurals>
+
+    <string name="edit_name">Edit name</string>
+    <string name="export">Export</string>
+    <string name="create_folder_name">Folder name</string>
+    <string name="folder_import">Import</string>
+    <string name="dialog_delete_folder_text">Folder with name %1$s will be deleted</string>
+    <string name="help">Help</string>
+    <string name="folders_help">Here you can manage your folder and import sudoku from file</string>
+    <string name="folder_import_supported_types">These file types are supported:\n.sdm (or .txt with the same structure)</string>
 </resources>
