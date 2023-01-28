@@ -14,6 +14,12 @@ interface BoardDao {
     @Query("SELECT * FROM board WHERE difficulty == :gameDifficulty")
     fun getAll(gameDifficulty: GameDifficulty): Flow<List<SudokuBoard>>
 
+    @Query("SELECT * FROM board WHERE folder_id == :folderUid")
+    fun getAllInFolder(folderUid: Long): Flow<List<SudokuBoard>>
+
+    @Query("SELECT * FROM board WHERE folder_id == :folderUid")
+    fun getAllInFolderList(folderUid: Long): List<SudokuBoard>
+
     @Query("SELECT * FROM board")
     fun getAllList(): List<SudokuBoard>
 

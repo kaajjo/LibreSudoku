@@ -16,6 +16,12 @@ class BoardRepositoryImpl(
     override fun getAll(difficulty: GameDifficulty): Flow<List<SudokuBoard>> =
         boardDao.getAll(difficulty)
 
+    override fun getAllInFolder(folderUid: Long): Flow<List<SudokuBoard>> =
+        boardDao.getAllInFolder(folderUid)
+
+    override fun getAllInFolderList(folderUid: Long): List<SudokuBoard> =
+        boardDao.getAllInFolderList(folderUid)
+
     override fun getWithSavedGames(): Flow<Map<SudokuBoard, SavedGame?>> =
         boardDao.getBoardsWithSavedGames()
 
