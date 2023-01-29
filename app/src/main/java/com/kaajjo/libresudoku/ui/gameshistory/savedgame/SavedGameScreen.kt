@@ -39,7 +39,7 @@ fun SavedGameScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.saved_game_screen_title)) },
+                title = { Text(stringResource(R.string.saved_game_screen_title, viewModel.boardUid ?: -1)) },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
@@ -173,7 +173,7 @@ fun SavedGameScreen(
                 ) {
                     var progress by remember { mutableStateOf(viewModel.getProgressFilled()) }
 
-                    LaunchedEffect(key1 = viewModel.parsedInitialBoard) {
+                    LaunchedEffect(viewModel.parsedInitialBoard) {
                         progress = viewModel.getProgressFilled()
                         viewModel.isSolved()
                     }
@@ -181,8 +181,7 @@ fun SavedGameScreen(
                     Text(
                         text = stringResource(
                             R.string.saved_game_progress,
-                            progress.second,
-                            progress.first
+                            progress
                         ),
                         style = textStyle
                     )
@@ -191,7 +190,7 @@ fun SavedGameScreen(
                             when {
                                 it.mistakes >= 3 -> stringResource(R.string.saved_game_mistakes_limit)
                                 it.giveUp -> stringResource(R.string.saved_game_give_up)
-                                it.let { it.completed && !it.canContinue } -> stringResource(R.string.saved_game_completed)
+                                it.completed && !it.canContinue -> stringResource(R.string.saved_game_completed)
                                 else -> stringResource(R.string.saved_game_in_progress)
                             }
                         } ?: ""

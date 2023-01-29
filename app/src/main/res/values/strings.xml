@@ -161,10 +161,10 @@
     <string name="history_item_id">Game ID: %1$d</string>
     <string name="history_item_can_continue">You can continue this game</string>
 
-    <string name="saved_game_screen_title">Saved game</string>
+    <string name="saved_game_screen_title">Game #%1$d</string>
     <string name="saved_game_current">Current</string>
     <string name="saved_game_initial">Initial</string>
-    <string name="saved_game_progress">Progress %1$d/%2$d</string>
+    <string name="saved_game_progress">Progress %1$d%%</string>
     <string name="empty_screen_something_went_wrong">Oops, something went wrong…</string>
     <string name="saved_game_difficulty">Difficulty: %1$s</string>
     <string name="saved_game_type">Type: %1$s</string>
