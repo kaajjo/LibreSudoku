@@ -32,7 +32,7 @@ class SavedGameViewModel
     appSettingsManager: AppSettingsManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val boardUid = savedStateHandle.get<Long>("uid")
+    val boardUid = savedStateHandle.get<Long>("uid")
 
     val fontSize = appSettingsManager.fontSize
 
@@ -93,21 +93,17 @@ class SavedGameViewModel
         return true
     }
 
-    fun getProgressFilled(): Pair<Int, Int> {
-        var size = 0
-        val count = boardEntity?.let { boardEntity ->
-            boardEntity.type.let { type ->
-                size = (type.sectionWidth * type.sectionHeight)
-                    .toDouble()
-                    .pow(2.0)
-                    .toInt()
-
-                size - parsedCurrentBoard.let { board ->
-                    board.sumOf { cells -> cells.count { cell -> cell.value == 0 } }
-                }
-            }
-        } ?: 0
-        return Pair(size, count)
+    fun getProgressFilled(): Int {
+        var totalCells = 1
+        var count = 0
+        boardEntity?.let { board ->
+            totalCells = (board.type.sectionWidth * board.type.sectionHeight)
+                .toDouble()
+                .pow(2.0)
+                .toInt()
+            count = totalCells - parsedCurrentBoard.sumOf { cells -> cells.count { cell -> cell.value == 0 } }
+        }
+        return (count.toFloat() / totalCells.toFloat() * 100f).toInt()
     }
 
     fun getFontSize(factor: Int): TextUnit {
