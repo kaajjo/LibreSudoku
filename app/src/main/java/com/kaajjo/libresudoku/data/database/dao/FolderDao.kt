@@ -16,6 +16,9 @@ interface FolderDao {
     @Query("SELECT * FROM Folder WHERE uid = :uid")
     fun get(uid: Long): Flow<Folder>
 
+    @Query("SELECT COUNT(uid) FROM board WHERE folder_id == :uid")
+    fun countPuzzlesFolder(uid: Long): Long
+
     @Insert
     suspend fun insert(folder: Folder): Long
 

@@ -29,6 +29,7 @@ class BoardRepositoryImpl(
         boardDao.getBoardsWithSavedGames(difficulty)
 
     override suspend fun get(uid: Long): SudokuBoard = boardDao.get(uid)
+    override suspend fun insert(boards: List<SudokuBoard>) = boardDao.insert(boards)
     override suspend fun insert(boardEntity: SudokuBoard): Long = boardDao.insert(boardEntity)
     override suspend fun delete(boardEntity: SudokuBoard) = boardDao.delete(boardEntity)
     override suspend fun update(boardEntity: SudokuBoard) = boardDao.update(boardEntity)

@@ -15,6 +15,7 @@ interface BoardRepository {
     fun getWithSavedGames(): Flow<Map<SudokuBoard, SavedGame?>>
     fun getWithSavedGames(difficulty: GameDifficulty): Flow<Map<SudokuBoard, SavedGame?>>
     suspend fun get(uid: Long): SudokuBoard
+    suspend fun insert(boards: List<SudokuBoard>)
     suspend fun insert(boardEntity: SudokuBoard): Long
     suspend fun delete(boardEntity: SudokuBoard)
     suspend fun update(boardEntity: SudokuBoard)

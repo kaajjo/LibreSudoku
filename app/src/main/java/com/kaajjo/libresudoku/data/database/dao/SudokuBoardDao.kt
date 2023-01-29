@@ -43,6 +43,9 @@ interface BoardDao {
     fun get(uid: Long): SudokuBoard
 
     @Insert
+    suspend fun insert(boardEntities: List<SudokuBoard>)
+
+    @Insert
     suspend fun insert(boardEntity: SudokuBoard): Long
 
     @Delete

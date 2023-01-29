@@ -11,11 +11,13 @@ import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.utils.SdmParser
 import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.domain.usecase.board.GetGamesInFolderUseCase
+import com.kaajjo.libresudoku.domain.usecase.folder.CountPuzzlesFolderUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.DeleteFolderUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.GetFoldersUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.InsertFolderUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.UpdateFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -28,7 +30,8 @@ class FoldersViewModel @Inject constructor(
     private val insertFolderUseCase: InsertFolderUseCase,
     private val updateFolderUseCase: UpdateFolderUseCase,
     private val deleteFolderUseCase: DeleteFolderUseCase,
-    private val getGamesInFolderUseCase: GetGamesInFolderUseCase
+    private val getGamesInFolderUseCase: GetGamesInFolderUseCase,
+    private val countPuzzlesFolderUseCase: CountPuzzlesFolderUseCase
 ) : ViewModel() {
     val folders = getFoldersUseCase()
 
@@ -42,6 +45,8 @@ class FoldersViewModel @Inject constructor(
     private val _sudokuListToImport = MutableStateFlow(emptyList<String>())
     val sudokuListToImport = _sudokuListToImport.asStateFlow()
 
+    var puzzlesCountInFolder by mutableStateOf(emptyList<Pair<Long, Int>>())
+
     fun createFolder(name: String) {
         viewModelScope.launch {
             insertFolderUseCase(
@@ -51,6 +56,18 @@ class FoldersViewModel @Inject constructor(
                     createdAt = ZonedDateTime.now()
                 )
             )
+        }
+    }
+
+    fun coutPuzzlesInFolders(folders: List<Folder>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val numberPuzzles = mutableListOf<Pair<Long, Int>>()
+            folders.forEach {
+                numberPuzzles.add(
+                    Pair(it.uid, countPuzzlesFolderUseCase(it.uid).toInt())
+                )
+            }
+            puzzlesCountInFolder = numberPuzzles
         }
     }
 

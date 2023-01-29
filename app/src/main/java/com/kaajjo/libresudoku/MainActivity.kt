@@ -37,6 +37,7 @@ import com.kaajjo.libresudoku.ui.game.GameScreen
 import com.kaajjo.libresudoku.ui.gameshistory.GamesHistoryScreen
 import com.kaajjo.libresudoku.ui.gameshistory.savedgame.SavedGameScreen
 import com.kaajjo.libresudoku.ui.home.HomeScreen
+import com.kaajjo.libresudoku.ui.import_from_file.ImportFromFileScreen
 import com.kaajjo.libresudoku.ui.learn.LearnScreen
 import com.kaajjo.libresudoku.ui.more.MoreScreen
 import com.kaajjo.libresudoku.ui.more.about.AboutLibrariesScreen
@@ -255,7 +256,22 @@ class MainActivity : AppCompatActivity() {
                                 viewModel = hiltViewModel(),
                                 navigateBack = { navController.popBackStack() },
                                 navigateExploreFolder = { },
-                                navigateImportSudokuFile = { }
+                                navigateImportSudokuFile = { uri ->
+                                    navController.navigate("import_sudoku_file?$uri?-1")
+                                }
+                            )
+                        }
+
+                        animatedComposable(
+                            route = "import_sudoku_file?{uri}?{folder_uid}",
+                            arguments = listOf(
+                                navArgument("uri") { type = NavType.StringType },
+                                navArgument("folder_uid") { type = NavType.LongType }
+                            )
+                        ) {
+                            ImportFromFileScreen(
+                                viewModel = hiltViewModel(),
+                                navigateBack = { navController.navigateUp() }
                             )
                         }
                     }

@@ -217,11 +217,19 @@ fun FoldersScreen(
         ) {
             val folders by viewModel.folders.collectAsStateWithLifecycle(initialValue = emptyList())
             if (folders.isNotEmpty() && gamesToImport.isEmpty()) {
+                LaunchedEffect(folders) {
+                    viewModel.coutPuzzlesInFolders(folders)
+                }
                 LazyColumn {
                     items(folders) { item ->
+                        var puzzlesCount by remember { mutableStateOf(0) }
+                        LaunchedEffect(viewModel.puzzlesCountInFolder) {
+                            puzzlesCount = viewModel.puzzlesCountInFolder
+                                .firstOrNull { it.first == item.uid }?.second ?: 0
+                        }
                         FolderItem(
                             name = item.name,
-                            puzzlesCount = 0, // TODO
+                            puzzlesCount = puzzlesCount, // TODO
                             onClick = {
                                 navigateExploreFolder(item.uid.toInt())
                             },

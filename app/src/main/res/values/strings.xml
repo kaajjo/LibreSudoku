@@ -271,4 +271,8 @@
     <string name="help">Help</string>
     <string name="folders_help">Here you can manage your folder and import sudoku from file</string>
     <string name="folder_import_supported_types">These file types are supported:\n.sdm (or .txt with the same structure)</string>
+    <string name="import_from_file_fail">Failed to import</string>
+    <string name="import_from_file_title">From file</string>
+    <string name="import_saving">Saving</string>
+    <string name="import_save">Save</string>
 </resources>
