@@ -129,10 +129,10 @@
     <string name="history_item_time">Время: %1$s</string>
     <string name="history_item_id">ID игры: %1$d</string>
     <string name="history_item_can_continue">Вы можете продолжить эту игру</string>
-    <string name="saved_game_screen_title">Сохраненная игра</string>
+    <string name="saved_game_screen_title">Игра #%1$d</string>
     <string name="saved_game_current">Текущая</string>
     <string name="saved_game_initial">Изначальная</string>
-    <string name="saved_game_progress">Прогресс %1$d/%2$d</string>
+    <string name="saved_game_progress">Прогресс %1$d%%</string>
     <string name="empty_screen_something_went_wrong">Упс, что-то пошло не так…</string>
     <string name="saved_game_difficulty">Сложность: %1$s</string>
     <string name="saved_game_type">Тип: %1$s</string>
