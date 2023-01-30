@@ -7,7 +7,7 @@
     <string name="tip_card_records_list_title">Seznam záznamů</string>
     <string name="history_no_games">Ještě jste nehráli</string>
     <string name="history_item_can_continue">V této hře můžete pokračovat</string>
-    <string name="saved_game_screen_title">Uložená hra</string>
+    <string name="saved_game_screen_title">Hra #%1$d</string>
     <string name="empty_screen_something_went_wrong">Jejda, něco se pokazilo…</string>
     <string name="tip_card_records_list_summ">Tento seznam obsahuje 5 vašich nejlepších záznamů, případně méně, podle toho, kolikrát jste hráli. Záznamy, které se vám nelíbí, můžete odstranit dlouhým stisknutím</string>
     <string name="delete_record_dialog">Chcete smazat svůj záznam %1$d\? Nelze to vzít zpět</string>
@@ -192,7 +192,7 @@
     <string name="statistics_difficulty_filter_all">Vše</string>
     <string name="win_rate_percentage">%1$d %%</string>
     <string name="best_time">Nejlepší čas</string>
-    <string name="saved_game_progress">Průběh %1$d/%2$d</string>
+    <string name="saved_game_progress">Průběh %1$d%%</string>
     <string name="saved_game_difficulty">Obtížnost: %1$s</string>
     <string name="saved_game_type">Typ: %1$s</string>
     <string name="saved_game_completed">Hra byla dokončena</string>
