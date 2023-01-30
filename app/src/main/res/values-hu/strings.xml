@@ -53,4 +53,10 @@
     <string name="theme_black_and_white">Fekete és fehér</string>
     <string name="pref_mistakes_limit">Hibalimit</string>
     <string name="pref_mistakes_limit_summ">3 hiba és vesztettél</string>
+    <string name="pref_disable_hints_summ">Nem szereted a tippeket\? Akkor csak tiltsd le őket!</string>
+    <string name="pref_assistance">Segítség</string>
+    <string name="pref_mistakes_check">Hibaellenőrzés</string>
+    <string name="pref_mistakes_check_off">Ki</string>
+    <string name="pref_show_timer">Időzitő mutatása</string>
+    <string name="pref_reset_timer">Időzitő visszaállítasa játék újraindításakor</string>
 </resources>
