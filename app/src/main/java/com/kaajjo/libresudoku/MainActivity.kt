@@ -32,6 +32,7 @@ import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.ui.components.animatedComposable
 import com.kaajjo.libresudoku.ui.customsudoku.CustomSudokuScreen
 import com.kaajjo.libresudoku.ui.customsudoku.createsudoku.CreateSudokuScreen
+import com.kaajjo.libresudoku.ui.explore_folder.ExploreFolderScreen
 import com.kaajjo.libresudoku.ui.folders.FoldersScreen
 import com.kaajjo.libresudoku.ui.game.GameScreen
 import com.kaajjo.libresudoku.ui.gameshistory.GamesHistoryScreen
@@ -255,7 +256,9 @@ class MainActivity : AppCompatActivity() {
                             FoldersScreen(
                                 viewModel = hiltViewModel(),
                                 navigateBack = { navController.popBackStack() },
-                                navigateExploreFolder = { },
+                                navigateExploreFolder = { uid ->
+                                    navController.navigate("explore_folder/$uid")
+                                },
                                 navigateImportSudokuFile = { uri ->
                                     navController.navigate("import_sudoku_file?$uri?-1")
                                 }
@@ -272,6 +275,27 @@ class MainActivity : AppCompatActivity() {
                             ImportFromFileScreen(
                                 viewModel = hiltViewModel(),
                                 navigateBack = { navController.navigateUp() }
+                            )
+                        }
+
+                        animatedComposable(
+                            route = "explore_folder/{uid}",
+                            arguments = listOf(navArgument("uid") { type = NavType.LongType })
+                        ) {
+                            ExploreFolderScreen(
+                                viewModel = hiltViewModel(),
+                                navigateBack = { navController.popBackStack() },
+                                navigatePlayGame = { args ->
+                                    navController.navigate(
+                                        "game/${args.first}/${args.second}"
+                                    ) {
+                                        popUpTo("explore_folder/${args.third}")
+                                    }
+                                },
+                                navigateImportFromFile = { args ->
+                                    // First - uri. Second = folder uid
+                                    navController.navigate("import_sudoku_file?${args.first}?${args.second}")
+                                }
                             )
                         }
                     }

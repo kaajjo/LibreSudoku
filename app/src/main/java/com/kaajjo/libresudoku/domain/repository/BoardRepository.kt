@@ -14,9 +14,12 @@ interface BoardRepository {
     fun getAllInFolderList(folderUid: Long): List<SudokuBoard>
     fun getWithSavedGames(): Flow<Map<SudokuBoard, SavedGame?>>
     fun getWithSavedGames(difficulty: GameDifficulty): Flow<Map<SudokuBoard, SavedGame?>>
+    fun getBoardsInFolderFlow(uid: Long): Flow<List<SudokuBoard>>
+    fun getBoardsInFolder(uid: Long): List<SudokuBoard>
     suspend fun get(uid: Long): SudokuBoard
     suspend fun insert(boards: List<SudokuBoard>)
-    suspend fun insert(boardEntity: SudokuBoard): Long
-    suspend fun delete(boardEntity: SudokuBoard)
-    suspend fun update(boardEntity: SudokuBoard)
+    suspend fun insert(board: SudokuBoard): Long
+    suspend fun delete(board: SudokuBoard)
+    suspend fun delete(boards: List<SudokuBoard>)
+    suspend fun update(board: SudokuBoard)
 }

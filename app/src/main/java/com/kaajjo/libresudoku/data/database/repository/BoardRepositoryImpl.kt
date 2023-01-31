@@ -28,9 +28,13 @@ class BoardRepositoryImpl(
     override fun getWithSavedGames(difficulty: GameDifficulty): Flow<Map<SudokuBoard, SavedGame?>> =
         boardDao.getBoardsWithSavedGames(difficulty)
 
+    override fun getBoardsInFolder(uid: Long): List<SudokuBoard> = boardDao.getBoardsInFolder(uid)
+    override fun getBoardsInFolderFlow(uid: Long): Flow<List<SudokuBoard>> = boardDao.getBoardsInFolderFlow(uid)
+
     override suspend fun get(uid: Long): SudokuBoard = boardDao.get(uid)
     override suspend fun insert(boards: List<SudokuBoard>) = boardDao.insert(boards)
-    override suspend fun insert(boardEntity: SudokuBoard): Long = boardDao.insert(boardEntity)
-    override suspend fun delete(boardEntity: SudokuBoard) = boardDao.delete(boardEntity)
-    override suspend fun update(boardEntity: SudokuBoard) = boardDao.update(boardEntity)
+    override suspend fun insert(board: SudokuBoard): Long = boardDao.insert(board)
+    override suspend fun delete(board: SudokuBoard) = boardDao.delete(board)
+    override suspend fun delete(boards: List<SudokuBoard>) = boardDao.delete(boards)
+    override suspend fun update(board: SudokuBoard) = boardDao.update(board)
 }

@@ -275,4 +275,15 @@
     <string name="import_from_file_title">From file</string>
     <string name="import_saving">Saving</string>
     <string name="import_save">Save</string>
+    <string name="action_edit">Edit</string>
+    <string name="folder_empty_label">This folder is empty</string>
+
+    <string name="dialog_delete_selected">Delete selected</string>
+    <plurals name="delete_selected_in_folder">
+        <item quantity="one">Are you sure you want to delete %1$d game?</item>
+        <item quantity="two">Are you sure you want to delete %1$d games?</item>
+        <item quantity="few">Are you sure you want to delete %1$d games?</item>
+        <item quantity="many">Are you sure you want to delete %1$d games</item>
+        <item quantity="other">Are you sure you want to delete %1$d games?</item>
+    </plurals>
 </resources>
