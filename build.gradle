@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        compose_version = '1.4.0-alpha04'
+        compose_version = '1.4.0-alpha05'
         room_version = "2.5.0"
         latestAboutLibsRelease = '10.5.2'
     }

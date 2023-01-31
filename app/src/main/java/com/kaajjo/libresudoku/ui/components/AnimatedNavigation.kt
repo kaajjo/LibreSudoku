@@ -20,20 +20,24 @@ fun NavGraphBuilder.animatedComposable(
     arguments = arguments,
     deepLinks = deepLinks,
     enterTransition = {
-        fadeIn(animationSpec = tween(230, delayMillis = 100)) +
-                scaleIn(initialScale = 0.95f)
+        fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                scaleIn(
+                    initialScale = 0.92f,
+                    animationSpec = tween(220, delayMillis = 90)
+                )
     },
     exitTransition = {
-        fadeOut(animationSpec = tween(200)) +
-                scaleOut(targetScale = 0.9f)
+        fadeOut(animationSpec = tween(90))
     },
     popEnterTransition = {
-        fadeIn(animationSpec = tween(230, delayMillis = 100)) +
-                scaleIn(initialScale = 0.95f)
+        fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                scaleIn(
+                    initialScale = 0.92f,
+                    animationSpec = tween(220, delayMillis = 90)
+                )
     },
     popExitTransition = {
-        fadeOut(animationSpec = tween(200)) +
-                scaleOut(targetScale = 0.9f)
+        fadeOut(animationSpec = tween(90))
     },
     content = content
 )
