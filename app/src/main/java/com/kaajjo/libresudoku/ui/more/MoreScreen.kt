@@ -21,7 +21,6 @@ import com.kaajjo.libresudoku.ui.components.PreferenceRow
 @Composable
 fun MoreScreen(
     navigateSettings: () -> Unit,
-    navigateCustomSudoku: () -> Unit,
     navigateLearn: () -> Unit,
     navigateAbout: () -> Unit,
     navigateImport: () -> Unit,
@@ -53,11 +52,6 @@ fun MoreScreen(
             title = stringResource(R.string.settings_title),
             painter = painterResource(R.drawable.ic_settings_24),
             onClick = navigateSettings
-        )
-        PreferenceRow(
-            title = stringResource(R.string.custom_sudoku_title),
-            painter = painterResource(R.drawable.ic_outline_science_24),
-            onClick = navigateCustomSudoku
         )
         PreferenceRow(
             title = stringResource(R.string.title_folders),

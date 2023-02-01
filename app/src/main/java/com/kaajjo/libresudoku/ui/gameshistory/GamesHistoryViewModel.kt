@@ -13,7 +13,7 @@ import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
-import com.kaajjo.libresudoku.ui.customsudoku.GameStateFilter
+import com.kaajjo.libresudoku.ui.create_edit_sudoku.GameStateFilter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

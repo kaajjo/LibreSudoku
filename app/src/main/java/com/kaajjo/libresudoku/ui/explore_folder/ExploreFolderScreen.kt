@@ -17,20 +17,26 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.NoteAdd
 import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
@@ -57,6 +63,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -70,18 +77,25 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
+import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
+import kotlinx.coroutines.launch
 import kotlin.math.sqrt
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
+    ExperimentalMaterialApi::class
+)
 @Composable
 fun ExploreFolderScreen(
     viewModel: ExploreFolderViewModel,
     navigateBack: () -> Unit,
     navigatePlayGame: (Triple<Long, Boolean, Long>) -> Unit,
-    navigateImportFromFile: (Pair<String, Long>) -> Unit
+    navigateImportFromFile: (Pair<String, Long>) -> Unit,
+    navigateEditGame: (Pair<Long, Long>) -> Unit,
+    navigateCreateSudoku: (Long) -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
     var deleteBoardDialog by rememberSaveable { mutableStateOf(false) }
     // used for a delete dialog when deleting
     var deleteBoardDialogBoard: SudokuBoard? by remember { mutableStateOf(null) }
@@ -124,7 +138,9 @@ fun ExploreFolderScreen(
                         },
                         navigateBack = navigateBack,
                         onImportMenuClick = {
-                            openDocumentLauncher.launch(arrayOf("*/*"))
+                            coroutineScope.launch {
+                                viewModel.drawerState.show()
+                            }
                         }
                     )
                 }
@@ -165,7 +181,7 @@ fun ExploreFolderScreen(
                             },
                             onPlayClick = { viewModel.prepareSudokuToPlay(game) },
                             onEditClick = {
-                                // TODO
+                                navigateEditGame(Pair(game.uid, folder!!.uid))
                             },
                             onDeleteClick = {
                                 deleteBoardDialogBoard = game
@@ -235,6 +251,61 @@ fun ExploreFolderScreen(
             }
         )
     }
+
+    CustomModalBottomSheet(
+        drawerState = viewModel.drawerState,
+        sheetContent = {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Add to folder",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        Pair("Create new", Icons.Outlined.Create),
+                        Pair("Import from file", Icons.Outlined.NoteAdd)
+                    ).forEachIndexed { index, item ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.small)
+                                .clickable {
+                                    when (index) {
+                                        0 -> {
+                                            folder?.let {
+                                                navigateCreateSudoku(it.uid)
+                                            }
+                                        }
+                                        1 -> {
+                                            openDocumentLauncher.launch(arrayOf("*/*"))
+                                        }
+                                        else -> { }
+                                    }
+                                    coroutineScope.launch {
+                                        viewModel.drawerState.hide()
+                                    }
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = item.second,
+                                contentDescription = null,
+                                modifier = Modifier.padding(12.dp)
+                            )
+                            Text(
+                                text = item.first,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    )
 }
 
 
@@ -385,7 +456,7 @@ private fun DefaultTopAppBar(
                                 )
                             },
                             text = {
-                                Text(stringResource(R.string.folder_import))
+                                Text(stringResource(R.string.explore_folder_add_sudoku))
                             },
                             onClick = {
                                 onImportMenuClick()

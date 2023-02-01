@@ -279,6 +279,8 @@
     <string name="folder_empty_label">This folder is empty</string>
 
     <string name="dialog_delete_selected">Delete selected</string>
+    <string name="explore_folder_add_sudoku">Add sudoku</string>
+    <string name="edit_sudoku">Edit sudoku</string>
     <plurals name="delete_selected_in_folder">
         <item quantity="one">Are you sure you want to delete %1$d game?</item>
         <item quantity="two">Are you sure you want to delete %1$d games?</item>

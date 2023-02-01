@@ -30,8 +30,7 @@ import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.ui.components.animatedComposable
-import com.kaajjo.libresudoku.ui.customsudoku.CustomSudokuScreen
-import com.kaajjo.libresudoku.ui.customsudoku.createsudoku.CreateSudokuScreen
+import com.kaajjo.libresudoku.ui.create_edit_sudoku.CreateSudokuScreen
 import com.kaajjo.libresudoku.ui.explore_folder.ExploreFolderScreen
 import com.kaajjo.libresudoku.ui.folders.FoldersScreen
 import com.kaajjo.libresudoku.ui.game.GameScreen
@@ -137,7 +136,6 @@ class MainActivity : AppCompatActivity() {
                         animatedComposable(Route.MORE) {
                             MoreScreen(
                                 navigateSettings = { navController.navigate("settings/?fromGame=false") },
-                                navigateCustomSudoku = { navController.navigate(Route.CUSTOM_SUDOKU) },
                                 navigateLearn = { navController.navigate(Route.LEARN) },
                                 navigateAbout = { navController.navigate(Route.ABOUT) },
                                 navigateImport = { navController.navigate(Route.FOLDERS) }
@@ -188,16 +186,13 @@ class MainActivity : AppCompatActivity() {
                             AboutLibrariesScreen { navController.popBackStack() }
                         }
 
-                        animatedComposable(Route.CUSTOM_SUDOKU) {
-                            CustomSudokuScreen(
-                                navigateBack = { navController.popBackStack() },
-                                navigateCreateSudoku = { navController.navigate(Route.CREATE_SUDOKU) },
-                                navigatePlayGame = { uid -> navController.navigate("game/${uid}/true") },
-                                hiltViewModel()
+                        animatedComposable(
+                            route = "create_edit_sudoku/{game_uid}/{folder_uid}",
+                            arguments = listOf(
+                                navArgument("game_uid") { type = NavType.LongType }, // used for editing
+                                navArgument("folder_uid") { type = NavType.LongType } // folder where to save
                             )
-                        }
-
-                        animatedComposable(Route.CREATE_SUDOKU) {
+                        ) {
                             CreateSudokuScreen(
                                 navigateBack = { navController.popBackStack() },
                                 hiltViewModel()
@@ -295,6 +290,12 @@ class MainActivity : AppCompatActivity() {
                                 navigateImportFromFile = { args ->
                                     // First - uri. Second = folder uid
                                     navController.navigate("import_sudoku_file?${args.first}?${args.second}")
+                                },
+                                navigateEditGame = { args ->
+                                    navController.navigate("create_edit_sudoku/${args.first}/${args.second}")
+                                },
+                                navigateCreateSudoku = { folderUid ->
+                                    navController.navigate("create_edit_sudoku/-1/$folderUid")
                                 }
                             )
                         }

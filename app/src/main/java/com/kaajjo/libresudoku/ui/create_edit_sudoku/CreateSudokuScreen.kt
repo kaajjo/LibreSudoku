@@ -1,4 +1,4 @@
-package com.kaajjo.libresudoku.ui.customsudoku.createsudoku
+package com.kaajjo.libresudoku.ui.create_edit_sudoku
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.PreferencesConstants
+import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
@@ -36,7 +37,12 @@ fun CreateSudokuScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(R.string.create_sudoku_title))
+                    Text(
+                        text = if (viewModel.gameUid == -1L)
+                            stringResource(R.string.create_sudoku_title)
+                        else
+                            stringResource(R.string.edit_sudoku)
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
@@ -87,24 +93,48 @@ fun CreateSudokuScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Box {
-                    var gameTypeMenuExpanded by remember { mutableStateOf(false) }
-                    val dropDownIconRotation by animateFloatAsState(if (gameTypeMenuExpanded) 180f else 0f)
-                    TextButton(onClick = { gameTypeMenuExpanded = !gameTypeMenuExpanded }) {
-                        Text(stringResource(viewModel.gameType.resName))
-                        Icon(
-                            modifier = Modifier.rotate(dropDownIconRotation),
-                            imageVector = Icons.Rounded.ArrowDropDown,
-                            contentDescription = null
+                Row {
+                    Box {
+                        var difficultyMenu by remember { mutableStateOf(false) }
+                        val dropDownIconRotation by animateFloatAsState(if (difficultyMenu) 180f else 0f)
+                        TextButton(onClick = { difficultyMenu = !difficultyMenu }) {
+                            Text(stringResource(viewModel.gameDifficulty.resName))
+                            Icon(
+                                modifier = Modifier.rotate(dropDownIconRotation),
+                                imageVector = Icons.Rounded.ArrowDropDown,
+                                contentDescription = null
+                            )
+                        }
+                        DifficultyMenu(
+                            expanded = difficultyMenu,
+                            onDismissRequest = { difficultyMenu = false },
+                            onClick = {
+                                viewModel.changeGameDifficulty(it)
+                            }
                         )
                     }
-                    GameTypeMenu(
-                        expanded = gameTypeMenuExpanded,
-                        onDismissRequest = { gameTypeMenuExpanded = false },
-                        onClick = {
-                            viewModel.changeGameType(it)
+                    // allow changing a game type only when creating a new sudoku
+                    if (viewModel.gameUid == -1L) {
+                        Box {
+                            var gameTypeMenuExpanded by remember { mutableStateOf(false) }
+                            val dropDownIconRotation by animateFloatAsState(if (gameTypeMenuExpanded) 180f else 0f)
+                            TextButton(onClick = { gameTypeMenuExpanded = !gameTypeMenuExpanded }) {
+                                Text(stringResource(viewModel.gameType.resName))
+                                Icon(
+                                    modifier = Modifier.rotate(dropDownIconRotation),
+                                    imageVector = Icons.Rounded.ArrowDropDown,
+                                    contentDescription = null
+                                )
+                            }
+                            GameTypeMenu(
+                                expanded = gameTypeMenuExpanded,
+                                onDismissRequest = { gameTypeMenuExpanded = false },
+                                onClick = {
+                                    viewModel.changeGameType(it)
+                                }
+                            )
                         }
-                    )
+                    }
                 }
                 FilledTonalButton(
                     enabled = !viewModel.gameBoard.flatten().all { it.value == 0 },
@@ -304,4 +334,36 @@ private fun ImportStringSudokuDialog(
             }
         }
     )
+}
+
+@Composable
+private fun DifficultyMenu(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    onClick: (GameDifficulty) -> Unit
+) {
+    MaterialTheme(shapes = MaterialTheme.shapes.copy(extraSmall = MaterialTheme.shapes.large)) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = onDismissRequest
+        ) {
+            listOf(
+                GameDifficulty.Easy,
+                GameDifficulty.Moderate,
+                GameDifficulty.Hard,
+                GameDifficulty.Challenge,
+                GameDifficulty.Custom,
+            ).forEach {
+                DropdownMenuItem(
+                    text = {
+                        Text(stringResource(it.resName))
+                    },
+                    onClick = {
+                        onClick(it)
+                        onDismissRequest()
+                    }
+                )
+            }
+        }
+    }
 }

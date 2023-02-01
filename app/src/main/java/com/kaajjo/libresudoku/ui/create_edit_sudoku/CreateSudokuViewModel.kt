@@ -1,11 +1,13 @@
-package com.kaajjo.libresudoku.ui.customsudoku.createsudoku
+package com.kaajjo.libresudoku.ui.create_edit_sudoku
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.TextUnit
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
@@ -16,8 +18,10 @@ import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
 import com.kaajjo.libresudoku.core.utils.UndoManager
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
-import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.domain.usecase.board.GetBoardUseCase
+import com.kaajjo.libresudoku.domain.usecase.board.InsertBoardUseCase
+import com.kaajjo.libresudoku.domain.usecase.board.UpdateBoardUseCase
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +34,33 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateSudokuViewModel @Inject constructor(
     appSettingsManager: AppSettingsManager,
-    private val boardRepository: BoardRepository
+    private val getBoardUseCase: GetBoardUseCase,
+    private val updateBoardUseCase: UpdateBoardUseCase,
+    private val insertBoardUseCase: InsertBoardUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    val gameUid = savedStateHandle.get<Long>("game_uid") ?: -1L
+    private val folderUid = savedStateHandle.get<Long>("folder_uid")
+
+    init {
+        if (gameUid != -1L) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val board = getBoardUseCase(gameUid)
+                withContext(Dispatchers.Default) {
+                    val sudokuParser = SudokuParser()
+                    val parsedBoard = sudokuParser.parseBoard(
+                        board = board.initialBoard,
+                        gameType = board.type
+                    )
+                    withContext(Dispatchers.Main) {
+                        gameBoard = parsedBoard
+                        gameDifficulty = board.difficulty
+                    }
+                }
+            }
+        }
+    }
+
     val highlightIdentical = appSettingsManager.highlightIdentical
     private val inputMethod = appSettingsManager.inputMethod
         .stateIn(
@@ -46,6 +75,7 @@ class CreateSudokuViewModel @Inject constructor(
     var noSolutionsDialog by mutableStateOf(false)
 
     var gameType by mutableStateOf(GameType.Default9x9)
+    var gameDifficulty by mutableStateOf(GameDifficulty.Easy)
     var gameBoard by mutableStateOf(List(gameType.size) { row ->
         List(gameType.size) { col ->
             Cell(
@@ -254,15 +284,28 @@ class CreateSudokuViewModel @Inject constructor(
                 }
                 solvedBoard = sudokuParser.boardToString(solvedBoardList)
             }
-            boardRepository.insert(
-                SudokuBoard(
-                    uid = 0,
-                    initialBoard = initialBoard,
-                    solvedBoard = solvedBoard,
-                    difficulty = GameDifficulty.Custom,
-                    type = gameType
+            if (gameUid != -1L) {
+                val oldBoard = getBoardUseCase(gameUid)
+                updateBoardUseCase(
+                    oldBoard.copy(
+                        initialBoard = initialBoard,
+                        solvedBoard = solvedBoard,
+                        difficulty = gameDifficulty,
+                        type = gameType
+                    )
                 )
-            )
+            } else {
+                insertBoardUseCase(
+                    SudokuBoard(
+                        uid = 0,
+                        initialBoard = initialBoard,
+                        solvedBoard = solvedBoard,
+                        difficulty = GameDifficulty.Custom,
+                        type = gameType,
+                        folderId = if (folderUid != -1L) folderUid else null
+                    )
+                )
+            }
         }
     }
 
@@ -274,4 +317,15 @@ class CreateSudokuViewModel @Inject constructor(
         )
         return Pair(solution, qqWingController.solutionCount)
     }
+
+    fun changeGameDifficulty(gameDifficulty: GameDifficulty) {
+        this.gameDifficulty = gameDifficulty
+    }
+}
+
+enum class GameStateFilter(val resName: Int) {
+    All(R.string.filter_all),
+    Completed(R.string.filter_completed),
+    InProgress(R.string.filter_in_progress),
+    NotStarted(R.string.filter_not_started)
 }
