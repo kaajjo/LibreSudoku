@@ -105,5 +105,5 @@ dependencies {
     // licenses
     implementation "com.mikepenz:aboutlibraries-compose:$latestAboutLibsRelease"
 
-    implementation "androidx.compose.material:material-icons-extended:1.3.1"
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
 }
