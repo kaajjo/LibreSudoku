@@ -173,6 +173,7 @@ fun ExploreFolderScreen(
                             board = game.initialBoard,
                             difficulty = stringResource(game.difficulty.resName),
                             type = stringResource(game.type.resName),
+                            gameId = game.uid,
                             expanded = gameExpanded,
                             selected = viewModel.selectedBoardsList.contains(game),
                             onClick = {
@@ -324,6 +325,7 @@ fun GameInFolderWidget(
     board: String,
     difficulty: String,
     type: String,
+    gameId: Long,
     expanded: Boolean,
     selected: Boolean,
     onClick: () -> Unit,
@@ -373,6 +375,7 @@ fun GameInFolderWidget(
                             .padding(horizontal = 12.dp)
                     ) {
                         Text("$difficulty $type")
+                        Text(stringResource(R.string.game_id, gameId))
                     }
                 }
                 AnimatedVisibility(
