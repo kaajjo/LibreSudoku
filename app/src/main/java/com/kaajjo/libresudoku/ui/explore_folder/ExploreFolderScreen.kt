@@ -1,6 +1,7 @@
 package com.kaajjo.libresudoku.ui.explore_folder
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -116,6 +117,12 @@ fun ExploreFolderScreen(
             folder?.let { folder ->
                 navigateImportFromFile(Pair(uri.toString(), folder.uid))
             }
+        }
+    }
+
+    BackHandler(viewModel.drawerState.isVisible) {
+        coroutineScope.launch {
+            viewModel.drawerState.hide()
         }
     }
 
@@ -280,10 +287,12 @@ fun ExploreFolderScreen(
                                                 navigateCreateSudoku(it.uid)
                                             }
                                         }
+
                                         1 -> {
                                             openDocumentLauncher.launch(arrayOf("*/*"))
                                         }
-                                        else -> { }
+
+                                        else -> {}
                                     }
                                     coroutineScope.launch {
                                         viewModel.drawerState.hide()

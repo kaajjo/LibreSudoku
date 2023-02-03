@@ -1,5 +1,6 @@
 package com.kaajjo.libresudoku.ui.gameshistory
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -72,6 +73,13 @@ fun GamesHistoryScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+    BackHandler(viewModel.drawerState.isVisible) {
+        coroutineScope.launch {
+            viewModel.drawerState.hide()
+        }
+    }
+
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection),

@@ -2,6 +2,7 @@ package com.kaajjo.libresudoku.ui.folders
 
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
@@ -368,6 +369,12 @@ fun FoldersScreen(
         }
     }
 
+
+    BackHandler(viewModel.drawerState.isVisible) {
+        coroutineScope.launch {
+            viewModel.drawerState.hide()
+        }
+    }
     CustomModalBottomSheet(
         drawerState = viewModel.drawerState,
         sheetContent = {
