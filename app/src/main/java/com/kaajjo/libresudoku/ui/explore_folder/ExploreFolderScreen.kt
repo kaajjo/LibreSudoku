@@ -18,6 +18,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -77,12 +78,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import kotlinx.coroutines.launch
 import kotlin.math.sqrt
+import kotlin.time.toKotlinDuration
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
     ExperimentalMaterialApi::class
@@ -102,7 +105,7 @@ fun ExploreFolderScreen(
     var deleteBoardDialogBoard: SudokuBoard? by remember { mutableStateOf(null) }
 
     val folder by viewModel.folder.collectAsStateWithLifecycle(null)
-    val games by viewModel.games.collectAsStateWithLifecycle(emptyList())
+    val games by viewModel.games.collectAsStateWithLifecycle(emptyMap())
 
     var contentUri by remember { mutableStateOf<Uri?>(null) }
     val openDocumentLauncher = rememberLauncherForActivityResult(
@@ -134,7 +137,7 @@ fun ExploreFolderScreen(
                         title = { Text(viewModel.selectedBoardsList.size.toString()) },
                         onCloseClick = { viewModel.inSelectionMode = false },
                         onClickDeleteSelected = { deleteBoardDialog = true },
-                        onClickSelectAll = { viewModel.addAllToSelection(games) }
+                        onClickSelectAll = { viewModel.addAllToSelection(games.map { it.key }) }
                     )
                 } else {
                     DefaultTopAppBar(
@@ -157,42 +160,43 @@ fun ExploreFolderScreen(
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
             if (folder != null && games.isNotEmpty()) {
+                var expandedGameUid by rememberSaveable { mutableStateOf(-1L) }
+                LaunchedEffect(viewModel.inSelectionMode) {
+                    expandedGameUid = -1L
+                }
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(
-                        items = games,
-                        key = { it.uid }
+                        items = games.toList(),
+                        key = { it.first.uid }
                     ) { game ->
-                        var gameExpanded by rememberSaveable { mutableStateOf(false) }
-                        LaunchedEffect(viewModel.inSelectionMode) {
-                            gameExpanded = false
-                        }
                         GameInFolderWidget(
                             modifier = Modifier.padding(horizontal = 12.dp),
-                            board = game.initialBoard,
-                            difficulty = stringResource(game.difficulty.resName),
-                            type = stringResource(game.type.resName),
-                            gameId = game.uid,
-                            expanded = gameExpanded,
-                            selected = viewModel.selectedBoardsList.contains(game),
+                            board = game.first.initialBoard,
+                            difficulty = stringResource(game.first.difficulty.resName),
+                            type = stringResource(game.first.type.resName),
+                            gameId = game.first.uid,
+                            savedGame = game.second,
+                            expanded = expandedGameUid == game.first.uid,
+                            selected = viewModel.selectedBoardsList.contains(game.first),
                             onClick = {
                                 if (!viewModel.inSelectionMode) {
-                                    gameExpanded = !gameExpanded
+                                    expandedGameUid = if (expandedGameUid != game.first.uid) game.first.uid else -1L
                                 } else {
-                                    viewModel.addToSelection(game)
+                                    viewModel.addToSelection(game.first)
                                 }
                             },
                             onLongClick = {
                                 viewModel.inSelectionMode = true
-                                viewModel.addToSelection(game)
+                                viewModel.addToSelection(game.first)
                             },
-                            onPlayClick = { viewModel.prepareSudokuToPlay(game) },
+                            onPlayClick = { viewModel.prepareSudokuToPlay(game.first) },
                             onEditClick = {
-                                navigateEditGame(Pair(game.uid, folder!!.uid))
+                                navigateEditGame(Pair(game.first.uid, folder!!.uid))
                             },
                             onDeleteClick = {
-                                deleteBoardDialogBoard = game
+                                deleteBoardDialogBoard = game.first
                                 deleteBoardDialog = true
                             }
                         )
@@ -326,6 +330,7 @@ fun GameInFolderWidget(
     difficulty: String,
     type: String,
     gameId: Long,
+    savedGame: SavedGame?,
     expanded: Boolean,
     selected: Boolean,
     onClick: () -> Unit,
@@ -375,7 +380,40 @@ fun GameInFolderWidget(
                             .padding(horizontal = 12.dp)
                     ) {
                         Text("$difficulty $type")
+
+                        if (savedGame != null) {
+                            Text(
+                                stringResource(
+                                    R.string.saved_game_time,
+                                    savedGame.timer.toKotlinDuration()
+                                        .toComponents { minutes, seconds, _ ->
+                                            String.format(" %02d:%02d", minutes, seconds)
+                                        }
+                                )
+                            )
+                        } else {
+                            Text(stringResource(R.string.game_not_started))
+                        }
+
                         Text(stringResource(R.string.game_id, gameId))
+
+                        if (savedGame != null && savedGame.canContinue) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        shape = MaterialTheme.shapes.large
+                                    )
+                                    .padding(vertical = 4.dp, horizontal = 8.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.can_continue_label),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
                     }
                 }
                 AnimatedVisibility(

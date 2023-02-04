@@ -288,4 +288,6 @@
         <item quantity="many">Are you sure you want to delete %1$d games</item>
         <item quantity="other">Are you sure you want to delete %1$d games?</item>
     </plurals>
+
+    <string name="game_id">Game #%1$d</string>
 </resources>

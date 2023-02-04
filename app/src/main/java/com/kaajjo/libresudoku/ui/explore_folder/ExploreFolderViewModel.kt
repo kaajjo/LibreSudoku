@@ -14,7 +14,7 @@ import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.domain.usecase.board.DeleteBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.board.DeleteBoardsUseCase
-import com.kaajjo.libresudoku.domain.usecase.board.GetBoardsInFolderFlowUseCase
+import com.kaajjo.libresudoku.domain.usecase.board.GetBoardsInFolderWithSavedUseCase
 import com.kaajjo.libresudoku.domain.usecase.board.UpdateBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.GetFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ExploreFolderViewModel @Inject constructor(
     getFolderUseCase: GetFolderUseCase,
-    getBoardsInFolderFlowUseCase: GetBoardsInFolderFlowUseCase,
+    getBoardsInFolderWithSavedUseCase: GetBoardsInFolderWithSavedUseCase,
     private val updateBoardUseCase: UpdateBoardUseCase,
     private val deleteBoardUseCase: DeleteBoardUseCase,
     private val deleteBoardsUseCase: DeleteBoardsUseCase,
@@ -34,7 +34,7 @@ class ExploreFolderViewModel @Inject constructor(
     private val folderUid = savedStateHandle.get<Long>("uid") ?: 0
 
     val folder = getFolderUseCase(folderUid)
-    val games = getBoardsInFolderFlowUseCase(folderUid)
+    val games = getBoardsInFolderWithSavedUseCase(folderUid)
 
     var gameUidToPlay: Long? by mutableStateOf(null)
     var isPlayedBefore by mutableStateOf(false)
