@@ -271,15 +271,15 @@ fun ExploreFolderScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Add to folder",
+                    text = stringResource(R.string.add_to_folder),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(
-                        Pair("Create new", Icons.Outlined.Create),
-                        Pair("Import from file", Icons.Outlined.NoteAdd)
+                        Pair(stringResource(R.string.add_to_folder_create_new), Icons.Outlined.Create),
+                        Pair(stringResource(R.string.add_to_folder_from_file), Icons.Outlined.NoteAdd)
                     ).forEachIndexed { index, item ->
                         Row(
                             modifier = Modifier

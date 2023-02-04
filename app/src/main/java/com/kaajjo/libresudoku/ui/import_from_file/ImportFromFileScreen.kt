@@ -1,7 +1,5 @@
 package com.kaajjo.libresudoku.ui.import_from_file
 
-import android.util.Log
-import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -86,17 +84,8 @@ fun ImportFromFileScreen(
     val gamesToImport by viewModel.sudokuListToImport.collectAsStateWithLifecycle(emptyList())
     LaunchedEffect(viewModel.fileUri) {
         viewModel.fileUri?.let { fileUri ->
-            // Выводит типа файла (.sdm и .opensudoku определяются как bin, .txt как txt).
-            // Узнать бы, какие еще файлы определяются как bin, и тогда, возможно, можно будет сделать проверку по типу файла
-            Log.d(
-                "fileType",
-                MimeTypeMap.getSingleton()
-                    .getExtensionFromMimeType(context.contentResolver.getType(fileUri)).toString()
-            )
-
             val inputStream = context.contentResolver.openInputStream(fileUri)
             inputStream?.let { stream ->
-                Log.d("contentUri", fileUri.toString())
                 viewModel.readData(InputStreamReader(stream))
             }
         }

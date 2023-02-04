@@ -290,4 +290,7 @@
     </plurals>
 
     <string name="game_id">Game #%1$d</string>
+    <string name="add_to_folder">Add to folder</string>
+    <string name="add_to_folder_create_new">Create new</string>
+    <string name="add_to_folder_from_file">Import from file</string>
 </resources>
