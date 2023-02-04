@@ -13,7 +13,6 @@ class Route {
         const val SETTINGS = "settings/?fromGame={fromGame}"
         const val GAME = "game/{uid}/{saved}"
         const val SAVED_GAME = "saved_game/{uid}"
-        const val CUSTOM_SUDOKU = "custom_sudoku"
-        const val CREATE_SUDOKU = "create_sudoku"
+        const val FOLDERS = "folders"
     }
 }

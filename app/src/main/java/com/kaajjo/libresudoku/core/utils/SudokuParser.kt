@@ -61,6 +61,14 @@ class SudokuParser {
         return boardString
     }
 
+    fun boardToString(board: IntArray, emptySeparator: Char = '0'): String {
+        var boardString = ""
+        board.forEach {
+            boardString += if(it != 0) it.toString(radix) else emptySeparator
+        }
+        return boardString
+    }
+
     fun parseNotes(notesString: String): List<Note> {
         val notes = mutableListOf<Note>()
         var i = 0

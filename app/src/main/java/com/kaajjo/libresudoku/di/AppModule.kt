@@ -4,14 +4,17 @@ import android.app.Application
 import android.content.Context
 import com.kaajjo.libresudoku.data.database.AppDatabase
 import com.kaajjo.libresudoku.data.database.dao.BoardDao
+import com.kaajjo.libresudoku.data.database.dao.FolderDao
 import com.kaajjo.libresudoku.data.database.dao.RecordDao
 import com.kaajjo.libresudoku.data.database.dao.SavedGameDao
 import com.kaajjo.libresudoku.data.database.repository.BoardRepositoryImpl
+import com.kaajjo.libresudoku.data.database.repository.FolderRepositoryImpl
 import com.kaajjo.libresudoku.data.database.repository.RecordRepositoryImpl
 import com.kaajjo.libresudoku.data.database.repository.SavedGameRepositoryImpl
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.domain.repository.BoardRepository
+import com.kaajjo.libresudoku.domain.repository.FolderRepository
 import com.kaajjo.libresudoku.domain.repository.RecordRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import dagger.Module
@@ -24,6 +27,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
+
+    @Provides
+    @Singleton
+    fun provideFolderRepository(folderDao: FolderDao): FolderRepository
+        = FolderRepositoryImpl(folderDao)
+
+    @Provides
+    @Singleton
+    fun provideFolderDao(appDatabase: AppDatabase): FolderDao = appDatabase.folderDao()
 
     // records
     @Singleton
