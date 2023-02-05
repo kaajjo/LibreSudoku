@@ -128,6 +128,9 @@ fun ExploreFolderScreen(
             viewModel.drawerState.hide()
         }
     }
+    BackHandler(viewModel.inSelectionMode) {
+        viewModel.inSelectionMode = false
+    }
 
     Scaffold(
         topBar = {

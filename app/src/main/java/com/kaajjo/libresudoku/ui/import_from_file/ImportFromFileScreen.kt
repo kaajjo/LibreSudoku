@@ -1,6 +1,7 @@
 package com.kaajjo.libresudoku.ui.import_from_file
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -78,6 +79,10 @@ fun ImportFromFileScreen(
     viewModel: ImportFromFileViewModel,
     navigateBack: () -> Unit
 ) {
+    BackHandler {
+        navigateBack()
+    }
+
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 

@@ -1,5 +1,6 @@
 package com.kaajjo.libresudoku
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +25,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import androidx.navigation.navOptions
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -48,6 +51,7 @@ import com.kaajjo.libresudoku.ui.statistics.StatisticsScreen
 import com.kaajjo.libresudoku.ui.theme.AppTheme
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.ui.util.Route
+import com.kaajjo.libresudoku.ui.util.findActivity
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -87,6 +91,7 @@ class MainActivity : AppCompatActivity() {
                     else -> AppTheme.Green
                 }
             ) {
+                val context = LocalContext.current
                 val navController = rememberAnimatedNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
 
@@ -189,8 +194,12 @@ class MainActivity : AppCompatActivity() {
                         animatedComposable(
                             route = "create_edit_sudoku/{game_uid}/{folder_uid}",
                             arguments = listOf(
-                                navArgument("game_uid") { type = NavType.LongType }, // used for editing
-                                navArgument("folder_uid") { type = NavType.LongType } // folder where to save
+                                navArgument("game_uid") {
+                                    type = NavType.LongType
+                                }, // used for editing
+                                navArgument("folder_uid") {
+                                    type = NavType.LongType
+                                } // folder where to save
                             )
                         ) {
                             CreateSudokuScreen(
@@ -269,7 +278,12 @@ class MainActivity : AppCompatActivity() {
                         ) {
                             ImportFromFileScreen(
                                 viewModel = hiltViewModel(),
-                                navigateBack = { navController.navigateUp() }
+                                navigateBack = {
+                                    val activity = context.findActivity()
+                                    activity?.intent?.data = null
+
+                                    navController.navigateUp()
+                                }
                             )
                         }
 
@@ -298,6 +312,30 @@ class MainActivity : AppCompatActivity() {
                                     navController.navigate("create_edit_sudoku/-1/$folderUid")
                                 }
                             )
+                        }
+
+                        animatedComposable(
+                            route = "import_sudoku_file_deeplink",
+                            deepLinks = listOf(
+                                navDeepLink {
+                                    uriPattern = "content://"
+                                    mimeType = "*/*"
+                                    action = Intent.ACTION_VIEW
+                                }
+                            )
+                        ) {
+                            val activity = context.findActivity()
+                            if (activity != null) {
+                                val intentData = activity.intent.data
+                                if (intentData != null) {
+                                    navController.navigate("import_sudoku_file?${intentData}?-1")
+                                }
+                                LaunchedEffect(intentData) {
+                                    if (activity.intent.data == null) {
+                                        activity.finish()
+                                    }
+                                }
+                            }
                         }
                     }
                 }
