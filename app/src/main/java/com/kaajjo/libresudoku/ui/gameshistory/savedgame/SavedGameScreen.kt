@@ -39,7 +39,7 @@ fun SavedGameScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.saved_game_screen_title, viewModel.boardUid ?: -1)) },
+                title = { Text(stringResource(R.string.game_id, viewModel.boardUid ?: -1)) },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
@@ -180,7 +180,7 @@ fun SavedGameScreen(
                     val textStyle = MaterialTheme.typography.bodyLarge
                     Text(
                         text = stringResource(
-                            R.string.saved_game_progress,
+                            R.string.saved_game_progress_percentage,
                             progress
                         ),
                         style = textStyle
