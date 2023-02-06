@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -184,12 +185,17 @@ fun ImportFromFileScreen(
                 }
             }
             Divider()
+            var span by remember { mutableStateOf(1) }
             ScrollbarLazyVerticalGrid(
                 state = lazyGridState,
                 columns = GridCells.Adaptive(130.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
+                spanCount = span,
                 content = {
-                    items(gamesToImport) { item ->
+                    items(
+                        items = gamesToImport,
+                        span = { GridItemSpan(1).also { span = maxLineSpan } }
+                    ) { item ->
                         Column(
                             modifier = Modifier.padding(8.dp)
                         ) {
