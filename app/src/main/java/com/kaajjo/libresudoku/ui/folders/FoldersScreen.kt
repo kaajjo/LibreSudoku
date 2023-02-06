@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -72,6 +71,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
+import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -221,7 +221,7 @@ fun FoldersScreen(
                 LaunchedEffect(folders) {
                     viewModel.coutPuzzlesInFolders(folders)
                 }
-                LazyColumn {
+                ScrollbarLazyColumn {
                     items(folders) { item ->
                         var puzzlesCount by remember { mutableStateOf(0) }
                         LaunchedEffect(viewModel.puzzlesCountInFolder) {

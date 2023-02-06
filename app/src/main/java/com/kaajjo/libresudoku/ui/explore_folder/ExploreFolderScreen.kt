@@ -30,7 +30,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -82,12 +81,14 @@ import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
+import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import kotlinx.coroutines.launch
 import kotlin.math.sqrt
 import kotlin.time.toKotlinDuration
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
     ExperimentalMaterialApi::class
 )
 @Composable
@@ -165,9 +166,9 @@ fun ExploreFolderScreen(
             if (folder != null && games.isNotEmpty()) {
                 var expandedGameUid by rememberSaveable { mutableStateOf(-1L) }
                 LaunchedEffect(viewModel.inSelectionMode) {
-                    expandedGameUid = -1L
+                    if (viewModel.inSelectionMode) expandedGameUid = -1L
                 }
-                LazyColumn(
+                ScrollbarLazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(
@@ -185,7 +186,8 @@ fun ExploreFolderScreen(
                             selected = viewModel.selectedBoardsList.contains(game.first),
                             onClick = {
                                 if (!viewModel.inSelectionMode) {
-                                    expandedGameUid = if (expandedGameUid != game.first.uid) game.first.uid else -1L
+                                    expandedGameUid =
+                                        if (expandedGameUid != game.first.uid) game.first.uid else -1L
                                 } else {
                                     viewModel.addToSelection(game.first)
                                 }
@@ -281,8 +283,14 @@ fun ExploreFolderScreen(
                 Spacer(modifier = Modifier.height(12.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(
-                        Pair(stringResource(R.string.add_to_folder_create_new), Icons.Outlined.Create),
-                        Pair(stringResource(R.string.add_to_folder_from_file), Icons.Outlined.NoteAdd)
+                        Pair(
+                            stringResource(R.string.add_to_folder_create_new),
+                            Icons.Outlined.Create
+                        ),
+                        Pair(
+                            stringResource(R.string.add_to_folder_from_file),
+                            Icons.Outlined.NoteAdd
+                        )
                     ).forEachIndexed { index, item ->
                         Row(
                             modifier = Modifier

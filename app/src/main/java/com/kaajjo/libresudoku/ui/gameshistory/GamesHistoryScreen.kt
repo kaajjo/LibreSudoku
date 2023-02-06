@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -55,6 +54,7 @@ import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.AnimatedIconFilterChip
 import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
+import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import com.kaajjo.libresudoku.ui.create_edit_sudoku.GameStateFilter
 import kotlinx.coroutines.coroutineScope
@@ -134,7 +134,7 @@ fun GamesHistoryScreen(
                     lazyListState.animateScrollToItem(0)
                 }
 
-                LazyColumn(
+                ScrollbarLazyColumn(
                     modifier = Modifier
                         .disableSplitMotionEvents(),
                     state = lazyListState

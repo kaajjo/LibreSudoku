@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
@@ -21,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.util.isScrolledToEnd
 import com.kaajjo.libresudoku.ui.util.isScrolledToStart
 
@@ -102,7 +102,7 @@ fun LanguagePicker(
                 if (!lazyListState.isScrolledToStart()) Divider(Modifier.align(Alignment.TopCenter))
                 if (!lazyListState.isScrolledToEnd()) Divider(Modifier.align(Alignment.BottomCenter))
 
-                LazyColumn(state = lazyListState) {
+                ScrollbarLazyColumn(state = lazyListState) {
                     items(entries.toList()) { locale ->
                         Row(
                             modifier = Modifier
