@@ -192,7 +192,7 @@
     <string name="statistics_difficulty_filter_all">Vše</string>
     <string name="win_rate_percentage">%1$d %%</string>
     <string name="best_time">Nejlepší čas</string>
-    <string name="saved_game_progress">Průběh %1$d%%</string>
+    <string name="saved_game_progress">Průběh %1$d/%2$d</string>
     <string name="saved_game_difficulty">Obtížnost: %1$s</string>
     <string name="saved_game_type">Typ: %1$s</string>
     <string name="saved_game_completed">Hra byla dokončena</string>
@@ -203,4 +203,46 @@
     <string name="can_continue_label">Lze pokračovat</string>
     <string name="create_from_string_hint">Hádanka</string>
     <string name="game_not_started">Nebylo zahájeno</string>
+    <string name="title_folders">Složky</string>
+    <string name="create_folder">Vytvořit složku</string>
+    <string name="delete_folder">Odstranit složku</string>
+    <string name="folder_name">Složka: %1$s</string>
+    <plurals name="number_puzzles_to_import">
+        <item quantity="one">%1$d hádanka pro import</item>
+        <item quantity="few">%1$d hádanky pro import</item>
+        <item quantity="other">%1$d hádanek pro import</item>
+    </plurals>
+    <string name="edit_name">Upravit název</string>
+    <string name="game_id">Hra #%1$d</string>
+    <string name="export">Exportovat</string>
+    <string name="create_folder_name">Název složky</string>
+    <string name="folder_import">Importovat</string>
+    <string name="help">Nápověda</string>
+    <string name="import_from_file_fail">Import se nezdařil</string>
+    <string name="import_from_file_title">Ze souboru</string>
+    <string name="import_saving">Ukládání</string>
+    <string name="import_save">Uložit</string>
+    <string name="action_edit">Upravit</string>
+    <plurals name="puzzles_in_folder">
+        <item quantity="one">%1$d hádanka</item>
+        <item quantity="few">%1$d hádanky</item>
+        <item quantity="other">%1$d hádanek</item>
+    </plurals>
+    <string name="dialog_delete_folder_text">Složka s názvem %1$s bude odstraněna</string>
+    <string name="folders_help">Zde můžete spravovat svou složku a importovat sudoku ze souboru</string>
+    <string name="dialog_delete_selected">Smazat vybrané</string>
+    <string name="explore_folder_add_sudoku">Přidat sudoku</string>
+    <string name="add_to_folder">Přidat do složky</string>
+    <string name="add_to_folder_create_new">Vytvořit nové</string>
+    <string name="add_to_folder_from_file">Importovat ze souboru</string>
+    <string name="saved_game_progress_percentage">Průběh %1$d%%</string>
+    <string name="folder_empty_label">Tato složka je prázdná</string>
+    <string name="edit_sudoku">Upravit sudoku</string>
+    <string name="folder_import_supported_types">Tyto typy souborů jsou podporovány:
+\n.sdm (nebo .txt se stejnou strukturou)</string>
+    <plurals name="delete_selected_in_folder">
+        <item quantity="one">Jste si jistí, že chcete odstranit %1$d hru\?</item>
+        <item quantity="few">Jste si jistí, že chcete odstranit %1$d hry\?</item>
+        <item quantity="other">Jste si jistí, že chcete odstranit %1$d her\?</item>
+    </plurals>
 </resources>
