@@ -13,6 +13,8 @@ import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
@@ -31,6 +33,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -43,6 +46,8 @@ import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.EditOff
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
@@ -50,6 +55,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -83,13 +89,15 @@ import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
+import com.kaajjo.libresudoku.ui.util.isScrolledToStart
+import com.kaajjo.libresudoku.ui.util.isScrollingUp
 import kotlinx.coroutines.launch
 import kotlin.math.sqrt
 import kotlin.time.toKotlinDuration
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
-    ExperimentalMaterialApi::class
+    ExperimentalMaterialApi::class, ExperimentalFoundationApi::class
 )
 @Composable
 fun ExploreFolderScreen(
@@ -101,6 +109,8 @@ fun ExploreFolderScreen(
     navigateCreateSudoku: (Long) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val lazyListState = rememberLazyListState()
+
     var deleteBoardDialog by rememberSaveable { mutableStateOf(false) }
     // used for a delete dialog when deleting
     var deleteBoardDialogBoard: SudokuBoard? by remember { mutableStateOf(null) }
@@ -159,7 +169,21 @@ fun ExploreFolderScreen(
                     )
                 }
             }
-
+        },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = lazyListState.isScrollingUp() && !lazyListState.isScrolledToStart(),
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut()
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        coroutineScope.launch { lazyListState.animateScrollToItem(0) }
+                    }
+                ) {
+                    Icon(Icons.Rounded.KeyboardArrowUp, contentDescription = null)
+                }
+            }
         }
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
@@ -169,6 +193,7 @@ fun ExploreFolderScreen(
                     if (viewModel.inSelectionMode) expandedGameUid = -1L
                 }
                 ScrollbarLazyColumn(
+                    state = lazyListState,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(
@@ -176,7 +201,9 @@ fun ExploreFolderScreen(
                         key = { it.first.uid }
                     ) { game ->
                         GameInFolderWidget(
-                            modifier = Modifier.padding(horizontal = 12.dp),
+                            modifier = Modifier
+                                .padding(horizontal = 12.dp)
+                                .animateItemPlacement(),
                             board = game.first.initialBoard,
                             difficulty = stringResource(game.first.difficulty.resName),
                             type = stringResource(game.first.type.resName),
@@ -440,12 +467,14 @@ fun GameInFolderWidget(
                         IconWithText(
                             imageVector = Icons.Rounded.PlayArrow,
                             text = stringResource(R.string.action_play),
-                            onClick = onPlayClick
+                            onClick = onPlayClick,
+                            enabled = savedGame?.canContinue ?: true
                         )
                         IconWithText(
-                            imageVector = Icons.Rounded.Edit,
+                            imageVector = if (savedGame == null) Icons.Rounded.Edit else Icons.Rounded.EditOff,
                             text = stringResource(R.string.action_edit),
-                            onClick = onEditClick
+                            onClick = onEditClick,
+                            enabled = savedGame == null
                         )
                         IconWithText(
                             imageVector = Icons.Outlined.Delete,
@@ -463,12 +492,16 @@ fun GameInFolderWidget(
 private fun IconWithText(
     imageVector: ImageVector,
     text: String,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        IconButton(onClick = onClick) {
+        IconButton(
+            onClick = onClick,
+            enabled = enabled
+        ) {
             Icon(imageVector, contentDescription = null)
         }
         Text(
