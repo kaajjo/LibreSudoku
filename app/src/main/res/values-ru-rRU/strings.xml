@@ -132,7 +132,7 @@
     <string name="saved_game_screen_title">Игра #%1$d</string>
     <string name="saved_game_current">Текущая</string>
     <string name="saved_game_initial">Изначальная</string>
-    <string name="saved_game_progress">Прогресс %1$d%%</string>
+    <string name="saved_game_progress">Прогресс %1$d/%2$d</string>
     <string name="empty_screen_something_went_wrong">Упс, что-то пошло не так…</string>
     <string name="saved_game_difficulty">Сложность: %1$s</string>
     <string name="saved_game_type">Тип: %1$s</string>
@@ -203,4 +203,49 @@
     <string name="sort_label">Сортировка</string>
     <string name="filter_label">Фильтр</string>
     <string name="help_translate">Помочь с переводом</string>
+    <string name="create_folder">Создать папку</string>
+    <string name="delete_folder">Удалить папку</string>
+    <string name="title_folders">Папки</string>
+    <plurals name="number_puzzles_to_import">
+        <item quantity="one">%1$d пазл для импорта</item>
+        <item quantity="few">%1$d пазла для импорта</item>
+        <item quantity="many">%1$d пазлов для импорта</item>
+        <item quantity="other">%1$d пазлов для импорта</item>
+    </plurals>
+    <plurals name="puzzles_in_folder">
+        <item quantity="one">%1$d пазл</item>
+        <item quantity="few">%1$d пазла</item>
+        <item quantity="many">%1$d пазлов</item>
+        <item quantity="other">%1$d пазлов</item>
+    </plurals>
+    <string name="edit_name">Переименовать</string>
+    <string name="export">Экспортировать</string>
+    <string name="create_folder_name">Название папки</string>
+    <string name="folder_import">Импортировать</string>
+    <string name="dialog_delete_folder_text">Папка с названием %1$s будет удалена</string>
+    <string name="help">Помощь</string>
+    <string name="folders_help">Здесь, вы можете управлять вашими папками и импортировать судоку из файла</string>
+    <string name="folder_import_supported_types">Поддерживаются данные типы файлов:
+\n.sdm (или .txt с такой же структурой)</string>
+    <string name="import_from_file_fail">Не удалось импортировать</string>
+    <string name="import_from_file_title">Из файла</string>
+    <string name="import_saving">Сохранение</string>
+    <string name="import_save">Сохранить</string>
+    <string name="action_edit">Изменить</string>
+    <string name="folder_empty_label">В этой папке пусто</string>
+    <string name="dialog_delete_selected">Удалить выбранные</string>
+    <string name="explore_folder_add_sudoku">Добавить судоку</string>
+    <string name="edit_sudoku">Редактировать судоку</string>
+    <string name="game_id">Игра #%1$d</string>
+    <string name="folder_name">Папка: %1$s</string>
+    <plurals name="delete_selected_in_folder">
+        <item quantity="one">Вы уверены, что хотите удалить %1$d игру\?</item>
+        <item quantity="few">Вы уверены, что хотите удалить %1$d игры\?</item>
+        <item quantity="many">Вы уверены, что хотите удалить %1$d игр\?</item>
+        <item quantity="other">Вы уверены, что хотите удалить %1$d игр\?</item>
+    </plurals>
+    <string name="add_to_folder">Добавить в папку</string>
+    <string name="add_to_folder_create_new">Создать новое</string>
+    <string name="add_to_folder_from_file">Импортировать из файла</string>
+    <string name="saved_game_progress_percentage">Прогресс %1$d%%</string>
 </resources>
