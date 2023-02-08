@@ -74,7 +74,7 @@
     <string name="best_time">En iyi süre</string>
     <string name="history_no_games">Henüz oynamadınız</string>
     <string name="history_item_id">Oyun kimliği: %1$d</string>
-    <string name="saved_game_screen_title">Kayıtlı oyun</string>
+    <string name="saved_game_screen_title">Oyun #%1$d</string>
     <string name="saved_game_in_progress">Devam ediyor</string>
     <string name="saved_game_give_up">Oyun tamamlanmadı, pes ettiniz</string>
     <string name="saved_game_mistakes_limit">Oyun tamamlanmadı, hata sınırını aştınız</string>
@@ -141,7 +141,7 @@
     <string name="history_item_can_continue">Bu oyuna devam edebilirsin</string>
     <string name="saved_game_current">Güncel</string>
     <string name="saved_game_initial">İlk</string>
-    <string name="saved_game_progress">Aşama %1$d/%2$d</string>
+    <string name="saved_game_progress">Aşama %%%1$d</string>
     <string name="empty_screen_something_went_wrong">Eyvah, bir şeyler ters gitti…</string>
     <string name="saved_game_type">Tür: %1$s</string>
     <string name="saved_game_time">Süre: %1$s</string>

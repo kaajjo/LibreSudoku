@@ -133,10 +133,10 @@
     <string name="history_item_time">Temps: %1$s</string>
     <string name="history_item_id">ID de jeu: %1$d</string>
     <string name="history_item_can_continue">Vous pouvez continuer cette partie</string>
-    <string name="saved_game_screen_title">Partie sauvegardée</string>
+    <string name="saved_game_screen_title">Partie #%1$d</string>
     <string name="saved_game_current">Actuel</string>
     <string name="saved_game_initial">Initial</string>
-    <string name="saved_game_progress">Progrès %1$d/%2$d</string>
+    <string name="saved_game_progress">Progression %1$d/%%</string>
     <string name="empty_screen_something_went_wrong">Oups, quelque chose s\'est mal passé…</string>
     <string name="saved_game_difficulty">Difficulté: %1$s</string>
     <string name="saved_game_type">Type: %1$s</string>
@@ -204,4 +204,45 @@
     <string name="sort_label">Trier</string>
     <string name="filter_label">Filtre</string>
     <string name="help_translate">Aidez à la traduction</string>
+    <string name="title_folders">Dossiers</string>
+    <string name="folder_name">Dossier : %1$s</string>
+    <string name="edit_sudoku">Modifier un Sudoku</string>
+    <string name="game_id">Partie #%1$d</string>
+    <plurals name="number_puzzles_to_import">
+        <item quantity="one">%1$d casse-tête à importer</item>
+        <item quantity="many">%1$d casse-têtes à importer</item>
+        <item quantity="other">%1$d casse-têtes à importer</item>
+    </plurals>
+    <string name="add_to_folder_from_file">Importer depuis un fichier</string>
+    <string name="create_folder">Créer un dossier</string>
+    <string name="delete_folder">Supprimer le dossier</string>
+    <string name="edit_name">Modifier le nom</string>
+    <string name="create_folder_name">Nom du dossier</string>
+    <string name="folder_import_supported_types">Ces types de fichiers sont pris en charge :
+\n.sdm (ou .txt avec la même structure)</string>
+    <string name="import_from_file_fail">Échec de l\'importation</string>
+    <plurals name="puzzles_in_folder">
+        <item quantity="one">%1$d casse-tête</item>
+        <item quantity="many">%1$d casse-têtes</item>
+        <item quantity="other">%1$d casse-têtes</item>
+    </plurals>
+    <string name="export">Exporter</string>
+    <string name="folder_import">Importer</string>
+    <string name="dialog_delete_folder_text">Le dossier portant le nom %1$s sera supprimé</string>
+    <string name="help">Aide</string>
+    <string name="folders_help">Ici vous pouvez gérer votre dossier et importer des sudokus depuis un fichier</string>
+    <string name="import_from_file_title">Depuis un fichier</string>
+    <string name="import_saving">Sauvegarde</string>
+    <string name="folder_empty_label">Ce dossier est vide</string>
+    <plurals name="delete_selected_in_folder">
+        <item quantity="one">Êtes-vous sûr de vouloir supprimer %1$d jeu \?</item>
+        <item quantity="many">Êtes-vous sûr de vouloir supprimer %1$d jeux \?</item>
+        <item quantity="other">Êtes-vous sûr de vouloir supprimer %1$d jeux \?</item>
+    </plurals>
+    <string name="import_save">Sauvegarder</string>
+    <string name="action_edit">Éditer</string>
+    <string name="dialog_delete_selected">Supprimer la sélection</string>
+    <string name="explore_folder_add_sudoku">Ajouter un sudoku</string>
+    <string name="add_to_folder_create_new">Créer un nouveau</string>
+    <string name="add_to_folder">Ajouter au dossier</string>
 </resources>
