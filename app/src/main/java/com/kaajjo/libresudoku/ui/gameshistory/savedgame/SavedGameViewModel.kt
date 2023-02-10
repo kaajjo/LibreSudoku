@@ -55,9 +55,19 @@ class SavedGameViewModel
                     withContext(Dispatchers.Default) {
                         val sudokuParser = SudokuParser()
                         parsedInitialBoard =
-                            sudokuParser.parseBoard(boardEntity.initialBoard, boardEntity.type)
+                            sudokuParser.parseBoard(
+                                boardEntity.initialBoard,
+                                boardEntity.type,
+                                locked = true
+                            )
                         parsedCurrentBoard =
                             sudokuParser.parseBoard(savedGame.currentBoard, boardEntity.type)
+                                .onEach { cells ->
+                                    cells.forEach { cell ->
+                                        cell.locked =
+                                            parsedInitialBoard[cell.col][cell.row].value != 0
+                                    }
+                                }
                         notes = sudokuParser.parseNotes(savedGame.notes)
                     }
                 }
@@ -101,7 +111,8 @@ class SavedGameViewModel
                 .toDouble()
                 .pow(2.0)
                 .toInt()
-            count = totalCells - parsedCurrentBoard.sumOf { cells -> cells.count { cell -> cell.value == 0 } }
+            count =
+                totalCells - parsedCurrentBoard.sumOf { cells -> cells.count { cell -> cell.value == 0 } }
         }
         return (count.toFloat() / totalCells.toFloat() * 100f).toInt()
     }
