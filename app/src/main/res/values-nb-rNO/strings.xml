@@ -117,4 +117,10 @@
     <string name="learn_tab_app">Program</string>
     <string name="page_next">Neste</string>
     <string name="create_save">Lagre</string>
+    <string name="pref_board_font_size">Brett-skriftstørrelse</string>
+    <string name="dialog_new_game_text">Avbryt uferdig spill og start nytt\?</string>
+    <string name="pref_board_font_size_small">Liten</string>
+    <string name="pref_board_font_size_medium">Middels</string>
+    <string name="pref_board_font_size_large">Stor</string>
+    <string name="pref_input">Inndatametode</string>
 </resources>
