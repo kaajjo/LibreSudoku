@@ -12,14 +12,18 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -32,9 +36,11 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Help
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -72,10 +78,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
+import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -83,7 +91,8 @@ fun FoldersScreen(
     viewModel: FoldersViewModel,
     navigateBack: () -> Unit,
     navigateExploreFolder: (Int) -> Unit,
-    navigateImportSudokuFile: (String) -> Unit
+    navigateImportSudokuFile: (String) -> Unit,
+    navigateViewSavedGame: (Long) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -217,11 +226,48 @@ fun FoldersScreen(
                 .fillMaxWidth()
         ) {
             val folders by viewModel.folders.collectAsStateWithLifecycle(initialValue = emptyList())
+            val lastGames by viewModel.lastSavedGames.collectAsStateWithLifecycle(initialValue = emptyList())
+
             if (folders.isNotEmpty() && gamesToImport.isEmpty()) {
                 LaunchedEffect(folders) {
-                    viewModel.coutPuzzlesInFolders(folders)
+                    viewModel.countPuzzlesInFolders(folders)
                 }
                 ScrollbarLazyColumn {
+                    item {
+                        if (lastGames.isNotEmpty()) {
+                            Column(Modifier.padding(vertical = 6.dp)) {
+                                Text(
+                                    text = stringResource(R.string.last_played_section_title),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier.padding(start = 12.dp, bottom = 6.dp)
+                                )
+                                LazyRow(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    contentPadding = PaddingValues(start = 12.dp, end = 12.dp)
+                                ) {
+                                    items(lastGames) {
+                                        ElevatedCard(
+                                            modifier = Modifier
+                                                .clip(CardDefaults.elevatedShape)
+                                                .clickable { navigateViewSavedGame(it.uid) },
+                                        ) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .padding(6.dp)
+                                                    .clip(RoundedCornerShape(4.dp))
+                                                    .size(130.dp)
+                                            ) {
+                                                BoardPreview(
+                                                    size = sqrt(it.currentBoard.length.toFloat()).toInt(),
+                                                    boardString = it.currentBoard
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     items(folders) { item ->
                         var puzzlesCount by remember { mutableStateOf(0) }
                         LaunchedEffect(viewModel.puzzlesCountInFolder) {
@@ -230,7 +276,7 @@ fun FoldersScreen(
                         }
                         FolderItem(
                             name = item.name,
-                            puzzlesCount = puzzlesCount, // TODO
+                            puzzlesCount = puzzlesCount,
                             onClick = {
                                 navigateExploreFolder(item.uid.toInt())
                             },

@@ -14,6 +14,7 @@ import com.kaajjo.libresudoku.domain.usecase.board.GetGamesInFolderUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.CountPuzzlesFolderUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.DeleteFolderUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.GetFoldersUseCase
+import com.kaajjo.libresudoku.domain.usecase.folder.GetLastSavedGamesAnyFolderUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.InsertFolderUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.UpdateFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +32,8 @@ class FoldersViewModel @Inject constructor(
     private val updateFolderUseCase: UpdateFolderUseCase,
     private val deleteFolderUseCase: DeleteFolderUseCase,
     private val getGamesInFolderUseCase: GetGamesInFolderUseCase,
-    private val countPuzzlesFolderUseCase: CountPuzzlesFolderUseCase
+    private val countPuzzlesFolderUseCase: CountPuzzlesFolderUseCase,
+    getLastSavedGamesAnyFolderUseCase: GetLastSavedGamesAnyFolderUseCase
 ) : ViewModel() {
     val folders = getFoldersUseCase()
 
@@ -47,6 +49,8 @@ class FoldersViewModel @Inject constructor(
 
     var puzzlesCountInFolder by mutableStateOf(emptyList<Pair<Long, Int>>())
 
+    val lastSavedGames = getLastSavedGamesAnyFolderUseCase(gamesCount = 10)
+
     fun createFolder(name: String) {
         viewModelScope.launch {
             insertFolderUseCase(
@@ -59,7 +63,7 @@ class FoldersViewModel @Inject constructor(
         }
     }
 
-    fun coutPuzzlesInFolders(folders: List<Folder>) {
+    fun countPuzzlesInFolders(folders: List<Folder>) {
         viewModelScope.launch(Dispatchers.IO) {
             val numberPuzzles = mutableListOf<Pair<Long, Int>>()
             folders.forEach {

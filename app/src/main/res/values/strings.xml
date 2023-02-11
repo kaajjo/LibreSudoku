@@ -294,4 +294,5 @@
     <string name="add_to_folder">Add to folder</string>
     <string name="add_to_folder_create_new">Create new</string>
     <string name="add_to_folder_from_file">Import from file</string>
+    <string name="last_played_section_title">Last played games</string>
 </resources>

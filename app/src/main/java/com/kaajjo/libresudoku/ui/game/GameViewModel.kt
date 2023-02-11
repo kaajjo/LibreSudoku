@@ -18,8 +18,8 @@ import com.kaajjo.libresudoku.core.utils.UndoManager
 import com.kaajjo.libresudoku.data.database.model.Record
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
-import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.domain.repository.RecordRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
@@ -30,10 +30,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Timer
 import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
-import kotlin.time.*
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
+import kotlin.time.toJavaDuration
+import kotlin.time.toKotlinDuration
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
@@ -408,6 +412,7 @@ class GameViewModel @Inject constructor(
                     }
                     remainingUsesList = countRemainingUses(gameBoard)
                 }
+
                 ToolBarItem.Hint -> {
                     useHint()
                 }
@@ -416,6 +421,7 @@ class GameViewModel @Inject constructor(
                     notesToggled = !notesToggled
                     eraseButtonToggled = false
                 }
+
                 ToolBarItem.Remove -> {
                     if (inputMethod.value == 1 || eraseButtonToggled) {
                         toggleEraseButton()
@@ -526,7 +532,8 @@ class GameViewModel @Inject constructor(
                     timer = java.time.Duration.ofSeconds(duration.inWholeSeconds),
                     currentBoard = sudokuParser.boardToString(gameBoard),
                     notes = sudokuParser.notesToString(notes),
-                    mistakes = mistakesCount
+                    mistakes = mistakesCount,
+                    lastPlayed = ZonedDateTime.now()
                 )
             )
         } else {
@@ -536,7 +543,8 @@ class GameViewModel @Inject constructor(
                     currentBoard = sudokuParser.boardToString(gameBoard),
                     notes = sudokuParser.notesToString(notes),
                     timer = java.time.Duration.ofSeconds(duration.inWholeSeconds),
-                    mistakes = mistakesCount
+                    mistakes = mistakesCount,
+                    lastPlayed = ZonedDateTime.now()
                 )
             )
         }

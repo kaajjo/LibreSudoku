@@ -265,6 +265,9 @@ class MainActivity : AppCompatActivity() {
                                 },
                                 navigateImportSudokuFile = { uri ->
                                     navController.navigate("import_sudoku_file?$uri?-1")
+                                },
+                                navigateViewSavedGame = { uid ->
+                                    navController.navigate("saved_game/${uid}")
                                 }
                             )
                         }
