@@ -61,7 +61,7 @@ fun HomeScreen(
             }
         }
 
-        val lastGame = viewModel.lastSaved.collectAsState(initial = null)
+        val lastGame by viewModel.lastSaved.collectAsState(initial = null)
         if (viewModel.generated
             && !viewModel.isGenerating
             && !viewModel.isSolving
@@ -72,7 +72,7 @@ fun HomeScreen(
 
             runBlocking {
                 viewModel.saveToDatabase()
-                val saved = if (lastGame.value != null) !lastGame.value?.completed!! else false
+                val saved = if (lastGame != null) !lastGame?.completed!! else false
                 navigatePlayGame(Pair(viewModel.insertedBoardUid, saved))
             }
         }
@@ -95,21 +95,27 @@ fun HomeScreen(
                 onRightClick = { viewModel.setType(1) }
             )
 
-            Button(onClick = {
-                if (lastGame.value != null && !lastGame.value!!.completed) {
-                    viewModel.showContinueGameDialog = true
-                } else {
-                    viewModel.giveUpLastGame()
-                    viewModel.generate()
-                }
-            }) {
-                Text(stringResource(R.string.action_play))
-            }
-            if (lastGame.value != null && !lastGame.value!!.completed) {
+            Spacer(Modifier.height(12.dp))
+
+            if (lastGame != null && !lastGame!!.completed) {
                 Button(onClick = {
-                    navigatePlayGame(Pair(lastGame.value!!.uid, true))
+                    lastGame?.let {
+                        navigatePlayGame(Pair(it.uid, true))
+                    }
                 }) {
                     Text(stringResource(R.string.action_continue))
+                }
+                FilledTonalButton(onClick = {
+                    viewModel.showContinueGameDialog = true
+                }) {
+                    Text(stringResource(R.string.action_play))
+                }
+            } else {
+                Button(onClick = {
+                    viewModel.giveUpLastGame()
+                    viewModel.generate()
+                }) {
+                    Text(stringResource(R.string.action_play))
                 }
             }
         }
