@@ -252,6 +252,11 @@ class MainActivity : AppCompatActivity() {
                                         popUpTo(Route.HISTORY)
                                     }
                                 },
+                                navigateToFolder = { uid ->
+                                    navController.navigate("explore_folder/$uid") {
+                                        popUpTo("history")
+                                    }
+                                },
                                 hiltViewModel()
                             )
                         }

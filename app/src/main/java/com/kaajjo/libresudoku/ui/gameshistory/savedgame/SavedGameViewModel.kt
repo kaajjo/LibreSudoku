@@ -12,13 +12,18 @@ import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
+import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
+import com.kaajjo.libresudoku.domain.usecase.folder.GetFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -29,6 +34,7 @@ class SavedGameViewModel
 @Inject constructor(
     private val boardRepository: BoardRepository,
     private val savedGameRepository: SavedGameRepository,
+    private val getFolderUseCase: GetFolderUseCase,
     appSettingsManager: AppSettingsManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -44,6 +50,9 @@ class SavedGameViewModel
     var notes by mutableStateOf(emptyList<Note>())
 
     var exportDialog by mutableStateOf(false)
+
+    private val _gameFolder: MutableStateFlow<Folder?> = MutableStateFlow(null)
+    val gameFolder = _gameFolder.asStateFlow()
 
     fun updateGame() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -69,6 +78,15 @@ class SavedGameViewModel
                                     }
                                 }
                         notes = sudokuParser.parseNotes(savedGame.notes)
+                    }
+                }
+
+                viewModelScope.launch {
+                    boardEntity.folderId?.let { folderUid ->
+                        val folder = getFolderUseCase(folderUid)
+                        folder.collectLatest {
+                            _gameFolder.emit(it)
+                        }
                     }
                 }
             }

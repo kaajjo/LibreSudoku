@@ -6,6 +6,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -34,6 +36,7 @@ import kotlin.time.toKotlinDuration
 fun SavedGameScreen(
     navigateBack: () -> Unit,
     navigatePlayGame: (Long) -> Unit,
+    navigateToFolder: (Long) -> Unit,
     viewModel: SavedGameViewModel
 ) {
     Scaffold(
@@ -177,6 +180,16 @@ fun SavedGameScreen(
                         progress = viewModel.getProgressFilled()
                         viewModel.isSolved()
                     }
+
+                    val gameFolder by viewModel.gameFolder.collectAsStateWithLifecycle()
+                    gameFolder?.let {
+                        AssistChip(
+                            leadingIcon = { Icon(Icons.Outlined.Folder, contentDescription = null) },
+                            onClick = { navigateToFolder(it.uid) },
+                            label = { Text(it.name) }
+                        )
+                    }
+
                     val textStyle = MaterialTheme.typography.bodyLarge
                     Text(
                         text = stringResource(
