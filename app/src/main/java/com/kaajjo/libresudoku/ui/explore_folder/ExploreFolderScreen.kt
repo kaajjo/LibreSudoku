@@ -204,7 +204,7 @@ fun ExploreFolderScreen(
                             modifier = Modifier
                                 .padding(horizontal = 12.dp)
                                 .animateItemPlacement(),
-                            board = game.first.initialBoard,
+                            board = game.second?.currentBoard ?: game.first.initialBoard,
                             difficulty = stringResource(game.first.difficulty.resName),
                             type = stringResource(game.first.type.resName),
                             gameId = game.first.uid,
@@ -466,7 +466,11 @@ fun GameInFolderWidget(
                     ) {
                         IconWithText(
                             imageVector = Icons.Rounded.PlayArrow,
-                            text = stringResource(R.string.action_play),
+                            text =
+                            if (savedGame == null || !savedGame.canContinue)
+                                stringResource(R.string.action_play)
+                            else
+                                stringResource(R.string.action_continue),
                             onClick = onPlayClick,
                             enabled = savedGame?.canContinue ?: true
                         )
