@@ -192,9 +192,11 @@ fun ExploreFolderScreen(
         Column(Modifier.padding(paddingValues)) {
             if (folder != null && games.isNotEmpty()) {
                 var expandedGameUid by rememberSaveable { mutableStateOf(-1L) }
+
                 LaunchedEffect(viewModel.inSelectionMode) {
                     if (viewModel.inSelectionMode) expandedGameUid = -1L
                 }
+
                 ScrollbarLazyColumn(
                     state = lazyListState,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -264,11 +266,13 @@ fun ExploreFolderScreen(
             }
         }
     }
+
     LaunchedEffect(viewModel.selectedBoardsList) {
         if (viewModel.selectedBoardsList.isEmpty()) {
             viewModel.inSelectionMode = false
         }
     }
+
     LaunchedEffect(viewModel.inSelectionMode) {
         if (!viewModel.inSelectionMode) {
             viewModel.selectedBoardsList = emptyList()

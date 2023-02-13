@@ -54,7 +54,10 @@ class SavedGameViewModel
     private val _gameFolder: MutableStateFlow<Folder?> = MutableStateFlow(null)
     val gameFolder = _gameFolder.asStateFlow()
 
-    fun updateGame() {
+    private val _gameProgressPercentage = MutableStateFlow(0)
+    val gameProgressPercentage = _gameProgressPercentage.asStateFlow()
+
+    fun updateGameDetails() {
         viewModelScope.launch(Dispatchers.IO) {
             boardEntity = boardRepository.get(boardUid ?: 0)
             savedGame = savedGameRepository.get(boardUid ?: 0)
@@ -93,46 +96,20 @@ class SavedGameViewModel
         }
     }
 
-    var causeMistakesLimit by mutableStateOf(false)
-    var correctSolution by mutableStateOf(false)
-    fun isSolved(): Boolean {
-        val sudokuParser = SudokuParser()
-
-        savedGame?.let {
-            if (it.mistakes >= 3) {
-                causeMistakesLimit = true
-                return true
+    fun countProgressFilled() {
+        viewModelScope.launch {
+            var totalCells = 1
+            var count = 0
+            boardEntity?.let { board ->
+                totalCells = (board.type.sectionWidth * board.type.sectionHeight)
+                    .toDouble()
+                    .pow(2.0)
+                    .toInt()
+                count =
+                    totalCells - parsedCurrentBoard.sumOf { cells -> cells.count { cell -> cell.value == 0 } }
             }
+            _gameProgressPercentage.emit((count.toFloat() / totalCells.toFloat() * 100f).toInt())
         }
-
-        if (boardEntity == null || savedGame == null || parsedInitialBoard.isEmpty()) return false
-        boardEntity?.let { boardEntity ->
-            val solvedBoard = sudokuParser.parseBoard(boardEntity.solvedBoard, boardEntity.type)
-            if (solvedBoard.size != parsedCurrentBoard.size) return false
-            for (i in 0 until boardEntity.type.size) {
-                for (j in 0 until boardEntity.type.size) {
-                    if (solvedBoard[i][j].value != parsedCurrentBoard[i][j].value) {
-                        return false
-                    }
-                }
-            }
-        }
-        correctSolution = true
-        return true
-    }
-
-    fun getProgressFilled(): Int {
-        var totalCells = 1
-        var count = 0
-        boardEntity?.let { board ->
-            totalCells = (board.type.sectionWidth * board.type.sectionHeight)
-                .toDouble()
-                .pow(2.0)
-                .toInt()
-            count =
-                totalCells - parsedCurrentBoard.sumOf { cells -> cells.count { cell -> cell.value == 0 } }
-        }
-        return (count.toFloat() / totalCells.toFloat() * 100f).toInt()
     }
 
     fun getFontSize(factor: Int): TextUnit {

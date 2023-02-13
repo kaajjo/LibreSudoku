@@ -81,9 +81,8 @@ fun SavedGameScreen(
             )
         },
     ) { innerPadding ->
-        LaunchedEffect(key1 = Unit) {
-            viewModel.updateGame()
-        }
+        LaunchedEffect(Unit) { viewModel.updateGameDetails() }
+
         if (viewModel.savedGame != null && viewModel.boardEntity != null &&
             viewModel.parsedCurrentBoard.isNotEmpty() && viewModel.parsedInitialBoard.isNotEmpty()
         ) {
@@ -98,9 +97,7 @@ fun SavedGameScreen(
                         viewModel.getFontSize(factor = fontSizeFactor)
                     )
                 }
-                LaunchedEffect(fontSizeFactor) {
-                    fontSizeValue = viewModel.getFontSize(fontSizeFactor)
-                }
+                LaunchedEffect(fontSizeFactor) { fontSizeValue = viewModel.getFontSize(fontSizeFactor) }
                 val pagerState = rememberPagerState()
                 val pages = listOf(
                     stringResource(R.string.saved_game_current),
@@ -127,7 +124,7 @@ fun SavedGameScreen(
                     }
                 }
                 val boardScale = remember { Animatable(0.3f) }
-                LaunchedEffect(key1 = Unit) {
+                LaunchedEffect(Unit) {
                     boardScale.animateTo(
                         targetValue = 1f,
                         animationSpec = tween(
@@ -174,27 +171,29 @@ fun SavedGameScreen(
                         .padding(horizontal = 12.dp)
                         .fillMaxWidth()
                 ) {
-                    var progress by remember { mutableStateOf(viewModel.getProgressFilled()) }
-
-                    LaunchedEffect(viewModel.parsedInitialBoard) {
-                        progress = viewModel.getProgressFilled()
-                        viewModel.isSolved()
-                    }
-
                     val gameFolder by viewModel.gameFolder.collectAsStateWithLifecycle()
                     gameFolder?.let {
                         AssistChip(
-                            leadingIcon = { Icon(Icons.Outlined.Folder, contentDescription = null) },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Outlined.Folder,
+                                    contentDescription = null
+                                )
+                            },
                             onClick = { navigateToFolder(it.uid) },
                             label = { Text(it.name) }
                         )
                     }
 
                     val textStyle = MaterialTheme.typography.bodyLarge
+
+                    val progressPercentage by viewModel.gameProgressPercentage.collectAsStateWithLifecycle()
+                    LaunchedEffect(viewModel.parsedCurrentBoard) { viewModel.countProgressFilled() }
+
                     Text(
                         text = stringResource(
                             R.string.saved_game_progress_percentage,
-                            progress
+                            progressPercentage
                         ),
                         style = textStyle
                     )
