@@ -37,7 +37,7 @@ class CreateSudokuViewModel @Inject constructor(
     private val getBoardUseCase: GetBoardUseCase,
     private val updateBoardUseCase: UpdateBoardUseCase,
     private val insertBoardUseCase: InsertBoardUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val gameUid = savedStateHandle.get<Long>("game_uid") ?: -1L
     private val folderUid = savedStateHandle.get<Long>("folder_uid")
@@ -300,7 +300,7 @@ class CreateSudokuViewModel @Inject constructor(
                         uid = 0,
                         initialBoard = initialBoard,
                         solvedBoard = solvedBoard,
-                        difficulty = GameDifficulty.Custom,
+                        difficulty = gameDifficulty,
                         type = gameType,
                         folderId = if (folderUid != -1L) folderUid else null
                     )
