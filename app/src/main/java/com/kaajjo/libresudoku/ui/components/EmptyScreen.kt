@@ -18,7 +18,8 @@ import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 @Composable
 fun EmptyScreen(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit = { }
 ) {
     val emptyFaces = listOf(
         "Σ(ಠ_ಠ)",
@@ -37,10 +38,11 @@ fun EmptyScreen(
             style = MaterialTheme.typography.displayMedium
         )
         Text(
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
             text = text,
             textAlign = TextAlign.Center
         )
+        content()
     }
 }
 

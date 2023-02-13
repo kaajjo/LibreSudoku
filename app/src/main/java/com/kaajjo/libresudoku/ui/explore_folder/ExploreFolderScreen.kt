@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,6 +42,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.NoteAdd
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
@@ -50,6 +52,7 @@ import androidx.compose.material.icons.rounded.EditOff
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -235,7 +238,20 @@ fun ExploreFolderScreen(
                     }
                 }
             } else if (folder != null) {
-                EmptyScreen(stringResource(R.string.folder_empty_label))
+                EmptyScreen(
+                    text = stringResource(R.string.folder_empty_label),
+                    content = {
+                        Button(onClick = {
+                            coroutineScope.launch {
+                                viewModel.drawerState.show()
+                            }
+                        }) {
+                            Icon(Icons.Rounded.Add, contentDescription = null)
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(stringResource(R.string.add_to_folder))
+                        }
+                    }
+                )
             }
         }
     }
