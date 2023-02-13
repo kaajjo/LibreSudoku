@@ -245,4 +245,5 @@
         <item quantity="few">Jste si jistí, že chcete odstranit %1$d hry\?</item>
         <item quantity="other">Jste si jistí, že chcete odstranit %1$d her\?</item>
     </plurals>
+    <string name="last_played_section_title">Naposledy odehrané hry</string>
 </resources>

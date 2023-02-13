@@ -136,7 +136,7 @@
     <string name="saved_game_screen_title">Partie #%1$d</string>
     <string name="saved_game_current">Actuel</string>
     <string name="saved_game_initial">Initial</string>
-    <string name="saved_game_progress">Progression %1$d/%%</string>
+    <string name="saved_game_progress">Progression %1$d/%2$d</string>
     <string name="empty_screen_something_went_wrong">Oups, quelque chose s\'est mal passé…</string>
     <string name="saved_game_difficulty">Difficulté: %1$s</string>
     <string name="saved_game_type">Type: %1$s</string>
@@ -245,4 +245,6 @@
     <string name="explore_folder_add_sudoku">Ajouter un sudoku</string>
     <string name="add_to_folder_create_new">Créer un nouveau</string>
     <string name="add_to_folder">Ajouter au dossier</string>
+    <string name="last_played_section_title">Dernières parties jouées</string>
+    <string name="saved_game_progress_percentage">Progression %1$d%%</string>
 </resources>

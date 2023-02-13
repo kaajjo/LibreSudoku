@@ -248,4 +248,5 @@
     <string name="add_to_folder_create_new">Создать новое</string>
     <string name="add_to_folder_from_file">Импортировать из файла</string>
     <string name="saved_game_progress_percentage">Прогресс %1$d%%</string>
+    <string name="last_played_section_title">Последние сыгранные</string>
 </resources>
