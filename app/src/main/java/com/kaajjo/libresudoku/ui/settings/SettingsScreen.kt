@@ -180,8 +180,8 @@ fun SettingsScreen(
                 )
 
                 PreferenceRow(
-                    title = "Sudoku board theme",
-                    subtitle = "Customize look of the sudoku board",
+                    title = stringResource(R.string.pref_board_theme_title),
+                    subtitle = stringResource(R.string.pref_board_theme_subtitle),
                     onClick = navigateBoardSettings
                 )
 
