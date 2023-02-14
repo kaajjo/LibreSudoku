@@ -65,6 +65,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyVerticalGrid
@@ -201,7 +202,8 @@ fun ImportFromFileScreen(
                         ) {
                             BoardPreview(
                                 size = 9,
-                                boardString = item
+                                boardString = item,
+                                boardColors = LocalBoardColors.current
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Divider()

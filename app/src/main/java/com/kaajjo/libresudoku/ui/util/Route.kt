@@ -14,5 +14,6 @@ class Route {
         const val GAME = "game/{uid}/{saved}"
         const val SAVED_GAME = "saved_game/{uid}"
         const val FOLDERS = "folders"
+        const val SETTINGS_BOARD_THEME = "settings_board_theme"
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
@@ -88,6 +89,7 @@ fun FirstPage(
                 size = 9,
                 selectedCell = selectedCell,
                 onClick = { cell -> selectedCellChanged(cell) },
+                boardColors = LocalBoardColors.current
             )
             Text(stringResource(R.string.onboard_recommendation_prefs))
             FilledTonalButton(

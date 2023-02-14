@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -47,14 +49,19 @@ import com.kaajjo.libresudoku.ui.more.about.AboutLibrariesScreen
 import com.kaajjo.libresudoku.ui.more.about.AboutScreen
 import com.kaajjo.libresudoku.ui.onboarding.WelcomeScreen
 import com.kaajjo.libresudoku.ui.settings.SettingsScreen
+import com.kaajjo.libresudoku.ui.settings.boardtheme.SettingsBoardTheme
 import com.kaajjo.libresudoku.ui.statistics.StatisticsScreen
 import com.kaajjo.libresudoku.ui.theme.AppTheme
+import com.kaajjo.libresudoku.ui.theme.BoardColors
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.kaajjo.libresudoku.ui.theme.SudokuBoardColorsImpl
 import com.kaajjo.libresudoku.ui.util.Route
 import com.kaajjo.libresudoku.ui.util.findActivity
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+
+val LocalBoardColors = staticCompositionLocalOf { SudokuBoardColorsImpl() }
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -115,234 +122,272 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
                 }
-                Scaffold(
-                    bottomBar = {
-                        NavigationBar(
-                            navController = navController,
-                            bottomBarState = bottomBarState
+
+                val monetSudokuBoard by mainViewModel.monetSudokuBoard.collectAsStateWithLifecycle(
+                    initialValue = PreferencesConstants.DEFAULT_MONET_SUDOKU_BOARD
+                )
+
+                val boardColors =
+                    if (monetSudokuBoard) {
+                        SudokuBoardColorsImpl(
+                            foregroundColor = BoardColors.foregroundColor,
+                            notesColor = BoardColors.notesColor,
+                            altForegroundColor = BoardColors.altForegroundColor,
+                            errorColor = BoardColors.errorColor,
+                            highlightColor = BoardColors.highlightColor,
+                            thickLineColor = BoardColors.thickLineColor,
+                            thinLineColor = BoardColors.thinLineColor
                         )
-                    },
-                    contentWindowInsets = WindowInsets(0.dp)
-                ) { paddingValues ->
-                    AnimatedNavHost(
-                        navController = navController,
-                        startDestination = Route.HOME,
-                        modifier = Modifier.padding(paddingValues)
-                    ) {
-                        animatedComposable(Route.HOME) {
-                            HomeScreen(
-                                navigatePlayGame = {
-                                    navController.navigate("game/${it.first}/${it.second}")
-                                },
-                                hiltViewModel()
+                    } else {
+                        SudokuBoardColorsImpl(
+                            foregroundColor = MaterialTheme.colorScheme.onSurface,
+                            notesColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
+                            altForegroundColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                            errorColor = Color(230, 67, 83),
+                            highlightColor = MaterialTheme.colorScheme.outline,
+                            thickLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.65f),
+                            thinLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.4f)
+                        )
+                    }
+
+                CompositionLocalProvider(LocalBoardColors provides boardColors) {
+                    Scaffold(
+                        bottomBar = {
+                            NavigationBar(
+                                navController = navController,
+                                bottomBarState = bottomBarState
                             )
-                        }
-
-                        animatedComposable(Route.MORE) {
-                            MoreScreen(
-                                navigateSettings = { navController.navigate("settings/?fromGame=false") },
-                                navigateLearn = { navController.navigate(Route.LEARN) },
-                                navigateAbout = { navController.navigate(Route.ABOUT) },
-                                navigateImport = { navController.navigate(Route.FOLDERS) }
-                            )
-                        }
-
-                        animatedComposable(Route.ABOUT) {
-                            AboutScreen(
-                                navigateBack = { navController.popBackStack() },
-                                navigateOpenSourceLicenses = { navController.navigate(Route.OPEN_SOURCE_LICENSES) }
-                            )
-                        }
-
-                        animatedComposable(Route.WELCOME_SCREEN) {
-                            WelcomeScreen(
-                                navigateToGame = {
-                                    navController.popBackStack()
-                                    navController.navigate(Route.HOME)
-                                },
-                                hiltViewModel()
-                            )
-                        }
-
-                        animatedComposable(Route.STATISTICS) {
-                            StatisticsScreen(
-                                navigateHistory = { navController.navigate(Route.HISTORY) },
-                                hiltViewModel()
-                            )
-                        }
-
-                        animatedComposable(Route.HISTORY) {
-                            GamesHistoryScreen(
-                                navigateBack = { navController.popBackStack() },
-                                navigateSavedGame = { uid ->
-                                    navController.navigate(
-                                        "saved_game/${uid}"
-                                    )
-                                },
-                                hiltViewModel()
-                            )
-                        }
-
-                        animatedComposable(Route.LEARN) {
-                            LearnScreen { navController.popBackStack() }
-                        }
-
-                        animatedComposable(Route.OPEN_SOURCE_LICENSES) {
-                            AboutLibrariesScreen { navController.popBackStack() }
-                        }
-
-                        animatedComposable(
-                            route = "create_edit_sudoku/{game_uid}/{folder_uid}",
-                            arguments = listOf(
-                                navArgument("game_uid") {
-                                    type = NavType.LongType
-                                }, // used for editing
-                                navArgument("folder_uid") {
-                                    type = NavType.LongType
-                                } // folder where to save
-                            )
+                        },
+                        contentWindowInsets = WindowInsets(0.dp)
+                    ) { paddingValues ->
+                        AnimatedNavHost(
+                            navController = navController,
+                            startDestination = Route.HOME,
+                            modifier = Modifier.padding(paddingValues)
                         ) {
-                            CreateSudokuScreen(
-                                navigateBack = { navController.popBackStack() },
-                                hiltViewModel()
-                            )
-                        }
-                        animatedComposable(
-                            route = Route.SETTINGS,
-                            arguments = listOf(navArgument("fromGame") {
-                                defaultValue = false
-                                type = NavType.BoolType
-                            })
-                        ) {
-                            SettingsScreen(
-                                navigateBack = { navController.popBackStack() },
-                                hiltViewModel()
-                            )
-                        }
+                            animatedComposable(Route.HOME) {
+                                HomeScreen(
+                                    navigatePlayGame = {
+                                        navController.navigate("game/${it.first}/${it.second}")
+                                    },
+                                    hiltViewModel()
+                                )
+                            }
 
-                        animatedComposable(
-                            route = Route.GAME,
-                            arguments = listOf(
-                                navArgument(name = "uid") { type = NavType.LongType },
-                                navArgument(name = "saved") {
-                                    type = NavType.BoolType
+                            animatedComposable(Route.MORE) {
+                                MoreScreen(
+                                    navigateSettings = { navController.navigate("settings/?fromGame=false") },
+                                    navigateLearn = { navController.navigate(Route.LEARN) },
+                                    navigateAbout = { navController.navigate(Route.ABOUT) },
+                                    navigateImport = { navController.navigate(Route.FOLDERS) }
+                                )
+                            }
+
+                            animatedComposable(Route.ABOUT) {
+                                AboutScreen(
+                                    navigateBack = { navController.popBackStack() },
+                                    navigateOpenSourceLicenses = { navController.navigate(Route.OPEN_SOURCE_LICENSES) }
+                                )
+                            }
+
+                            animatedComposable(Route.WELCOME_SCREEN) {
+                                WelcomeScreen(
+                                    navigateToGame = {
+                                        navController.popBackStack()
+                                        navController.navigate(Route.HOME)
+                                    },
+                                    hiltViewModel()
+                                )
+                            }
+
+                            animatedComposable(Route.STATISTICS) {
+                                StatisticsScreen(
+                                    navigateHistory = { navController.navigate(Route.HISTORY) },
+                                    hiltViewModel()
+                                )
+                            }
+
+                            animatedComposable(Route.HISTORY) {
+                                GamesHistoryScreen(
+                                    navigateBack = { navController.popBackStack() },
+                                    navigateSavedGame = { uid ->
+                                        navController.navigate(
+                                            "saved_game/${uid}"
+                                        )
+                                    },
+                                    hiltViewModel()
+                                )
+                            }
+
+                            animatedComposable(Route.LEARN) {
+                                LearnScreen { navController.popBackStack() }
+                            }
+
+                            animatedComposable(Route.OPEN_SOURCE_LICENSES) {
+                                AboutLibrariesScreen { navController.popBackStack() }
+                            }
+
+                            animatedComposable(
+                                route = "create_edit_sudoku/{game_uid}/{folder_uid}",
+                                arguments = listOf(
+                                    navArgument("game_uid") {
+                                        type = NavType.LongType
+                                    }, // used for editing
+                                    navArgument("folder_uid") {
+                                        type = NavType.LongType
+                                    } // folder where to save
+                                )
+                            ) {
+                                CreateSudokuScreen(
+                                    navigateBack = { navController.popBackStack() },
+                                    hiltViewModel()
+                                )
+                            }
+                            animatedComposable(
+                                route = Route.SETTINGS,
+                                arguments = listOf(navArgument("fromGame") {
                                     defaultValue = false
-                                }
-                            )
-                        ) {
-                            GameScreen(
-                                navigateBack = { navController.popBackStack() },
-                                navigateSettings = {
-                                    navController.navigate("settings/?fromGame=true")
-                                },
-                                hiltViewModel()
-                            )
-                        }
+                                    type = NavType.BoolType
+                                })
+                            ) {
+                                SettingsScreen(
+                                    navigateBack = { navController.popBackStack() },
+                                    hiltViewModel(),
+                                    navigateBoardSettings = { navController.navigate("settings_board_theme") }
+                                )
+                            }
 
-                        animatedComposable(
-                            route = Route.SAVED_GAME,
-                            arguments = listOf(navArgument("uid") { type = NavType.LongType })
-                        ) {
-                            SavedGameScreen(
-                                navigateBack = { navController.popBackStack() },
-                                navigatePlayGame = { uid ->
-                                    navController.navigate(
-                                        "game/${uid}/${true}"
-                                    ) {
-                                        popUpTo(Route.HISTORY)
+                            animatedComposable(
+                                route = Route.GAME,
+                                arguments = listOf(
+                                    navArgument(name = "uid") { type = NavType.LongType },
+                                    navArgument(name = "saved") {
+                                        type = NavType.BoolType
+                                        defaultValue = false
                                     }
-                                },
-                                navigateToFolder = { uid ->
-                                    navController.navigate("explore_folder/$uid") {
-                                        popUpTo("history")
+                                )
+                            ) {
+                                GameScreen(
+                                    navigateBack = { navController.popBackStack() },
+                                    navigateSettings = {
+                                        navController.navigate("settings/?fromGame=true")
+                                    },
+                                    hiltViewModel()
+                                )
+                            }
+
+                            animatedComposable(
+                                route = Route.SAVED_GAME,
+                                arguments = listOf(navArgument("uid") { type = NavType.LongType })
+                            ) {
+                                SavedGameScreen(
+                                    navigateBack = { navController.popBackStack() },
+                                    navigatePlayGame = { uid ->
+                                        navController.navigate(
+                                            "game/${uid}/${true}"
+                                        ) {
+                                            popUpTo(Route.HISTORY)
+                                        }
+                                    },
+                                    navigateToFolder = { uid ->
+                                        navController.navigate("explore_folder/$uid") {
+                                            popUpTo("history")
+                                        }
+                                    },
+                                    hiltViewModel()
+                                )
+                            }
+
+                            animatedComposable(Route.FOLDERS) {
+                                FoldersScreen(
+                                    viewModel = hiltViewModel(),
+                                    navigateBack = { navController.popBackStack() },
+                                    navigateExploreFolder = { uid ->
+                                        navController.navigate("explore_folder/$uid")
+                                    },
+                                    navigateImportSudokuFile = { uri ->
+                                        navController.navigate("import_sudoku_file?$uri?-1")
+                                    },
+                                    navigateViewSavedGame = { uid ->
+                                        navController.navigate("saved_game/${uid}")
                                     }
-                                },
-                                hiltViewModel()
-                            )
-                        }
+                                )
+                            }
 
-                        animatedComposable(Route.FOLDERS) {
-                            FoldersScreen(
-                                viewModel = hiltViewModel(),
-                                navigateBack = { navController.popBackStack() },
-                                navigateExploreFolder = { uid ->
-                                    navController.navigate("explore_folder/$uid")
-                                },
-                                navigateImportSudokuFile = { uri ->
-                                    navController.navigate("import_sudoku_file?$uri?-1")
-                                },
-                                navigateViewSavedGame = { uid ->
-                                    navController.navigate("saved_game/${uid}")
-                                }
-                            )
-                        }
+                            animatedComposable(
+                                route = "import_sudoku_file?{uri}?{folder_uid}",
+                                arguments = listOf(
+                                    navArgument("uri") { type = NavType.StringType },
+                                    navArgument("folder_uid") { type = NavType.LongType }
+                                )
+                            ) {
+                                ImportFromFileScreen(
+                                    viewModel = hiltViewModel(),
+                                    navigateBack = {
+                                        val activity = context.findActivity()
+                                        activity?.intent?.data = null
 
-                        animatedComposable(
-                            route = "import_sudoku_file?{uri}?{folder_uid}",
-                            arguments = listOf(
-                                navArgument("uri") { type = NavType.StringType },
-                                navArgument("folder_uid") { type = NavType.LongType }
-                            )
-                        ) {
-                            ImportFromFileScreen(
-                                viewModel = hiltViewModel(),
-                                navigateBack = {
-                                    val activity = context.findActivity()
-                                    activity?.intent?.data = null
-
-                                    navController.navigateUp()
-                                }
-                            )
-                        }
-
-                        animatedComposable(
-                            route = "explore_folder/{uid}",
-                            arguments = listOf(navArgument("uid") { type = NavType.LongType })
-                        ) {
-                            ExploreFolderScreen(
-                                viewModel = hiltViewModel(),
-                                navigateBack = { navController.popBackStack() },
-                                navigatePlayGame = { args ->
-                                    navController.navigate(
-                                        "game/${args.first}/${args.second}"
-                                    ) {
-                                        popUpTo("explore_folder/${args.third}")
+                                        navController.navigateUp()
                                     }
-                                },
-                                navigateImportFromFile = { args ->
-                                    // First - uri. Second = folder uid
-                                    navController.navigate("import_sudoku_file?${args.first}?${args.second}")
-                                },
-                                navigateEditGame = { args ->
-                                    navController.navigate("create_edit_sudoku/${args.first}/${args.second}")
-                                },
-                                navigateCreateSudoku = { folderUid ->
-                                    navController.navigate("create_edit_sudoku/-1/$folderUid")
-                                }
-                            )
-                        }
+                                )
+                            }
 
-                        animatedComposable(
-                            route = "import_sudoku_file_deeplink",
-                            deepLinks = listOf(
-                                navDeepLink {
-                                    uriPattern = "content://"
-                                    mimeType = "*/*"
-                                    action = Intent.ACTION_VIEW
-                                }
-                            )
-                        ) {
-                            val activity = context.findActivity()
-                            if (activity != null) {
-                                val intentData = activity.intent.data
-                                if (intentData != null) {
-                                    navController.navigate("import_sudoku_file?${intentData}?-1")
-                                }
-                                LaunchedEffect(intentData) {
-                                    if (activity.intent.data == null) {
-                                        activity.finish()
+                            animatedComposable(
+                                route = "explore_folder/{uid}",
+                                arguments = listOf(navArgument("uid") { type = NavType.LongType })
+                            ) {
+                                ExploreFolderScreen(
+                                    viewModel = hiltViewModel(),
+                                    navigateBack = { navController.popBackStack() },
+                                    navigatePlayGame = { args ->
+                                        navController.navigate(
+                                            "game/${args.first}/${args.second}"
+                                        ) {
+                                            popUpTo("explore_folder/${args.third}")
+                                        }
+                                    },
+                                    navigateImportFromFile = { args ->
+                                        // First - uri. Second = folder uid
+                                        navController.navigate("import_sudoku_file?${args.first}?${args.second}")
+                                    },
+                                    navigateEditGame = { args ->
+                                        navController.navigate("create_edit_sudoku/${args.first}/${args.second}")
+                                    },
+                                    navigateCreateSudoku = { folderUid ->
+                                        navController.navigate("create_edit_sudoku/-1/$folderUid")
+                                    }
+                                )
+                            }
+
+                            animatedComposable(
+                                route = "import_sudoku_file_deeplink",
+                                deepLinks = listOf(
+                                    navDeepLink {
+                                        uriPattern = "content://"
+                                        mimeType = "*/*"
+                                        action = Intent.ACTION_VIEW
+                                    }
+                                )
+                            ) {
+                                val activity = context.findActivity()
+                                if (activity != null) {
+                                    val intentData = activity.intent.data
+                                    if (intentData != null) {
+                                        navController.navigate("import_sudoku_file?${intentData}?-1")
+                                    }
+                                    LaunchedEffect(intentData) {
+                                        if (activity.intent.data == null) {
+                                            activity.finish()
+                                        }
                                     }
                                 }
+                            }
+
+                            animatedComposable(Route.SETTINGS_BOARD_THEME) {
+                                SettingsBoardTheme(
+                                    viewModel = hiltViewModel(),
+                                    navigateBack = { navController.popBackStack() }
+                                )
                             }
                         }
                     }
@@ -420,4 +465,5 @@ class MainActivityViewModel
     val amoledBlack = themeSettingsManager.amoledBlack
     val firstLaunch = appSettingsManager.firstLaunch
     val currentTheme = themeSettingsManager.currentTheme
+    val monetSudokuBoard = themeSettingsManager.monetSudokuBoard
 }

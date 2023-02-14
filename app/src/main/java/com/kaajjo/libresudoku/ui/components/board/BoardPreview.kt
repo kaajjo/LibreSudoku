@@ -3,10 +3,18 @@ package com.kaajjo.libresudoku.ui.components.board
 import android.graphics.Paint
 import android.graphics.Rect
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -20,7 +28,10 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kaajjo.libresudoku.core.Cell
+import com.kaajjo.libresudoku.ui.theme.BoardColors
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.kaajjo.libresudoku.ui.theme.SudokuBoardColors
+import com.kaajjo.libresudoku.ui.theme.SudokuBoardColorsImpl
 import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -37,7 +48,8 @@ fun BoardPreview(
         9 -> 11.sp
         12 -> 9.sp
         else -> 22.sp
-    }
+    },
+    boardColors: SudokuBoardColors
 ) {
     BoxWithConstraints(
         modifier = modifier
@@ -48,7 +60,9 @@ fun BoardPreview(
         val maxWidth = constraints.maxWidth.toFloat()
 
         var cellSize by remember { mutableStateOf(maxWidth / size.toFloat()) }
-        val foregroundColor = MaterialTheme.colorScheme.onSurface
+        val foregroundColor = boardColors.altForegroundColor
+        val thickLineColor = boardColors.thickLineColor
+        val thinLineColor = boardColors.thinLineColor
 
         var vertThick by remember { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
         var horThick by remember { mutableStateOf(ceil(sqrt(size.toFloat())).toInt()) }
@@ -78,7 +92,7 @@ fun BoardPreview(
                 .fillMaxSize()
         ) {
             drawRoundRect(
-                color = foregroundColor,
+                color = thickLineColor,
                 topLeft = Offset.Zero,
                 size = Size(maxWidth, maxWidth),
                 cornerRadius = CornerRadius(10f, 10f),
@@ -88,11 +102,7 @@ fun BoardPreview(
             for (i in 1 until size) {
                 val isThickLine = i % horThick == 0
                 drawLine(
-                    color = if (isThickLine) {
-                        foregroundColor.copy(0.9f)
-                    } else {
-                        foregroundColor.copy(0.6f)
-                    },
+                    color = if (isThickLine) thickLineColor else thinLineColor,
                     start = Offset(cellSize * i.toFloat(), 0f),
                     end = Offset(cellSize * i.toFloat(), maxWidth),
                     strokeWidth = if (isThickLine) thickLineWidth else thinLineWidth
@@ -101,11 +111,7 @@ fun BoardPreview(
             for (i in 1 until size) {
                 val isThickLine = i % vertThick == 0
                 drawLine(
-                    color = if (isThickLine) {
-                        foregroundColor.copy(0.9f)
-                    } else {
-                        foregroundColor.copy(0.6f)
-                    },
+                    color = if (isThickLine) thickLineColor else thinLineColor,
                     start = Offset(0f, cellSize * i.toFloat()),
                     end = Offset(maxWidth, cellSize * i.toFloat()),
                     strokeWidth = if (isThickLine) thickLineWidth else thinLineWidth
@@ -154,7 +160,16 @@ private fun BoardPreviewPreview() {
     LibreSudokuTheme {
         Surface {
             BoardPreview(
-                boardString = "000010000000040000000000000700000000000900000000680000000000000005000000000000000"
+                boardString = "0000100000040000000000000700000000000900000000680000000000000005000000000000000",
+                boardColors =  SudokuBoardColorsImpl(
+                    foregroundColor = BoardColors.foregroundColor,
+                    notesColor = BoardColors.notesColor,
+                    altForegroundColor = BoardColors.altForegroundColor,
+                    errorColor = BoardColors.errorColor,
+                    highlightColor = BoardColors.highlightColor,
+                    thickLineColor = BoardColors.thickLineColor,
+                    thinLineColor = BoardColors.thinLineColor
+                )
             )
         }
     }

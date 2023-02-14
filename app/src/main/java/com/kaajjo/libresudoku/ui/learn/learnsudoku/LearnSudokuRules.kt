@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.ui.components.board.Board
@@ -147,6 +148,7 @@ fun LearnSudokuRules(
                 size = 9,
                 selectedCell = selectedCell,
                 onClick = { selectedCell = it },
+                boardColors = LocalBoardColors.current
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(stringResource(R.string.sudoku_rules_mistakes))
@@ -185,6 +187,7 @@ fun LearnSudokuRules(
                 errorsHighlight = highlightError,
                 selectedCell = secondSelectedCell,
                 onClick = { secondSelectedCell = it },
+                boardColors = LocalBoardColors.current
             )
             Text(stringResource(R.string.sudoku_rules_mistakes_explanation))
         }

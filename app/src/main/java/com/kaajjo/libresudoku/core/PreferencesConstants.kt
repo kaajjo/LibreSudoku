@@ -28,5 +28,6 @@ class PreferencesConstants {
         const val DEFAULT_DARK_THEME = 0
         const val DEFAULT_AMOLED_BLACK = false
         const val DEFAULT_SELECTED_THEME = GREEN_THEME_KEY
+        const val DEFAULT_MONET_SUDOKU_BOARD = true
     }
 }

@@ -2,11 +2,17 @@ package com.kaajjo.libresudoku.ui.learn.learnsudoku
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
@@ -117,7 +123,8 @@ fun LearnHiddenPairs(
                 notes = notes,
                 cellsToHighlight = if (step < stepsCell.size) stepsCell[step] else null,
                 onClick = { },
-                selectedCell = Cell(-1, -1)
+                selectedCell = Cell(-1, -1),
+                boardColors = LocalBoardColors.current
             )
             TutorialBottomContent(
                 steps = steps,

@@ -85,6 +85,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
@@ -430,7 +431,8 @@ fun GameInFolderWidget(
                     ) {
                         BoardPreview(
                             size = sqrt(board.length.toFloat()).toInt(),
-                            boardString = board
+                            boardString = board,
+                            boardColors = LocalBoardColors.current
                         )
                     }
                     Column(

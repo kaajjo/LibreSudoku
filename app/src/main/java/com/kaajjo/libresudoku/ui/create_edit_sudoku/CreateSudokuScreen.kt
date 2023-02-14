@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
@@ -167,7 +168,8 @@ fun CreateSudokuScreen(
                 onClick = { cell ->
                     viewModel.processInput(cell = cell)
                 },
-                identicalNumbersHighlight = highlightIdentical
+                identicalNumbersHighlight = highlightIdentical,
+                boardColors = LocalBoardColors.current
             )
             DefaultGameKeyboard(
                 size = viewModel.gameType.size,

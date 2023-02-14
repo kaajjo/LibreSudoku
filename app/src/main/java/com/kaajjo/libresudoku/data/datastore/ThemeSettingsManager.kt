@@ -34,6 +34,9 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
     // current app theme
     private val currentThemeKey = stringPreferencesKey("current_theme")
 
+    // colorful sudoku board with dynamic theme colors
+    private val monetSudokuBoardKey = booleanPreferencesKey("monet_sudoku_board")
+
     suspend fun setDynamicColors(enabled: Boolean) {
         dataStore.edit { settings ->
             settings[dynamicColorsKey] = enabled
@@ -80,5 +83,15 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
 
     val currentTheme = dataStore.data.map { preferences ->
         preferences[currentThemeKey] ?: PreferencesConstants.DEFAULT_SELECTED_THEME
+    }
+
+    suspend fun setMonetSudokuBoard(enabled: Boolean) {
+        dataStore.edit { settings ->
+            settings[monetSudokuBoardKey] = enabled
+        }
+    }
+
+    val monetSudokuBoard = dataStore.data.map { preferences ->
+        preferences[monetSudokuBoardKey] ?: PreferencesConstants.DEFAULT_MONET_SUDOKU_BOARD
     }
 }

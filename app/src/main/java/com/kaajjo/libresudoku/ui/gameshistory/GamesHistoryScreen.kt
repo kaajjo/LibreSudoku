@@ -46,6 +46,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
@@ -298,7 +299,8 @@ fun SudokuHistoryItem(
             ) {
                 BoardPreview(
                     size = sqrt(board.length.toFloat()).toInt(),
-                    boardString = board
+                    boardString = board,
+                    boardColors = LocalBoardColors.current
                 )
             }
             Column(

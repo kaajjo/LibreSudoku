@@ -33,7 +33,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingsScreen(
     navigateBack: () -> Unit,
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    navigateBoardSettings: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -176,6 +177,12 @@ fun SettingsScreen(
                     onClick = {
                         viewModel.updateAmoledBlack(!amoledBlackState)
                     }
+                )
+
+                PreferenceRow(
+                    title = "Sudoku board theme",
+                    subtitle = "Customize look of the sudoku board",
+                    onClick = navigateBoardSettings
                 )
 
                 PreferenceRow(

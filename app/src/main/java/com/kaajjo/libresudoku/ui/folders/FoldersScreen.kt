@@ -75,6 +75,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
@@ -259,7 +260,8 @@ fun FoldersScreen(
                                             ) {
                                                 BoardPreview(
                                                     size = sqrt(it.currentBoard.length.toFloat()).toInt(),
-                                                    boardString = it.currentBoard
+                                                    boardString = it.currentBoard,
+                                                    boardColors = LocalBoardColors.current
                                                 )
                                             }
                                         }

@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
@@ -151,7 +152,8 @@ fun SavedGameScreen(
                                 modifier = boardModifier,
                                 mainTextSize = fontSizeValue,
                                 selectedCell = Cell(-1, -1),
-                                onClick = { }
+                                onClick = { },
+                                boardColors = LocalBoardColors.current
                             )
 
                             1 -> Board(
@@ -159,7 +161,8 @@ fun SavedGameScreen(
                                 modifier = boardModifier,
                                 mainTextSize = fontSizeValue,
                                 selectedCell = Cell(-1, -1),
-                                onClick = { }
+                                onClick = { },
+                                boardColors = LocalBoardColors.current
                             )
                         }
                     }

@@ -6,17 +6,29 @@ import android.util.TypedValue
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -27,7 +39,10 @@ import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.SudokuParser
+import com.kaajjo.libresudoku.ui.theme.BoardColors
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.kaajjo.libresudoku.ui.theme.SudokuBoardColors
+import com.kaajjo.libresudoku.ui.theme.SudokuBoardColorsImpl
 import com.kaajjo.libresudoku.ui.util.LightDarkPreview
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -61,7 +76,8 @@ fun Board(
     questions: Boolean = false,
     renderNotes: Boolean = true,
     cellsToHighlight: List<Cell>? = null,
-    zoomable: Boolean = false
+    zoomable: Boolean = false,
+    boardColors: SudokuBoardColors
 ) {
     BoxWithConstraints(
         modifier = modifier
@@ -78,14 +94,16 @@ fun Board(
         // div for note in one column in cell
         var cellSizeDivHeight by remember { mutableStateOf(cellSize / floor(sqrt(size.toFloat()))) }
 
-        val foregroundColor = MaterialTheme.colorScheme.onSurface
-        val thickLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.65f)
-        val thinLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.4f)
+        val errorColor = boardColors.errorColor
+        val foregroundColor = boardColors.foregroundColor
+        val thickLineColor = boardColors.thickLineColor
+        val thinLineColor = boardColors.thinLineColor
         // locked numbers
-        val altForegroundColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f)
+        val altForegroundColor = boardColors.altForegroundColor
+        val notesColor = boardColors.notesColor
 
         // highlight (cells)
-        val highlightColor = MaterialTheme.colorScheme.outline
+        val highlightColor = boardColors.highlightColor
 
         var vertThick by remember { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
         var horThick by remember { mutableStateOf(ceil(sqrt(size.toFloat())).toInt()) }
@@ -119,7 +137,7 @@ fun Board(
         var errorTextPaint by remember {
             mutableStateOf(
                 Paint().apply {
-                    color = Color(230, 67, 83).toArgb()
+                    color = errorColor.toArgb()
                     isAntiAlias = true
                     textSize = fontSizePx
                 }
@@ -140,7 +158,7 @@ fun Board(
         var notePaint by remember {
             mutableStateOf(
                 Paint().apply {
-                    color = foregroundColor.toArgb()
+                    color = notesColor.toArgb()
                     isAntiAlias = true
                     textSize = noteSizePx
                 }
@@ -148,7 +166,7 @@ fun Board(
         }
 
         val context = LocalContext.current
-        LaunchedEffect(mainTextSize, noteTextSize) {
+        LaunchedEffect(mainTextSize, noteTextSize, boardColors) {
             fontSizePx = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP,
                 mainTextSize.value,
@@ -165,7 +183,7 @@ fun Board(
                 textSize = fontSizePx
             }
             notePaint = Paint().apply {
-                color = foregroundColor.toArgb()
+                color = notesColor.toArgb()
                 isAntiAlias = true
                 textSize = noteSizePx
             }
@@ -178,7 +196,6 @@ fun Board(
                 color = altForegroundColor.toArgb()
                 isAntiAlias = true
                 textSize = fontSizePx
-                //typeface = Typeface.create(Typeface.DEFAULT, 700, false)
             }
         }
 
@@ -250,7 +267,7 @@ fun Board(
             if (selectedCell.row >= 0 && selectedCell.col >= 0) {
                 // current cell
                 drawRect(
-                    color = highlightColor.copy(alpha = 0.3f),
+                    color = highlightColor.copy(alpha = 0.2f),
                     topLeft = Offset(
                         x = selectedCell.col * cellSize,
                         y = selectedCell.row * cellSize
@@ -281,9 +298,11 @@ fun Board(
             if (identicalNumbersHighlight) {
                 for (i in 0 until size) {
                     for (j in 0 until size) {
-                        if (board[i][j].value == selectedCell.value && board[i][j].value != 0) {
+                        if (board[i][j].value == selectedCell.value && board[i][j].value != 0 &&
+                            i != selectedCell.col && j != selectedCell.row
+                        ) {
                             drawRect(
-                                color = highlightColor.copy(alpha = 0.3f),
+                                color = highlightColor.copy(alpha = 0.2f),
                                 topLeft = Offset(
                                     x = board[i][j].col * cellSize,
                                     y = board[i][j].row * cellSize
@@ -296,7 +315,7 @@ fun Board(
             }
             cellsToHighlight?.forEach {
                 drawRect(
-                    color = highlightColor.copy(alpha = 0.5f),
+                    color = highlightColor,
                     topLeft = Offset(
                         x = it.col * cellSize,
                         y = it.row * cellSize
@@ -453,7 +472,16 @@ private fun BoardPreviewLight() {
                 board = board,
                 notes = notes,
                 selectedCell = Cell(-1, -1),
-                onClick = { }
+                onClick = { },
+                boardColors = SudokuBoardColorsImpl(
+                    foregroundColor = BoardColors.foregroundColor,
+                    notesColor = BoardColors.notesColor,
+                    altForegroundColor = BoardColors.altForegroundColor,
+                    errorColor = BoardColors.errorColor,
+                    highlightColor = BoardColors.highlightColor,
+                    thickLineColor = BoardColors.thickLineColor,
+                    thinLineColor = BoardColors.thinLineColor
+                )
             )
         }
     }
