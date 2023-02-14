@@ -447,7 +447,7 @@ fun FoldersScreen(
                 Spacer(modifier = Modifier.height(12.dp))
             }
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                actions.forEachIndexed() { index, action ->
+                actions.forEachIndexed { index, action ->
                     Row(
                         modifier = Modifier
                             .clip(MaterialTheme.shapes.medium)

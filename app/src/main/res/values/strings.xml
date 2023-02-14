@@ -299,4 +299,5 @@
     <string name="pref_boardtheme_accent_subtitle">Make your sudoku board more colorful</string>
     <string name="pref_board_theme_title">Sudoku board theme</string>
     <string name="pref_board_theme_subtitle">Customize look of the sudoku board</string>
+    <string name="board_theme_title">Board theme</string>
 </resources>

@@ -49,7 +49,7 @@ fun SettingsBoardTheme(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
-                title = { Text("Board theme") },
+                title = { Text(stringResource(R.string.board_theme_title)) },
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
@@ -71,7 +71,7 @@ fun SettingsBoardTheme(
             BoardPreviewTheme(Modifier.padding(horizontal = 12.dp, vertical = 16.dp))
 
             val monetSudokuBoard by viewModel.monetSudokuBoard.collectAsStateWithLifecycle(
-                initialValue = PreferencesConstants.DEFAULT_MONET_SUDOKU_BOARD
+                PreferencesConstants.DEFAULT_MONET_SUDOKU_BOARD
             )
             PreferenceRowSwitch(
                 title = stringResource(R.string.pref_boardtheme_accent),

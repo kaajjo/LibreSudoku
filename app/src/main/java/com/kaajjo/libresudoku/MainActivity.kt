@@ -13,7 +13,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -143,7 +142,7 @@ class MainActivity : AppCompatActivity() {
                             foregroundColor = MaterialTheme.colorScheme.onSurface,
                             notesColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
                             altForegroundColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
-                            errorColor = Color(230, 67, 83),
+                            errorColor = BoardColors.errorColor,
                             highlightColor = MaterialTheme.colorScheme.outline,
                             thickLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.65f),
                             thinLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.4f)
