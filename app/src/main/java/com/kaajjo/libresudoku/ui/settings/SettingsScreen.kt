@@ -292,14 +292,6 @@ fun SettingsScreen(
                     onClick = { viewModel.updateRemainingUse(!remainingUse) }
                 )
 
-                val positionLines by viewModel.positionLines.collectAsState(initial = PreferencesConstants.DEFAULT_POSITION_LINES)
-                PreferenceRowSwitch(
-                    title = stringResource(R.string.pref_position_lines),
-                    subtitle = stringResource(R.string.pref_position_lines_summ),
-                    checked = positionLines,
-                    onClick = { viewModel.updatePositionLines(!positionLines) }
-                )
-
                 val autoEraseNotes by viewModel.autoEraseNotes.collectAsState(initial = PreferencesConstants.DEFAULT_AUTO_ERASE_NOTES)
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_auto_erase_notes),

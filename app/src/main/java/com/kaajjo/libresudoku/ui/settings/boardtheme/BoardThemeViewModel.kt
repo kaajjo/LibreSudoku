@@ -12,7 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsBoardThemeViewModel @Inject constructor(
     private val themeSettingsManager: ThemeSettingsManager,
-    appSettingsManager: AppSettingsManager
+    private val appSettingsManager: AppSettingsManager
 ) : ViewModel() {
     val monetSudokuBoard = themeSettingsManager.monetSudokuBoard
     val positionLines = appSettingsManager.positionLines
@@ -21,6 +21,12 @@ class SettingsBoardThemeViewModel @Inject constructor(
     fun updateMonetSudokuBoardSetting(enabled: Boolean) {
         viewModelScope.launch {
             themeSettingsManager.setMonetSudokuBoard(enabled)
+        }
+    }
+
+    fun updatePositionLinesSetting(enabled: Boolean) {
+        viewModelScope.launch {
+            appSettingsManager.setPositionLines(enabled)
         }
     }
 }

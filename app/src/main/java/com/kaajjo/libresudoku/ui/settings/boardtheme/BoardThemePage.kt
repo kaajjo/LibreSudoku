@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.rounded.GridGoldenratio
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -88,6 +89,14 @@ fun SettingsBoardTheme(
                 onClick = {
                     viewModel.updateMonetSudokuBoardSetting(!monetSudokuBoard)
                 }
+            )
+
+            PreferenceRowSwitch(
+                title = stringResource(R.string.pref_position_lines),
+                subtitle = stringResource(R.string.pref_position_lines_summ),
+                checked = positionLines,
+                painter = rememberVectorPainter(Icons.Rounded.GridGoldenratio),
+                onClick = { viewModel.updatePositionLinesSetting(!positionLines) }
             )
         }
     }

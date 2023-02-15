@@ -20,7 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.xmlpull.v1.XmlPullParser
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -106,13 +106,6 @@ class SettingsViewModel
     fun updateRemainingUse(enabled: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             settingsDataManager.setRemainingUse(enabled)
-        }
-    }
-
-    val positionLines = settingsDataManager.positionLines
-    fun updatePositionLines(enabled: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            settingsDataManager.setPositionLines(enabled)
         }
     }
 
