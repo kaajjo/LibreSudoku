@@ -24,6 +24,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
@@ -298,9 +299,7 @@ fun Board(
             if (identicalNumbersHighlight) {
                 for (i in 0 until size) {
                     for (j in 0 until size) {
-                        if (board[i][j].value == selectedCell.value && board[i][j].value != 0 &&
-                            i != selectedCell.col && j != selectedCell.row
-                        ) {
+                        if (board[i][j].value == selectedCell.value && board[i][j].value != 0) {
                             drawRect(
                                 color = highlightColor.copy(alpha = 0.2f),
                                 topLeft = Offset(
@@ -324,13 +323,11 @@ fun Board(
                 )
             }
 
-            // frame field
-            drawRoundRect(
-                color = thickLineColor,
-                topLeft = Offset.Zero,
-                size = Size(maxWidth, maxWidth),
-                cornerRadius = CornerRadius(15f, 15f),
-                style = Stroke(width = thickLineWidth)
+            drawBoardFrame(
+                thickLineColor = thickLineColor,
+                thickLineWidth = thickLineWidth,
+                maxWidth = maxWidth,
+                cornerRadius = CornerRadius(15f, 15f)
             )
 
             // horizontal line
@@ -356,59 +353,111 @@ fun Board(
                 }
             }
 
+            drawNumbers(
+                size = size,
+                board = board,
+                highlightErrors = errorsHighlight,
+                errorTextPaint = errorTextPaint,
+                lockedTextPaint = lockedTextPaint,
+                textPaint = textPaint,
+                questions = questions,
+                cellSize = cellSize
+            )
 
-            // numbers
-            drawIntoCanvas { canvas ->
-                for (i in 0 until size) {
-                    for (j in 0 until size) {
-                        if (board[i][j].value != 0) {
-                            val paint = when {
-                                board[i][j].error && errorsHighlight -> errorTextPaint
-                                board[i][j].locked -> lockedTextPaint
-                                else -> textPaint
-                            }
-
-                            val textToDraw =
-                                if (questions) "?" else board[i][j].value.toString(16).uppercase()
-                            val textBounds = Rect()
-                            textPaint.getTextBounds(textToDraw, 0, 1, textBounds)
-                            val textWidth = paint.measureText(textToDraw)
-
-                            canvas.nativeCanvas.drawText(
-                                textToDraw,
-                                board[i][j].col * cellSize + (cellSize - textWidth) / 2f,
-                                board[i][j].row * cellSize + (cellSize + textBounds.height()) / 2f,
-                                paint
-                            )
-                        }
-                    }
-                }
-            }
-
-            // notes
             if (!notes.isNullOrEmpty() && !questions && renderNotes) {
-                val noteBounds = Rect()
-                notePaint.getTextBounds("1", 0, 1, noteBounds)
+                drawNotes(
+                    size = size,
+                    paint = notePaint,
+                    notes = notes,
+                    cellSize = cellSize,
+                    cellSizeDivWidth = cellSizeDivWidth,
+                    cellSizeDivHeight = cellSizeDivHeight
+                )
+            }
+        }
+    }
+}
 
-                drawIntoCanvas { canvas ->
-                    notes.forEach { note ->
-                        val textToDraw = note.value.toString(16).uppercase()
-                        val noteTextMeasure = notePaint.measureText(textToDraw)
-                        canvas.nativeCanvas.drawText(
-                            textToDraw,
-                            note.col * cellSize + cellSizeDivWidth / 2f + (cellSizeDivWidth * getNoteRowNumber(
-                                note.value,
-                                size
-                            )) - noteTextMeasure / 2f,
-                            note.row * cellSize + cellSizeDivHeight / 2f + (cellSizeDivHeight * getNoteColumnNumber(
-                                note.value,
-                                size
-                            )) + noteBounds.height() / 2f,
-                            notePaint
-                        )
+private fun DrawScope.drawBoardFrame(
+    thickLineColor: Color,
+    thickLineWidth: Float,
+    maxWidth: Float,
+    cornerRadius: CornerRadius
+) {
+    drawRoundRect(
+        color = thickLineColor,
+        topLeft = Offset.Zero,
+        size = Size(maxWidth, maxWidth),
+        cornerRadius = cornerRadius,
+        style = Stroke(width = thickLineWidth)
+    )
+}
+
+private fun DrawScope.drawNumbers(
+    size: Int,
+    board: List<List<Cell>>,
+    highlightErrors: Boolean,
+    errorTextPaint: Paint,
+    lockedTextPaint: Paint,
+    textPaint: Paint,
+    questions: Boolean,
+    cellSize: Float
+) {
+    drawIntoCanvas { canvas ->
+        for (i in 0 until size) {
+            for (j in 0 until size) {
+                if (board[i][j].value != 0) {
+                    val paint = when {
+                        board[i][j].error && highlightErrors -> errorTextPaint
+                        board[i][j].locked -> lockedTextPaint
+                        else -> textPaint
                     }
+
+                    val textToDraw =
+                        if (questions) "?" else board[i][j].value.toString(16).uppercase()
+                    val textBounds = Rect()
+                    textPaint.getTextBounds(textToDraw, 0, 1, textBounds)
+                    val textWidth = paint.measureText(textToDraw)
+
+                    canvas.nativeCanvas.drawText(
+                        textToDraw,
+                        board[i][j].col * cellSize + (cellSize - textWidth) / 2f,
+                        board[i][j].row * cellSize + (cellSize + textBounds.height()) / 2f,
+                        paint
+                    )
                 }
             }
+        }
+    }
+}
+
+private fun DrawScope.drawNotes(
+    size: Int,
+    paint: Paint,
+    notes: List<Note>,
+    cellSize: Float,
+    cellSizeDivWidth: Float,
+    cellSizeDivHeight: Float
+) {
+    val noteBounds = Rect()
+    paint.getTextBounds("1", 0, 1, noteBounds)
+
+    drawIntoCanvas { canvas ->
+        notes.forEach { note ->
+            val textToDraw = note.value.toString(16).uppercase()
+            val noteTextMeasure = paint.measureText(textToDraw)
+            canvas.nativeCanvas.drawText(
+                textToDraw,
+                note.col * cellSize + cellSizeDivWidth / 2f + (cellSizeDivWidth * getNoteRowNumber(
+                    note.value,
+                    size
+                )) - noteTextMeasure / 2f,
+                note.row * cellSize + cellSizeDivHeight / 2f + (cellSizeDivHeight * getNoteColumnNumber(
+                    note.value,
+                    size
+                )) + noteBounds.height() / 2f,
+                paint
+            )
         }
     }
 }
