@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,7 +69,13 @@ fun SettingsBoardTheme(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            BoardPreviewTheme(Modifier.padding(horizontal = 12.dp, vertical = 16.dp))
+            val positionLines by viewModel.positionLines.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_POSITION_LINES)
+            val highlightMistakes by viewModel.highlightMistakes.collectAsState(initial = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES)
+            BoardPreviewTheme(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
+                positionLines = positionLines,
+                errosHighlight = highlightMistakes != 0
+            )
 
             val monetSudokuBoard by viewModel.monetSudokuBoard.collectAsStateWithLifecycle(
                 PreferencesConstants.DEFAULT_MONET_SUDOKU_BOARD
@@ -87,7 +94,11 @@ fun SettingsBoardTheme(
 }
 
 @Composable
-private fun BoardPreviewTheme(modifier: Modifier = Modifier) {
+private fun BoardPreviewTheme(
+    positionLines: Boolean,
+    errosHighlight: Boolean,
+    modifier: Modifier = Modifier
+) {
     val previewBoard = listOf(
         listOf(
             Cell(0, 0, 0, locked = true),
@@ -196,6 +207,8 @@ private fun BoardPreviewTheme(modifier: Modifier = Modifier) {
         size = 9,
         selectedCell = selectedCell,
         onClick = { cell -> selectedCell = if (selectedCell == cell) Cell(-1, -1, 0) else cell },
-        boardColors = LocalBoardColors.current
+        boardColors = LocalBoardColors.current,
+        positionLines = positionLines,
+        errorsHighlight = errosHighlight
     )
 }

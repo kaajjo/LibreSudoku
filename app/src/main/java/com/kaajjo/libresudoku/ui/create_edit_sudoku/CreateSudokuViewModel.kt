@@ -69,6 +69,8 @@ class CreateSudokuViewModel @Inject constructor(
             initialValue = PreferencesConstants.DEFAULT_INPUT_METHOD
         )
 
+    val positionLines = appSettingsManager.positionLines
+
     val fontSize = appSettingsManager.fontSize
 
     var multipleSolutionsDialog by mutableStateOf(false)

@@ -159,6 +159,7 @@ fun CreateSudokuScreen(
                 fontSizeValue = viewModel.getFontSize(factor = fontSizeFactor)
             }
 
+            val positionLines by viewModel.positionLines.collectAsState(initial = PreferencesConstants.DEFAULT_POSITION_LINES)
             Board(
                 modifier = Modifier.padding(vertical = 12.dp),
                 size = viewModel.gameType.size,
@@ -169,7 +170,8 @@ fun CreateSudokuScreen(
                     viewModel.processInput(cell = cell)
                 },
                 identicalNumbersHighlight = highlightIdentical,
-                boardColors = LocalBoardColors.current
+                boardColors = LocalBoardColors.current,
+                positionLines = positionLines
             )
             DefaultGameKeyboard(
                 size = viewModel.gameType.size,
