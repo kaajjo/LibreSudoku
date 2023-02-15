@@ -271,7 +271,7 @@
     <string name="dialog_delete_folder_text">Folder with name %1$s will be deleted</string>
     <string name="help">Help</string>
     <string name="folders_help">Here you can manage your folder and import sudoku from file</string>
-    <string name="folder_import_supported_types">These file types are supported:\n.sdm (or .txt with the same structure)</string>
+    <string name="folder_import_supported_types">These file types are supported:\n.sdm (or .txt with the same structure)\n.opensudoku</string>
     <string name="import_from_file_fail">Failed to import</string>
     <string name="import_from_file_title">From file</string>
     <string name="import_saving">Saving</string>

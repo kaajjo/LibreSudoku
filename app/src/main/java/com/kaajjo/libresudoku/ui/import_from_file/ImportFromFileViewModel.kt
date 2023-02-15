@@ -1,7 +1,6 @@
 package com.kaajjo.libresudoku.ui.import_from_file
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,6 +10,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.utils.OpenSudokuParser
+import com.kaajjo.libresudoku.core.utils.SdmParser
 import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.domain.repository.BoardRepository
@@ -52,22 +53,21 @@ class ImportFromFileViewModel @Inject constructor(
 
     fun readData(inputStream: InputStreamReader) {
         viewModelScope.launch {
-            val toImport = mutableListOf<String>()
+            var toImport = listOf<String>()
             try {
                 BufferedReader(inputStream).use { bufferRead ->
-                    var line: String? = ""
-                    while (line != null && !_importingError.value) {
-                        line = bufferRead.readLine()
-                        if (line != null) {
-                            line = line.trim()
-                            if (line.length == 81) {
-                                line = line.replace(".", "0")
-                                toImport.add(line)
-                            } else {
-                                Log.d("importReadData", "This line is not supported: $line")
-                                _importingError.emit(true)
-                            }
-                        }
+                    val contentText = bufferRead.readText()
+
+                    if (contentText.contains("<opensudoku")) {
+                        val openSudokuParser = OpenSudokuParser()
+                        val result = openSudokuParser.textToStringBoards(contentText)
+                        toImport = result.second
+                        _importingError.emit(!result.first)
+                    } else {
+                        val sdmParser = SdmParser()
+                        val result = sdmParser.textToStringBoards(contentText)
+                        toImport = result.second
+                        _importingError.emit(!result.first)
                     }
                 }
             } catch (e: Exception) {
