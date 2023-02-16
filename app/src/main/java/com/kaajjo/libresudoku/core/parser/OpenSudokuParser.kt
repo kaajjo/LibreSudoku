@@ -1,4 +1,4 @@
-package com.kaajjo.libresudoku.core.utils
+package com.kaajjo.libresudoku.core.parser
 
 import android.util.Log
 import org.xmlpull.v1.XmlPullParser
@@ -12,39 +12,39 @@ import java.io.IOException
 /**
  * .opensudoku - format from the OpenSudoku app. Uses XML schema
  */
-class OpenSudokuParser {
+class OpenSudokuParser : FileImportParser {
     private val tag = "OpenSudokuParser"
 
     /**
-     * @param text .opensudoku file content
+     * @param content .opensudoku file content
      * @return Pair with: First - parsing success. Second - strings of parsed boards
      */
-    fun textToStringBoards(text: String): Pair<Boolean, List<String>> {
+    override fun toBoards(content: String): Pair<Boolean, List<String>> {
         var result: Pair<Boolean, List<String>> = Pair(false, emptyList())
 
         val factory: XmlPullParserFactory
-        val xpp: XmlPullParser
+        val parser: XmlPullParser
         try {
             factory = XmlPullParserFactory.newInstance()
             factory.isNamespaceAware = false
-            xpp = factory.newPullParser()
-            xpp.setInput(text.reader())
-            var eventType = xpp.eventType
+            parser = factory.newPullParser()
+            parser.setInput(content.reader())
+            var eventType = parser.eventType
             var rootTag: String
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 if (eventType == XmlPullParser.START_TAG) {
-                    rootTag = xpp.name
+                    rootTag = parser.name
                     if (rootTag == "opensudoku") {
-                        val version = xpp.getAttributeValue(null, "version")
+                        val version = parser.getAttributeValue(null, "version")
                         if (version == null) {
                             // no version provided, assume that it's version 1
-                            result = importV1(xpp)
+                            result = importV1(parser)
                         } else if (version == "2") {
-                            result = importV2(xpp)
+                            result = importV2(parser)
                         }
                     }
                 }
-                eventType = xpp.next()
+                eventType = parser.next()
             }
         } catch (e: XmlPullParserException) {
             e.printStackTrace()

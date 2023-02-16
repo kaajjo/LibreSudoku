@@ -8,10 +8,11 @@ import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kaajjo.libresudoku.core.parser.GsudokuParser
+import com.kaajjo.libresudoku.core.parser.OpenSudokuParser
+import com.kaajjo.libresudoku.core.parser.SdmParser
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
-import com.kaajjo.libresudoku.core.utils.OpenSudokuParser
-import com.kaajjo.libresudoku.core.utils.SdmParser
 import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.domain.repository.BoardRepository
@@ -60,12 +61,17 @@ class ImportFromFileViewModel @Inject constructor(
 
                     if (contentText.contains("<opensudoku")) {
                         val openSudokuParser = OpenSudokuParser()
-                        val result = openSudokuParser.textToStringBoards(contentText)
+                        val result = openSudokuParser.toBoards(contentText)
+                        toImport = result.second
+                        _importingError.emit(!result.first)
+                    } else if (contentText.contains("<onegravitysudoku")) {
+                        val gsudokuParser = GsudokuParser()
+                        val result = gsudokuParser.toBoards(contentText)
                         toImport = result.second
                         _importingError.emit(!result.first)
                     } else {
                         val sdmParser = SdmParser()
-                        val result = sdmParser.textToStringBoards(contentText)
+                        val result = sdmParser.toBoards(contentText)
                         toImport = result.second
                         _importingError.emit(!result.first)
                     }

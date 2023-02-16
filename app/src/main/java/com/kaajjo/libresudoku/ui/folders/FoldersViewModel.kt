@@ -8,7 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaajjo.libresudoku.core.utils.SdmParser
+import com.kaajjo.libresudoku.core.parser.SdmParser
 import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.domain.usecase.board.GetGamesInFolderUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.CountPuzzlesFolderUseCase

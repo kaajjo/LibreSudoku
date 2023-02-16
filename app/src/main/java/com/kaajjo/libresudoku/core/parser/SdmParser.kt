@@ -1,4 +1,4 @@
-package com.kaajjo.libresudoku.core.utils
+package com.kaajjo.libresudoku.core.parser
 
 import android.util.Log
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
@@ -9,23 +9,30 @@ import com.kaajjo.libresudoku.data.database.model.SudokuBoard
  * Empty cells can be represented by a zero or a dot
  * Example: 000605000003020800045090270500000001062000540400000007098060450006040700000203000
  */
-class SdmParser {
+class SdmParser : FileImportParser {
     private val tag = "SDMParser"
 
-    fun textToStringBoards(text: String): Pair<Boolean, List<String>> {
+    /**
+     * @param content .sdm file content
+     * @return Pair with: First - parsing success. Second - strings of parsed boards
+     */
+    override fun toBoards(content: String): Pair<Boolean, List<String>> {
         val toImport = mutableListOf<String>()
-        if (text.isEmpty()) return Pair(false, toImport)
+        if (content.isEmpty()) return Pair(false, toImport)
 
-        text.lines().forEach {
-            val line = it.trim()
-            Log.d(tag, "Current line: $line")
-            if (line.length == 81) {
-                toImport.add(line.replace(".", "0"))
-            } else {
-                Log.i(tag, "This line was skipped: $line")
+        try {
+            content.lines().forEach {
+                val line = it.trim()
+                if (line.length == 81) {
+                    toImport.add(line.replace(".", "0"))
+                } else {
+                    Log.i(tag, "This line was skipped: $line")
+                }
             }
+        } catch (e: Exception) {
+            Log.e(tag, "Exception while parsing!")
+            e.printStackTrace()
         }
-        Log.d(tag, "About to return: ${toImport.size} boards")
 
         return Pair(true, toImport)
     }
