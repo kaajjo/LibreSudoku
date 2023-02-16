@@ -23,4 +23,5 @@ interface BoardRepository {
     suspend fun delete(board: SudokuBoard)
     suspend fun delete(boards: List<SudokuBoard>)
     suspend fun update(board: SudokuBoard)
+    suspend fun update(boards: List<SudokuBoard>)
 }

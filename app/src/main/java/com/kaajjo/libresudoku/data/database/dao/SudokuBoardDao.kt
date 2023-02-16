@@ -71,4 +71,7 @@ interface BoardDao {
 
     @Update
     suspend fun update(board: SudokuBoard)
+
+    @Update
+    suspend fun update(boards: List<SudokuBoard>)
 }

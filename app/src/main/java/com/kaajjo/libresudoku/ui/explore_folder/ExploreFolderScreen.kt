@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -41,6 +42,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.DriveFileMove
+import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.NoteAdd
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AddCircleOutline
@@ -54,6 +57,7 @@ import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
@@ -87,12 +91,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
+import com.kaajjo.libresudoku.ui.util.isScrolledToEnd
 import com.kaajjo.libresudoku.ui.util.isScrolledToStart
 import com.kaajjo.libresudoku.ui.util.isScrollingUp
 import kotlinx.coroutines.launch
@@ -115,10 +121,12 @@ fun ExploreFolderScreen(
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
 
+    var moveSelectedDialog by rememberSaveable { mutableStateOf(false) }
     var deleteBoardDialog by rememberSaveable { mutableStateOf(false) }
     // used for a delete dialog when deleting
     var deleteBoardDialogBoard: SudokuBoard? by remember { mutableStateOf(null) }
 
+    val folders by viewModel.folders.collectAsStateWithLifecycle(initialValue = emptyList())
     val folder by viewModel.folder.collectAsStateWithLifecycle(null)
     val games by viewModel.games.collectAsStateWithLifecycle(emptyMap())
 
@@ -154,6 +162,7 @@ fun ExploreFolderScreen(
                     SelectionTopAppbar(
                         title = { Text(viewModel.selectedBoardsList.size.toString()) },
                         onCloseClick = { viewModel.inSelectionMode = false },
+                        onClickMoveSelected = { moveSelectedDialog = true },
                         onClickDeleteSelected = { deleteBoardDialog = true },
                         onClickSelectAll = { viewModel.addAllToSelection(games.map { it.key }) }
                     )
@@ -315,7 +324,14 @@ fun ExploreFolderScreen(
                 }
             }
         )
+    } else if (moveSelectedDialog) {
+        MoveSudokuToFolderDialog(
+            availableFolders = folders.filter { it != folder },
+            onDismiss = { moveSelectedDialog = false },
+            onConfirmMove = { folderUid -> viewModel.moveBoards(folderUid) }
+        )
     }
+
 
     CustomModalBottomSheet(
         drawerState = viewModel.drawerState,
@@ -595,6 +611,7 @@ private fun DefaultTopAppBar(
 private fun SelectionTopAppbar(
     title: @Composable () -> Unit,
     onCloseClick: () -> Unit,
+    onClickMoveSelected: () -> Unit,
     onClickDeleteSelected: () -> Unit,
     onClickSelectAll: () -> Unit
 ) {
@@ -606,6 +623,12 @@ private fun SelectionTopAppbar(
             }
         },
         actions = {
+            IconButton(onClick = onClickMoveSelected) {
+                Icon(
+                    imageVector = Icons.Outlined.DriveFileMove,
+                    contentDescription = null
+                )
+            }
             IconButton(onClick = onClickDeleteSelected) {
                 Icon(
                     imageVector = Icons.Rounded.Delete,
@@ -622,5 +645,65 @@ private fun SelectionTopAppbar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp)
         )
+    )
+}
+
+@Composable
+private fun MoveSudokuToFolderDialog(
+    availableFolders: List<Folder>,
+    onDismiss: () -> Unit,
+    onConfirmMove: (Long) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AlertDialog(
+        modifier = modifier,
+        icon = { Icon(Icons.Outlined.DriveFileMove, contentDescription = null) },
+        title = { Text(stringResource(R.string.action_move_selected)) },
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(R.string.move_games_to_folder_subtitle),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Box {
+                    val lazyListState = rememberLazyListState()
+
+                    if (!lazyListState.isScrolledToStart()) Divider(Modifier.align(Alignment.TopCenter))
+                    if (!lazyListState.isScrolledToEnd()) Divider(Modifier.align(Alignment.BottomCenter))
+
+                    ScrollbarLazyColumn(state = lazyListState) {
+                        items(availableFolders) { folder ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(min = 48.dp)
+                                    .clip(MaterialTheme.shapes.small)
+                                    .clickable {
+                                        onConfirmMove(folder.uid)
+                                        onDismiss()
+                                    },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Folder,
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(horizontal = 12.dp)
+                                )
+                                Text(
+                                    text = folder.name,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
     )
 }

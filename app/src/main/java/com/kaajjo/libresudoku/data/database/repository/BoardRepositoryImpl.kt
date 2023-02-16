@@ -32,7 +32,8 @@ class BoardRepositoryImpl(
         boardDao.getInFolderWithSaved(folderUid)
 
     override fun getBoardsInFolder(uid: Long): List<SudokuBoard> = boardDao.getBoardsInFolder(uid)
-    override fun getBoardsInFolderFlow(uid: Long): Flow<List<SudokuBoard>> = boardDao.getBoardsInFolderFlow(uid)
+    override fun getBoardsInFolderFlow(uid: Long): Flow<List<SudokuBoard>> =
+        boardDao.getBoardsInFolderFlow(uid)
 
     override suspend fun get(uid: Long): SudokuBoard = boardDao.get(uid)
     override suspend fun insert(boards: List<SudokuBoard>) = boardDao.insert(boards)
@@ -40,4 +41,5 @@ class BoardRepositoryImpl(
     override suspend fun delete(board: SudokuBoard) = boardDao.delete(board)
     override suspend fun delete(boards: List<SudokuBoard>) = boardDao.delete(boards)
     override suspend fun update(board: SudokuBoard) = boardDao.update(board)
+    override suspend fun update(boards: List<SudokuBoard>) = boardDao.update(boards)
 }
