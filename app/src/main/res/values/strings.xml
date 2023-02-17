@@ -302,4 +302,6 @@
     <string name="board_theme_title">Board theme</string>
     <string name="action_move_selected">Move selected</string>
     <string name="move_games_to_folder_subtitle">Select the folder where you want to move selected games</string>
+    <string name="pref_cross_highlight_subtitle">Highlight some blocks on the board</string>
+    <string name="pref_cross_highlight">Cross highlight</string>
 </resources>

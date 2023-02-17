@@ -16,6 +16,7 @@ import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import com.kaajjo.libresudoku.domain.usecase.folder.GetFolderUseCase
@@ -36,6 +37,7 @@ class SavedGameViewModel
     private val savedGameRepository: SavedGameRepository,
     private val getFolderUseCase: GetFolderUseCase,
     appSettingsManager: AppSettingsManager,
+    themeSettingsManager: ThemeSettingsManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val boardUid = savedStateHandle.get<Long>("uid")
@@ -56,6 +58,8 @@ class SavedGameViewModel
 
     private val _gameProgressPercentage = MutableStateFlow(0)
     val gameProgressPercentage = _gameProgressPercentage.asStateFlow()
+
+    val crossHighlight = themeSettingsManager.boardCrossHighlight
 
     fun updateGameDetails() {
         viewModelScope.launch(Dispatchers.IO) {

@@ -92,13 +92,18 @@ fun SavedGameScreen(
                     .padding(innerPadding)
                     .fillMaxWidth()
             ) {
+                val crossHighlight by viewModel.crossHighlight.collectAsStateWithLifecycle(
+                    initialValue = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT
+                )
                 val fontSizeFactor by viewModel.fontSize.collectAsState(initial = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
                 var fontSizeValue by remember {
                     mutableStateOf(
                         viewModel.getFontSize(factor = fontSizeFactor)
                     )
                 }
-                LaunchedEffect(fontSizeFactor) { fontSizeValue = viewModel.getFontSize(fontSizeFactor) }
+                LaunchedEffect(fontSizeFactor) {
+                    fontSizeValue = viewModel.getFontSize(fontSizeFactor)
+                }
                 val pagerState = rememberPagerState()
                 val pages = listOf(
                     stringResource(R.string.saved_game_current),
@@ -153,7 +158,8 @@ fun SavedGameScreen(
                                 mainTextSize = fontSizeValue,
                                 selectedCell = Cell(-1, -1),
                                 onClick = { },
-                                boardColors = LocalBoardColors.current
+                                boardColors = LocalBoardColors.current,
+                                crossHighlight = crossHighlight
                             )
 
                             1 -> Board(
@@ -162,7 +168,8 @@ fun SavedGameScreen(
                                 mainTextSize = fontSizeValue,
                                 selectedCell = Cell(-1, -1),
                                 onClick = { },
-                                boardColors = LocalBoardColors.current
+                                boardColors = LocalBoardColors.current,
+                                crossHighlight = crossHighlight
                             )
                         }
                     }

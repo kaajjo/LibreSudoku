@@ -17,6 +17,7 @@ class SettingsBoardThemeViewModel @Inject constructor(
     val monetSudokuBoard = themeSettingsManager.monetSudokuBoard
     val positionLines = appSettingsManager.positionLines
     val highlightMistakes = appSettingsManager.highlightMistakes
+    var crossHighlight = themeSettingsManager.boardCrossHighlight
 
     fun updateMonetSudokuBoardSetting(enabled: Boolean) {
         viewModelScope.launch {
@@ -27,6 +28,12 @@ class SettingsBoardThemeViewModel @Inject constructor(
     fun updatePositionLinesSetting(enabled: Boolean) {
         viewModelScope.launch {
             appSettingsManager.setPositionLines(enabled)
+        }
+    }
+
+    fun updateBoardCrossHighlight(enabled: Boolean) {
+        viewModelScope.launch {
+            themeSettingsManager.setBoardCrossHighlight(enabled)
         }
     }
 }

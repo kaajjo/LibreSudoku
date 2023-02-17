@@ -53,6 +53,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
@@ -356,6 +357,9 @@ fun GameScreen(
                 val positionLines by viewModel.positionLines.collectAsState(initial = PreferencesConstants.DEFAULT_POSITION_LINES)
                 val boardBlur by animateDpAsState(targetValue = if (viewModel.gamePlaying || viewModel.endGame) 0.dp else 10.dp)
                 val scale by animateFloatAsState(targetValue = if (viewModel.gamePlaying || viewModel.endGame) 1f else 0.90f)
+                val crossHighlight by viewModel.crossHighlight.collectAsStateWithLifecycle(
+                    initialValue = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT
+                )
 
                 val fontSizeFactor by viewModel.fontSize.collectAsState(initial = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
                 var fontSizeValue by remember {
@@ -394,7 +398,8 @@ fun GameScreen(
                     questions = !(viewModel.gamePlaying || viewModel.endGame) && Build.VERSION.SDK_INT < Build.VERSION_CODES.R,
                     renderNotes = renderNotes && !viewModel.showSolution,
                     zoomable = viewModel.boardEntity.type == GameType.Default12x12,
-                    boardColors = LocalBoardColors.current
+                    boardColors = LocalBoardColors.current,
+                    crossHighlight = crossHighlight
                 )
             }
 

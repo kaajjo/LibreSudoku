@@ -19,6 +19,7 @@ import com.kaajjo.libresudoku.core.utils.SudokuUtils
 import com.kaajjo.libresudoku.core.utils.UndoManager
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.domain.usecase.board.GetBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.board.InsertBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.board.UpdateBoardUseCase
@@ -34,6 +35,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateSudokuViewModel @Inject constructor(
     appSettingsManager: AppSettingsManager,
+    themeSettingsManager: ThemeSettingsManager,
     private val getBoardUseCase: GetBoardUseCase,
     private val updateBoardUseCase: UpdateBoardUseCase,
     private val insertBoardUseCase: InsertBoardUseCase,
@@ -70,6 +72,7 @@ class CreateSudokuViewModel @Inject constructor(
         )
 
     val positionLines = appSettingsManager.positionLines
+    val crossHighlight = themeSettingsManager.boardCrossHighlight
 
     val fontSize = appSettingsManager.fontSize
 

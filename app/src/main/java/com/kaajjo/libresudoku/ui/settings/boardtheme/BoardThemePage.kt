@@ -8,6 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.rounded.GridGoldenratio
+import androidx.compose.material.icons.rounded.GridOn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -72,10 +73,12 @@ fun SettingsBoardTheme(
         ) {
             val positionLines by viewModel.positionLines.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_POSITION_LINES)
             val highlightMistakes by viewModel.highlightMistakes.collectAsState(initial = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES)
+            val boardCrossHighlight by viewModel.crossHighlight.collectAsState(initial = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT)
             BoardPreviewTheme(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
                 positionLines = positionLines,
-                errosHighlight = highlightMistakes != 0
+                errosHighlight = highlightMistakes != 0,
+                crossHighlight = boardCrossHighlight
             )
 
             val monetSudokuBoard by viewModel.monetSudokuBoard.collectAsStateWithLifecycle(
@@ -98,6 +101,14 @@ fun SettingsBoardTheme(
                 painter = rememberVectorPainter(Icons.Rounded.GridGoldenratio),
                 onClick = { viewModel.updatePositionLinesSetting(!positionLines) }
             )
+
+            PreferenceRowSwitch(
+                title = stringResource(R.string.pref_cross_highlight),
+                subtitle = stringResource(R.string.pref_cross_highlight_subtitle),
+                checked = boardCrossHighlight,
+                painter = rememberVectorPainter(Icons.Rounded.GridOn),
+                onClick = { viewModel.updateBoardCrossHighlight(!boardCrossHighlight) }
+            )
         }
     }
 }
@@ -106,6 +117,7 @@ fun SettingsBoardTheme(
 private fun BoardPreviewTheme(
     positionLines: Boolean,
     errosHighlight: Boolean,
+    crossHighlight: Boolean,
     modifier: Modifier = Modifier
 ) {
     val previewBoard = listOf(
@@ -218,6 +230,7 @@ private fun BoardPreviewTheme(
         onClick = { cell -> selectedCell = if (selectedCell == cell) Cell(-1, -1, 0) else cell },
         boardColors = LocalBoardColors.current,
         positionLines = positionLines,
-        errorsHighlight = errosHighlight
+        errorsHighlight = errosHighlight,
+        crossHighlight = crossHighlight
     )
 }

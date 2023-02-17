@@ -160,6 +160,7 @@ fun CreateSudokuScreen(
             }
 
             val positionLines by viewModel.positionLines.collectAsState(initial = PreferencesConstants.DEFAULT_POSITION_LINES)
+            val crossHighlight by viewModel.crossHighlight.collectAsState(initial = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT)
             Board(
                 modifier = Modifier.padding(vertical = 12.dp),
                 size = viewModel.gameType.size,
@@ -171,7 +172,8 @@ fun CreateSudokuScreen(
                 },
                 identicalNumbersHighlight = highlightIdentical,
                 boardColors = LocalBoardColors.current,
-                positionLines = positionLines
+                positionLines = positionLines,
+                crossHighlight = crossHighlight
             )
             DefaultGameKeyboard(
                 size = viewModel.gameType.size,

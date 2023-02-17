@@ -19,6 +19,7 @@ import com.kaajjo.libresudoku.data.database.model.Record
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.domain.repository.RecordRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
@@ -45,6 +46,7 @@ class GameViewModel @Inject constructor(
     private val savedGameRepository: SavedGameRepository,
     private val appSettingsManager: AppSettingsManager,
     private val recordRepository: RecordRepository,
+    themeSettingsManager: ThemeSettingsManager,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     init {
@@ -122,6 +124,7 @@ class GameViewModel @Inject constructor(
     )
 
     var positionLines = appSettingsManager.positionLines
+    val crossHighlight = themeSettingsManager.boardCrossHighlight
 
     var mistakesLimit = appSettingsManager.mistakesLimit.stateIn(
         viewModelScope,

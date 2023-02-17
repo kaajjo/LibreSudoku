@@ -78,7 +78,8 @@ fun Board(
     renderNotes: Boolean = true,
     cellsToHighlight: List<Cell>? = null,
     zoomable: Boolean = false,
-    boardColors: SudokuBoardColors
+    boardColors: SudokuBoardColors,
+    crossHighlight: Boolean = false
 ) {
     BoxWithConstraints(
         modifier = modifier
@@ -374,6 +375,26 @@ fun Board(
                     cellSizeDivHeight = cellSizeDivHeight
                 )
             }
+
+            // doesn't look good on 6x6
+            if (crossHighlight && size != 6) {
+                val sectionHeight = getSectionHeightForSize(size)
+                val sectionWidth = getSectionWidthForSize(size)
+                for (i in 0 until size / sectionWidth) {
+                    for (j in 0 until size / sectionHeight) {
+                        if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) {
+                            drawRect(
+                                color = highlightColor.copy(alpha = 0.1f),
+                                topLeft = Offset(
+                                    x = i * sectionWidth * cellSize,
+                                    y = j * sectionHeight * cellSize
+                                ),
+                                size = Size(cellSize * sectionWidth, cellSize * sectionHeight)
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -499,6 +520,24 @@ private fun getNoteRowNumber(number: Int, size: Int): Int {
         }
     }
     return 0
+}
+
+private fun getSectionHeightForSize(size: Int): Int {
+    return when (size) {
+        6 -> GameType.Default6x6.sectionHeight
+        9 -> GameType.Default9x9.sectionHeight
+        12 -> GameType.Default12x12.sectionHeight
+        else -> GameType.Default9x9.sectionHeight
+    }
+}
+
+private fun getSectionWidthForSize(size: Int): Int {
+    return when (size) {
+        6 -> GameType.Default6x6.sectionWidth
+        9 -> GameType.Default9x9.sectionWidth
+        12 -> GameType.Default12x12.sectionWidth
+        else -> GameType.Default9x9.sectionWidth
+    }
 }
 
 @LightDarkPreview

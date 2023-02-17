@@ -37,6 +37,8 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
     // colorful sudoku board with dynamic theme colors
     private val monetSudokuBoardKey = booleanPreferencesKey("monet_sudoku_board")
 
+    private val boardCrossHighlightKey = booleanPreferencesKey("board_cross_highlight")
+
     suspend fun setDynamicColors(enabled: Boolean) {
         dataStore.edit { settings ->
             settings[dynamicColorsKey] = enabled
@@ -93,5 +95,15 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
 
     val monetSudokuBoard = dataStore.data.map { preferences ->
         preferences[monetSudokuBoardKey] ?: PreferencesConstants.DEFAULT_MONET_SUDOKU_BOARD
+    }
+
+    suspend fun setBoardCrossHighlight(enabled: Boolean) {
+        dataStore.edit { settings ->
+            settings[boardCrossHighlightKey] = enabled
+        }
+    }
+
+    val boardCrossHighlight = dataStore.data.map { preferences ->
+        preferences[boardCrossHighlightKey] ?: PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT
     }
 }
