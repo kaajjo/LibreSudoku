@@ -314,7 +314,7 @@ fun Board(
             }
             cellsToHighlight?.forEach {
                 drawRect(
-                    color = highlightColor,
+                    color = highlightColor.copy(alpha = 0.3f),
                     topLeft = Offset(
                         x = it.col * cellSize,
                         y = it.row * cellSize
