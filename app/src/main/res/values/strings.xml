@@ -304,4 +304,7 @@
     <string name="move_games_to_folder_subtitle">Select the folder where you want to move selected games</string>
     <string name="pref_cross_highlight_subtitle">Highlight some blocks on the board</string>
     <string name="pref_cross_highlight">Cross highlight</string>
+    <string name="dialog_crash_report_text">Oops, LibreSudoku just crushed. Would you like to send a crash report to the developers?</string>
+    <string name="pref_crash_reporting">Crash reporting</string>
+    <string name="pref_crash_reporting_subtitle">Help us to fix bugs. App doesn\'t send any logs by itself, you will be prompted to send a crash report by email</string>
 </resources>

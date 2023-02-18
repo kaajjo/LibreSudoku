@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.data.database.AppDatabase
+import com.kaajjo.libresudoku.data.datastore.AcraSharedPrefs
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.data.datastore.TipCardsDataStore
@@ -29,6 +30,7 @@ class SettingsViewModel
     private val settingsDataManager: AppSettingsManager,
     private val tipCardsDataStore: TipCardsDataStore,
     private val appDatabase: AppDatabase,
+    private val acraSharedPrefs: AcraSharedPrefs,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     @Inject
@@ -42,6 +44,8 @@ class SettingsViewModel
     var inputMethodDialog by mutableStateOf(false)
     var mistakesDialog by mutableStateOf(false)
     var languagePickDialog by mutableStateOf(false)
+
+    var crashReportingEnabled by mutableStateOf(acraSharedPrefs.getAcraEnabled())
 
     val darkTheme by lazy {
         appThemeDataStore.darkTheme
@@ -214,5 +218,10 @@ class SettingsViewModel
             else -> Locale.forLanguageTag(lang)
         }
         return locale!!.getDisplayName(locale).replaceFirstChar { it.uppercase(locale) }
+    }
+
+    fun updateCrashReportingEnabled(enabled: Boolean) {
+        acraSharedPrefs.setAcraEnabled(enabled)
+        crashReportingEnabled = acraSharedPrefs.getAcraEnabled()
     }
 }

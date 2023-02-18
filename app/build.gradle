@@ -107,4 +107,7 @@ dependencies {
     implementation "com.mikepenz:aboutlibraries-compose:$latestAboutLibsRelease"
 
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
+
+    implementation("ch.acra:acra-dialog:5.9.7")
+    implementation("ch.acra:acra-mail:5.9.7")
 }
