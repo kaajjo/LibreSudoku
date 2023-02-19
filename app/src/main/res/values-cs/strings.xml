@@ -239,11 +239,22 @@
     <string name="folder_empty_label">Tato složka je prázdná</string>
     <string name="edit_sudoku">Upravit sudoku</string>
     <string name="folder_import_supported_types">Tyto typy souborů jsou podporovány:
-\n.sdm (nebo .txt se stejnou strukturou)</string>
+\n.sdm (nebo .txt se stejnou strukturou)
+\n.opensudoku
+\n.1gsudoku</string>
     <plurals name="delete_selected_in_folder">
         <item quantity="one">Jste si jistí, že chcete odstranit %1$d hru\?</item>
         <item quantity="few">Jste si jistí, že chcete odstranit %1$d hry\?</item>
         <item quantity="other">Jste si jistí, že chcete odstranit %1$d her\?</item>
     </plurals>
     <string name="last_played_section_title">Naposledy odehrané hry</string>
+    <string name="pref_boardtheme_accent">Použít akcentní barvy</string>
+    <string name="pref_boardtheme_accent_subtitle">Udělejte svou sudoku desku více barevnou</string>
+    <string name="pref_board_theme_title">Téma sudoku desky</string>
+    <string name="pref_board_theme_subtitle">Přizpůsobte vzhled sudoku desky</string>
+    <string name="board_theme_title">Téma desky</string>
+    <string name="action_move_selected">Přesunout vybrané</string>
+    <string name="move_games_to_folder_subtitle">Vyberte složku, do které chcete přesunout vybrané hry</string>
+    <string name="pref_cross_highlight_subtitle">Zvýrazněte některé rámečky na desce</string>
+    <string name="pref_cross_highlight">Zvýraznění kříže</string>
 </resources>
