@@ -258,4 +258,6 @@
     <string name="pref_board_theme_subtitle">Измените поле судоку под ваш вкус</string>
     <string name="action_move_selected">Переместить выбранные</string>
     <string name="move_games_to_folder_subtitle">Выберите папку, в которую вы хотите переместить выбранные игры</string>
+    <string name="pref_cross_highlight_subtitle">Выделение некоторых блоков на доске</string>
+    <string name="pref_cross_highlight">Крестовое выделение</string>
 </resources>
