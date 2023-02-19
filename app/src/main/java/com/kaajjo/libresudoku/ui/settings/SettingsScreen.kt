@@ -1,6 +1,8 @@
 package com.kaajjo.libresudoku.ui.settings
 
+import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -28,6 +30,8 @@ import com.kaajjo.libresudoku.ui.theme.AppColorScheme
 import com.kaajjo.libresudoku.ui.theme.AppTheme
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import kotlinx.coroutines.launch
+import org.xmlpull.v1.XmlPullParser
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -196,10 +200,13 @@ fun SettingsScreen(
                     onClick = { viewModel.fontSizeDialog = true }
                 )
 
-                val currentLanguage by remember {
+                var currentLanguage by remember {
                     mutableStateOf(
-                        viewModel.getCurrentLocaleString(context)
+                        getCurrentLocaleString(context)
                     )
+                }
+                LaunchedEffect(viewModel.languagePickDialog) {
+                    currentLanguage = getCurrentLocaleString(context)
                 }
                 PreferenceRow(
                     title = stringResource(R.string.pref_app_language),
@@ -433,8 +440,8 @@ fun SettingsScreen(
         } else if (viewModel.languagePickDialog) {
             LanguagePicker(
                 title = stringResource(R.string.pref_app_language),
-                entries = viewModel.getLangs(context),
-                selected = viewModel.getCurrentLocaleString(context),
+                entries = getLangs(context),
+                selected = getCurrentLocaleString(context),
                 onSelect = { localeKey ->
                     val locale = if (localeKey == "") {
                         LocaleListCompat.getEmptyLocaleList()
@@ -442,6 +449,7 @@ fun SettingsScreen(
                         LocaleListCompat.forLanguageTags(localeKey)
                     }
                     AppCompatDelegate.setApplicationLocales(locale)
+
                 },
                 onDismiss = { viewModel.languagePickDialog = false }
             )
@@ -501,4 +509,54 @@ fun AppThemeItem(
             style = MaterialTheme.typography.labelSmall
         )
     }
+}
+
+
+private fun getCurrentLocaleString(context: Context): String {
+    val langs = getLangs(context)
+    langs.forEach {
+        Log.d("lang", "${it.key} ${it.value}")
+    }
+    val locales = AppCompatDelegate.getApplicationLocales()
+    if (locales == LocaleListCompat.getEmptyLocaleList()) {
+        return context.getString(R.string.pref_app_language_default)
+    }
+    return getDisplayName(locales.toLanguageTags())
+}
+
+private fun getLangs(context: Context): Map<String, String> {
+    val langs = mutableListOf<Pair<String, String>>()
+    val parser = context.resources.getXml(R.xml.locales_config)
+    var eventType = parser.eventType
+    while (eventType != XmlPullParser.END_DOCUMENT) {
+        if (eventType == XmlPullParser.START_TAG && parser.name == "locale") {
+            for (i in 0 until parser.attributeCount) {
+                if (parser.getAttributeName(i) == "name") {
+                    val langTag = parser.getAttributeValue(i)
+                    val displayName = getDisplayName(langTag)
+                    if (displayName.isNotEmpty()) {
+                        langs.add(Pair(langTag, displayName))
+                    }
+                }
+            }
+        }
+        eventType = parser.next()
+    }
+
+    langs.sortBy { it.second }
+    langs.add(0, Pair("", context.getString(R.string.pref_app_language_default)))
+
+    return langs.toMap()
+}
+
+private fun getDisplayName(lang: String?): String {
+    if (lang == null) {
+        return ""
+    }
+
+    val locale = when (lang) {
+        "" -> LocaleListCompat.getAdjustedDefault()[0]
+        else -> Locale.forLanguageTag(lang)
+    }
+    return locale!!.getDisplayName(locale).replaceFirstChar { it.uppercase(locale) }
 }
