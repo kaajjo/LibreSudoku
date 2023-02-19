@@ -296,8 +296,8 @@ fun ExploreFolderScreen(
             text = {
                 Text(
                     text = pluralStringResource(
-                        R.plurals.delete_selected_in_folder,
-                        viewModel.selectedBoardsList.size,
+                        id = R.plurals.delete_selected_in_folder,
+                        count = if (deleteBoardDialogBoard != null) 1 else viewModel.selectedBoardsList.size,
                         if (deleteBoardDialogBoard != null) 1 else viewModel.selectedBoardsList.size
                     )
                 )
