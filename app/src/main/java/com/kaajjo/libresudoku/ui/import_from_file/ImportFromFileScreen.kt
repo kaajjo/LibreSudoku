@@ -174,13 +174,15 @@ fun ImportFromFileScreen(
                             onClick = { difficulty -> viewModel.setDifficulty(difficulty) }
                         )
                     }
-                    FilledTonalButton(onClick = {
-                        if (viewModel.folderUid == -1L) {
-                            setFolderNameDialog = true
-                        } else {
-                            viewModel.saveImported()
-                        }
-                    }) {
+                    FilledTonalButton(
+                        enabled = gamesToImport.isNotEmpty(),
+                        onClick = {
+                            if (viewModel.folderUid == -1L) {
+                                setFolderNameDialog = true
+                            } else {
+                                viewModel.saveImported()
+                            }
+                        }) {
                         Text(stringResource(R.string.import_save))
                     }
                 }
@@ -211,6 +213,21 @@ fun ImportFromFileScreen(
                     }
                 }
             )
+            if (viewModel.isLoading) {
+                Dialog(onDismissRequest = { }) {
+                    Surface(
+                        shape = RoundedCornerShape(28.dp),
+                        color = MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp)
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.padding(24.dp)
+                        ) {
+                            CircularProgressIndicator(Modifier.align(Alignment.Center))
+                        }
+                    }
+                }
+            }
         }
     }
 

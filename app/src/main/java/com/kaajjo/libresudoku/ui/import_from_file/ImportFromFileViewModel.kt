@@ -41,6 +41,7 @@ class ImportFromFileViewModel @Inject constructor(
     // If uid = -1, a new folder will be created (ask the user for the folder name)
     val folderUid by mutableStateOf(savedStateHandle.get<Long>("folder_uid") ?: -1L)
 
+    var isLoading by mutableStateOf(true)
     var isSaved by mutableStateOf(false)
     var isSaving by mutableStateOf(false)
 
@@ -53,28 +54,23 @@ class ImportFromFileViewModel @Inject constructor(
     val importError = _importingError.asStateFlow()
 
     fun readData(inputStream: InputStreamReader) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             var toImport = listOf<String>()
             try {
                 BufferedReader(inputStream).use { bufferRead ->
                     val contentText = bufferRead.readText()
 
-                    if (contentText.contains("<opensudoku")) {
-                        val openSudokuParser = OpenSudokuParser()
-                        val result = openSudokuParser.toBoards(contentText)
-                        toImport = result.second
-                        _importingError.emit(!result.first)
-                    } else if (contentText.contains("<onegravitysudoku")) {
-                        val gsudokuParser = GsudokuParser()
-                        val result = gsudokuParser.toBoards(contentText)
-                        toImport = result.second
-                        _importingError.emit(!result.first)
-                    } else {
-                        val sdmParser = SdmParser()
-                        val result = sdmParser.toBoards(contentText)
-                        toImport = result.second
-                        _importingError.emit(!result.first)
+                    val parser = when {
+                        contentText.contains("<opensudoku") -> OpenSudokuParser()
+
+                        contentText.contains("<onegravitysudoku") -> GsudokuParser()
+
+                        else -> SdmParser()
                     }
+                    val result = parser.toBoards(contentText)
+                    toImport = result.second
+                    _importingError.emit(!result.first)
+                    isLoading = false
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

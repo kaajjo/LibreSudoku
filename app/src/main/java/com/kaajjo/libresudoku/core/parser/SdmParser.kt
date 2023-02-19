@@ -23,7 +23,8 @@ class SdmParser : FileImportParser {
         try {
             content.lines().forEach {
                 val line = it.trim()
-                if (line.length == 81) {
+
+                if (line.length == 81 && line.all { char -> char.isDigit() }) {
                     toImport.add(line.replace(".", "0"))
                 } else {
                     Log.i(tag, "This line was skipped: $line")
@@ -32,6 +33,7 @@ class SdmParser : FileImportParser {
         } catch (e: Exception) {
             Log.e(tag, "Exception while parsing!")
             e.printStackTrace()
+            return Pair(false, toImport)
         }
 
         return Pair(true, toImport)

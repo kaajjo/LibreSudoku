@@ -25,12 +25,12 @@ class GsudokuParser : FileImportParser {
 
         var eventType = parser.eventType
         try {
-            while(eventType != XmlPullParser.END_DOCUMENT) {
+            while (eventType != XmlPullParser.END_DOCUMENT) {
                 if (eventType == XmlPullParser.START_TAG && parser.name == "sudoku") {
                     for (i in 0 until parser.attributeCount) {
                         if (parser.getAttributeName(i) == "data") {
                             val boardString = parser.getAttributeValue(i)
-                            if (boardString.length == 81) {
+                            if (boardString.length == 81 && boardString.all { char -> char.isDigit() }) {
                                 parsedBoards.add(boardString)
                             } else {
                                 Log.i(tag, "Unexpected line: $boardString")

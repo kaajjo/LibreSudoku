@@ -65,7 +65,8 @@ class OpenSudokuParser : FileImportParser {
                 lastTag = parser.name
                 if (lastTag == "game") {
                     val boardString = parser.getAttributeValue(null, "data")
-                    if (boardString.length == 81) {
+
+                    if (boardString.length == 81 && boardString.all { char -> char.isDigit() }) {
                         boards.add(boardString)
                     } else {
                         Log.i("$tag/ImportV1", "This line was skipped $boardString")
