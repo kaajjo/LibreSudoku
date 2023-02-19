@@ -260,4 +260,7 @@
     <string name="move_games_to_folder_subtitle">Выберите папку, в которую вы хотите переместить выбранные игры</string>
     <string name="pref_cross_highlight_subtitle">Выделение некоторых блоков на доске</string>
     <string name="pref_cross_highlight">Крестовое выделение</string>
+    <string name="pref_crash_reporting">Отчеты об ошибках</string>
+    <string name="dialog_crash_report_text">Упс, в LibreSudoku произошла ошибка. Желаете отправить отчет об ошибке разработчикам\?</string>
+    <string name="pref_crash_reporting_subtitle">Помощь в исправлении ошибок. Приложение не отсылает ничего самостоятельно, вам будет предложено отослать отчет об ошибке через почту</string>
 </resources>
