@@ -219,7 +219,9 @@
     <string name="edit_name">Modifier le nom</string>
     <string name="create_folder_name">Nom du dossier</string>
     <string name="folder_import_supported_types">Ces types de fichiers sont pris en charge :
-\n.sdm (ou .txt avec la même structure)</string>
+\n.sdm (ou .txt avec la même structure)
+\n.opensudoku
+\n.1gsudoku</string>
     <string name="import_from_file_fail">Échec de l\'importation</string>
     <plurals name="puzzles_in_folder">
         <item quantity="one">%1$d casse-tête</item>
@@ -247,4 +249,13 @@
     <string name="add_to_folder">Ajouter au dossier</string>
     <string name="last_played_section_title">Dernières parties jouées</string>
     <string name="saved_game_progress_percentage">Progression %1$d%%</string>
+    <string name="pref_boardtheme_accent">Appliquer des couleurs d\'accentuation</string>
+    <string name="pref_boardtheme_accent_subtitle">Rendez votre plateau de sudoku plus colorée</string>
+    <string name="pref_board_theme_title">Thème du plateau de sudoku</string>
+    <string name="pref_board_theme_subtitle">Personnalisez l\'apparence du plateau de sudoku</string>
+    <string name="board_theme_title">Thème du plateau</string>
+    <string name="action_move_selected">Déplacer les éléments sélectionnés</string>
+    <string name="move_games_to_folder_subtitle">Sélectionnez le dossier dans lequel vous souhaitez déplacer les jeux désignés</string>
+    <string name="pref_cross_highlight_subtitle">Mettre en surbrillance certains blocs sur le plateau de jeu</string>
+    <string name="pref_cross_highlight">Mise en évidence des croisements</string>
 </resources>
