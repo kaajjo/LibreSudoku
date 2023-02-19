@@ -226,7 +226,9 @@
     <string name="help">Помощь</string>
     <string name="folders_help">Здесь, вы можете управлять вашими папками и импортировать судоку из файла</string>
     <string name="folder_import_supported_types">Поддерживаются данные типы файлов:
-\n.sdm (или .txt с такой же структурой)</string>
+\n.sdm (или .txt с такой же структурой)
+\n.opensudoku
+\n.1gsudoku</string>
     <string name="import_from_file_fail">Не удалось импортировать</string>
     <string name="import_from_file_title">Из файла</string>
     <string name="import_saving">Сохранение</string>
@@ -249,4 +251,11 @@
     <string name="add_to_folder_from_file">Импортировать из файла</string>
     <string name="saved_game_progress_percentage">Прогресс %1$d%%</string>
     <string name="last_played_section_title">Последние сыгранные</string>
+    <string name="board_theme_title">Тема судоку</string>
+    <string name="pref_boardtheme_accent">Применять акцентные цвета</string>
+    <string name="pref_boardtheme_accent_subtitle">Сделайте ваше судоку более красочным</string>
+    <string name="pref_board_theme_title">Тема поля судоку</string>
+    <string name="pref_board_theme_subtitle">Измените поле судоку под ваш вкус</string>
+    <string name="action_move_selected">Переместить выбранные</string>
+    <string name="move_games_to_folder_subtitle">Выберите папку, в которую вы хотите переместить выбранные игры</string>
 </resources>
