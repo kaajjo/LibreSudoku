@@ -168,4 +168,11 @@ class SettingsViewModel
         acraSharedPrefs.setAcraEnabled(enabled)
         crashReportingEnabled = acraSharedPrefs.getAcraEnabled()
     }
+
+    val funKeyboardOverNum = settingsDataManager.funKeyboardOverNumbers
+    fun updateFunKeyboardOverNum(enabled: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsDataManager.setFunKeyboardOverNum(enabled)
+        }
+    }
 }

@@ -58,6 +58,9 @@ class AppSettingsManager(context: Context) {
     // first game
     private val firstGameKey = booleanPreferencesKey("first_game")
 
+    // place function keyboard (undo, erase etc.) above the numbers keyboard
+    private val funKeyboardOverNumKey = booleanPreferencesKey("fun_keyboard_over_numbers")
+
     suspend fun setFirstLaunch(value: Boolean) {
         dataStore.edit { settings ->
             settings[firstLaunchKey] = value
@@ -196,5 +199,15 @@ class AppSettingsManager(context: Context) {
 
     val firstGame = dataStore.data.map { preferences ->
         preferences[firstGameKey] ?: true
+    }
+
+    suspend fun setFunKeyboardOverNum(enabled: Boolean) {
+        dataStore.edit { settings ->
+            settings[funKeyboardOverNumKey] = enabled
+        }
+    }
+
+    val funKeyboardOverNumbers = dataStore.data.map {prefs ->
+        prefs[funKeyboardOverNumKey] ?: PreferencesConstants.DEFAULT_FUN_KEYBOARD_OVER_NUM
     }
 }

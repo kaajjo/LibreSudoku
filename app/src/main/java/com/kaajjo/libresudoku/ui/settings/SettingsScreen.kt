@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
@@ -260,6 +261,18 @@ fun SettingsScreen(
                     title = stringResource(R.string.pref_reset_timer),
                     checked = resetTimer,
                     onClick = { viewModel.updateCanResetTimer(!resetTimer) }
+                )
+
+                val funKeyboardOverNum by viewModel.funKeyboardOverNum.collectAsStateWithLifecycle(
+                    initialValue = PreferencesConstants.DEFAULT_FUN_KEYBOARD_OVER_NUM
+                )
+                PreferenceRowSwitch(
+                    title = stringResource(R.string.pref_fun_keyboard_over_num),
+                    subtitle = stringResource(R.string.pref_fun_keyboard_over_num_subtitle),
+                    checked = funKeyboardOverNum,
+                    onClick = {
+                        viewModel.updateFunKeyboardOverNum(!funKeyboardOverNum)
+                    }
                 )
 
                 Divider(

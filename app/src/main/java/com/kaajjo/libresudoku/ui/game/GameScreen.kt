@@ -64,6 +64,7 @@ import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
 import com.kaajjo.libresudoku.ui.onboarding.FirstGameDialog
+import com.kaajjo.libresudoku.ui.util.ReverseArrangement
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
@@ -96,10 +97,12 @@ fun GameScreen(
             Lifecycle.Event.ON_RESUME -> {
                 if (viewModel.gamePlaying) viewModel.startTimer()
             }
+
             Lifecycle.Event.ON_PAUSE -> {
                 viewModel.pauseTimer()
                 viewModel.currCell = Cell(-1, -1, 0)
             }
+
             Lifecycle.Event.ON_DESTROY -> viewModel.pauseTimer()
             else -> {}
         }
@@ -403,79 +406,87 @@ fun GameScreen(
                 )
             }
 
-            AnimatedVisibility(visible = !viewModel.endGame) {
-                val remainingUse by viewModel.remainingUse.collectAsState(initial = PreferencesConstants.DEFAULT_REMAINING_USES)
-                DefaultGameKeyboard(
-                    size = viewModel.size,
-                    remainingUses = if (remainingUse) viewModel.remainingUsesList else null,
-                    onClick = {
-                        viewModel.processInputKeyboard(number = it)
-                    },
-                    onLongClick = {
-                        viewModel.processInputKeyboard(
-                            number = it,
-                            longTap = true
-                        )
-                    },
-                    selected = viewModel.digitFirstNumber
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(vertical = 8.dp)
+            val funKeyboardOverNum by viewModel.funKeyboardOverNum.collectAsStateWithLifecycle(
+                initialValue = PreferencesConstants.DEFAULT_FUN_KEYBOARD_OVER_NUM
+            )
+
+            Column(
+                verticalArrangement = if (funKeyboardOverNum) ReverseArrangement else Arrangement.Top
             ) {
-                ToolbarItem(
-                    modifier = Modifier.weight(1f),
-                    painter = painterResource(R.drawable.ic_round_undo_24),
-                    onClick = { viewModel.toolbarClick(ToolBarItem.Undo) }
-                )
-                val hintsDisabled by viewModel.disableHints.collectAsState(initial = PreferencesConstants.DEFAULT_HINTS_DISABLED)
-                if (!hintsDisabled) {
-                    ToolbarItem(
-                        modifier = Modifier.weight(1f),
-                        painter = painterResource(R.drawable.ic_lightbulb_stars_24),
-                        onClick = { viewModel.toolbarClick(ToolBarItem.Hint) }
+                AnimatedVisibility(visible = !viewModel.endGame) {
+                    val remainingUse by viewModel.remainingUse.collectAsState(initial = PreferencesConstants.DEFAULT_REMAINING_USES)
+                    DefaultGameKeyboard(
+                        size = viewModel.size,
+                        remainingUses = if (remainingUse) viewModel.remainingUsesList else null,
+                        onClick = {
+                            viewModel.processInputKeyboard(number = it)
+                        },
+                        onLongClick = {
+                            viewModel.processInputKeyboard(
+                                number = it,
+                                longTap = true
+                            )
+                        },
+                        selected = viewModel.digitFirstNumber
                     )
                 }
-
-                Box(
-                    modifier = Modifier.weight(1f)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(vertical = 8.dp)
                 ) {
-                    NotesMenu(
-                        expanded = viewModel.showNotesMenu,
-                        onDismiss = { viewModel.showNotesMenu = false },
-                        onComputeNotesClick = { viewModel.computeNotes() },
-                        onClearNotesClick = { viewModel.clearNotes() },
-                        renderNotes = renderNotes,
-                        onRenderNotesClick = { renderNotes = !renderNotes }
-                    )
                     ToolbarItem(
-                        painter = painterResource(R.drawable.ic_round_edit_24),
-                        toggled = viewModel.notesToggled,
-                        onClick = { viewModel.toolbarClick(ToolBarItem.Note) },
+                        modifier = Modifier.weight(1f),
+                        painter = painterResource(R.drawable.ic_round_undo_24),
+                        onClick = { viewModel.toolbarClick(ToolBarItem.Undo) }
+                    )
+                    val hintsDisabled by viewModel.disableHints.collectAsState(initial = PreferencesConstants.DEFAULT_HINTS_DISABLED)
+                    if (!hintsDisabled) {
+                        ToolbarItem(
+                            modifier = Modifier.weight(1f),
+                            painter = painterResource(R.drawable.ic_lightbulb_stars_24),
+                            onClick = { viewModel.toolbarClick(ToolBarItem.Hint) }
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        NotesMenu(
+                            expanded = viewModel.showNotesMenu,
+                            onDismiss = { viewModel.showNotesMenu = false },
+                            onComputeNotesClick = { viewModel.computeNotes() },
+                            onClearNotesClick = { viewModel.clearNotes() },
+                            renderNotes = renderNotes,
+                            onRenderNotesClick = { renderNotes = !renderNotes }
+                        )
+                        ToolbarItem(
+                            painter = painterResource(R.drawable.ic_round_edit_24),
+                            toggled = viewModel.notesToggled,
+                            onClick = { viewModel.toolbarClick(ToolBarItem.Note) },
+                            onLongClick = {
+                                if (viewModel.gamePlaying) {
+                                    localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                                    viewModel.showNotesMenu = true
+                                }
+                            }
+                        )
+
+                    }
+                    ToolbarItem(
+                        modifier = Modifier.weight(1f),
+                        painter = painterResource(R.drawable.ic_eraser_24),
+                        toggled = viewModel.eraseButtonToggled,
+                        onClick = {
+                            viewModel.toolbarClick(ToolBarItem.Remove)
+                        },
                         onLongClick = {
                             if (viewModel.gamePlaying) {
                                 localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                                viewModel.showNotesMenu = true
+                                viewModel.toggleEraseButton()
                             }
                         }
                     )
-
                 }
-                ToolbarItem(
-                    modifier = Modifier.weight(1f),
-                    painter = painterResource(R.drawable.ic_eraser_24),
-                    toggled = viewModel.eraseButtonToggled,
-                    onClick = {
-                        viewModel.toolbarClick(ToolBarItem.Remove)
-                    },
-                    onLongClick = {
-                        if (viewModel.gamePlaying) {
-                            localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                            viewModel.toggleEraseButton()
-                        }
-                    }
-                )
             }
         }
     }

@@ -16,6 +16,7 @@ class PreferencesConstants {
         const val DEFAULT_FONT_SIZE_FACTOR = 1
         const val DEFAULT_KEEP_SCREEN_ON = true
         const val DEFAULT_INPUT_METHOD = 1
+        const val DEFAULT_FUN_KEYBOARD_OVER_NUM = false
 
         // Theme settings
         const val GREEN_THEME_KEY = "green"
