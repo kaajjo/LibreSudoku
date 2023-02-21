@@ -263,4 +263,6 @@
     <string name="pref_crash_reporting">Отчеты об ошибках</string>
     <string name="dialog_crash_report_text">Упс, в LibreSudoku произошла ошибка. Желаете отправить отчет об ошибке разработчикам\?</string>
     <string name="pref_crash_reporting_subtitle">Помощь в исправлении ошибок. Приложение не отсылает ничего самостоятельно, вам будет предложено отослать отчет об ошибке через почту</string>
+    <string name="pref_fun_keyboard_over_num_subtitle">Поместить функциональную клавиатуру над числами</string>
+    <string name="pref_fun_keyboard_over_num">Функциональная клавиатура над числовой</string>
 </resources>

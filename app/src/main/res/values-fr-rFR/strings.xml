@@ -258,4 +258,7 @@
     <string name="move_games_to_folder_subtitle">Sélectionnez le dossier dans lequel vous souhaitez déplacer les jeux désignés</string>
     <string name="pref_cross_highlight_subtitle">Mettre en surbrillance certains blocs sur le plateau de jeu</string>
     <string name="pref_cross_highlight">Mise en évidence des croisements</string>
+    <string name="pref_crash_reporting">Rapport d\'incident</string>
+    <string name="dialog_crash_report_text">Oups, LibreSudoku vient de planter. Souhaitez-vous envoyer un rapport de plantage aux développeurs \?</string>
+    <string name="pref_crash_reporting_subtitle">Aidez-nous à corriger les bugs. L\'application n\'envoie aucun journal par elle-même, vous serez invité à envoyer un rapport de plantage par e-mail</string>
 </resources>

@@ -136,7 +136,7 @@
     <string name="saved_game_screen_title">Jogo #%1$d</string>
     <string name="saved_game_current">Atual</string>
     <string name="saved_game_initial">Inicial</string>
-    <string name="saved_game_progress">Progresso %1$d%%</string>
+    <string name="saved_game_progress">Progresso %1$d/%2$d</string>
     <string name="empty_screen_something_went_wrong">Ops, algo deu errado…</string>
     <string name="saved_game_difficulty">Dificuldade: %1$s</string>
     <string name="saved_game_type">Tipo: %1$s</string>
@@ -204,4 +204,63 @@
     <string name="sort_label">Ordenar</string>
     <string name="filter_label">Filtrar</string>
     <string name="help_translate">Ajude na tradução 🤩</string>
+    <plurals name="number_puzzles_to_import">
+        <item quantity="one">%1$d quebra-cabeça para importar</item>
+        <item quantity="many">%1$d quebra-cabeças para importar</item>
+        <item quantity="other">%1$d quebra-cabeças para importar</item>
+    </plurals>
+    <string name="last_played_section_title">Últimos jogos jogados</string>
+    <string name="delete_folder">Excluir pasta</string>
+    <string name="pref_boardtheme_accent">Aplicar cores de destaque</string>
+    <string name="pref_boardtheme_accent_subtitle">Deixe seu tabuleiro de sudoku mais colorido</string>
+    <string name="pref_board_theme_subtitle">Personalize a aparência do quadro de sudoku</string>
+    <plurals name="puzzles_in_folder">
+        <item quantity="one">%1$d quebra-cabeça</item>
+        <item quantity="many">%1$d quebra-cabeças</item>
+        <item quantity="other">%1$d quebra-cabeças</item>
+    </plurals>
+    <string name="pref_board_theme_title">Tema do tabuleiro Sudoku</string>
+    <string name="board_theme_title">Tema do quadro</string>
+    <string name="title_folders">Pasta</string>
+    <string name="create_folder">Criar pasta</string>
+    <string name="import_from_file_title">Do arquivo</string>
+    <string name="game_id">Jogo #%1$d</string>
+    <string name="saved_game_progress_percentage">Progresso %1$d%%</string>
+    <string name="folder_name">Pasta:%1$s</string>
+    <string name="edit_name">Editar nome</string>
+    <string name="export">Exportar</string>
+    <string name="create_folder_name">Nome da pasta</string>
+    <string name="folder_import">Importar</string>
+    <string name="dialog_delete_folder_text">A pasta com o nome %1$s será deletada</string>
+    <string name="help">Ajuda</string>
+    <string name="folders_help">Aqui você pode gerenciar sua pasta e importar o sudoku do arquivo</string>
+    <string name="import_from_file_fail">Falha ao importar</string>
+    <string name="import_saving">Salvando</string>
+    <string name="action_edit">Editar</string>
+    <string name="folder_empty_label">Esta pasta está vazia</string>
+    <string name="dialog_delete_selected">Excluir selecionado</string>
+    <string name="explore_folder_add_sudoku">Adicionar Sudoku</string>
+    <string name="edit_sudoku">Editar sudoku</string>
+    <string name="add_to_folder">Adicionar à pasta</string>
+    <string name="add_to_folder_from_file">Importar do arquivo</string>
+    <string name="import_save">Salvar</string>
+    <string name="add_to_folder_create_new">Criar nova</string>
+    <string name="folder_import_supported_types">Estes tipos de arquivo são suportados:
+\n.sdm (ou .txt com a mesma estrutura)
+\n.opensudoku
+\n.1gsudoku</string>
+    <plurals name="delete_selected_in_folder">
+        <item quantity="one">Tem certeza de que deseja excluir %1$d jogo\?</item>
+        <item quantity="many">Tem certeza de que deseja excluir %1$d jogos\?</item>
+        <item quantity="other">Tem certeza de que deseja excluir %1$d jogos\?</item>
+    </plurals>
+    <string name="action_move_selected">Mover selecionado</string>
+    <string name="move_games_to_folder_subtitle">Selecione a pasta para onde você deseja mover os jogos selecionados</string>
+    <string name="pref_cross_highlight">Destaque cruzado</string>
+    <string name="pref_cross_highlight_subtitle">Destaque alguns blocos no tabuleiro</string>
+    <string name="dialog_crash_report_text">Ops, o LibreSudoku não está funcionando corretamente. Gostaria de enviar um relatório de bug para os desenvolvedores\?</string>
+    <string name="pref_crash_reporting">Relatório de falhas</string>
+    <string name="pref_crash_reporting_subtitle">Ajude-nos a corrigir erros. O aplicativo não envia nenhum log por si só, você será solicitado a enviar um relatório de falha por e-mail</string>
+    <string name="pref_fun_keyboard_over_num">Teclado de função sobre os números</string>
+    <string name="pref_fun_keyboard_over_num_subtitle">Coloque o teclado de função acima dos números</string>
 </resources>
