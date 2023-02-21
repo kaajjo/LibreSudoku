@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity() {
                         SudokuBoardColorsImpl(
                             foregroundColor = MaterialTheme.colorScheme.onSurface,
                             notesColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
-                            altForegroundColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                            altForegroundColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                             errorColor = BoardColors.errorColor,
                             highlightColor = MaterialTheme.colorScheme.outline,
                             thickLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.65f),
