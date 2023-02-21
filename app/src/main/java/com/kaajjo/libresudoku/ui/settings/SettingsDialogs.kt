@@ -116,7 +116,10 @@ fun LanguagePicker(
                         ) {
                             RadioButton(
                                 selected = selected == locale.second,
-                                onClick = { }
+                                onClick = {
+                                    onSelect(locale.first)
+                                    onDismiss()
+                                }
                             )
                             Text(
                                 text = locale.second,
