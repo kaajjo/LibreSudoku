@@ -1,0 +1,6 @@
+New:
+Folders
+Importing files
+More customizations, improvements and bug fixes
+
+Full changelogs available on GitHub
