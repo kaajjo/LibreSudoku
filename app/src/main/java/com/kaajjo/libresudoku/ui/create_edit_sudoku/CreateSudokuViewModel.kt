@@ -57,6 +57,7 @@ class CreateSudokuViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         gameBoard = parsedBoard
                         gameDifficulty = board.difficulty
+                        gameType = board.type
                     }
                 }
             }
