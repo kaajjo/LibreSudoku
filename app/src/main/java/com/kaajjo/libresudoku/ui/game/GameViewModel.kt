@@ -280,12 +280,13 @@ class GameViewModel @Inject constructor(
     fun processInput(cell: Cell, remainingUse: Boolean, longTap: Boolean = false): Boolean {
         if (gamePlaying) {
             currCell =
-                if (currCell.row == cell.row && currCell.col == cell.col && digitFirstNumber == 0) Cell(
-                    -1,
-                    -1
-                ) else cell
+                if (currCell.row == cell.row && currCell.col == cell.col && digitFirstNumber == 0) {
+                    Cell(-1, -1)
+                } else {
+                    cell
+                }
 
-            if (currCell.row >= 0 && currCell.col >= 0) {
+            if (currCell.row >= 0 && currCell.col >= 0 && !gameBoard[currCell.row][currCell.col].locked) {
                 if ((inputMethod.value == 1 || overrideInputMethodDF) && digitFirstNumber > 0) {
                     if (!longTap) {
                         if ((remainingUsesList.size >= digitFirstNumber && remainingUsesList[digitFirstNumber - 1] > 0) || !remainingUse) {
