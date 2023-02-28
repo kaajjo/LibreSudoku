@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.qqwing.QQWing
 import com.kaajjo.libresudoku.core.qqwing.QQWingController
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
@@ -66,9 +67,16 @@ class HomeViewModel
 
         generated = false
         isGenerating = true
-        val thread = Thread {
+        viewModelScope.launch(Dispatchers.Default) {
             val controller = QQWingController()
             intPuzzle = controller.generate(selectedType, selectedDifficulty)
+
+            val qqWing = QQWing(selectedType, selectedDifficulty)
+            qqWing.puzzle = intPuzzle
+            qqWing.solve()
+
+            selectedDifficulty = qqWing.getDifficulty()
+
             board = intPuzzle.toMutableList()
             for (i in 0 until size) {
                 for (j in 0 until size) {
@@ -79,7 +87,6 @@ class HomeViewModel
             isGenerating = false
             generated = true
         }
-        thread.start()
     }
 
     fun solve() {
@@ -88,7 +95,7 @@ class HomeViewModel
         solvedPuzzle =
             MutableList(selectedType.size) { row -> MutableList(size) { col -> Cell(row, col, 0) } }
 
-        val thread = Thread {
+        viewModelScope.launch(Dispatchers.Default) {
             val controller = QQWingController()
             intPuzzle = controller.solve(intPuzzle, selectedType)
             solvedBoard = intPuzzle.toMutableList()
@@ -100,7 +107,6 @@ class HomeViewModel
             isSolving = false
             solved = true
         }
-        thread.start()
     }
 
     fun setDifficulty(diff: Int) {

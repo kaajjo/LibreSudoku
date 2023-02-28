@@ -92,7 +92,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
     /**
      * Whether or not to record history
      */
-    private var recordHistory = false
+    private var recordHistory = true
 
     /**
      * Whether or not to print history as it happens
@@ -197,15 +197,14 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         if (getNakedPairCount() > 0) return GameDifficulty.Moderate
         when (gameType) {
             GameType.Default6x6 -> if (getHiddenSingleCount() > 0) return GameDifficulty.Moderate
-            GameType.Default9x9 -> if (getHiddenSingleCount() > 10) {
-                return GameDifficulty.Moderate
-            }
+            GameType.Default9x9 -> if (getHiddenSingleCount() > 10) return GameDifficulty.Moderate
             GameType.Default12x12 -> if (getHiddenSingleCount() > 20) return GameDifficulty.Moderate
             else -> if (getHiddenSingleCount() > 10) return GameDifficulty.Moderate
         }
         when (gameType) {
             GameType.Default6x6 -> if (getSingleCount() > 10) return GameDifficulty.Easy
             GameType.Default9x9 -> if (getSingleCount() > 35) return GameDifficulty.Easy
+            GameType.Default12x12 -> if (getSingleCount() > 50) return GameDifficulty.Easy
             else -> if (getSingleCount() > 20) return GameDifficulty.Easy
         }
         return GameDifficulty.Unspecified
@@ -381,18 +380,22 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                             ROW_COL_SEC_SIZE - 1 - cellToColumn(position)
                         )
                     }
+
                     Symmetry.ROTATE180 -> positionsym1 = rowColumnToCell(
                         ROW_COL_SEC_SIZE - 1 - cellToRow(position),
                         ROW_COL_SEC_SIZE - 1 - cellToColumn(position)
                     )
+
                     Symmetry.MIRROR -> positionsym1 = rowColumnToCell(
                         cellToRow(position),
                         ROW_COL_SEC_SIZE - 1 - cellToColumn(position)
                     )
+
                     Symmetry.FLIP -> positionsym1 = rowColumnToCell(
                         ROW_COL_SEC_SIZE - 1 - cellToRow(position),
                         cellToColumn(position)
                     )
+
                     else -> {}
                 }
                 // try backing out the value and
