@@ -81,7 +81,7 @@ class SavedGameViewModel
                                 .onEach { cells ->
                                     cells.forEach { cell ->
                                         cell.locked =
-                                            parsedInitialBoard[cell.col][cell.row].value != 0
+                                            parsedInitialBoard[cell.row][cell.col].value != 0
                                     }
                                 }
                         notes = sudokuParser.parseNotes(savedGame.notes)
