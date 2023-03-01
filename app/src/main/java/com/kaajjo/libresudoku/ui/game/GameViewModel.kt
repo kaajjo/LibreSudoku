@@ -11,6 +11,7 @@ import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.qqwing.QQWingController
 import com.kaajjo.libresudoku.core.utils.GameState
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
@@ -156,7 +157,7 @@ class GameViewModel @Inject constructor(
 
     private lateinit var initialBoard: List<List<Cell>>
     var gameBoard by mutableStateOf(List(9) { row -> List(9) { col -> Cell(row, col, 0) } })
-    var solvedBoard = List(9) { row -> List(9) { col -> Cell(row, col, 0) } }
+    var solvedBoard = emptyList<List<Cell>>()
 
     var currCell by mutableStateOf(Cell(-1, -1, 0))
     private var undoManager = UndoManager(GameState(gameBoard, notes))
@@ -448,6 +449,7 @@ class GameViewModel @Inject constructor(
     }
 
     private fun useHint() {
+        if (solvedBoard.isEmpty()) solveBoard()
         if (currCell.row >= 0 && currCell.col >= 0 && !currCell.locked) {
             notes = clearNotesAtCell(notes, currCell.row, currCell.col)
             gameBoard = setValueCell(solvedBoard[currCell.row][currCell.col].value)
@@ -484,20 +486,21 @@ class GameViewModel @Inject constructor(
         board: List<List<Cell>> = getBoardNoRef(),
         cell: Cell
     ): List<List<Cell>> {
-        solvedBoard.let {
+        if (solvedBoard.isNotEmpty()) {
             board[cell.row][cell.col].error =
-                it[cell.row][cell.col].value != board[cell.row][cell.col].value
+                solvedBoard[cell.row][cell.col].value != board[cell.row][cell.col].value
+        } else {
+            solveBoard()
         }
         return board
     }
 
     private fun isCompleted(board: List<List<Cell>> = getBoardNoRef()): Boolean {
-        solvedBoard.let {
-            for (i in it.indices) {
-                for (j in it.indices) {
-                    if (it[i][j].value != board[i][j].value) {
-                        return false
-                    }
+        if (solvedBoard.isEmpty()) solveBoard()
+        for (i in solvedBoard.indices) {
+            for (j in solvedBoard.indices) {
+                if (solvedBoard[i][j].value != board[i][j].value) {
+                    return false
                 }
             }
         }
@@ -645,5 +648,20 @@ class GameViewModel @Inject constructor(
         currCell = Cell(-1, -1, 0)
         digitFirstNumber = -1
         eraseButtonToggled = !eraseButtonToggled
+    }
+
+    // to make sure that solvedBoard really contains a solved board
+    private fun solveBoard() {
+        val qqWing = QQWingController()
+        val boardToSolve = boardEntity.initialBoard.map { it.digitToInt(13) }.toIntArray()
+        val solved = qqWing.solve(boardToSolve, boardEntity.type)
+
+        val newSolvedBoard = List(boardEntity.type.size) { row -> List(boardEntity.type.size) { col -> Cell(row, col, 0) } }
+        for (i in 0 until size) {
+            for (j in 0 until size) {
+                newSolvedBoard[i][j].value = solved[i * size + j]
+            }
+        }
+        solvedBoard = newSolvedBoard
     }
 }
