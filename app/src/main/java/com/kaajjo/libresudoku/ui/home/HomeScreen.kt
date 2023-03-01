@@ -5,12 +5,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
 import kotlinx.coroutines.runBlocking
 
@@ -19,60 +21,22 @@ fun HomeScreen(
     navigatePlayGame: (Pair<Long, Boolean>) -> Unit,
     viewModel: HomeViewModel
 ) {
-    if (viewModel.showContinueGameDialog) {
-        AlertDialog(
-            title = { Text(stringResource(R.string.dialog_new_game)) },
-            text = { Text(stringResource(R.string.dialog_new_game_text)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.showContinueGameDialog = false
-                    viewModel.giveUpLastGame()
-                    viewModel.generate()
-                }) {
-                    Text(stringResource(R.string.dialog_new_game_positive))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { viewModel.showContinueGameDialog = false }) {
-                    Text(stringResource(R.string.action_cancel))
-                }
-            },
-            onDismissRequest = {
-                viewModel.showContinueGameDialog = false
-            }
-        )
-    }
+    var continueGameDialog by rememberSaveable { mutableStateOf(false) }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround
     ) {
-        if (viewModel.isGenerating || viewModel.isSolving) {
-            GeneratingDialog(
-                onDismiss = { },
-                text = if (viewModel.isGenerating) stringResource(R.string.dialog_generating) else stringResource(
-                    R.string.dialog_solving
-                )
-            )
-        }
-        LaunchedEffect(viewModel.generated) {
-            if (viewModel.generated) {
-                viewModel.solve()
-            }
-        }
 
-        val lastGame by viewModel.lastSaved.collectAsState(initial = null)
-        if (viewModel.generated
-            && !viewModel.isGenerating
-            && !viewModel.isSolving
-            && viewModel.solved
-        ) {
-            viewModel.generated = false
-            viewModel.solved = false
+        val lastGame by viewModel.lastSavedGame.collectAsStateWithLifecycle()
+
+        if (viewModel.readyToPlay) {
+            viewModel.readyToPlay = false
 
             runBlocking {
-                viewModel.saveToDatabase()
-                val saved = if (lastGame != null) !lastGame?.completed!! else false
+                //viewModel.saveToDatabase()
+                val saved = lastGame?.completed ?: false
                 navigatePlayGame(Pair(viewModel.insertedBoardUid, saved))
             }
         }
@@ -86,13 +50,13 @@ fun HomeScreen(
         ) {
             HorizontalPicker(
                 text = stringResource(viewModel.selectedDifficulty.resName),
-                onLeftClick = { viewModel.setDifficulty(-1) },
-                onRightClick = { viewModel.setDifficulty(1) }
+                onLeftClick = { viewModel.changeDifficulty(-1) },
+                onRightClick = { viewModel.changeDifficulty(1) }
             )
             HorizontalPicker(
                 text = stringResource(viewModel.selectedType.resName),
-                onLeftClick = { viewModel.setType(-1) },
-                onRightClick = { viewModel.setType(1) }
+                onLeftClick = { viewModel.changeType(-1) },
+                onRightClick = { viewModel.changeType(1) }
             )
 
             Spacer(Modifier.height(12.dp))
@@ -106,19 +70,55 @@ fun HomeScreen(
                     Text(stringResource(R.string.action_continue))
                 }
                 FilledTonalButton(onClick = {
-                    viewModel.showContinueGameDialog = true
+                    continueGameDialog = true
                 }) {
                     Text(stringResource(R.string.action_play))
                 }
             } else {
                 Button(onClick = {
                     viewModel.giveUpLastGame()
-                    viewModel.generate()
+                    viewModel.startGame()
                 }) {
                     Text(stringResource(R.string.action_play))
                 }
             }
         }
+    }
+
+
+    if (viewModel.isGenerating || viewModel.isSolving) {
+        GeneratingDialog(
+            onDismiss = { },
+            text = when {
+                viewModel.isGenerating -> stringResource(R.string.dialog_generating)
+                viewModel.isSolving -> stringResource(R.string.dialog_solving)
+                else -> ""
+            }
+        )
+    }
+
+    if (continueGameDialog) {
+        AlertDialog(
+            title = { Text(stringResource(R.string.dialog_new_game)) },
+            text = { Text(stringResource(R.string.dialog_new_game_text)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    continueGameDialog = false
+                    viewModel.giveUpLastGame()
+                    viewModel.startGame()
+                }) {
+                    Text(stringResource(R.string.dialog_new_game_positive))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { continueGameDialog = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
+            onDismissRequest = {
+                continueGameDialog = false
+            }
+        )
     }
 }
 
