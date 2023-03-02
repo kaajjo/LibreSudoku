@@ -257,4 +257,9 @@
     <string name="move_games_to_folder_subtitle">Vyberte složku, do které chcete přesunout vybrané hry</string>
     <string name="pref_cross_highlight_subtitle">Zvýrazněte některé rámečky na desce</string>
     <string name="pref_cross_highlight">Zvýraznění kříže</string>
+    <string name="pref_crash_reporting">Hlášení o selhání</string>
+    <string name="pref_crash_reporting_subtitle">Pomozte nám opravit chyby. Aplikace sama o sobě neodesílá žádné protokoly, budete vyzváni k odeslání hlášení o pádu e-mailem</string>
+    <string name="dialog_crash_report_text">Jejda, LibreSudoku právě spadlo. Chcete poslat hlášení o pádu vývojářům\?</string>
+    <string name="pref_fun_keyboard_over_num">Funkční klávesnice nad čísly</string>
+    <string name="pref_fun_keyboard_over_num_subtitle">Umístěte funkční klávesnici nad čísla</string>
 </resources>
