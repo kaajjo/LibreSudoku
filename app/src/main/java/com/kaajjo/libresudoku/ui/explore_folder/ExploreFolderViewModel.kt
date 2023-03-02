@@ -9,7 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaajjo.libresudoku.core.qqwing.QQWing
+import com.kaajjo.libresudoku.core.qqwing.QQWingController
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.domain.usecase.UpdateManyBoardsUseCase
@@ -58,16 +58,15 @@ class ExploreFolderViewModel @Inject constructor(
         gameUidToPlay = board.uid
         if (board.solvedBoard == "") {
             viewModelScope.launch {
-                val qqWing = QQWing(board.type, board.difficulty)
+                val qqWingController = QQWingController()
+                val sudokuParser = SudokuParser()
                 val boardToSolve = board.initialBoard.map { it.digitToInt(13) }.toIntArray()
 
-                qqWing.puzzle = boardToSolve
-                qqWing.solve()
-                val sudokuParser = SudokuParser()
-                val solutionsCount = qqWing.countSolutions()
-                if (solutionsCount == 1) {
+                val solved = qqWingController.solve(boardToSolve, board.type)
+
+                if (qqWingController.solutionCount == 1) {
                     updateBoardUseCase(
-                        board.copy(solvedBoard = sudokuParser.boardToString(qqWing.solution))
+                        board.copy(solvedBoard = sudokuParser.boardToString(solved))
                     )
                     readyToPlay = true
                 }

@@ -21,9 +21,10 @@ import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
-import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.domain.repository.RecordRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
+import com.kaajjo.libresudoku.domain.usecase.board.GetBoardUseCase
+import com.kaajjo.libresudoku.domain.usecase.board.UpdateBoardUseCase
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -43,10 +44,11 @@ import kotlin.time.toKotlinDuration
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
-    private val boardRepository: BoardRepository,
     private val savedGameRepository: SavedGameRepository,
     private val appSettingsManager: AppSettingsManager,
     private val recordRepository: RecordRepository,
+    private val updateBoardUseCase: UpdateBoardUseCase,
+    private val getBoardUseCase: GetBoardUseCase,
     themeSettingsManager: ThemeSettingsManager,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -55,7 +57,7 @@ class GameViewModel @Inject constructor(
         val continueSaved = savedStateHandle.get<Boolean>("saved")
 
         viewModelScope.launch(Dispatchers.IO) {
-            boardEntity = boardRepository.get(savedStateHandle["uid"] ?: 1L)
+            boardEntity = getBoardUseCase(savedStateHandle["uid"] ?: 1L)
             val savedGame = savedGameRepository.get(boardEntity.uid)
 
             withContext(Dispatchers.Default) {
@@ -68,15 +70,22 @@ class GameViewModel @Inject constructor(
                         cell.locked = cell.value != 0
                     }
                 }
-                solvedBoard = sudokuParser.parseBoard(
-                    boardEntity.solvedBoard,
-                    boardEntity.type
-                )
-                for (i in solvedBoard.indices) {
-                    for (j in initialBoard.indices) {
-                        solvedBoard[i][j].locked = initialBoard[i][j].locked
-                    }
-                }
+
+               if (boardEntity.solvedBoard.isNotBlank() && !boardEntity.solvedBoard.contains("0")) {
+                   solvedBoard = sudokuParser.parseBoard(
+                       boardEntity.solvedBoard,
+                       boardEntity.type
+                   )
+                   for (i in solvedBoard.indices) {
+                       for (j in solvedBoard.indices) {
+                           solvedBoard[i][j].locked = initialBoard[i][j].locked
+                       }
+                   }
+               } else {
+                   withContext(Dispatchers.Main) {
+                       solveBoard()
+                   }
+               }
             }
 
             withContext(Dispatchers.Main) {
@@ -662,6 +671,19 @@ class GameViewModel @Inject constructor(
                 newSolvedBoard[i][j].value = solved[i * size + j]
             }
         }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val sudokuParser = SudokuParser()
+            updateBoardUseCase(
+                boardEntity.copy(solvedBoard = sudokuParser.boardToString(newSolvedBoard))
+            )
+        }
         solvedBoard = newSolvedBoard
+
+        for (i in solvedBoard.indices) {
+            for (j in solvedBoard.indices) {
+                solvedBoard[i][j].locked = initialBoard[i][j].locked
+            }
+        }
     }
 }
