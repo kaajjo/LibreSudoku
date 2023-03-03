@@ -125,7 +125,7 @@
     <string name="tip_card_records_list_summ">Это список рекордов, он содержит 5 ваших лучших игр, или меньше, взависимости от того, сколько вы играли. Вы можете удалить рекорд по долгому нажатию на него</string>
     <string name="statistics_no_records">У вас пока нет рекрдов</string>
     <string name="history_title">История</string>
-    <string name="history_no_games">Вы пока не играли</string>
+    <string name="history_no_games">Вы еще не играли</string>
     <string name="history_item_time">Время: %1$s</string>
     <string name="history_item_id">ID игры: %1$d</string>
     <string name="history_item_can_continue">Вы можете продолжить эту игру</string>
