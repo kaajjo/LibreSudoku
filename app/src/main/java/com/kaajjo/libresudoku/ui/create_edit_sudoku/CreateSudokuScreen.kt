@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.PreferencesConstants
@@ -26,6 +27,7 @@ import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
+import com.kaajjo.libresudoku.ui.util.ReverseArrangement
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -175,36 +177,45 @@ fun CreateSudokuScreen(
                 positionLines = positionLines,
                 crossHighlight = crossHighlight
             )
-            DefaultGameKeyboard(
-                size = viewModel.gameType.size,
-                remainingUses = null,
-                onClick = {
-                    viewModel.processInputKeyboard(number = it)
-                },
-                onLongClick = {
-                    viewModel.processInputKeyboard(
-                        number = it,
-                        longTap = true
-                    )
-                },
-                selected = viewModel.digitFirstNumber
+
+            val funKeyboardOverNum by viewModel.funKeyboardOverNum.collectAsStateWithLifecycle(
+                initialValue = PreferencesConstants.DEFAULT_FUN_KEYBOARD_OVER_NUM
             )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(vertical = 8.dp)
+
+            Column(
+                verticalArrangement = if (funKeyboardOverNum) ReverseArrangement else Arrangement.Top
             ) {
-                ToolbarItem(
-                    modifier = Modifier.weight(1f),
-                    painter = painterResource(R.drawable.ic_round_undo_24),
-                    onClick = { viewModel.toolbarClick(ToolBarItem.Undo) }
-                )
-                ToolbarItem(
-                    modifier = Modifier.weight(1f),
-                    painter = painterResource(R.drawable.ic_eraser_24),
+                DefaultGameKeyboard(
+                    size = viewModel.gameType.size,
+                    remainingUses = null,
                     onClick = {
-                        viewModel.toolbarClick(ToolBarItem.Remove)
-                    }
+                        viewModel.processInputKeyboard(number = it)
+                    },
+                    onLongClick = {
+                        viewModel.processInputKeyboard(
+                            number = it,
+                            longTap = true
+                        )
+                    },
+                    selected = viewModel.digitFirstNumber
                 )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    ToolbarItem(
+                        modifier = Modifier.weight(1f),
+                        painter = painterResource(R.drawable.ic_round_undo_24),
+                        onClick = { viewModel.toolbarClick(ToolBarItem.Undo) }
+                    )
+                    ToolbarItem(
+                        modifier = Modifier.weight(1f),
+                        painter = painterResource(R.drawable.ic_eraser_24),
+                        onClick = {
+                            viewModel.toolbarClick(ToolBarItem.Remove)
+                        }
+                    )
+                }
             }
 
             if (importStringDialog) {

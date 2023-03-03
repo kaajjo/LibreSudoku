@@ -74,6 +74,7 @@ class CreateSudokuViewModel @Inject constructor(
 
     val positionLines = appSettingsManager.positionLines
     val crossHighlight = themeSettingsManager.boardCrossHighlight
+    val funKeyboardOverNum = appSettingsManager.funKeyboardOverNumbers
 
     val fontSize = appSettingsManager.fontSize
 
