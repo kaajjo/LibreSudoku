@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
 import com.kaajjo.libresudoku.core.PreferencesConstants
+import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.QQWingController
 import com.kaajjo.libresudoku.core.utils.GameState
@@ -60,6 +61,12 @@ class GameViewModel @Inject constructor(
             boardEntity = getBoardUseCase(savedStateHandle["uid"] ?: 1L)
             val savedGame = savedGameRepository.get(boardEntity.uid)
 
+            withContext(Dispatchers.Main) {
+                gameType = boardEntity.type
+                gameDifficulty = boardEntity.difficulty
+            }
+
+
             withContext(Dispatchers.Default) {
                 initialBoard = sudokuParser.parseBoard(
                     boardEntity.initialBoard,
@@ -71,21 +78,21 @@ class GameViewModel @Inject constructor(
                     }
                 }
 
-               if (boardEntity.solvedBoard.isNotBlank() && !boardEntity.solvedBoard.contains("0")) {
-                   solvedBoard = sudokuParser.parseBoard(
-                       boardEntity.solvedBoard,
-                       boardEntity.type
-                   )
-                   for (i in solvedBoard.indices) {
-                       for (j in solvedBoard.indices) {
-                           solvedBoard[i][j].locked = initialBoard[i][j].locked
-                       }
-                   }
-               } else {
-                   withContext(Dispatchers.Main) {
-                       solveBoard()
-                   }
-               }
+                if (boardEntity.solvedBoard.isNotBlank() && !boardEntity.solvedBoard.contains("0")) {
+                    solvedBoard = sudokuParser.parseBoard(
+                        boardEntity.solvedBoard,
+                        boardEntity.type
+                    )
+                    for (i in solvedBoard.indices) {
+                        for (j in solvedBoard.indices) {
+                            solvedBoard[i][j].locked = initialBoard[i][j].locked
+                        }
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        solveBoard()
+                    }
+                }
             }
 
             withContext(Dispatchers.Main) {
@@ -109,8 +116,10 @@ class GameViewModel @Inject constructor(
 
     var remainingUsesList = emptyList<Int>()
     val firstGame = appSettingsManager.firstGame
-    lateinit var boardEntity: SudokuBoard
+    private lateinit var boardEntity: SudokuBoard
     var size by mutableStateOf(9)
+    var gameType by mutableStateOf(GameType.Unspecified)
+    var gameDifficulty by mutableStateOf(GameDifficulty.Unspecified)
 
     // dialogs, menus
     var restartDialog by mutableStateOf(false)
@@ -395,8 +404,10 @@ class GameViewModel @Inject constructor(
                 if (prevTime.toInt(DurationUnit.SECONDS) != duration.toInt(DurationUnit.SECONDS)) {
                     timeText = durationToString(duration)
                     // save game
-                    viewModelScope.launch(Dispatchers.IO) {
-                        saveGame()
+                    if (gameBoard.any { it.any { cell -> cell.value != 0 } }) {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            saveGame()
+                        }
                     }
                 }
             }
@@ -642,7 +653,7 @@ class GameViewModel @Inject constructor(
         currCell = Cell(-1, -1, 0)
     }
 
-    fun getFontSize(type: GameType = boardEntity.type, factor: Int): TextUnit {
+    fun getFontSize(type: GameType = gameType, factor: Int): TextUnit {
         return sudokuUtils.getFontSize(type, factor)
     }
 
@@ -665,7 +676,15 @@ class GameViewModel @Inject constructor(
         val boardToSolve = boardEntity.initialBoard.map { it.digitToInt(13) }.toIntArray()
         val solved = qqWing.solve(boardToSolve, boardEntity.type)
 
-        val newSolvedBoard = List(boardEntity.type.size) { row -> List(boardEntity.type.size) { col -> Cell(row, col, 0) } }
+        val newSolvedBoard = List(boardEntity.type.size) { row ->
+            List(boardEntity.type.size) { col ->
+                Cell(
+                    row,
+                    col,
+                    0
+                )
+            }
+        }
         for (i in 0 until size) {
             for (j in 0 until size) {
                 newSolvedBoard[i][j].value = solved[i * size + j]

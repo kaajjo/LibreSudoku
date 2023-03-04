@@ -329,7 +329,7 @@ fun GameScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TopBoardSection(stringResource(viewModel.boardEntity.difficulty.resName))
+                TopBoardSection(stringResource(viewModel.gameDifficulty.resName))
 
                 val mistakesLimit by viewModel.mistakesLimit.collectAsState(initial = PreferencesConstants.DEFAULT_MISTAKES_LIMIT)
                 if (mistakesLimit && errorHighlight != 0) {
@@ -370,7 +370,7 @@ fun GameScreen(
                         viewModel.getFontSize(factor = fontSizeFactor)
                     )
                 }
-                LaunchedEffect(fontSizeFactor) {
+                LaunchedEffect(fontSizeFactor, viewModel.gameType) {
                     fontSizeValue = viewModel.getFontSize(factor = fontSizeFactor)
                 }
 
@@ -400,7 +400,7 @@ fun GameScreen(
                     enabled = viewModel.gamePlaying && !viewModel.endGame,
                     questions = !(viewModel.gamePlaying || viewModel.endGame) && Build.VERSION.SDK_INT < Build.VERSION_CODES.R,
                     renderNotes = renderNotes && !viewModel.showSolution,
-                    zoomable = viewModel.boardEntity.type == GameType.Default12x12,
+                    zoomable = viewModel.gameType == GameType.Default12x12,
                     boardColors = LocalBoardColors.current,
                     crossHighlight = crossHighlight
                 )
