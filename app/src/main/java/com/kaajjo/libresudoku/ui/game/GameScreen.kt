@@ -365,13 +365,10 @@ fun GameScreen(
                 )
 
                 val fontSizeFactor by viewModel.fontSize.collectAsState(initial = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
-                var fontSizeValue by remember {
+                val fontSizeValue by remember(fontSizeFactor, viewModel.gameType) {
                     mutableStateOf(
                         viewModel.getFontSize(factor = fontSizeFactor)
                     )
-                }
-                LaunchedEffect(fontSizeFactor, viewModel.gameType) {
-                    fontSizeValue = viewModel.getFontSize(factor = fontSizeFactor)
                 }
 
                 Board(

@@ -10,11 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -59,19 +57,14 @@ fun BoardPreview(
     ) {
         val maxWidth = constraints.maxWidth.toFloat()
 
-        var cellSize by remember { mutableStateOf(maxWidth / size.toFloat()) }
+        val cellSize by remember(size) { mutableStateOf(maxWidth / size.toFloat()) }
         val foregroundColor = boardColors.altForegroundColor
         val thickLineColor = boardColors.thickLineColor
         val thinLineColor = boardColors.thinLineColor
 
-        var vertThick by remember { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
-        var horThick by remember { mutableStateOf(ceil(sqrt(size.toFloat())).toInt()) }
+        val vertThick by remember(size) { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
+        val horThick by remember(size) { mutableStateOf(ceil(sqrt(size.toFloat())).toInt()) }
 
-        LaunchedEffect(size) {
-            cellSize = maxWidth / size.toFloat()
-            vertThick = floor(sqrt(size.toFloat())).toInt()
-            horThick = ceil(sqrt(size.toFloat())).toInt()
-        }
         val fontSizePx = with(LocalDensity.current) { mainTextSize.toPx() }
 
         val textPaint by remember {
@@ -161,7 +154,7 @@ private fun BoardPreviewPreview() {
         Surface {
             BoardPreview(
                 boardString = "0000100000040000000000000700000000000900000000680000000000000005000000000000000",
-                boardColors =  SudokuBoardColorsImpl(
+                boardColors = SudokuBoardColorsImpl(
                     foregroundColor = BoardColors.foregroundColor,
                     notesColor = BoardColors.notesColor,
                     altForegroundColor = BoardColors.altForegroundColor,

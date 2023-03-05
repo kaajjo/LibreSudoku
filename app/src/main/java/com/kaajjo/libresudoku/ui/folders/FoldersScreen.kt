@@ -271,10 +271,10 @@ fun FoldersScreen(
                         }
                     }
                     items(folders) { item ->
-                        var puzzlesCount by remember { mutableStateOf(0) }
-                        LaunchedEffect(viewModel.puzzlesCountInFolder) {
-                            puzzlesCount = viewModel.puzzlesCountInFolder
+                        val puzzlesCount by remember(viewModel.puzzlesCountInFolder) {
+                            mutableStateOf(viewModel.puzzlesCountInFolder
                                 .firstOrNull { it.first == item.uid }?.second ?: 0
+                            )
                         }
                         FolderItem(
                             name = item.name,

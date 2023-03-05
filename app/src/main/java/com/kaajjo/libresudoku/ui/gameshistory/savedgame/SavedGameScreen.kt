@@ -96,14 +96,12 @@ fun SavedGameScreen(
                     initialValue = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT
                 )
                 val fontSizeFactor by viewModel.fontSize.collectAsState(initial = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
-                var fontSizeValue by remember {
+                val fontSizeValue by remember(fontSizeFactor) {
                     mutableStateOf(
                         viewModel.getFontSize(factor = fontSizeFactor)
                     )
                 }
-                LaunchedEffect(fontSizeFactor) {
-                    fontSizeValue = viewModel.getFontSize(fontSizeFactor)
-                }
+
                 val pagerState = rememberPagerState()
                 val pages = listOf(
                     stringResource(R.string.saved_game_current),

@@ -90,11 +90,11 @@ fun Board(
         val maxWidth = constraints.maxWidth.toFloat()
 
         // single cell size
-        var cellSize by remember { mutableStateOf(maxWidth / size.toFloat()) }
+        val cellSize by remember(size) { mutableStateOf(maxWidth / size.toFloat()) }
         // div for notes in one row in cell
-        var cellSizeDivWidth by remember { mutableStateOf(cellSize / ceil(sqrt(size.toFloat()))) }
+        val cellSizeDivWidth by remember(size) { mutableStateOf(cellSize / ceil(sqrt(size.toFloat()))) }
         // div for note in one column in cell
-        var cellSizeDivHeight by remember { mutableStateOf(cellSize / floor(sqrt(size.toFloat()))) }
+        val cellSizeDivHeight by remember(size) { mutableStateOf(cellSize / floor(sqrt(size.toFloat()))) }
 
         val errorColor = boardColors.errorColor
         val foregroundColor = boardColors.foregroundColor
@@ -107,16 +107,8 @@ fun Board(
         // highlight (cells)
         val highlightColor = boardColors.highlightColor
 
-        var vertThick by remember { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
-        var horThick by remember { mutableStateOf(ceil(sqrt(size.toFloat())).toInt()) }
-
-        LaunchedEffect(size) {
-            cellSize = maxWidth / size.toFloat()
-            cellSizeDivWidth = cellSize / ceil(sqrt(size.toFloat()))
-            cellSizeDivHeight = cellSize / floor(sqrt(size.toFloat()))
-            vertThick = floor(sqrt(size.toFloat())).toInt()
-            horThick = ceil(sqrt(size.toFloat())).toInt()
-        }
+        val vertThick by remember(size) { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
+        val horThick by remember(size) { mutableStateOf(ceil(sqrt(size.toFloat())).toInt()) }
 
         var fontSizePx = with(LocalDensity.current) { mainTextSize.toPx() }
         var noteSizePx = with(LocalDensity.current) { noteTextSize.toPx() }
@@ -201,12 +193,9 @@ fun Board(
             }
         }
 
-        var zoom by remember { mutableStateOf(1f) }
-        var offset by remember { mutableStateOf(Offset.Zero) }
-        LaunchedEffect(enabled) {
-            zoom = 1f
-            offset = Offset.Zero
-        }
+        var zoom by remember(enabled) { mutableStateOf(1f) }
+        var offset by remember(enabled) { mutableStateOf(Offset.Zero) }
+
         val boardModifier = Modifier
             .fillMaxSize()
             .pointerInput(key1 = enabled, key2 = board) {

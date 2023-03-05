@@ -92,10 +92,7 @@ fun DefaultGameKeyboard(
     size: Int,
     selected: Int = 0
 ) {
-    var numbers by remember { mutableStateOf((1..size).toList()) }
-    LaunchedEffect(key1 = size) {
-        numbers = (1..size).toList()
-    }
+    val numbers by remember(size) { mutableStateOf((1..size).toList()) }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(2.dp)
