@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">LibreSudoku</string>
     <string name="nav_bar_statistics">Statistics</string>
@@ -12,7 +13,6 @@
     <string name="action_play">Play</string>
     <string name="action_continue">Continue</string>
     <string name="action_delete">Delete</string>
-
     <string name="difficulty_unspecified">Unspecified</string>
     <string name="difficulty_simple">Simple</string>
     <string name="difficulty_easy">Easy</string>
@@ -20,96 +20,72 @@
     <string name="difficulty_hard">Hard</string>
     <string name="difficulty_challenge">Challenge</string>
     <string name="difficulty_custom">Custom</string>
-
     <string name="type_default_6x6">6x6</string>
     <string name="type_default_9x9">9x9</string>
     <string name="type_default_12x12">12x12</string>
     <string name="type_unspecified">Unspecified</string>
-
     <string name="settings_title">Settings</string>
     <string name="more_title">More</string>
     <string name="about_title">About</string>
-
     <string name="pref_appearance">Appearance</string>
     <string name="pref_dark_theme">Dark theme</string>
     <string name="pref_dark_theme_follow">Follow system</string>
     <string name="pref_dark_theme_off">Off</string>
     <string name="pref_dark_theme_on">On</string>
-
     <string name="pref_board_font_size">Board font size</string>
     <string name="pref_board_font_size_small">Small</string>
     <string name="pref_board_font_size_medium">Medium</string>
     <string name="pref_board_font_size_large">Large</string>
-
     <string name="pref_input">Input method</string>
     <string name="pref_input_cell_first">Cell first</string>
     <string name="pref_input_digit_first">Value first</string>
-
     <string name="pref_delete_stats">Clear all statistics</string>
     <string name="pref_delete_stats_summ">This action will delete all your statistics, saved games and records. It can\'t be undone</string>
     <string name="action_deleted">Deleted</string>
-
     <string name="pref_app_theme">App theme</string>
-
     <string name="theme_dynamic">Dynamic</string>
     <string name="theme_green">Green</string>
     <string name="theme_peach">Peach</string>
     <string name="theme_yellow">Yellow</string>
     <string name="theme_lavender">Lavender</string>
     <string name="theme_black_and_white">Black and white</string>
-
     <string name="pref_pure_black">Pure black dark theme</string>
     <string name="pref_gameplay">Gameplay</string>
-
     <string name="pref_mistakes_limit">Mistakes limit</string>
     <string name="pref_mistakes_limit_summ">3 mistakes and you\'re done</string>
-
     <string name="pref_disable_hints">Disable hints</string>
     <string name="pref_disable_hints_summ">Don\'t like hints? Just remove them!</string>
-
     <string name="pref_show_timer">Show timer</string>
     <string name="pref_reset_timer">Reset the timer on game reset</string>
-
     <string name="pref_assistance">Assistance</string>
     <string name="pref_mistakes_check">Mistakes checking</string>
     <string name="pref_mistakes_check_off">Off</string>
     <string name="pref_mistakes_check_violations">Rules violations</string>
     <string name="pref_mistakes_check_final">With final solution</string>
-
     <string name="pref_highlight_identical">Highlight identical values</string>
     <string name="pref_highlight_identical_summ">Selection of a value on the board highlights cells with the same value</string>
-
     <string name="pref_remaining_uses">Remaining uses</string>
     <string name="pref_remaining_uses_summ">The number of remaining uses of a value is displayed on the keyboard</string>
-
     <string name="pref_position_lines">Position lines</string>
     <string name="pref_position_lines_summ">The row and column of the selected cell are highlighted</string>
-
     <string name="pref_auto_erase_notes">Auto erase notes</string>
-
     <string name="pref_other">Other</string>
     <string name="pref_keep_screen_on">Keep screen awake</string>
-
     <string name="pref_reset_tipcards">Reset all tip cards</string>
     <string name="pref_tipcards_reset">Tip cards was reset!</string>
-
     <string name="pref_app_language">App language</string>
     <string name="pref_app_language_default">Default</string>
-
     <string name="about_version">Version</string>
     <string name="about_github_project">Project on GitHub</string>
-
     <string name="action_give_up">Give up</string>
     <string name="action_reset_game">Reset the game</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
-
     <string name="action_show_notes">Show notes</string>
     <string name="action_clear_notes">Clear notes</string>
     <string name="action_compute_notes">Compute notes</string>
     <string name="action_show_solution">Show solution</string>
     <string name="action_show_mine_sudoku">Show mine</string>
-
     <string name="onboard_title">Welcome</string>
     <string name="intro_what_is_sudoku">A classic sudoku looks as follows</string>
     <string name="intro_rules">The goal of the game is to fill all the cells with numbers from 1 to 9. So that the values do not repeat in any column, row or smaller box (3x3)</string>
@@ -130,10 +106,8 @@
     <string name="game_completed_text">You have completed the game. You can stay or return to the main menu</string>
     <string name="game_over">Game over</string>
     <string name="game_over_mistakes">You have made 3 mistakes</string>
-
     <string name="dialog_generating">Generating…</string>
     <string name="dialog_solving">Solving…</string>
-
     <string name="statistics">Statistics</string>
     <string name="games_started">Games started</string>
     <string name="games_completed">Games completed</string>
@@ -154,13 +128,11 @@
     <string name="tip_card_records_list_title">List of records</string>
     <string name="tip_card_records_list_summ">This list contains up to 5 of your best records. You can delete a record that you don\'t like with a long press on the entry</string>
     <string name="statistics_no_records">You have no records yet</string>
-
     <string name="history_title">History</string>
     <string name="history_no_games">You haven\'t played yet</string>
     <string name="history_item_time">Time: %1$s</string>
     <string name="history_item_id">Game ID: %1$d</string>
     <string name="history_item_can_continue">You can continue this game</string>
-
     <string name="saved_game_screen_title">Game #%1$d</string>
     <string name="saved_game_current">Current</string>
     <string name="saved_game_initial">Initial</string>
@@ -174,38 +146,32 @@
     <string name="saved_game_give_up">The game was not completed, you gave up</string>
     <string name="saved_game_in_progress">In progress</string>
     <string name="saved_game_mistakes_limit">The game has not been completed, you have exceeded the mistakes limit</string>
-
     <string name="learn_screen_title">Learn</string>
     <string name="learn_tab_sudoku">Sudoku</string>
     <string name="learn_tab_app">App</string>
     <string name="learn_app_toolbar">Toolbar</string>
     <string name="learn_app_toolbar_desc">A panel under the keyboard</string>
     <string name="learn_app_toolbar_notes_menu">You can press and hold the Notes button to open the Notes menu, where you can clear or compute notes and toggle their visibility</string>
-
     <string name="learn_sudoku_rules">Sudoku rules</string>
-
     <string name="sudoku_rules_mistakes">There is a mistake here, can you spot it? Maybe even two</string>
     <string name="sudoku_rules_mistakes_highlight">Highlight mistakes</string>
     <string name="sudoku_rules_mistakes_explanation">The first mistake is two 2s in the sixth box. Remember the rule that there can\'t be double values in a box? The second mistake is the number 6 in row 2, column 8 (R2C8), because there is already a 6 in that column in R5C8</string>
     <string name="naked_pairs_title">Naked pairs</string>
     <string name="naked_pairs_explanation">There are two cells that share the same two pencil marks. Right now, we can\'t tell which one is the 2 and which one is the 3.\nBut since the Sudoku rules tell us that each box can have only one "2" and only one "3", we can assume that one of them is the 2 and the other is the 3</string>
     <string name="naked_pairs_end">Now, this wouldn\'t help us if there weren\'t any other "2" or "3" pencil marks in that box. But since there are, we can remove them! The other cells in the box cannot be 2 or 3</string>
-
     <string name="learn_basic_title">Basic</string>
     <string name="learn_basic_1">Let\'s select box number 7. There are already four cells filled</string>
     <string name="learn_basic_2">Now let\'s take a look at the number 8. The number 8 in row 4, column 3 (R4C3) blocks the entire column in our box. So the number 8 can\'t stand there</string>
-    <string name="learn_basic_3">Also, the number 8 in R7C5 blocks the entire row in our block</string>
+    <string name="learn_basic_3">Also, the number 8 in R7C5 blocks the entire row in our box</string>
     <string name="learn_basic_4">And we are left with only one cell in which the number 8 can stand</string>
-    <string name="learn_basic_5">The same logic applies to rows and columns. Look at the first row. The number 4 in R7C3 blocks the third column in our row. The number 4 in R3C5 blocks two columns at once (4 and 6), because there can be no other fours in the same block. R6C7 blocks column 7</string>
+    <string name="learn_basic_5">The same logic applies to rows and columns. Look at the first row. The number 4 in R7C3 blocks the third column in our row. The number 4 in R3C5 blocks two columns at once (4 and 6), because there can be no other fours in the same box. R6C7 blocks column 7</string>
     <string name="learn_basic_6">As a result, we are left with only one cell that can contain the number 4. This is cell R1C3</string>
-
     <string name="learn_hidden_pairs_title">Hidden pairs</string>
     <string name="learn_hidden_pairs_1">Hidden pairs are almost the same as naked pairs, the only difference being that they are hidden among the others. These two cells have something in common, they can hold the numbers 6 and 9, and these are the only two squares here where they can stand on</string>
     <string name="learn_hidden_pairs_2">You can conclude that these two cells contain only these two numbers and not the others. So you can remove unnecessary markers from these cells. As with naked pairs, this works the same way with columns and rows</string>
     <string name="page_previous">Previous</string>
     <string name="page_next">Next</string>
     <string name="no_value_default" translatable="false">--</string>
-
     <string name="libraries_licenses_title">Open Source Licenses</string>
     <string name="can_continue_label">Can continue</string>
     <string name="custom_sudoku_title">Custom sudoku</string>
@@ -228,22 +194,18 @@
     <string name="export_string_copy">Copy</string>
     <string name="export_string_state_copied">Copied</string>
     <string name="export_string_state_error">Error</string>
-
     <string name="filter_all">All</string>
     <string name="filter_completed">Completed</string>
     <string name="filter_in_progress">In progress</string>
     <string name="filter_not_started">Not started</string>
-
     <string name="sort_ascending">Ascending</string>
     <string name="sort_descending">Descending</string>
     <string name="sort_by_timer">Timer</string>
     <string name="sort_by_game_id">ID</string>
     <string name="sort_label">Sort</string>
     <string name="filter_label">Filter</string>
-
     <string name="help_translate">Help translate</string>
     <string name="title_folders">Folders</string>
-
     <string name="create_folder">Create a folder</string>
     <string name="delete_folder">Delete a folder</string>
     <string name="folder_name">Folder: %1$s</string>
@@ -254,7 +216,6 @@
         <item quantity="many">%1$d puzzles to import</item>
         <item quantity="other">%1$d puzzles to import</item>
     </plurals>
-
     <plurals name="puzzles_in_folder">
         <item quantity="zero">Empty</item>
         <item quantity="one">%1$d puzzle</item>
@@ -263,7 +224,6 @@
         <item quantity="many">%1$d puzzles</item>
         <item quantity="other">%1$d puzzles</item>
     </plurals>
-
     <string name="edit_name">Edit name</string>
     <string name="export">Export</string>
     <string name="create_folder_name">Folder name</string>
@@ -278,7 +238,6 @@
     <string name="import_save">Save</string>
     <string name="action_edit">Edit</string>
     <string name="folder_empty_label">This folder is empty</string>
-
     <string name="dialog_delete_selected">Delete selected</string>
     <string name="explore_folder_add_sudoku">Add sudoku</string>
     <string name="edit_sudoku">Edit sudoku</string>
@@ -289,7 +248,6 @@
         <item quantity="many">Are you sure you want to delete %1$d games</item>
         <item quantity="other">Are you sure you want to delete %1$d games?</item>
     </plurals>
-
     <string name="game_id">Game #%1$d</string>
     <string name="add_to_folder">Add to folder</string>
     <string name="add_to_folder_create_new">Create new</string>

@@ -51,7 +51,7 @@
     <string name="pref_mistakes_limit">Лимит ошибок</string>
     <string name="pref_mistakes_limit_summ">3 ошибки и игра будет окончена</string>
     <string name="pref_disable_hints">Отключить подсказки</string>
-    <string name="pref_disable_hints_summ">Не любите подсказки? Так отключите их!</string>
+    <string name="pref_disable_hints_summ">Не любите подсказки\? Так отключите их!</string>
     <string name="pref_show_timer">Показывать таймер</string>
     <string name="pref_reset_timer">Сбрасывать таймер при рестарте</string>
     <string name="pref_assistance">Помощь</string>
@@ -94,8 +94,8 @@
     <string name="action_exit">Выйти</string>
     <string name="action_stay">Остаться</string>
     <string name="mistakes_number_out_of">Ошибок %1$d/%2$d</string>
-    <string name="reset_game_text">Начать текущую судоку заново?</string>
-    <string name="give_up_text">Хотите сдаться? После того, как Вы сдадитесь, вы сможете посмотреть решение, но игра будет окончена</string>
+    <string name="reset_game_text">Начать текущую судоку заново\?</string>
+    <string name="give_up_text">Хотите сдаться\? После того, как Вы сдадитесь, вы сможете посмотреть решение, но игра будет окончена</string>
     <string name="game_completed">Игра завершена</string>
     <string name="game_completed_text">Вы завершили эту судоку. Вы можете остаться или выйти на главный экран, чтобы начать новую игру</string>
     <string name="game_over">Конец игры</string>
@@ -103,7 +103,7 @@
     <string name="dialog_generating">Генерируем…</string>
     <string name="dialog_solving">Решаем…</string>
     <string name="dialog_new_game">Игра в процессе</string>
-    <string name="dialog_new_game_text">У вас есть незавершенная игра, вы точно хотите начать новую?</string>
+    <string name="dialog_new_game_text">У вас есть незавершенная игра, вы точно хотите начать новую\?</string>
     <string name="statistics">Статистика</string>
     <string name="games_started">Игр начато</string>
     <string name="games_completed">Игр завершено</string>
@@ -150,7 +150,7 @@
     <string name="learn_sudoku_rules">Правила судоку</string>
     <string name="sudoku_rules_mistakes">Здесь есть ошибка, сможете заметить? Может быть их даже 2</string>
     <string name="sudoku_rules_mistakes_highlight">Подсветка ошибок</string>
-    <string name="sudoku_rules_mistakes_explanation">Первая ошибка это две 2 в шестом квадрате. Вы еще помните правило про то, что числа не могут повторяться в строках, столбцах и квадратах? Вторая ошибка это цифра 6 в строке 2, столбце 8 (R2C8), потому что в этом столбце уже есть цифра 6 R5C8</string>
+    <string name="sudoku_rules_mistakes_explanation">Первая ошибка это две 2 в шестом квадрате. Вы еще помните правило про то, что числа не могут повторяться в строках, столбцах и квадратах\? Вторая ошибка это цифра 6 в строке 2, столбце 8 (R2C8), потому что в этом столбце уже есть цифра 6 R5C8</string>
     <string name="naked_pairs_title">Голые пары</string>
     <string name="naked_pairs_explanation">Здесь две клетки в которых две одинаковых заметки. На данный момент не можем сказать, где будет 2, а где 3
 \nНо так как правила судоку говорят нам, что в каждом блоке должна быть только одна 2 и одна 3, мы можем считать, что одна из них 2, а другая 3</string>
@@ -169,7 +169,7 @@
     <string name="learn_hidden_pairs_title">Скрытые пары</string>
     <string name="learn_hidden_pairs_1">Скрытые пары это почти то же самое, что и голые пары, только с одним отличием, они скрыты среди других. Эти две клетки имеют кое-что общее, а именно, в них могут стоять цифры 6 и 9, и это единственные две клетки в этом блоке, где они могут стоять</string>
     <string name="learn_hidden_pairs_2">Из этого можно сделать вывод, что эти две клетки будут содержать имеено эти две цифры, и никакие другие. Так что, мы можем убрать ненужные заметки из этих клеток. Как и с голыми парами, это точно также работае со строками и столбцами</string>
-    <string name="libraries_licenses_title">Open source лицензии</string>
+    <string name="libraries_licenses_title">Open Source лицензии</string>
     <string name="can_continue_label">Можно продолжить</string>
     <string name="action_show_mine_sudoku">Показать свое</string>
     <string name="custom_sudoku_title">Кастомное судоку</string>
@@ -185,7 +185,7 @@
     <string name="create_import_set">Установить</string>
     <string name="custom_sudoku_no_added">Вы пока не добавили ни одного судоку</string>
     <string name="custom_sudoku_delete_dialog_title">Удалить выбранное</string>
-    <string name="custom_sudoku_delete_dialog_text">Вы уверены, что хотите удалить выбранные судоку? Это действие нельзя отменить</string>
+    <string name="custom_sudoku_delete_dialog_text">Вы уверены, что хотите удалить выбранные судоку\? Это действие нельзя отменить</string>
     <string name="game_not_started">Не начата</string>
     <string name="export_string_text">Выделите текст ниже или просто нажмите на кнопку скопировать</string>
     <string name="export_string_title">Экспортировать как строку</string>
