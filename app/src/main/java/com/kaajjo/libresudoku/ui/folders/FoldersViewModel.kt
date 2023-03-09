@@ -1,8 +1,5 @@
 package com.kaajjo.libresudoku.ui.folders
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -36,11 +33,6 @@ class FoldersViewModel @Inject constructor(
     getLastSavedGamesAnyFolderUseCase: GetLastSavedGamesAnyFolderUseCase
 ) : ViewModel() {
     val folders = getFoldersUseCase()
-
-    @OptIn(ExperimentalMaterialApi::class)
-    var drawerState: ModalBottomSheetState = ModalBottomSheetState(
-        ModalBottomSheetValue.Hidden
-    )
 
     var selectedFolder: Folder? by mutableStateOf(null)
 

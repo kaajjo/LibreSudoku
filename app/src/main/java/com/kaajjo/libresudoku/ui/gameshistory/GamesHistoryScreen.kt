@@ -1,29 +1,29 @@
 package com.kaajjo.libresudoku.ui.gameshistory
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +54,6 @@ import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.AnimatedIconFilterChip
-import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
@@ -63,9 +63,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.sqrt
 import kotlin.time.toKotlinDuration
 
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GamesHistoryScreen(
     navigateBack: () -> Unit,
@@ -74,12 +72,7 @@ fun GamesHistoryScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
-    BackHandler(viewModel.drawerState.isVisible) {
-        coroutineScope.launch {
-            viewModel.drawerState.hide()
-        }
-    }
+    var filterBottomSheet by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier
@@ -98,9 +91,7 @@ fun GamesHistoryScreen(
                 actions = {
                     IconButton(onClick = {
                         coroutineScope.launch {
-                            if (!viewModel.drawerState.isVisible) {
-                                viewModel.drawerState.show()
-                            }
+                            filterBottomSheet = true
                         }
                     }) {
                         Icon(
@@ -170,28 +161,28 @@ fun GamesHistoryScreen(
         }
     }
 
-    CustomModalBottomSheet(
-        drawerState = viewModel.drawerState,
-        sheetContent = {
-            Column {
+    if (filterBottomSheet) {
+        ModalBottomSheet(onDismissRequest = { filterBottomSheet = false }) {
+            Column(Modifier.padding(vertical = 12.dp)) {
                 Text(
                     text = stringResource(R.string.sort_label),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(start = 12.dp)
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    AnimatedIconFilterChip(
-                        selected = viewModel.sortType == SortType.Ascending,
-                        label = stringResource(R.string.sort_ascending),
-                        onClick = {
-                            viewModel.switchSortType()
-                        }
-                    )
-                    enumValues<SortEntry>().forEach {
+                    item {
+                        AnimatedIconFilterChip(
+                            selected = viewModel.sortType == SortType.Ascending,
+                            label = stringResource(R.string.sort_ascending),
+                            onClick = {
+                                viewModel.switchSortType()
+                            }
+                        )
+                    }
+                    items(enumValues<SortEntry>().toList()) {
                         AnimatedIconFilterChip(
                             selected = it == viewModel.sortEntry,
                             label = stringResource(it.resName),
@@ -203,21 +194,22 @@ fun GamesHistoryScreen(
                 }
                 Text(
                     text = stringResource(R.string.filter_label),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(start = 12.dp)
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    listOf(
-                        GameDifficulty.Easy,
-                        GameDifficulty.Moderate,
-                        GameDifficulty.Hard,
-                        GameDifficulty.Challenge,
-                        GameDifficulty.Custom,
-                    ).forEach {
+                    items(
+                        listOf(
+                            GameDifficulty.Easy,
+                            GameDifficulty.Moderate,
+                            GameDifficulty.Hard,
+                            GameDifficulty.Challenge,
+                            GameDifficulty.Custom,
+                        )
+                    ) {
                         AnimatedIconFilterChip(
                             selected = viewModel.filterDifficulties.contains(it),
                             label = stringResource(it.resName),
@@ -227,17 +219,17 @@ fun GamesHistoryScreen(
                         )
                     }
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    listOf(
-                        GameType.Default9x9,
-                        GameType.Default6x6,
-                        GameType.Default12x12,
-                    ).forEach {
+                    items(
+                        listOf(
+                            GameType.Default9x9,
+                            GameType.Default6x6,
+                            GameType.Default12x12,
+                        )
+                    ) {
                         AnimatedIconFilterChip(
                             selected = viewModel.filterGameTypes.contains(it),
                             label = stringResource(it.resName),
@@ -247,17 +239,17 @@ fun GamesHistoryScreen(
                         )
                     }
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    listOf(
-                        GameStateFilter.All,
-                        GameStateFilter.Completed,
-                        GameStateFilter.InProgress,
-                    ).forEach {
+                    items(
+                        listOf(
+                            GameStateFilter.All,
+                            GameStateFilter.Completed,
+                            GameStateFilter.InProgress,
+                        )
+                    ) {
                         AnimatedIconFilterChip(
                             selected = it == viewModel.filterByGameState,
                             label = stringResource(it.resName),
@@ -269,7 +261,7 @@ fun GamesHistoryScreen(
                 }
             }
         }
-    )
+    }
 }
 
 @Composable

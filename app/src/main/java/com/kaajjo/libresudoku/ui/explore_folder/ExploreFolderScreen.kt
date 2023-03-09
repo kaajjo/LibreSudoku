@@ -37,7 +37,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Create
@@ -66,6 +65,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -94,7 +94,6 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
-import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
@@ -107,7 +106,7 @@ import kotlin.time.toKotlinDuration
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
-    ExperimentalMaterialApi::class, ExperimentalFoundationApi::class
+    ExperimentalFoundationApi::class
 )
 @Composable
 fun ExploreFolderScreen(
@@ -121,6 +120,7 @@ fun ExploreFolderScreen(
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
 
+    var addSudokuBottomSheet by rememberSaveable { mutableStateOf(false) }
     var moveSelectedDialog by rememberSaveable { mutableStateOf(false) }
     var deleteBoardDialog by rememberSaveable { mutableStateOf(false) }
     // used for a delete dialog when deleting
@@ -146,11 +146,6 @@ fun ExploreFolderScreen(
         }
     }
 
-    BackHandler(viewModel.drawerState.isVisible) {
-        coroutineScope.launch {
-            viewModel.drawerState.hide()
-        }
-    }
     BackHandler(viewModel.inSelectionMode) {
         viewModel.inSelectionMode = false
     }
@@ -175,9 +170,7 @@ fun ExploreFolderScreen(
                         },
                         navigateBack = navigateBack,
                         onImportMenuClick = {
-                            coroutineScope.launch {
-                                viewModel.drawerState.show()
-                            }
+                            addSudokuBottomSheet = true
                         }
                     )
                 }
@@ -254,9 +247,7 @@ fun ExploreFolderScreen(
                     text = stringResource(R.string.folder_empty_label),
                     content = {
                         Button(onClick = {
-                            coroutineScope.launch {
-                                viewModel.drawerState.show()
-                            }
+                            addSudokuBottomSheet = true
                         }) {
                             Icon(Icons.Rounded.Add, contentDescription = null)
                             Spacer(modifier = Modifier.width(12.dp))
@@ -333,11 +324,12 @@ fun ExploreFolderScreen(
     }
 
 
-    CustomModalBottomSheet(
-        drawerState = viewModel.drawerState,
-        sheetContent = {
+    if (addSudokuBottomSheet) {
+        ModalBottomSheet(onDismissRequest = { addSudokuBottomSheet = false }) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
             ) {
                 Text(
                     text = stringResource(R.string.add_to_folder),
@@ -374,9 +366,7 @@ fun ExploreFolderScreen(
 
                                         else -> {}
                                     }
-                                    coroutineScope.launch {
-                                        viewModel.drawerState.hide()
-                                    }
+                                    addSudokuBottomSheet = false
                                 },
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -394,7 +384,7 @@ fun ExploreFolderScreen(
                 }
             }
         }
-    )
+    }
 }
 
 

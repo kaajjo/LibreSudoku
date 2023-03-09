@@ -2,7 +2,6 @@ package com.kaajjo.libresudoku.ui.folders
 
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
@@ -24,7 +23,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Folder
@@ -46,6 +44,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -77,7 +76,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
-import com.kaajjo.libresudoku.ui.components.CustomModalBottomSheet
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import kotlinx.coroutines.Dispatchers
@@ -86,7 +84,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.sqrt
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoldersScreen(
     viewModel: FoldersViewModel,
@@ -124,6 +122,7 @@ fun FoldersScreen(
     var createFolderDialog by rememberSaveable { mutableStateOf(false) }
     var renameFolderDialog by rememberSaveable { mutableStateOf(false) }
     var deleteFolderDialog by rememberSaveable { mutableStateOf(false) }
+    var folderActionBottomSheet by rememberSaveable { mutableStateOf(false) }
     var helpDialog by rememberSaveable { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -219,7 +218,7 @@ fun FoldersScreen(
                 )
             }
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -272,8 +271,9 @@ fun FoldersScreen(
                     }
                     items(folders) { item ->
                         val puzzlesCount by remember(viewModel.puzzlesCountInFolder) {
-                            mutableStateOf(viewModel.puzzlesCountInFolder
-                                .firstOrNull { it.first == item.uid }?.second ?: 0
+                            mutableStateOf(
+                                viewModel.puzzlesCountInFolder
+                                    .firstOrNull { it.first == item.uid }?.second ?: 0
                             )
                         }
                         FolderItem(
@@ -285,7 +285,7 @@ fun FoldersScreen(
                             onLongClick = {
                                 viewModel.selectedFolder = item
                                 coroutineScope.launch {
-                                    viewModel.drawerState.show()
+                                    folderActionBottomSheet = true
                                 }
                             }
                         )
@@ -297,9 +297,9 @@ fun FoldersScreen(
     }
 
     if (createFolderDialog) {
-
         var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
         var isError by rememberSaveable { mutableStateOf(false) }
+
         NameActionDialog(
             icon = {
                 Icon(Icons.Rounded.CreateNewFolder, contentDescription = null)
@@ -399,7 +399,6 @@ fun FoldersScreen(
             },
             confirmButton = {
                 TextButton(onClick = {
-                    viewModel.deleteFolder()
                     helpDialog = false
                 }) {
                     Text(stringResource(R.string.dialog_ok))
@@ -417,15 +416,8 @@ fun FoldersScreen(
         }
     }
 
-
-    BackHandler(viewModel.drawerState.isVisible) {
-        coroutineScope.launch {
-            viewModel.drawerState.hide()
-        }
-    }
-    CustomModalBottomSheet(
-        drawerState = viewModel.drawerState,
-        sheetContent = {
+    if (folderActionBottomSheet) {
+        ModalBottomSheet(onDismissRequest = { folderActionBottomSheet = false }) {
             val actions = listOf(
                 Pair(Icons.Rounded.Edit, stringResource(R.string.edit_name)),
                 Pair(Icons.Rounded.Share, stringResource(R.string.export)),
@@ -446,11 +438,14 @@ fun FoldersScreen(
                 }
                 Spacer(modifier = Modifier.height(12.dp))
             }
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
+            ) {
                 actions.forEachIndexed { index, action ->
                     Row(
                         modifier = Modifier
-                            .clip(MaterialTheme.shapes.medium)
+                            .clip(MaterialTheme.shapes.small)
                             .fillMaxWidth()
                             .clickable {
                                 when (index) {
@@ -471,7 +466,7 @@ fun FoldersScreen(
                                     2 -> deleteFolderDialog = true
                                 }
                                 coroutineScope.launch {
-                                    viewModel.drawerState.hide()
+                                    folderActionBottomSheet = false
                                 }
                             },
                         verticalAlignment = Alignment.CenterVertically
@@ -486,7 +481,7 @@ fun FoldersScreen(
                 }
             }
         }
-    )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)

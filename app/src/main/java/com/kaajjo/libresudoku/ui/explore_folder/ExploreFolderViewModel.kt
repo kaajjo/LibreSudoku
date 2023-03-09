@@ -1,8 +1,5 @@
 package com.kaajjo.libresudoku.ui.explore_folder
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -48,11 +45,6 @@ class ExploreFolderViewModel @Inject constructor(
     var selectedBoardsList by mutableStateOf(emptyList<SudokuBoard>())
 
     val folders = getFoldersUseCase()
-
-    @OptIn(ExperimentalMaterialApi::class)
-    var drawerState = ModalBottomSheetState(
-        ModalBottomSheetValue.Hidden, isSkipHalfExpanded = true
-    )
 
     fun prepareSudokuToPlay(board: SudokuBoard) {
         gameUidToPlay = board.uid

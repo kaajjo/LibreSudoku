@@ -1,8 +1,5 @@
 package com.kaajjo.libresudoku.ui.gameshistory
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,11 +21,6 @@ class HistoryViewModel
 ) : ViewModel(
 ) {
     val games = savedGameRepository.getWithBoards()
-
-    @OptIn(ExperimentalMaterialApi::class)
-    var drawerState: ModalBottomSheetState = ModalBottomSheetState(
-        ModalBottomSheetValue.Hidden, isSkipHalfExpanded = true
-    )
 
     var sortType by mutableStateOf(SortType.Descending)
     var sortEntry by mutableStateOf(SortEntry.GameID)
