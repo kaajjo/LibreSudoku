@@ -339,7 +339,7 @@ class GameViewModel @Inject constructor(
     fun processInputKeyboard(number: Int, longTap: Boolean = false) {
         if (gamePlaying) {
             if (!longTap) {
-                if (inputMethod.value == 0) {
+                if (inputMethod.value == 0 && !currCell.locked && currCell.col >= 0 && currCell.row >= 0) {
                     overrideInputMethodDF = false
                     digitFirstNumber = 0
                     processNumberInput(number)
