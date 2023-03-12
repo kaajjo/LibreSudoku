@@ -7,7 +7,8 @@
 
 </div>
 
-Sudoku app built with [Jetpack Compose](https://developer.android.com/jetpack/compose) and [Material3](https://m3.material.io/)
+Open Source sudoku application designed to be as user friendly and customizable as possible \
+Built with [Jetpack Compose](https://developer.android.com/jetpack/compose) and [Material3](https://m3.material.io/)
 
 ## 📱 Screenshots 
 <div>
@@ -20,31 +21,26 @@ Sudoku app built with [Jetpack Compose](https://developer.android.com/jetpack/co
 </div>
 
 ## 💡 Features
-- Basic things such as pencil marks (notes), undo, game pause, board reset and give up (show solution)
-- 9x9, 6x6 and 12x12 with 4 difficulties
-- Zoom and pan the board in 12x12
-- 2 input methods: 1. Digit first; 2. Cell first
-- 3 types of mistakes checking: 1. Off; 2. Rules violation; 3. With final solution
-- Statistics and records. Best and average times, win streak, started/completed games count and win rate 
-- Saves. You can continue any uncompleted game whenever you want
-- Many settings and customizations such as auto erase notes, remaining uses, identical numbers highlight, board colors, app themes and more
-- Tutorials for game techniques (in progress)
-- Custom sudoku (manually or from string)
-- Importing sudoku files
+- 6x6, 9x9, and 12x12 sudoku boards with 4 difficulty levels
+- Countless customization options
+- Advanced statistics and game history - previous games list, best and average times for each mode, win streak and percentage
+- Saves. You can continue any unfinished game and start a new one whenever you want
+- Tutorials for playing techniques
+- Create your own sudoku puzzles!
+- Import custom sudoku files
+
+## Future plans
+- Better hint system (explain the next move instead of just revealing the value)
+- Complete set of sudoku technique tutorials
+- Custom sudoku from gallery or camera picture
+- More customization options (customize anything that can be customized🔥)
 
 ## 🌍 Translation
-You can help translate LibreSudoku into your language on [Hosted Weblate](https://hosted.weblate.org/engage/libresudoku/)\
+You can help to translate LibreSudoku into your language at [Hosted Weblate](https://hosted.weblate.org/engage/libresudoku/)\
 [![Translation status](https://hosted.weblate.org/widgets/libresudoku/-/multi-auto.svg)](https://hosted.weblate.org/engage/libresudoku/)
 
-## App plans
-- Better hint system (explain the next move instead of just reveal the number)
-- Full set of sudoku techniques tutorials
-- Custom sudoku from gallery or camera
-- More customizations (customize everything that can be customized🔥)
-
-
 ## Credits
-This project uses modified version of [QQWing](https://github.com/stephenostermiller/qqwing) - sudoku puzzle generator and solver\
-Some of the UI elements were inspired by [Tachiyomi](https://github.com/tachiyomiorg/tachiyomi)
+This project uses a modified version of [QQWing](https://github.com/stephenostermiller/qqwing) - sudoku puzzle generator and solver\
+Some of the UI elements are inspired by [Tachiyomi](https://github.com/tachiyomiorg/tachiyomi)
 ## License
 [![](https://img.shields.io/github/license/kaajjo/libre-sudoku)](https://github.com/kaajjo/libre-sudoku/blob/main/LICENSE)
