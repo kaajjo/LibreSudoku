@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -175,18 +176,18 @@ fun GamesHistoryScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     item {
-                        AnimatedIconFilterChip(
+                        FilterChip(
                             selected = viewModel.sortType == SortType.Ascending,
-                            label = stringResource(R.string.sort_ascending),
+                            label = { Text(stringResource(R.string.sort_ascending)) },
                             onClick = {
                                 viewModel.switchSortType()
                             }
                         )
                     }
                     items(enumValues<SortEntry>().toList()) {
-                        AnimatedIconFilterChip(
+                        FilterChip(
                             selected = it == viewModel.sortEntry,
-                            label = stringResource(it.resName),
+                            label = { Text(stringResource(it.resName)) },
                             onClick = {
                                 viewModel.selectSortEntry(it)
                             }
@@ -251,9 +252,9 @@ fun GamesHistoryScreen(
                             GameStateFilter.InProgress,
                         )
                     ) {
-                        AnimatedIconFilterChip(
+                        FilterChip(
                             selected = it == viewModel.filterByGameState,
-                            label = stringResource(it.resName),
+                            label = { Text(stringResource(it.resName)) },
                             onClick = {
                                 viewModel.selectFilter(it)
                             }
