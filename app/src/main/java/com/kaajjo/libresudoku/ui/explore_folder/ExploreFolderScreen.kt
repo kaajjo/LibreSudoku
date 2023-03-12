@@ -91,6 +91,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
@@ -451,10 +452,9 @@ fun GameInFolderWidget(
                             Text(
                                 stringResource(
                                     R.string.saved_game_time,
-                                    savedGame.timer.toKotlinDuration()
-                                        .toComponents { minutes, seconds, _ ->
-                                            String.format(" %02d:%02d", minutes, seconds)
-                                        }
+                                    savedGame.timer
+                                        .toKotlinDuration()
+                                        .toFormattedString()
                                 )
                             )
                         } else {

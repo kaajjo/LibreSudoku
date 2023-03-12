@@ -51,6 +51,7 @@ import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.ui.components.AnimatedIconFilterChip
@@ -304,10 +305,9 @@ fun SudokuHistoryItem(
                     Text(
                         text = stringResource(
                             R.string.history_item_time,
-                            savedGame.timer.toKotlinDuration()
-                                .toComponents { minutes, seconds, _ ->
-                                    String.format(" %02d:%02d", minutes, seconds)
-                                }
+                            savedGame.timer
+                                .toKotlinDuration()
+                                .toFormattedString()
                         )
                     )
                     Text(stringResource(R.string.history_item_id, savedGame.uid))

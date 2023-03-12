@@ -27,6 +27,7 @@ import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
+import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.board.Board
 import kotlinx.coroutines.launch
@@ -230,11 +231,11 @@ fun SavedGameScreen(
                         style = textStyle
                     )
                     Text(
-                        text = stringResource(R.string.saved_game_time,
-                            viewModel.savedGame!!.timer.toKotlinDuration()
-                                .toComponents { minutes, seconds, _ ->
-                                    String.format(" %02d:%02d", minutes, seconds)
-                                }
+                        text = stringResource(
+                            R.string.saved_game_time,
+                            viewModel.savedGame!!.timer
+                                .toKotlinDuration()
+                                .toFormattedString()
                         )
                     )
 

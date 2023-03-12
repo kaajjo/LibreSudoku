@@ -17,6 +17,7 @@ import com.kaajjo.libresudoku.core.utils.GameState
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
 import com.kaajjo.libresudoku.core.utils.UndoManager
+import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.database.model.Record
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
@@ -402,7 +403,7 @@ class GameViewModel @Inject constructor(
                 duration = duration.plus((updateRate * 1e6).toDuration(DurationUnit.NANOSECONDS))
                 // update text every second
                 if (prevTime.toInt(DurationUnit.SECONDS) != duration.toInt(DurationUnit.SECONDS)) {
-                    timeText = durationToString(duration)
+                    timeText = duration.toFormattedString()
                     // save game
                     if (gameBoard.any { it.any { cell -> cell.value != 0 } }) {
                         viewModelScope.launch(Dispatchers.IO) {
@@ -411,12 +412,6 @@ class GameViewModel @Inject constructor(
                     }
                 }
             }
-        }
-    }
-
-    private fun durationToString(duration: Duration): String {
-        return duration.toComponents { minutes, seconds, _ ->
-            String.format("%02d:%02d", minutes, seconds)
         }
     }
 
@@ -479,7 +474,7 @@ class GameViewModel @Inject constructor(
             gameBoard = new
 
             duration = duration.plus(30.toDuration(DurationUnit.SECONDS))
-            timeText = durationToString(duration)
+            timeText = duration.toFormattedString()
             undoManager.addState(GameState(gameBoard, notes))
         }
     }
@@ -490,7 +485,7 @@ class GameViewModel @Inject constructor(
         currCell = Cell(-1, -1, 0)
         if (resetTimer) {
             duration = Duration.ZERO
-            timeText = durationToString(duration)
+            timeText = duration.toFormattedString()
         }
         digitFirstNumber = 0
         notesToggled = false
@@ -582,7 +577,7 @@ class GameViewModel @Inject constructor(
         if (savedGame != null) {
             // restore timer and text
             duration = savedGame.timer.toKotlinDuration()
-            timeText = durationToString(duration)
+            timeText = duration.toFormattedString()
 
             mistakesCount = savedGame.mistakes
             val sudokuParser = SudokuParser()
