@@ -196,11 +196,12 @@
     <string name="delete_question">Sil\?</string>
     <string name="delete_record_dialog">%1$d kaydınızı silmek mi istiyorsunuz\? Geri alınamaz</string>
     <string name="statistics_difficulty_filter_all">Hepsi</string>
-    <string name="tip_card_records_list_summ">Bu liste, kaç kez çaldığınıza bağlı olarak en iyi 5 kaydınızı veya daha azını içerir. Beğenmediğiniz bir kaydı üzerine uzun süre basarak silebilirsiniz</string>
+    <string name="tip_card_records_list_summ">Bu liste, kaç kez oynadığınıza bağlı olarak en iyi 5 kaydınızı veya daha azını içerir. Beğenmediğiniz bir kaydı üzerine uzun süre basarak silebilirsiniz</string>
     <string name="saved_game_completed">Oyun tamamlandı</string>
     <string name="saved_game_difficulty">Zorluk: %1$s</string>
     <string name="learn_app_toolbar_notes_menu">Notlar menüsünü açmak için notlar düğmesine uzun basabilirsiniz; burada notları temizleme veya hesaplama ve notların görünürlüğünü değiştirme gibi işlemleri gerçekleştirebilirsiniz</string>
     <string name="sudoku_rules_mistakes_explanation">İlk hata altıncı kutuda iki 2\'dir. Bir kutuda yinelenen sayılar olamayacağı kuralını hatırlıyor musunuz\? İkinci hata, satır 2, sütun 8\'deki (R2C8) 6 sayısıdır, çünkü R5C8\'de bu sütunda zaten 6 var</string>
     <string name="multiple_solution_text">Bu bulmacanın birden fazla çözümü vardır. Doğru sudoku bulmacasının tek bir benzersiz çözümü olmalıdır</string>
     <string name="learn_hidden_pairs_2">Buradan, bu iki hücrenin yalnızca bu iki sayıyı içereceği ve diğerlerini içermeyeceği sonucuna varabilirsiniz. Böylece bu hücrelerden gereksiz işaretleri kaldırabilirsiniz. Çıplak çiftlerde olduğu gibi, bu işlem sütun ve satırlarda da aynı şekilde çalışır</string>
+    <string name="last_played_section_title">Yakın zamanda oynanmış oyunlar</string>
 </resources>
