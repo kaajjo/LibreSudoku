@@ -487,6 +487,10 @@ fun GameScreen(
             }
         }
     }
+
+    LaunchedEffect(viewModel.mistakesMethod) {
+        viewModel.checkMistakesAll()
+    }
 }
 
 @Composable

@@ -430,6 +430,7 @@ class GameViewModel @Inject constructor(
                             notes = it.notes
                         }
                         undoManager.addState(GameState(getBoardNoRef(), notes))
+                        checkMistakesAll()
                     }
                     remainingUsesList = countRemainingUses(gameBoard)
                 }
@@ -699,5 +700,36 @@ class GameViewModel @Inject constructor(
                 solvedBoard[i][j].locked = initialBoard[i][j].locked
             }
         }
+    }
+
+    fun checkMistakesAll() {
+        var new = getBoardNoRef()
+
+        if (!this::initialBoard.isInitialized) return
+
+        for (i in new.indices) {
+            for (j in new.indices) {
+                if (new[i][j].value != 0 && !new[i][j].locked) {
+                    when (mistakesMethod.value) {
+                        0 -> {
+                            // mistake checking is off
+                            new[i][j].error = false
+                        }
+
+                        1 -> {
+                            // rule violations
+                            new[i][j].error =
+                                !sudokuUtils.isValidCellDynamic(new, new[i][j], boardEntity.type)
+                        }
+
+                        2 -> {
+                            // check with final solution
+                            new = isValidCell(new, new[i][j])
+                        }
+                    }
+                }
+            }
+        }
+        gameBoard = new
     }
 }
