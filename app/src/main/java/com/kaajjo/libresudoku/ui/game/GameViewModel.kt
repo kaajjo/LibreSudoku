@@ -527,7 +527,8 @@ class GameViewModel @Inject constructor(
                     savedGame.copy(
                         completed = true,
                         giveUp = false,
-                        canContinue = false
+                        canContinue = false,
+                        finishedAt = ZonedDateTime.now()
                     )
                 )
             }
@@ -568,7 +569,8 @@ class GameViewModel @Inject constructor(
                     notes = sudokuParser.notesToString(notes),
                     timer = java.time.Duration.ofSeconds(duration.inWholeSeconds),
                     mistakes = mistakesCount,
-                    lastPlayed = ZonedDateTime.now()
+                    lastPlayed = ZonedDateTime.now(),
+                    startedAt = ZonedDateTime.now()
                 )
             )
         }
@@ -625,7 +627,8 @@ class GameViewModel @Inject constructor(
                         completed = true,
                         giveUp = true,
                         mistakes = mistakesCount,
-                        canContinue = false
+                        canContinue = false,
+                        finishedAt = ZonedDateTime.now()
                     )
                 )
             }

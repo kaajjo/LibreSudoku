@@ -27,5 +27,7 @@ data class SavedGame(
     @ColumnInfo(name = "give_up", defaultValue = "false") val giveUp: Boolean = false,
     @ColumnInfo(name = "mistakes", defaultValue = "0") val mistakes: Int = 0,
     @ColumnInfo(name = "can_continue") val canContinue: Boolean = true,
-    @ColumnInfo(name = "last_played") val lastPlayed: ZonedDateTime? = null
+    @ColumnInfo(name = "last_played") val lastPlayed: ZonedDateTime? = null,
+    @ColumnInfo(name = "started_at") val startedAt: ZonedDateTime? = null,
+    @ColumnInfo(name = "finished_at") val finishedAt: ZonedDateTime? = null,
 )

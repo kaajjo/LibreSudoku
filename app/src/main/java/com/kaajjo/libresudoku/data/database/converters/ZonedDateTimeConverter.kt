@@ -15,11 +15,16 @@ class ZonedDateTimeConverter {
      * @return ZonedDateTime of seconds
      */
     @TypeConverter
-    fun toZonedDateTime(value: Long): ZonedDateTime {
-        return ZonedDateTime.ofInstant(
-            Instant.ofEpochSecond(value),
-            ZoneId.systemDefault()
-        )
+    fun toZonedDateTime(value: Long?): ZonedDateTime? {
+        return if (value != null) {
+            ZonedDateTime.ofInstant(
+                Instant.ofEpochSecond(value),
+                ZoneId.systemDefault()
+            )
+        } else {
+            null
+        }
+
     }
 
     /**
@@ -27,7 +32,7 @@ class ZonedDateTimeConverter {
      * @param zonedDateTime date
      */
     @TypeConverter
-    fun fromZonedDateTime(zonedDateTime: ZonedDateTime): Long {
-        return zonedDateTime.toInstant().epochSecond
+    fun fromZonedDateTime(zonedDateTime: ZonedDateTime?): Long? {
+        return zonedDateTime?.toInstant()?.epochSecond
     }
 }

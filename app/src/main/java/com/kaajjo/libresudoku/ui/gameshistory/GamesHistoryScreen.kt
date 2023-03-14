@@ -62,6 +62,7 @@ import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import com.kaajjo.libresudoku.ui.create_edit_sudoku.GameStateFilter
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 import kotlin.math.sqrt
 import kotlin.time.toKotlinDuration
 
@@ -312,6 +313,16 @@ fun SudokuHistoryItem(
                         )
                     )
                     Text(stringResource(R.string.history_item_id, savedGame.uid))
+                }
+
+
+                if (savedGame.startedAt != null) {
+                    val startedAt by remember(savedGame) {
+                        mutableStateOf(
+                            savedGame.startedAt.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
+                        )
+                    }
+                    Text(startedAt)
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
