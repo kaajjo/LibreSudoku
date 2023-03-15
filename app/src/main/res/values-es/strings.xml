@@ -67,7 +67,7 @@
     <string name="dialog_no">No</string>
     <string name="action_show_notes">Mostrar notas</string>
     <string name="pref_other">Otro</string>
-    <string name="pref_app_language_default">Por defecto</string>
+    <string name="label_default">Por defecto</string>
     <string name="about_version">Versión</string>
     <string name="action_compute_notes">Calcular notas</string>
     <string name="action_show_solution">Mostrar solución</string>

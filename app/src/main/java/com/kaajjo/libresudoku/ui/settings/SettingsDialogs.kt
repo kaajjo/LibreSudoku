@@ -79,7 +79,7 @@ fun SelectionDialog(
 }
 
 @Composable
-fun LanguagePicker(
+fun SelectionDialog(
     title: String,
     entries: Map<String, String>,
     selected: String,
@@ -103,26 +103,26 @@ fun LanguagePicker(
                 if (!lazyListState.isScrolledToEnd()) Divider(Modifier.align(Alignment.BottomCenter))
 
                 ScrollbarLazyColumn(state = lazyListState) {
-                    items(entries.toList()) { locale ->
+                    items(entries.toList()) { item ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(MaterialTheme.shapes.small)
                                 .clickable {
-                                    onSelect(locale.first)
+                                    onSelect(item.first)
                                     onDismiss()
                                 },
                             verticalAlignment = CenterVertically
                         ) {
                             RadioButton(
-                                selected = selected == locale.second,
+                                selected = selected == item.first,
                                 onClick = {
-                                    onSelect(locale.first)
+                                    onSelect(item.first)
                                     onDismiss()
                                 }
                             )
                             Text(
-                                text = locale.second,
+                                text = item.second,
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }

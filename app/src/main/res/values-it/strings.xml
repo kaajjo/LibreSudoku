@@ -135,7 +135,7 @@
     <string name="action_start">Inizia</string>
     <string name="toolbar_undo_description">Annulla. Semplicemente annulla</string>
     <string name="first_game_dialog_title">Breve tour</string>
-    <string name="pref_app_language_default">Predefinita</string>
+    <string name="label_default">Predefinita</string>
     <string name="action_show_mine_sudoku">Mostra mia</string>
     <string name="toolbar_notes_description">Attiva modalità note (segni di matita)</string>
     <string name="action_exit">Esci</string>

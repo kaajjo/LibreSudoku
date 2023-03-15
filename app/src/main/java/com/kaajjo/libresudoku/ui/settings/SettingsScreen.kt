@@ -24,6 +24,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.PreferencesConstants
+import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
 import com.kaajjo.libresudoku.ui.components.PreferenceRowSwitch
 import com.kaajjo.libresudoku.ui.settings.components.AppThemePreviewItem
@@ -32,6 +33,11 @@ import com.kaajjo.libresudoku.ui.theme.AppTheme
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import kotlinx.coroutines.launch
 import org.xmlpull.v1.XmlPullParser
+import java.time.ZonedDateTime
+import java.time.chrono.IsoChronology
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.format.FormatStyle
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,6 +74,7 @@ fun SettingsScreen(
         val inputMethod by viewModel.inputMethod.collectAsState(initial = PreferencesConstants.DEFAULT_INPUT_METHOD)
         val darkTheme by viewModel.darkTheme.collectAsState(initial = PreferencesConstants.DEFAULT_DARK_THEME)
         val fontSize by viewModel.fontSize.collectAsState(initial = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
+        val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle(initialValue = "")
 
         Column(
             modifier = Modifier
@@ -213,6 +220,14 @@ fun SettingsScreen(
                     title = stringResource(R.string.pref_app_language),
                     subtitle = currentLanguage,
                     onClick = { viewModel.languagePickDialog = true }
+                )
+
+                PreferenceRow(
+                    title = stringResource(R.string.pref_date_format),
+                    subtitle = "${dateFormat.ifEmpty { stringResource(R.string.label_default) }} (${
+                        ZonedDateTime.now().format(AppSettingsManager.dateFormat(dateFormat))
+                    })",
+                    onClick = { viewModel.dateFormatDialog = true }
                 )
 
                 Divider(
@@ -451,10 +466,10 @@ fun SettingsScreen(
                 onDismissRequest = { viewModel.resetStatsDialog = false }
             )
         } else if (viewModel.languagePickDialog) {
-            LanguagePicker(
+            SelectionDialog(
                 title = stringResource(R.string.pref_app_language),
                 entries = getLangs(context),
-                selected = getCurrentLocaleString(context),
+                selected = getCurrentLocaleTag(context),
                 onSelect = { localeKey ->
                     val locale = if (localeKey == "") {
                         LocaleListCompat.getEmptyLocaleList()
@@ -462,13 +477,50 @@ fun SettingsScreen(
                         LocaleListCompat.forLanguageTags(localeKey)
                     }
                     AppCompatDelegate.setApplicationLocales(locale)
-
                 },
                 onDismiss = { viewModel.languagePickDialog = false }
+            )
+        } else if (viewModel.dateFormatDialog) {
+            SelectionDialog(
+                title = stringResource(R.string.pref_date_format),
+                entries = DateFormats.associateWith { dateFormatEntry ->
+                    val dateString = ZonedDateTime.now().format(
+                        when (dateFormatEntry) {
+                            "" -> {
+                                DateTimeFormatter.ofPattern(
+                                    DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+                                        FormatStyle.SHORT,
+                                        null,
+                                        IsoChronology.INSTANCE,
+                                        Locale.getDefault()
+                                    )
+                                )
+                            }
+
+                            else -> {
+                                DateTimeFormatter.ofPattern(dateFormatEntry)
+                            }
+                        }
+                    )
+                    "${dateFormatEntry.ifEmpty { stringResource(R.string.label_default) }} ($dateString)"
+                },
+                selected = dateFormat,
+                onSelect = { format ->
+                    viewModel.updateDateFormat(format)
+                },
+                onDismiss = { viewModel.dateFormatDialog = false }
             )
         }
     }
 }
+
+private val DateFormats = listOf(
+    "",
+    "dd/MM/yy",
+    "MM/dd/yy",
+    "dd.MM.yy",
+    "dd MMM yyyy"
+)
 
 @Composable
 fun SettingsCategory(
@@ -532,9 +584,21 @@ private fun getCurrentLocaleString(context: Context): String {
     }
     val locales = AppCompatDelegate.getApplicationLocales()
     if (locales == LocaleListCompat.getEmptyLocaleList()) {
-        return context.getString(R.string.pref_app_language_default)
+        return context.getString(R.string.label_default)
     }
     return getDisplayName(locales.toLanguageTags())
+}
+
+private fun getCurrentLocaleTag(context: Context): String {
+    val langs = getLangs(context)
+    langs.forEach {
+        Log.d("lang", "${it.key} ${it.value}")
+    }
+    val locales = AppCompatDelegate.getApplicationLocales()
+    if (locales == LocaleListCompat.getEmptyLocaleList()) {
+        return context.getString(R.string.label_default)
+    }
+    return locales.toLanguageTags()
 }
 
 private fun getLangs(context: Context): Map<String, String> {
@@ -557,7 +621,7 @@ private fun getLangs(context: Context): Map<String, String> {
     }
 
     langs.sortBy { it.second }
-    langs.add(0, Pair("", context.getString(R.string.pref_app_language_default)))
+    langs.add(0, Pair("", context.getString(R.string.label_default)))
 
     return langs.toMap()
 }

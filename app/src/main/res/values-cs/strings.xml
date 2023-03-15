@@ -131,7 +131,7 @@
     <string name="pref_pure_black">Čistě černý tmavý motiv</string>
     <string name="pref_mistakes_limit_summ">3 chyby a máte hotovo</string>
     <string name="pref_auto_erase_notes">Automatické mazání poznámek</string>
-    <string name="pref_app_language_default">Výchozí</string>
+    <string name="label_default">Výchozí</string>
     <string name="about_version">Verze</string>
     <string name="action_reset_game">Resetovat hru</string>
     <string name="pref_mistakes_limit">Limit chyb</string>

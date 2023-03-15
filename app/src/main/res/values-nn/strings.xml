@@ -67,7 +67,7 @@
     <string name="pref_auto_erase_notes">Slett merknadar sjølvverkande</string>
     <string name="pref_position_lines">Trykkstadliner</string>
     <string name="pref_keep_screen_on">Hald skjermen slegen på</string>
-    <string name="pref_app_language_default">Forval</string>
+    <string name="label_default">Forval</string>
     <string name="dialog_yes">Ja</string>
     <string name="dialog_no">Nei</string>
     <string name="action_show_notes">Vis merknadar</string>

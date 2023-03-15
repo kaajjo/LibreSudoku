@@ -6,9 +6,15 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import kotlinx.coroutines.flow.map
+import java.time.chrono.IsoChronology
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.format.FormatStyle
+import java.util.Locale
 import javax.inject.Singleton
 
 @Singleton
@@ -60,6 +66,9 @@ class AppSettingsManager(context: Context) {
 
     // place function keyboard (undo, erase etc.) above the numbers keyboard
     private val funKeyboardOverNumKey = booleanPreferencesKey("fun_keyboard_over_numbers")
+
+    // custom date format
+    private val dateFormatKey = stringPreferencesKey("date_format")
 
     suspend fun setFirstLaunch(value: Boolean) {
         dataStore.edit { settings ->
@@ -207,7 +216,36 @@ class AppSettingsManager(context: Context) {
         }
     }
 
-    val funKeyboardOverNumbers = dataStore.data.map {prefs ->
+    val funKeyboardOverNumbers = dataStore.data.map { prefs ->
         prefs[funKeyboardOverNumKey] ?: PreferencesConstants.DEFAULT_FUN_KEYBOARD_OVER_NUM
+    }
+
+    suspend fun setDateFormat(format: String) {
+        dataStore.edit { settings ->
+            settings[dateFormatKey] = format
+        }
+    }
+
+    val dateFormat = dataStore.data.map { prefs ->
+        prefs[dateFormatKey] ?: ""
+    }
+
+    companion object {
+        fun dateFormat(format: String): DateTimeFormatter = when (format) {
+            "" -> {
+                DateTimeFormatter.ofPattern(
+                    DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+                        FormatStyle.SHORT,
+                        null,
+                        IsoChronology.INSTANCE,
+                        Locale.getDefault()
+                    )
+                )
+            }
+
+            else -> {
+                DateTimeFormatter.ofPattern(format, Locale.getDefault())
+            }
+        }
     }
 }

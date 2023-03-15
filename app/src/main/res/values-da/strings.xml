@@ -135,7 +135,7 @@
     <string name="pref_remaining_uses_summ">Antallet af resterende brug af en værdi bliver vist på tastaturet</string>
     <string name="pref_position_lines_summ">Cellens række og kolonne bliver fremhævet</string>
     <string name="pref_auto_erase_notes">Slet automatisk noter</string>
-    <string name="pref_app_language_default">Standard</string>
+    <string name="label_default">Standard</string>
     <string name="about_version">Version</string>
     <string name="dialog_no">Nej</string>
     <string name="action_show_notes">Vis noter</string>

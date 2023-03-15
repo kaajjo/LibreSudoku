@@ -63,7 +63,7 @@
     <string name="pref_auto_erase_notes">Automatické mazanie poznámok</string>
     <string name="pref_other">Ostatné</string>
     <string name="pref_tipcards_reset">Karty tipov boli resetované!</string>
-    <string name="pref_app_language_default">Predvolený</string>
+    <string name="label_default">Predvolený</string>
     <string name="about_version">Verzia</string>
     <string name="about_github_project">Projekt na GitHube</string>
     <string name="action_give_up">Vzdať sa</string>

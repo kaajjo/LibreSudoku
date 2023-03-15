@@ -48,6 +48,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
@@ -55,6 +56,7 @@ import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
+import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.ui.components.AnimatedIconFilterChip
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
@@ -108,6 +110,8 @@ fun GamesHistoryScreen(
         },
     ) { innerPadding ->
         val games by viewModel.games.collectAsState(initial = emptyMap())
+        val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle("")
+
         if (games.isNotEmpty()) {
             Column(
                 modifier = Modifier.padding(innerPadding)
@@ -146,7 +150,8 @@ fun GamesHistoryScreen(
                             onClick = {
                                 navigateSavedGame(game.first.uid)
 
-                            }
+                            },
+                            dateTimeFormatter = AppSettingsManager.dateFormat(dateFormat)
                         )
                         if (index < filteredAndSortedBoards.size - 1) {
                             Divider(
@@ -274,7 +279,8 @@ fun SudokuHistoryItem(
     type: String,
     savedGame: SavedGame,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = { }
+    onClick: () -> Unit = { },
+    dateTimeFormatter: DateTimeFormatter
 ) {
     Box(
         modifier = modifier
@@ -319,7 +325,7 @@ fun SudokuHistoryItem(
                 if (savedGame.startedAt != null) {
                     val startedAt by remember(savedGame) {
                         mutableStateOf(
-                            savedGame.startedAt.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
+                            savedGame.startedAt.format(dateTimeFormatter)
                         )
                     }
                     Text(startedAt)

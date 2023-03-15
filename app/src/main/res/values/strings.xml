@@ -74,7 +74,7 @@
     <string name="pref_reset_tipcards">Reset all tip cards</string>
     <string name="pref_tipcards_reset">Tip cards was reset!</string>
     <string name="pref_app_language">App language</string>
-    <string name="pref_app_language_default">Default</string>
+    <string name="label_default">Default</string>
     <string name="about_version">Version</string>
     <string name="about_github_project">Project on GitHub</string>
     <string name="action_give_up">Give up</string>
@@ -267,4 +267,5 @@
     <string name="pref_crash_reporting_subtitle">Help us fix bugs. App doesn\'t send logs by itself, you will be prompted to send a crash report by email</string>
     <string name="pref_fun_keyboard_over_num">Function panel over the values</string>
     <string name="pref_fun_keyboard_over_num_subtitle">Place the function panel above the values keyboard</string>
+    <string name="pref_date_format">Date format</string>
 </resources>

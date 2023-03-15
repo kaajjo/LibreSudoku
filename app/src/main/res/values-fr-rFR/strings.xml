@@ -74,7 +74,7 @@
     <string name="pref_reset_tipcards">Réinitialiser toutes les fiches de conseils</string>
     <string name="pref_tipcards_reset">Les fiches de conseils ont été remises à zéro!</string>
     <string name="pref_app_language">Langue de l\'application</string>
-    <string name="pref_app_language_default">Défaut</string>
+    <string name="label_default">Défaut</string>
     <string name="about_version">Version</string>
     <string name="about_github_project">Le projet sur GitHub</string>
     <string name="action_give_up">Abandonner</string>

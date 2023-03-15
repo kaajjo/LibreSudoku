@@ -37,6 +37,7 @@ class SettingsViewModel
     var inputMethodDialog by mutableStateOf(false)
     var mistakesDialog by mutableStateOf(false)
     var languagePickDialog by mutableStateOf(false)
+    var dateFormatDialog by mutableStateOf(false)
 
     var crashReportingEnabled by mutableStateOf(acraSharedPrefs.getAcraEnabled())
 
@@ -173,6 +174,13 @@ class SettingsViewModel
     fun updateFunKeyboardOverNum(enabled: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             settingsDataManager.setFunKeyboardOverNum(enabled)
+        }
+    }
+
+    val dateFormat = settingsDataManager.dateFormat
+    fun updateDateFormat(format: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsDataManager.setDateFormat(format)
         }
     }
 }

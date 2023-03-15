@@ -9,6 +9,7 @@ import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
+import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import com.kaajjo.libresudoku.ui.create_edit_sudoku.GameStateFilter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HistoryViewModel
 @Inject constructor(
-    savedGameRepository: SavedGameRepository
+    savedGameRepository: SavedGameRepository,
+    appSettingsManager: AppSettingsManager
 ) : ViewModel(
 ) {
     val games = savedGameRepository.getWithBoards()
@@ -27,6 +29,8 @@ class HistoryViewModel
     var filterDifficulties by mutableStateOf(emptyList<GameDifficulty>())
     var filterGameTypes by mutableStateOf(emptyList<GameType>())
     var filterByGameState by mutableStateOf(GameStateFilter.All)
+
+    val dateFormat = appSettingsManager.dateFormat
 
     fun selectFilter(filter: GameDifficulty) {
         filterDifficulties = if (!filterDifficulties.contains(filter)) {

@@ -84,7 +84,7 @@
     <string name="theme_dynamic">Dynamisk</string>
     <string name="pref_show_timer">Vis tidsur</string>
     <string name="pref_assistance">Hjelp</string>
-    <string name="pref_app_language_default">Forvalg</string>
+    <string name="label_default">Forvalg</string>
     <string name="action_give_up">Gi opp</string>
     <string name="first_game_dialog_got_it">Skjønner</string>
     <string name="action_exit">Avslutt</string>

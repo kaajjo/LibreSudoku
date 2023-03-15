@@ -59,7 +59,7 @@
     <string name="pref_reset_tipcards">Tüm ipucu kartlarını sıfırla</string>
     <string name="pref_tipcards_reset">İpucu kartları sıfırlandı!</string>
     <string name="pref_app_language">Uygulama dili</string>
-    <string name="pref_app_language_default">Varsayılan</string>
+    <string name="label_default">Varsayılan</string>
     <string name="about_version">Sürüm</string>
     <string name="about_github_project">Proje GitHub\'da</string>
     <string name="action_reset_game">Oyunu sıfırla</string>

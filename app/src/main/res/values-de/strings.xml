@@ -67,7 +67,7 @@
     <string name="pref_other">Andere</string>
     <string name="pref_tipcards_reset">Hinweiskarten wurden zurückgesetzt!</string>
     <string name="pref_app_language">App Sprache</string>
-    <string name="pref_app_language_default">Voreinstellung</string>
+    <string name="label_default">Voreinstellung</string>
     <string name="about_version">Version</string>
     <string name="about_github_project">Projekt auf GitHub</string>
     <string name="action_give_up">Aufgeben</string>
