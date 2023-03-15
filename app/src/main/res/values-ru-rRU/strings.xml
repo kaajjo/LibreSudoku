@@ -250,7 +250,7 @@
     <string name="add_to_folder_create_new">Создать новое</string>
     <string name="add_to_folder_from_file">Импортировать из файла</string>
     <string name="saved_game_progress_percentage">Прогресс %1$d%%</string>
-    <string name="last_played_section_title">Последние сыгранные</string>
+    <string name="last_played_section_title">Недавно сыгранные</string>
     <string name="board_theme_title">Тема судоку</string>
     <string name="pref_boardtheme_accent">Применять акцентные цвета</string>
     <string name="pref_boardtheme_accent_subtitle">Сделайте ваше судоку более красочным</string>

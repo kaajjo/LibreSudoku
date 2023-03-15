@@ -94,7 +94,7 @@
     <string name="pref_dark_theme">Tmavý motiv</string>
     <string name="pref_input">Metoda zadávání</string>
     <string name="pref_input_cell_first">Nejdříve buňka</string>
-    <string name="pref_input_digit_first">Nejdříve číslice</string>
+    <string name="pref_input_digit_first">Hodnota jako první</string>
     <string name="game_completed">Hra dokončena</string>
     <string name="win_streak">Vítězná série</string>
     <string name="current_streak">Aktuální série</string>
@@ -123,7 +123,7 @@
     <string name="pref_app_theme">Motiv aplikace</string>
     <string name="pref_board_font_size_small">Malé</string>
     <string name="pref_board_font_size_large">Velké</string>
-    <string name="pref_delete_stats_summ">Tato akce odstraní všechny vaše statistiky, uložené hry a záznamy a nelze ji vrátit zpět</string>
+    <string name="pref_delete_stats_summ">Tato akce smaže všechny vaše statistiky, uložené hry a záznamy. Nelze to vrátit zpět</string>
     <string name="theme_green">Zelený</string>
     <string name="pref_gameplay">Hratelnost</string>
     <string name="pref_reset_timer">Resetovat časovač při resetování hry</string>
@@ -136,7 +136,7 @@
     <string name="action_reset_game">Resetovat hru</string>
     <string name="pref_mistakes_limit">Limit chyb</string>
     <string name="about_github_project">Projekt na GitHubu</string>
-    <string name="pref_disable_hints_summ">Nemáte rádi nápovědy\? Pak je prostě vypněte!</string>
+    <string name="pref_disable_hints_summ">Nemáte rádi nápovědy\? Prostě je vypněte!</string>
     <string name="pref_highlight_identical">Zvýraznění stejných čísel</string>
     <string name="dialog_yes">Ano</string>
     <string name="pref_disable_hints">Vypnout nápovědy</string>
