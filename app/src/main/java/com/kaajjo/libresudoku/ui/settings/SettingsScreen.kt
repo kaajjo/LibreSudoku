@@ -469,7 +469,7 @@ fun SettingsScreen(
             SelectionDialog(
                 title = stringResource(R.string.pref_app_language),
                 entries = getLangs(context),
-                selected = getCurrentLocaleTag(context),
+                selected = getCurrentLocaleTag(),
                 onSelect = { localeKey ->
                     val locale = if (localeKey == "") {
                         LocaleListCompat.getEmptyLocaleList()
@@ -589,14 +589,10 @@ private fun getCurrentLocaleString(context: Context): String {
     return getDisplayName(locales.toLanguageTags())
 }
 
-private fun getCurrentLocaleTag(context: Context): String {
-    val langs = getLangs(context)
-    langs.forEach {
-        Log.d("lang", "${it.key} ${it.value}")
-    }
+private fun getCurrentLocaleTag(): String {
     val locales = AppCompatDelegate.getApplicationLocales()
     if (locales == LocaleListCompat.getEmptyLocaleList()) {
-        return context.getString(R.string.label_default)
+        return ""
     }
     return locales.toLanguageTags()
 }

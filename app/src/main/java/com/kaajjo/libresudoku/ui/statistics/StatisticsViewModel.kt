@@ -9,6 +9,7 @@ import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.data.database.model.Record
 import com.kaajjo.libresudoku.data.database.model.SavedGame
+import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.TipCardsDataStore
 import com.kaajjo.libresudoku.domain.repository.RecordRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
@@ -22,8 +23,9 @@ import javax.inject.Inject
 class StatisticsViewModel
 @Inject constructor(
     private val recordRepository: RecordRepository,
-    private val savedGameRepository: SavedGameRepository,
-    private val tipCardsDataStore: TipCardsDataStore
+    private val tipCardsDataStore: TipCardsDataStore,
+    savedGameRepository: SavedGameRepository,
+    appSettingsManager: AppSettingsManager
 ) : ViewModel() {
     var showDeleteDialog by mutableStateOf(false)
     var selectedDifficulty by mutableStateOf(GameDifficulty.Unspecified)
@@ -34,6 +36,8 @@ class StatisticsViewModel
 
     var recordList: Flow<List<Record>> = recordRepository.getAllSortByTime()
     val savedGamesList: Flow<List<SavedGame>> = savedGameRepository.getAll()
+
+    val dateFormat = appSettingsManager.dateFormat
 
     fun deleteRecord(recordEntity: Record) {
         viewModelScope.launch {

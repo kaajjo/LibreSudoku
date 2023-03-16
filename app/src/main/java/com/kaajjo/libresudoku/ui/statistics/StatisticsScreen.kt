@@ -21,9 +21,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.HelpCard
 import java.time.Duration
@@ -38,6 +40,7 @@ fun StatisticsScreen(
     viewModel: StatisticsViewModel
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle(initialValue = "")
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -206,6 +209,7 @@ fun StatisticsScreen(
                                 difficulty = stringResource(record.difficulty.resName),
                                 date = record.date.toLocalDateTime(),
                                 type = stringResource(record.type.resName),
+                                dateFormat = dateFormat,
                                 onLongClick = {
                                     selectedIndex = index
                                     viewModel.showDeleteDialog = true
@@ -464,6 +468,7 @@ fun RecordItem(
     date: LocalDateTime,
     difficulty: String,
     type: String,
+    dateFormat: String,
     onClick: () -> Unit = { },
     onLongClick: () -> Unit = { }
 ) {
@@ -495,7 +500,11 @@ fun RecordItem(
             }
             Row {
                 Text(
-                    text = date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"))
+                    text = date.format(AppSettingsManager.dateFormat(dateFormat))
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = date.format(DateTimeFormatter.ofPattern("HH:mm"))
                 )
             }
         }
