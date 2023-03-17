@@ -28,9 +28,11 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.utils.toFormattedString
+import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.board.Board
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 import kotlin.time.toKotlinDuration
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
@@ -41,6 +43,14 @@ fun SavedGameScreen(
     navigateToFolder: (Long) -> Unit,
     viewModel: SavedGameViewModel
 ) {
+    val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle(
+        initialValue = ""
+    )
+    val dateTimeFormatter by remember(dateFormat) {
+        mutableStateOf(
+            AppSettingsManager.dateFormat(dateFormat)
+        )
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -206,6 +216,27 @@ fun SavedGameScreen(
                         ),
                         style = textStyle
                     )
+
+
+                    viewModel.savedGame?.let { savedGame ->
+                        if (savedGame.startedAt != null) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                val startedAtDate by remember(savedGame) {
+                                    mutableStateOf(
+                                        savedGame.startedAt.format(dateTimeFormatter)
+                                    )
+                                }
+                                val startedAtTime by remember(savedGame) {
+                                    mutableStateOf(
+                                        savedGame.startedAt.format(DateTimeFormatter.ofPattern("HH:mm"))
+                                    )
+                                }
+                                Text(startedAtDate)
+                                Text(startedAtTime)
+                            }
+                        }
+                    }
+
                     Text(
                         text = viewModel.savedGame?.let {
                             when {
@@ -216,6 +247,7 @@ fun SavedGameScreen(
                             }
                         } ?: ""
                     )
+
                     Text(
                         text = stringResource(
                             R.string.saved_game_difficulty,

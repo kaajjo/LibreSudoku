@@ -43,6 +43,7 @@ class SavedGameViewModel
     val boardUid = savedStateHandle.get<Long>("uid")
 
     val fontSize = appSettingsManager.fontSize
+    val dateFormat = appSettingsManager.dateFormat
 
     var savedGame by mutableStateOf<SavedGame?>(null)
     var boardEntity by mutableStateOf<SudokuBoard?>(null)

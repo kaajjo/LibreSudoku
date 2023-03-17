@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -272,6 +274,7 @@ fun GamesHistoryScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SudokuHistoryItem(
     board: String,
@@ -323,12 +326,20 @@ fun SudokuHistoryItem(
 
 
                 if (savedGame.startedAt != null) {
-                    val startedAt by remember(savedGame) {
+                    val startedAtDate by remember(savedGame) {
                         mutableStateOf(
                             savedGame.startedAt.format(dateTimeFormatter)
                         )
                     }
-                    Text(startedAt)
+                    val startedAtTime by remember(savedGame) {
+                        mutableStateOf(
+                            savedGame.startedAt.format(DateTimeFormatter.ofPattern("HH:mm"))
+                        )
+                    }
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(startedAtDate)
+                        Text(startedAtTime)
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
