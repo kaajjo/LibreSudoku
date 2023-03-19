@@ -261,7 +261,7 @@
     <string name="board_theme_title">Board theme</string>
     <string name="action_move_selected">Move selected</string>
     <string name="move_games_to_folder_subtitle">Select a folder to move the selected games to</string>
-    <string name="pref_cross_highlight_subtitle">Highlight some boxen on the board</string>
+    <string name="pref_cross_highlight_subtitle">Highlight some boxes on the board</string>
     <string name="pref_cross_highlight">Cross highlight</string>
     <string name="dialog_crash_report_text">LibreSudoku crashed. Send a report to the developers?</string>
     <string name="pref_crash_reporting">Crash reporting</string>
