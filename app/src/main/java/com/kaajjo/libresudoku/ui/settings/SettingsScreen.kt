@@ -517,9 +517,10 @@ fun SettingsScreen(
 private val DateFormats = listOf(
     "",
     "dd/MM/yy",
-    "MM/dd/yy",
     "dd.MM.yy",
-    "dd MMM yyyy"
+    "MM/dd/yy",
+    "dd MMM yyyy",
+    "MMM dd, yyyy"
 )
 
 @Composable

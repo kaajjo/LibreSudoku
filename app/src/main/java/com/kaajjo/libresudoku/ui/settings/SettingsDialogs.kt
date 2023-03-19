@@ -1,6 +1,5 @@
 package com.kaajjo.libresudoku.ui.settings
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -118,7 +117,6 @@ fun SelectionDialog(
                             RadioButton(
                                 selected = selected == item.first,
                                 onClick = {
-                                    Log.d("dialog", "$selected ${item.first}")
                                     onSelect(item.first)
                                     onDismiss()
                                 }
