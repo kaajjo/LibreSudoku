@@ -185,7 +185,7 @@
     <string name="multiple_solution_text">More than one solution. Proper sudokus must have a unique solution.</string>
     <string name="no_solution_text">No solutions</string>
     <string name="create_import_set">Set</string>
-    <string name="custom_sudoku_no_added">No sudokus adde yet.</string>
+    <string name="custom_sudoku_no_added">No sudokus added yet</string>
     <string name="custom_sudoku_delete_dialog_title">Delete selected</string>
     <string name="custom_sudoku_delete_dialog_text">Delete the selected sudokus permanently?</string>
     <string name="game_not_started">Not started</string>
