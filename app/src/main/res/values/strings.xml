@@ -96,7 +96,7 @@
     <string name="toolbar_hint_description">Solves selected cell</string>
     <string name="toolbar_erase_description">Clears selected cell</string>
     <string name="first_game_dialog_title">Quick tour</string>
-    <string name="first_game_dialog_got_it">OK</string>
+    <string name="first_game_dialog_got_it">Got it</string>
     <string name="action_exit">Exit</string>
     <string name="action_stay">Stay</string>
     <string name="mistakes_number_out_of">%1$d/%2$d mistakes</string>
@@ -263,7 +263,7 @@
     <string name="pref_cross_highlight">Cross highlight</string>
     <string name="dialog_crash_report_text">LibreSudoku crashed. Send a report to the developers?</string>
     <string name="pref_crash_reporting">Crash reporting</string>
-    <string name="pref_crash_reporting_subtitle">Ask to submit bug reports via e-mail.</string>
+    <string name="pref_crash_reporting_subtitle">Submit bug reports via e-mail.</string>
     <string name="pref_fun_keyboard_over_num">Function panel over the values</string>
     <string name="pref_fun_keyboard_over_num_subtitle">Place the function panel above the value keyboard</string>
     <string name="pref_date_format">Date format</string>
