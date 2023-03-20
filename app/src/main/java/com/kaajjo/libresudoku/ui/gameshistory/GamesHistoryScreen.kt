@@ -45,8 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -64,7 +62,7 @@ import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import com.kaajjo.libresudoku.ui.create_edit_sudoku.GameStateFilter
-import kotlinx.coroutines.coroutineScope
+import com.kaajjo.libresudoku.ui.util.disableSplitMotionEvents
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import kotlin.math.sqrt
@@ -363,27 +361,3 @@ fun SudokuHistoryItem(
         }
     }
 }
-
-// https://stackoverflow.com/questions/69901608/how-to-disable-simultaneous-clicks-on-multiple-items-in-jetpack-compose-list-c
-fun Modifier.disableSplitMotionEvents() =
-    pointerInput(Unit) {
-        coroutineScope {
-            var currentId: Long = -1L
-            awaitPointerEventScope {
-                while (true) {
-                    awaitPointerEvent(PointerEventPass.Initial).changes.forEach { pointerInfo ->
-                        when {
-                            pointerInfo.pressed && currentId == -1L -> currentId =
-                                pointerInfo.id.value
-
-                            pointerInfo.pressed.not() && currentId == pointerInfo.id.value -> currentId =
-                                -1
-
-                            pointerInfo.id.value != currentId && currentId != -1L -> pointerInfo.consume()
-                            else -> Unit
-                        }
-                    }
-                }
-            }
-        }
-    }
