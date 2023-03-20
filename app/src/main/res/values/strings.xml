@@ -10,7 +10,7 @@
     <string name="dialog_new_game_positive">Start new</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_confirm">Yes</string>
-    <string name="action_play">Start</string>
+    <string name="action_play">Play</string>
     <string name="action_continue">Continue</string>
     <string name="action_delete">Delete</string>
     <string name="difficulty_unspecified">Unspecified</string>
@@ -114,7 +114,7 @@
     <string name="win_rate">Win rate</string>
     <string name="win_streak">Win streak</string>
     <string name="current_streak">Current</string>
-    <string name="best_streak">Streak</string>
+    <string name="best_streak">Best</string>
     <string name="number_best_games">%1$d best games</string>
     <string name="games">Games</string>
     <string name="time">Time</string>
@@ -145,7 +145,7 @@
     <string name="saved_game_completed">Completed</string>
     <string name="saved_game_give_up">You have given up.</string>
     <string name="saved_game_in_progress">In progress</string>
-    <string name="saved_game_mistakes_limit">Mistake-limit exceeded.</string>
+    <string name="saved_game_mistakes_limit">Mistake limit exceeded</string>
     <string name="learn_screen_title">Learn</string>
     <string name="learn_tab_sudoku">Sudoku</string>
     <string name="learn_tab_app">App</string>
@@ -153,7 +153,7 @@
     <string name="learn_app_toolbar_desc">A panel under the keyboard</string>
     <string name="learn_app_toolbar_notes_menu">Press and hold the \"Notes\" to compute, clear, or hide/show notes.</string>
     <string name="learn_sudoku_rules">Rules</string>
-    <string name="sudoku_rules_mistakes">Spot the mistake(s) here</string>
+    <string name="sudoku_rules_mistakes">Spot the mistakes here</string>
     <string name="sudoku_rules_mistakes_highlight">Highlight mistakes</string>
     <string name="sudoku_rules_mistakes_explanation"><b>2</b> can not be repeated within a (3x3) box? There can only be one <b>6</b> in each row.</string>
     <string name="naked_pairs_title">Naked pairs</string>
@@ -182,14 +182,13 @@
     <string name="create_from_string_text">Enter a sudoku in string form. Empty cells are indicated by a \".\" or a \"0\".</string>
     <string name="create_from_string_hint">Sudoku</string>
     <string name="create_incorrect_puzzle">Incorrect sudoku</string>
-    <string name="multiple_solution_text">More than one solution. Proper sudokus must have a unique solution.</string>
-    <string name="no_solution_text">No solutions</string>
+    <string name="multiple_solution_text">Ensure there is only one possible solution.</string>
+    <string name="no_solution_text">Unsolvable</string>
     <string name="create_import_set">Set</string>
     <string name="custom_sudoku_no_added">No sudokus added yet</string>
     <string name="custom_sudoku_delete_dialog_title">Delete selected</string>
     <string name="custom_sudoku_delete_dialog_text">Delete the selected sudokus permanently?</string>
     <string name="game_not_started">Not started</string>
-    <string name="export_string_text">Select text from the text field, or press \"Copy\".</string>
     <string name="export_string_title">Export as string</string>
     <string name="export_string_copy">Copy</string>
     <string name="export_string_state_copied">Copied</string>
@@ -230,8 +229,7 @@
     <string name="folder_import">Import</string>
     <string name="dialog_delete_folder_text">The \"%1$s\" folder will be deleted</string>
     <string name="help">Help</string>
-    <string name="folders_help">Manage your folder and import sudokus from a file here.</string>
-    <string name="folder_import_supported_types">Supported filetypes:\n.sdm (or .txt with the same structure)\n.opensudoku\n.1gsudoku</string>
+    <string name="folders_help">Manage the sudoku folder, and import .sdm (or .txt with the same structure) .opensudoku, or .1gsudoku files here.</string>
     <string name="import_from_file_fail">Could not import sudoku</string>
     <string name="import_from_file_title">From a file</string>
     <string name="import_saving">Saving…</string>
