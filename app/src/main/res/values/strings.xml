@@ -6,7 +6,7 @@
     <string name="nav_bar_more">More</string>
     <string name="new_game">New game</string>
     <string name="dialog_new_game">Game in progress</string>
-    <string name="dialog_new_game_text">Continue, or start a new game?</string>
+    <string name="dialog_new_game_text">You have a game in progress. Want to start a new one?</string>
     <string name="dialog_new_game_positive">Start new</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_confirm">Yes</string>
