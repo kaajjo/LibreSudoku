@@ -183,7 +183,7 @@
     <string name="create_from_string_hint">Sudoku</string>
     <string name="create_incorrect_puzzle">Incorrect sudoku</string>
     <string name="multiple_solution_text">Ensure there is only one possible solution.</string>
-    <string name="no_solution_text">Unsolvable</string>
+    <string name="no_solution_text">This sudoku has no solutions.</string>
     <string name="create_import_set">Set</string>
     <string name="custom_sudoku_no_added">No sudokus added yet</string>
     <string name="custom_sudoku_delete_dialog_title">Delete selected</string>
