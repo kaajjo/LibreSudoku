@@ -229,7 +229,7 @@
     <string name="folder_import">Import</string>
     <string name="dialog_delete_folder_text">The \"%1$s\" folder will be deleted</string>
     <string name="help">Help</string>
-    <string name="folders_help">Manage the sudoku folder, and import .sdm (or .txt with the same structure) .opensudoku, or .1gsudoku files here.</string>
+    <string name="folders_help">Manage folders, and import .sdm (or .txt with the same structure) .opensudoku, or .1gsudoku files here.</string>
     <string name="import_from_file_fail">Could not import sudoku</string>
     <string name="import_from_file_title">From a file</string>
     <string name="import_saving">Saving…</string>
