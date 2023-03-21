@@ -62,11 +62,11 @@
     <string name="pref_mistakes_check_off">Off</string>
     <string name="pref_mistakes_check_violations">Rule violations</string>
     <string name="pref_mistakes_check_final">With final solution</string>
-    <string name="pref_highlight_identical">Highlight repeated values</string>
+    <string name="pref_highlight_identical">Highlight identical values</string>
     <string name="pref_highlight_identical_summ">Selection of a value on the board highlights cells with the same value.</string>
     <string name="pref_remaining_uses">Remaining uses</string>
     <string name="pref_remaining_uses_summ">The number of remaining uses of a value is displayed on the keyboard</string>
-    <string name="pref_position_lines">Positional lines</string>
+    <string name="pref_position_lines">Position lines</string>
     <string name="pref_position_lines_summ">The row and column of the selected cell are highlighted.</string>
     <string name="pref_auto_erase_notes">Auto-erase notes</string>
     <string name="pref_other">Other</string>
