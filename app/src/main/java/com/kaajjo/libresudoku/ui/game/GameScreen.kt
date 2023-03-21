@@ -343,7 +343,7 @@ fun GameScreen(
                 }
 
                 val timerEnabled by viewModel.timerEnabled.collectAsState(initial = PreferencesConstants.DEFAULT_SHOW_TIMER)
-                if (timerEnabled) {
+                AnimatedVisibility(visible = timerEnabled || viewModel.endGame) {
                     TopBoardSection(viewModel.timeText)
                 }
             }
