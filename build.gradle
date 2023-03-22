@@ -1,8 +1,8 @@
 buildscript {
     ext {
-        compose_version = '1.4.0-beta02'
-        room_version = "2.5.0"
-        latestAboutLibsRelease = '10.5.2'
+        compose_version = '1.4.0'
+        room_version = "2.5.1"
+        latestAboutLibsRelease = '10.6.1'
     }
 }
 plugins {
