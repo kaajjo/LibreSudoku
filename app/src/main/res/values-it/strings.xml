@@ -5,7 +5,7 @@
     <string name="dialog_ok">OK</string>
     <string name="sort_by_timer">Timer</string>
     <string name="difficulty_unspecified">Non specificato</string>
-    <string name="pref_delete_stats_summ">Questa azione eliminerà tutte le statistiche, le partite e i record salvati e non può essere annullata</string>
+    <string name="pref_delete_stats_summ">Questa azione eliminerà tutte le statistiche, le partite e i record salvati. Non può essere annullata</string>
     <string name="nav_bar_home">Home</string>
     <string name="nav_bar_more">Di più</string>
     <string name="new_game">Nuova partita</string>
@@ -46,7 +46,7 @@
     <string name="pref_delete_stats">Elimina tutte le statistiche</string>
     <string name="theme_dynamic">Dinamico</string>
     <string name="theme_green">Verde</string>
-    <string name="dialog_new_game_text">Hai una partita incompiuta, vuoi davvero iniziarne una nuova\?</string>
+    <string name="dialog_new_game_text">Hai una partita incompleta, vuoi davvero iniziarne una nuova\?</string>
     <string name="nav_bar_statistics">Statistiche</string>
     <string name="dialog_new_game_positive">Inizia nuova</string>
     <string name="action_cancel">Annulla</string>
@@ -105,7 +105,7 @@
     <string name="pref_pure_black">Tema scuro amoled</string>
     <string name="pref_show_timer">Mostra timer</string>
     <string name="pref_mistakes_check_final">Con soluzione finale</string>
-    <string name="pref_highlight_identical">Evidenzia numeri identici</string>
+    <string name="pref_highlight_identical">Evidenzia valori identici</string>
     <string name="pref_mistakes_limit">Limite errori</string>
     <string name="pref_reset_timer">Ripristina timer quando ripristini la partita</string>
     <string name="pref_mistakes_check">Controllo errori</string>
@@ -115,7 +115,7 @@
     <string name="pref_mistakes_check_off">Spento</string>
     <string name="pref_mistakes_check_violations">Violazione regole</string>
     <string name="first_game_dialog_got_it">Capito</string>
-    <string name="pref_remaining_uses_summ">Il numero di usi rimasti del numero sarà mostrato sulla tastiera</string>
+    <string name="pref_remaining_uses_summ">Il numero di usi rimasti del numero verrà mostrato sulla tastiera</string>
     <string name="pref_position_lines_summ">La riga e la colonna della cella selezionata saranno evidenziate</string>
     <string name="pref_other">Altro</string>
     <string name="about_version">Versione</string>

@@ -262,4 +262,5 @@
     <string name="naked_pairs_explanation">Hay dos celdas que comparten las mismas dos marcas de lápiz. Ahora mismo, no podemos saber cuál es el 2 y cuál es el 3.
 \nPero como las reglas del Sudoku nos dicen que cada casilla sólo puede tener un 2 y un 3, podemos suponer que una de ellas es el 2 y la otra es el 3</string>
     <string name="learn_basic_5">La misma lógica se aplica a las filas y columnas. Mira la primera fila. El número 4 en R7C3 bloquea la tercera columna de nuestra fila. El número 4 en R3C5 bloquea dos columnas a la vez (4 y 6), porque no puede haber otros cuatros en la misma casilla. R6C7 bloquea la columna 7</string>
+    <string name="pref_date_format">Formato de la fecha</string>
 </resources>
