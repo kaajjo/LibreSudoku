@@ -183,4 +183,10 @@ class SettingsViewModel
             settingsDataManager.setDateFormat(format)
         }
     }
+
+    val saveLastSelectedDifficultyType = settingsDataManager.saveSelectedGameDifficultyType
+    fun updateSaveLastSelectedDifficultyType(enabled: Boolean) =
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsDataManager.setSaveSelectedGameDifficultyType(enabled)
+        }
 }

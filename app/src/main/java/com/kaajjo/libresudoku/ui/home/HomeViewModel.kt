@@ -6,11 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.Cell
+import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.QQWingController
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
+import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel
 @Inject constructor(
+    private val appSettingsManager: AppSettingsManager,
     private val boardRepository: BoardRepository,
     private val savedGameRepository: SavedGameRepository
 ) : ViewModel() {
@@ -39,21 +42,38 @@ class HomeViewModel
         GameDifficulty.Hard,
         GameDifficulty.Challenge,
     )
-    var selectedDifficulty by mutableStateOf(difficulties.first())
 
     private val types = listOf(
         GameType.Default9x9,
         GameType.Default6x6,
         GameType.Default12x12
     )
+
+    val lastSelectedGameDifficultyType = appSettingsManager.lastSelectedGameDifficultyType
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            initialValue = Pair(difficulties.first(), types.first())
+        )
+
+    val saveSelectedGameDifficultyType = appSettingsManager.saveSelectedGameDifficultyType
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            initialValue = PreferencesConstants.DEFAULT_SAVE_LAST_SELECTED_DIFF_TYPE
+        )
+
+    var selectedDifficulty by mutableStateOf(difficulties.first())
     var selectedType by mutableStateOf(types.first())
 
     var isGenerating by mutableStateOf(false)
     var isSolving by mutableStateOf(false)
     var readyToPlay by mutableStateOf(false)
 
-    private var puzzle = List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
-    private var solvedPuzzle = List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
+    private var puzzle =
+        List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
+    private var solvedPuzzle =
+        List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
 
 
     fun startGame() {
@@ -68,6 +88,13 @@ class HomeViewModel
         solvedPuzzle = List(size) { row -> List(size) { col -> Cell(row, col, 0) } }
 
         viewModelScope.launch(Dispatchers.Default) {
+            if (saveSelectedGameDifficultyType.value) {
+                appSettingsManager.setLastSelectedGameDifficultyType(
+                    difficulty = selectedDifficulty,
+                    type = selectedType
+                )
+            }
+
             val qqWingController = QQWingController()
 
             // generating
@@ -131,6 +158,13 @@ class HomeViewModel
                     )
                 }
             }
+        }
+    }
+
+    fun restoreDifficultyAndType() {
+        if (saveSelectedGameDifficultyType.value) {
+            selectedDifficulty = lastSelectedGameDifficultyType.value.first
+            selectedType = lastSelectedGameDifficultyType.value.second
         }
     }
 }

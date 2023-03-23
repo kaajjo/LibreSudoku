@@ -342,6 +342,17 @@ fun SettingsScreen(
                     title = stringResource(R.string.pref_other)
                 )
 
+                val saveLastSelectedDifficultyType by viewModel.saveLastSelectedDifficultyType
+                    .collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_SAVE_LAST_SELECTED_DIFF_TYPE)
+                PreferenceRowSwitch(
+                    title = stringResource(R.string.pref_save_last_diff_and_type),
+                    subtitle = stringResource(R.string.pref_save_last_diff_and_type_subtitle),
+                    checked = saveLastSelectedDifficultyType,
+                    onClick = {
+                        viewModel.updateSaveLastSelectedDifficultyType(!saveLastSelectedDifficultyType)
+                    }
+                )
+
                 val keepScreenOn by viewModel.keepScreenOn.collectAsState(initial = PreferencesConstants.DEFAULT_KEEP_SCREEN_ON)
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_keep_screen_on),
