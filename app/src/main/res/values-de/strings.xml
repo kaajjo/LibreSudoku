@@ -259,4 +259,5 @@
     <string name="create_from_string_hint">Puzzle</string>
     <string name="learn_basic_5">Die gleiche Logik gilt für Zeilen und Spalten. Schau dir die erste Zeile an. Hier blockiert die Zahl 4 in R7C3 die dritte Spalte in unserer Reihe. Die Zahl 4 in R3C5 blockiert zwei Spalten auf einmal (4 und 6), weil es keine anderen Vieren in der selben Box geben kann. R6C7 blockiert Spalte Nummer 7</string>
     <string name="win_rate_percentage">%1$d%%</string>
+    <string name="pref_date_format">Datumsformat</string>
 </resources>

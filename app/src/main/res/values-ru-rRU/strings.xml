@@ -265,4 +265,7 @@
     <string name="pref_crash_reporting_subtitle">Помощь в исправлении ошибок. Приложение не отсылает ничего самостоятельно, вам будет предложено отослать отчет об ошибке через почту</string>
     <string name="pref_fun_keyboard_over_num_subtitle">Поместить функциональную клавиатуру над числами</string>
     <string name="pref_fun_keyboard_over_num">Функциональная клавиатура над числовой</string>
+    <string name="pref_date_format">Формат даты</string>
+    <string name="pref_save_last_diff_and_type">Запоминать тип и сложность</string>
+    <string name="pref_save_last_diff_and_type_subtitle">Запоминать тип и сложность игры последней игры</string>
 </resources>
