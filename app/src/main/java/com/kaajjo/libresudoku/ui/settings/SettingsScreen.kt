@@ -530,6 +530,7 @@ private val DateFormats = listOf(
     "dd/MM/yy",
     "dd.MM.yy",
     "MM/dd/yy",
+    "yyyy-MM-dd",
     "dd MMM yyyy",
     "MMM dd, yyyy"
 )
