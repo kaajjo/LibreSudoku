@@ -9,6 +9,8 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.kaajjo.libresudoku.core.PreferencesConstants
+import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
+import com.kaajjo.libresudoku.core.qqwing.GameType
 import kotlinx.coroutines.flow.map
 import java.time.chrono.IsoChronology
 import java.time.format.DateTimeFormatter
@@ -69,6 +71,14 @@ class AppSettingsManager(context: Context) {
 
     // custom date format
     private val dateFormatKey = stringPreferencesKey("date_format")
+
+    // whether to save the last selected type and difficulty in the HomeScreen
+    private val saveSelectedGameDifficultyTypeKey =
+        booleanPreferencesKey("save_last_selected_difficulty_type")
+
+    // last selected difficulty and type
+    private val lastSelectedGameDifficultyTypeKey =
+        stringPreferencesKey("last_selected_difficulty_type")
 
     suspend fun setFirstLaunch(value: Boolean) {
         dataStore.edit { settings ->
@@ -228,6 +238,75 @@ class AppSettingsManager(context: Context) {
 
     val dateFormat = dataStore.data.map { prefs ->
         prefs[dateFormatKey] ?: ""
+    }
+
+    suspend fun setSaveSelectedGameDifficultyType(enabled: Boolean) {
+        dataStore.edit { settings ->
+            settings[saveSelectedGameDifficultyTypeKey] = enabled
+        }
+    }
+
+    /**
+     * Whether to save the last selected type and difficulty in the HomeScreen
+     */
+    val saveSelectedGameDifficultyType = dataStore.data.map { prefs ->
+        prefs[saveSelectedGameDifficultyTypeKey]
+            ?: PreferencesConstants.DEFAULT_SAVE_LAST_SELECTED_DIFF_TYPE
+    }
+
+    suspend fun setLastSelectedGameDifficultyType(
+        difficulty: GameDifficulty,
+        type: GameType
+    ) {
+        dataStore.edit { settings ->
+            var difficultyAndType = when (difficulty) {
+                GameDifficulty.Unspecified -> "0"
+                GameDifficulty.Simple -> "1"
+                GameDifficulty.Easy -> "2"
+                GameDifficulty.Moderate -> "3"
+                GameDifficulty.Hard -> "4"
+                GameDifficulty.Challenge -> "5"
+                GameDifficulty.Custom -> "6"
+            }
+            difficultyAndType += ";"
+            difficultyAndType += when (type) {
+                GameType.Unspecified -> "0"
+                GameType.Default9x9 -> "1"
+                GameType.Default12x12 -> "2"
+                GameType.Default6x6 -> "3"
+            }
+            settings[lastSelectedGameDifficultyTypeKey] = difficultyAndType
+        }
+    }
+
+    /**
+     * Last selected difficulty and type. Returns Pair<GameDifficulty, GameType>
+     */
+    val lastSelectedGameDifficultyType = dataStore.data.map { prefs ->
+        var gameDifficulty = GameDifficulty.Easy
+        var gameType = GameType.Default9x9
+
+        val key = prefs[lastSelectedGameDifficultyTypeKey] ?: ""
+        if (key.isNotEmpty() && key.contains(";")) {
+            gameDifficulty = when (key.substring(0, key.indexOf(";"))) {
+                "0" -> GameDifficulty.Unspecified
+                "1" -> GameDifficulty.Simple
+                "2" -> GameDifficulty.Easy
+                "3" -> GameDifficulty.Moderate
+                "4" -> GameDifficulty.Hard
+                "5" -> GameDifficulty.Challenge
+                "6" -> GameDifficulty.Custom
+                else -> GameDifficulty.Easy
+            }
+            gameType = when (key.substring(key.indexOf(";") + 1)) {
+                "0" -> GameType.Unspecified
+                "1" -> GameType.Default9x9
+                "2" -> GameType.Default12x12
+                "3" -> GameType.Default6x6
+                else -> GameType.Default9x9
+            }
+        }
+        Pair(gameDifficulty, gameType)
     }
 
     companion object {

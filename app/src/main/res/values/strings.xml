@@ -268,4 +268,6 @@
     <string name="pref_fun_keyboard_over_num">Function panel over the values</string>
     <string name="pref_fun_keyboard_over_num_subtitle">Place the function panel above the values keyboard</string>
     <string name="pref_date_format">Date format</string>
+    <string name="pref_save_last_diff_and_type">Remember type and difficulty</string>
+    <string name="pref_save_last_diff_and_type_subtitle">Remember the last game\'s type and difficulty</string>
 </resources>

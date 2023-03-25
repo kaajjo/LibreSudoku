@@ -120,6 +120,13 @@ fun HomeScreen(
             }
         )
     }
+
+    LaunchedEffect(
+        viewModel.lastSelectedGameDifficultyType,
+        viewModel.saveSelectedGameDifficultyType
+    ) {
+        viewModel.restoreDifficultyAndType()
+    }
 }
 
 @Composable
