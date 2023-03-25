@@ -37,11 +37,11 @@ object BoardColors {
 
     inline val thickLineColor: Color
         @Composable
-        get() = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.65f)
+        get() = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.55f)
 
     inline val thinLineColor: Color
         @Composable
-        get() = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.4f)
+        get() = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.25f)
 }
 
 interface SudokuBoardColors {
