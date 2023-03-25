@@ -42,6 +42,11 @@ fun KeyboardItem(
         targetValue = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else Color.Transparent
     )
     val localView = LocalView.current
+    val keyboardFontSize = if (remainingUses != null) {
+        25.sp
+    } else {
+        36.sp
+    }
     Box(
         modifier = modifier
             .clip(CircleShape)
@@ -63,19 +68,19 @@ fun KeyboardItem(
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(7.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
             Text(
                 text = number.toString(16).uppercase(),
                 fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
+                fontSize = keyboardFontSize,
             )
             if (remainingUses != null) {
                 Text(
                     text = remainingUses.toString(),
-                    fontSize = 14.sp
+                    fontSize = 11.sp
                 )
             }
         }
