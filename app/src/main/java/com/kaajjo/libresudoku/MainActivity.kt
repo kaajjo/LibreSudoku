@@ -144,8 +144,8 @@ class MainActivity : AppCompatActivity() {
                             altForegroundColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                             errorColor = BoardColors.errorColor,
                             highlightColor = MaterialTheme.colorScheme.outline,
-                            thickLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.65f),
-                            thinLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.4f)
+                            thickLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.55f),
+                            thinLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.25f)
                         )
                     }
 
