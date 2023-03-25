@@ -80,9 +80,7 @@ fun KeyboardItem(
             if (remainingUses != null) {
                 Text(
                     text = remainingUses.toString(),
-                    fontSize = 11.sp,
-
-
+                    fontSize = 11.sp
                 )
             }
         }
