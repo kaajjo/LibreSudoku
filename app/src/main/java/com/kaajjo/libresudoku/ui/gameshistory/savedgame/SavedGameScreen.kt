@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -21,8 +23,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -382,7 +386,6 @@ private fun ExportDialog(
         },
         text = {
             Column {
-                Text(stringResource(R.string.export_string_text))
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(top = 8.dp),
@@ -397,8 +400,11 @@ private fun ExportDialog(
                     onClick = {
                         onClickCopy()
                         onDismiss()
-                    }
+                    },
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding
                 ) {
+                    Icon(Icons.Rounded.ContentCopy, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(stringResource(R.string.export_string_copy))
                 }
             }
