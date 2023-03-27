@@ -11,7 +11,7 @@
     <string name="action_continue">Продолжить</string>
     <string name="action_delete">Удалить</string>
     <string name="difficulty_unspecified">Неопределенная</string>
-    <string name="difficulty_simple">Легчайше</string>
+    <string name="difficulty_simple">Легчайшая</string>
     <string name="difficulty_easy">Легко</string>
     <string name="difficulty_moderate">Средне</string>
     <string name="difficulty_hard">Сложно</string>
@@ -95,7 +95,7 @@
     <string name="action_stay">Остаться</string>
     <string name="mistakes_number_out_of">Ошибок %1$d/%2$d</string>
     <string name="reset_game_text">Начать текущую судоку заново\?</string>
-    <string name="give_up_text">Хотите сдаться\? После того, как Вы сдадитесь, вы сможете посмотреть решение, но игра будет окончена</string>
+    <string name="give_up_text">Хотите сдаться\? После того как вы сдадитесь, вы сможете посмотреть решение</string>
     <string name="game_completed">Игра завершена</string>
     <string name="game_completed_text">Вы завершили эту судоку. Вы можете остаться или выйти на главный экран, чтобы начать новую игру</string>
     <string name="game_over">Конец игры</string>
@@ -120,10 +120,10 @@
     <string name="average_time">Среднее время</string>
     <string name="best_time">Лучшее время</string>
     <string name="win_rate_percentage">%1$d%%</string>
-    <string name="tip_card_win_streak_summ">Серия побед сбрасывается, когда вы проигрываете (из-за лимита ошибок), сдаетесь, или начинаете новую игру, незавершив предудыщую</string>
+    <string name="tip_card_win_streak_summ">Серия побед сбрасывается, когда вы проигрываете (из-за лимита ошибок), сдаетесь, или начинаете новую игру, не завершив предыдущую, так что осторожнее</string>
     <string name="tip_card_records_list_title">Список рекордов</string>
-    <string name="tip_card_records_list_summ">Это список рекордов, он содержит 5 ваших лучших игр, или меньше, взависимости от того, сколько вы играли. Вы можете удалить рекорд по долгому нажатию на него</string>
-    <string name="statistics_no_records">У вас пока нет рекрдов</string>
+    <string name="tip_card_records_list_summ">Это список рекордов, он содержит 5 ваших лучших игр, или меньше, в зависимости от того, сколько вы играли. Вы можете удалить рекорд по долгому нажатию на него</string>
+    <string name="statistics_no_records">У вас пока нет рекордов</string>
     <string name="history_title">История</string>
     <string name="history_no_games">Вы еще не играли</string>
     <string name="history_item_time">Время: %1$s</string>
@@ -168,7 +168,7 @@
     <string name="learn_basic_title">База</string>
     <string name="learn_hidden_pairs_title">Скрытые пары</string>
     <string name="learn_hidden_pairs_1">Скрытые пары это почти то же самое, что и голые пары, только с одним отличием, они скрыты среди других. Эти две клетки имеют кое-что общее, а именно, в них могут стоять цифры 6 и 9, и это единственные две клетки в этом блоке, где они могут стоять</string>
-    <string name="learn_hidden_pairs_2">Из этого можно сделать вывод, что эти две клетки будут содержать имеено эти две цифры, и никакие другие. Так что, мы можем убрать ненужные заметки из этих клеток. Как и с голыми парами, это точно также работае со строками и столбцами</string>
+    <string name="learn_hidden_pairs_2">Из этого можно сделать вывод, что эти две клетки будут содержать именно эти две цифры, и никакие другие. Так что, мы можем убрать ненужные заметки из этих клеток. Как и с голыми парами, это точно также работает со строками и столбцами</string>
     <string name="libraries_licenses_title">Open Source лицензии</string>
     <string name="can_continue_label">Можно продолжить</string>
     <string name="action_show_mine_sudoku">Показать свое</string>
