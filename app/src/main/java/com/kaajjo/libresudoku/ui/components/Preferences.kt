@@ -116,7 +116,7 @@ fun PreferenceRowSwitch(
             Switch(
                 thumbContent = icon,
                 checked = checked,
-                onCheckedChange = null
+                onCheckedChange = { onClick() }
             )
         },
     )
