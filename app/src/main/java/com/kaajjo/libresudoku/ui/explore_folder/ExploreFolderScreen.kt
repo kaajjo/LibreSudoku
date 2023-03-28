@@ -21,6 +21,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -166,7 +167,10 @@ fun ExploreFolderScreen(
                     DefaultTopAppBar(
                         title = {
                             folder?.let {
-                                Text(it.name)
+                                Text(
+                                    text = it.name,
+                                    modifier = Modifier.basicMarquee()
+                                )
                             }
                         },
                         navigateBack = navigateBack,
