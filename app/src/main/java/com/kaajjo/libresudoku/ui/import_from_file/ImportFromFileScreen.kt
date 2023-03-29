@@ -247,6 +247,7 @@ fun ImportFromFileScreen(
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(focusRequester),
                     isError = isError,
+                    singleLine = true,
                     value = value,
                     onValueChange = { value = it },
                     label = { Text(stringResource(R.string.create_folder_name)) }

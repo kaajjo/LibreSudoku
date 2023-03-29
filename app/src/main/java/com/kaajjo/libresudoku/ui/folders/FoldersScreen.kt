@@ -555,6 +555,7 @@ fun NameActionDialog(
             OutlinedTextField(
                 modifier = Modifier.focusRequester(focusRequester),
                 isError = isError,
+                singleLine = true,
                 value = value,
                 onValueChange = onValueChange,
                 label = { Text(stringResource(R.string.create_folder_name)) }
