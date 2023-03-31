@@ -27,6 +27,7 @@ import com.kaajjo.libresudoku.domain.repository.RecordRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import com.kaajjo.libresudoku.domain.usecase.board.GetBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.board.UpdateBoardUseCase
+import com.kaajjo.libresudoku.domain.usecase.record.GetAllRecordsUseCase
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +53,8 @@ class GameViewModel @Inject constructor(
     private val updateBoardUseCase: UpdateBoardUseCase,
     private val getBoardUseCase: GetBoardUseCase,
     themeSettingsManager: ThemeSettingsManager,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val getAllRecordsUseCase: GetAllRecordsUseCase
 ) : ViewModel() {
     init {
         val sudokuParser = SudokuParser()
@@ -167,6 +169,7 @@ class GameViewModel @Inject constructor(
     var giveUpDialog by mutableStateOf(false)
 
     // mistakes
+    // used for mistakes limit
     var mistakesCount by mutableStateOf(0)
     var mistakesLimitDialog by mutableStateOf(false)
 
@@ -200,6 +203,12 @@ class GameViewModel @Inject constructor(
 
     // when true, tapping on any cell will clear it
     var eraseButtonToggled by mutableStateOf(false)
+
+    var hintsUsed = 0
+    // used only in the game-completed section. Not saved anywhere
+    var mistakesMade = 0
+
+    val allRecords by lazy { getAllRecordsUseCase(gameDifficulty, gameType) }
 
     private fun clearNotesAtCell(
         notes: List<Note>,
@@ -477,6 +486,7 @@ class GameViewModel @Inject constructor(
             duration = duration.plus(30.toDuration(DurationUnit.SECONDS))
             timeText = duration.toFormattedString()
             undoManager.addState(GameState(gameBoard, notes))
+            hintsUsed++
         }
     }
 
