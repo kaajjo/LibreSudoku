@@ -268,4 +268,10 @@
     <string name="pref_date_format">Формат даты</string>
     <string name="pref_save_last_diff_and_type">Запоминать тип и сложность</string>
     <string name="pref_save_last_diff_and_type_subtitle">Запоминать тип и сложность игры последней игры</string>
+    <string name="hints_used">Подсказок: %1$d</string>
+    <string name="mistakes_made">Ошибок: %1$d</string>
+    <string name="notes_taken">Заметок: %1$d</string>
+    <string name="stat_time_current">Текущее: %1$s</string>
+    <string name="stat_time_average">Сред.: %1$s</string>
+    <string name="stat_time_best">Лучшее: %1$s</string>
 </resources>
