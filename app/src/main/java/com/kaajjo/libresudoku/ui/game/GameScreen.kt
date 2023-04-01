@@ -21,10 +21,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.rounded.Cancel
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Grade
 import androidx.compose.material.icons.rounded.Lightbulb
-import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -149,6 +149,7 @@ fun GameScreen(
                             }
                         }
                     }
+
                     AnimatedVisibility(visible = !viewModel.endGame) {
                         val rotationAngle by animateFloatAsState(
                             targetValue = if (viewModel.gamePlaying) 0f else 360f
@@ -169,9 +170,8 @@ fun GameScreen(
                                 contentDescription = null
                             )
                         }
-
-
                     }
+
                     AnimatedVisibility(visible = !viewModel.endGame) {
                         IconButton(onClick = { viewModel.restartDialog = true }) {
                             Icon(
@@ -393,6 +393,11 @@ fun GameScreen(
                     }
                 } else {
                     // Game completed section
+
+                    val allRecords by viewModel.allRecords.collectAsStateWithLifecycle(
+                        initialValue = emptyList()
+                    )
+
                     Column(Modifier.fillMaxWidth()) {
                         Text(
                             text = stringResource(R.string.game_completed),
@@ -401,9 +406,13 @@ fun GameScreen(
                                 .align(Alignment.CenterHorizontally)
                                 .padding(bottom = 8.dp)
                         )
-                        val allRecords by viewModel.allRecords.collectAsStateWithLifecycle(
-                            initialValue = emptyList()
+
+                        Text(
+                            text = stringResource(R.string.time),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
+
                         FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
@@ -411,56 +420,91 @@ fun GameScreen(
                                 text = {
                                     Text(
                                         stringResource(
-                                            R.string.saved_game_time,
+                                            R.string.stat_time_current,
                                             viewModel.timeText
                                         )
                                     )
-                                },
-                                icon = { Icon(Icons.Outlined.Schedule, contentDescription = null) }
+                                }
                             )
 
                             if (allRecords.isNotEmpty()) {
                                 StatBoxWithBottomPadding(
                                     text = {
                                         Text(
-                                            "Best: ${
-                                                allRecords.first().time.toKotlinDuration()
-                                                    .toFormattedString()
-                                            }"
-                                        )
-                                    },
-                                    icon = {
-                                        Icon(
-                                            Icons.Rounded.Schedule,
-                                            contentDescription = null
+                                            text = stringResource(
+                                                R.string.stat_time_average,
+                                                DateUtils.formatElapsedTime(allRecords.sumOf { it.time.seconds } / allRecords.count())
+                                            )
                                         )
                                     }
                                 )
-
                                 StatBoxWithBottomPadding(
                                     text = {
                                         Text(
-                                            "Avg.: ${
-                                                DateUtils.formatElapsedTime(allRecords.sumOf { it.time.seconds } / allRecords.count())
-                                            }"
-                                        )
-                                    },
-                                    icon = {
-                                        Icon(
-                                            Icons.Rounded.Schedule,
-                                            contentDescription = null
+                                            text = stringResource(
+                                                R.string.stat_time_best,
+                                                allRecords.first().time
+                                                    .toKotlinDuration()
+                                                    .toFormattedString()
+                                            )
                                         )
                                     }
                                 )
                             }
+                        }
 
+                        Text(
+                            text = stringResource(R.string.statistics),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
+                        )
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
                             StatBoxWithBottomPadding(
-                                text = { Text("Hints: ${viewModel.hintsUsed}") },
+                                text = {
+                                    Text(
+                                        "${stringResource(viewModel.gameDifficulty.resName)} ${
+                                            stringResource(
+                                                viewModel.gameType.resName
+                                            )
+                                        }"
+                                    )
+                                },
+                                icon = { Icon(Icons.Rounded.Grade, contentDescription = null) }
+                            )
+                            StatBoxWithBottomPadding(
+                                text = {
+                                    Text(
+                                        stringResource(
+                                            R.string.hints_used,
+                                            viewModel.hintsUsed
+                                        )
+                                    )
+                                },
                                 icon = { Icon(Icons.Rounded.Lightbulb, contentDescription = null) }
                             )
                             StatBoxWithBottomPadding(
-                                text = { Text("Mistakes: ${viewModel.mistakesMade}") },
+                                text = {
+                                    Text(
+                                        stringResource(
+                                            R.string.mistakes_made,
+                                            viewModel.mistakesMade
+                                        )
+                                    )
+                                },
                                 icon = { Icon(Icons.Rounded.Cancel, contentDescription = null) }
+                            )
+                            StatBoxWithBottomPadding(
+                                text = {
+                                    Text(
+                                        stringResource(
+                                            R.string.notes_taken,
+                                            viewModel.notesTaken
+                                        )
+                                    )
+                                },
+                                icon = { Icon(Icons.Rounded.Edit, contentDescription = null) }
                             )
                         }
                     }
@@ -696,8 +740,8 @@ fun KeepScreenOn() = AndroidView({ View(it).apply { keepScreenOn = true } })
 @Composable
 fun StatBox(
     text: @Composable () -> Unit,
-    icon: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    icon: @Composable () -> Unit = { }
 ) {
     Box(
         modifier = modifier
@@ -714,11 +758,13 @@ fun StatBox(
     }
 }
 
+// TODO: Remove this when cross-axis arrangement support is added to FlowRow
+// https://android-review.googlesource.com/c/platform/frameworks/support/+/2478295
 @Composable
 fun StatBoxWithBottomPadding(
     text: @Composable () -> Unit,
-    icon: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    icon: @Composable () -> Unit = { }
 ) {
     StatBox(
         text = text,

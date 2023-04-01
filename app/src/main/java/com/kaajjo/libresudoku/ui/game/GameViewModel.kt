@@ -204,9 +204,10 @@ class GameViewModel @Inject constructor(
     // when true, tapping on any cell will clear it
     var eraseButtonToggled by mutableStateOf(false)
 
-    var hintsUsed = 0
     // used only in the game-completed section. Not saved anywhere
+    var hintsUsed = 0
     var mistakesMade = 0
+    var notesTaken = 0
 
     val allRecords by lazy { getAllRecordsUseCase(gameDifficulty, gameType) }
 
@@ -279,13 +280,16 @@ class GameViewModel @Inject constructor(
 
         currCell.error = currCell.value == 0
         // updating mistakes limit
-        if (mistakesLimit.value && new[row][col].error) {
-            mistakesCount++
-            if (mistakesCount >= 3) {
-                mistakesLimitDialog = true
-                pauseTimer()
-                giveUp()
-                endGame = true
+        if (new[row][col].error) {
+            mistakesMade++
+            if (mistakesLimit.value) {
+                mistakesCount++
+                if (mistakesCount >= 3) {
+                    mistakesLimitDialog = true
+                    pauseTimer()
+                    giveUp()
+                    endGame = true
+                }
             }
         }
 
@@ -387,11 +391,12 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun setNote(number: Int) {
+    private fun setNote(number: Int) {
         val note = Note(currCell.row, currCell.col, number)
         notes = if (notes.contains(note)) {
             removeNote(note.value, note.row, note.col)
         } else {
+            notesTaken++
             addNote(note.value, note.row, note.col)
         }
     }
@@ -506,6 +511,10 @@ class GameViewModel @Inject constructor(
         gameBoard = initialBoard.map { items -> items.map { item -> item.copy() } }
 
         remainingUsesList = countRemainingUses(gameBoard)
+
+        hintsUsed = 0
+        mistakesMade = 0
+        notesTaken = 0
     }
 
     private fun isValidCell(
