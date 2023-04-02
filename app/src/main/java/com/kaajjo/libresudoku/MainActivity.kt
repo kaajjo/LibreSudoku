@@ -202,6 +202,7 @@ class MainActivity : AppCompatActivity() {
                             animatedComposable(Route.STATISTICS) {
                                 StatisticsScreen(
                                     navigateHistory = { navController.navigate(Route.HISTORY) },
+                                    navigateSavedGame = { navController.navigate("saved_game/${it}") },
                                     hiltViewModel()
                                 )
                             }

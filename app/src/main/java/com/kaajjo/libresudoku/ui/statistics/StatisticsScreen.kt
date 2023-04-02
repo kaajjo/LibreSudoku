@@ -7,7 +7,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -37,6 +36,7 @@ import kotlin.math.roundToInt
 @Composable
 fun StatisticsScreen(
     navigateHistory: () -> Unit,
+    navigateSavedGame: (Long) -> Unit,
     viewModel: StatisticsViewModel
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -210,6 +210,9 @@ fun StatisticsScreen(
                                 date = record.date.toLocalDateTime(),
                                 type = stringResource(record.type.resName),
                                 dateFormat = dateFormat,
+                                onClick = {
+                                    navigateSavedGame(record.board_uid)
+                                },
                                 onLongClick = {
                                     selectedIndex = index
                                     viewModel.showDeleteDialog = true
@@ -418,19 +421,17 @@ fun ChipRowType(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChipRowDifficulty(
-    modifier: Modifier = Modifier,
     items: List<GameDifficulty>,
     selected: GameDifficulty,
-    onSelected: (GameDifficulty) -> Unit
+    onSelected: (GameDifficulty) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LazyRow(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
-        itemsIndexed(items) { index, item ->
-            if (index == 0) {
-                Spacer(modifier = Modifier.width(8.dp))
-            }
+        items(items) { item ->
             val selectedColor by animateColorAsState(
                 targetValue = if (selected == item) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface
             )
@@ -453,9 +454,6 @@ fun ChipRowDifficulty(
                 ),
                 elevation = FilterChipDefaults.elevatedFilterChipElevation(4.dp)
             )
-            if (index == items.size - 1) {
-                Spacer(modifier = Modifier.width(8.dp))
-            }
         }
     }
 }
