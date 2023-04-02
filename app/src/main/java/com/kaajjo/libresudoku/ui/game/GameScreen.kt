@@ -750,7 +750,8 @@ fun StatBox(
     ) {
         Row(
             modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             icon()
             text()
