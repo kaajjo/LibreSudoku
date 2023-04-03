@@ -177,7 +177,7 @@
     <string name="create_sudoku_title">Créer un sudoku</string>
     <string name="create_set_from_string">Définir à partir d\'une chaîne</string>
     <string name="dialog_ok">OK</string>
-    <string name="create_save">Sauver</string>
+    <string name="action_save">Sauver</string>
     <string name="create_from_string_text">Entrez un casse-tête sous forme de chaîne. Les cellules vides sont indiquées par un "." ou un "0"</string>
     <string name="create_from_string_hint">Casse-tête</string>
     <string name="create_incorrect_puzzle">Casse-tête incorrect</string>
@@ -241,7 +241,6 @@
         <item quantity="many">Êtes-vous sûr de vouloir supprimer %1$d jeux \?</item>
         <item quantity="other">Êtes-vous sûr de vouloir supprimer %1$d jeux \?</item>
     </plurals>
-    <string name="import_save">Sauvegarder</string>
     <string name="action_edit">Éditer</string>
     <string name="dialog_delete_selected">Supprimer la sélection</string>
     <string name="explore_folder_add_sudoku">Ajouter un sudoku</string>

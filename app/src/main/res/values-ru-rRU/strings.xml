@@ -176,7 +176,7 @@
     <string name="create_sudoku_title">Создать судоку</string>
     <string name="create_set_from_string">Установить из строки</string>
     <string name="dialog_ok">ОК</string>
-    <string name="create_save">Сохранить</string>
+    <string name="action_save">Сохранить</string>
     <string name="create_from_string_text">Введите судоку в виде строки. Пустые клетки обозначаются как . или 0</string>
     <string name="create_from_string_hint">Судоку</string>
     <string name="create_incorrect_puzzle">Неверное судоку</string>
@@ -232,7 +232,6 @@
     <string name="import_from_file_fail">Не удалось импортировать</string>
     <string name="import_from_file_title">Из файла</string>
     <string name="import_saving">Сохранение</string>
-    <string name="import_save">Сохранить</string>
     <string name="action_edit">Изменить</string>
     <string name="folder_empty_label">В этой папке пусто</string>
     <string name="dialog_delete_selected">Удалить выбранные</string>

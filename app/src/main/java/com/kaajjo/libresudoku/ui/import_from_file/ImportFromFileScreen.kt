@@ -183,7 +183,7 @@ fun ImportFromFileScreen(
                                 viewModel.saveImported()
                             }
                         }) {
-                        Text(stringResource(R.string.import_save))
+                        Text(stringResource(R.string.action_save))
                     }
                 }
             }

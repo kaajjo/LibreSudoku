@@ -116,7 +116,7 @@
     <string name="saved_game_difficulty">Vanskelighetsgrad: %1$s</string>
     <string name="learn_tab_app">Program</string>
     <string name="page_next">Neste</string>
-    <string name="create_save">Lagre</string>
+    <string name="action_save">Lagre</string>
     <string name="pref_board_font_size">Brett-skriftstørrelse</string>
     <string name="dialog_new_game_text">Avbryt uferdig spill og start nytt\?</string>
     <string name="pref_board_font_size_small">Liten</string>
@@ -205,7 +205,6 @@
     <string name="add_to_folder">Legg til i mappe</string>
     <string name="add_to_folder_create_new">Opprett ny</string>
     <string name="add_to_folder_from_file">Importer fra en fil</string>
-    <string name="import_save">Lagre</string>
     <string name="import_saving">Lagrer …</string>
     <string name="naked_pairs_explanation">To celler deler samme blyantmerker. Du vet derfor ikke hvilket som er 2 og hvilket som er 3.
 \nSiden hver boks kun kan ha én av hver fastslår man at en celler er 2 og den andre 3.</string>

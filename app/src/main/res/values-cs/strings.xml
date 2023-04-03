@@ -2,7 +2,7 @@
 <resources>
     <string name="statistics_no_records">Zatím nemáte žádné záznamy</string>
     <string name="learn_basic_2">Nyní se podívejme na číslo 8. Číslo 8 ve 4. řádku 3. sloupce (R4C3) blokuje celý sloupec v našem rámečku. Číslo 8 tam tedy nemůže být</string>
-    <string name="create_save">Uložit</string>
+    <string name="action_save">Uložit</string>
     <string name="tip_card_win_streak_summ">Vítězná série se resetuje, když prohrajete (limit chyb), vzdáte se nebo začnete novou hru, aniž byste dokončili tu předchozí, takže buďte opatrní</string>
     <string name="tip_card_records_list_title">Seznam záznamů</string>
     <string name="history_no_games">Ještě jste nehráli</string>
@@ -221,7 +221,6 @@
     <string name="import_from_file_fail">Import se nezdařil</string>
     <string name="import_from_file_title">Ze souboru</string>
     <string name="import_saving">Ukládání</string>
-    <string name="import_save">Uložit</string>
     <string name="action_edit">Upravit</string>
     <plurals name="puzzles_in_folder">
         <item quantity="one">%1$d hádanka</item>

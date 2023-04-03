@@ -578,7 +578,7 @@ fun SettingsScreen(
                             }
                         }
                     ) {
-                        Text(stringResource(R.string.create_save))
+                        Text(stringResource(R.string.action_save))
                     }
                 },
                 dismissButton = {

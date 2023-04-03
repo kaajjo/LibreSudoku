@@ -177,7 +177,7 @@
     <string name="create_sudoku_title">Criar um sudoku</string>
     <string name="create_set_from_string">Adicionar uma palavra</string>
     <string name="dialog_ok">OK</string>
-    <string name="create_save">Salvar</string>
+    <string name="action_save">Salvar</string>
     <string name="create_from_string_text">Digite um quebra-cabeça em forma de palavras. Células vazias são indicadas como . ou 0</string>
     <string name="create_from_string_hint">Quebra-cabeça</string>
     <string name="create_incorrect_puzzle">Quebra-cabeça incorreto</string>
@@ -243,7 +243,6 @@
     <string name="edit_sudoku">Editar sudoku</string>
     <string name="add_to_folder">Adicionar à pasta</string>
     <string name="add_to_folder_from_file">Importar do arquivo</string>
-    <string name="import_save">Salvar</string>
     <string name="add_to_folder_create_new">Criar nova</string>
     <string name="folder_import_supported_types">Estes tipos de arquivo são suportados:
 \n.sdm (ou .txt com a mesma estrutura)

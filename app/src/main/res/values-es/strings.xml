@@ -95,7 +95,7 @@
     <string name="learn_app_toolbar">Barra de herramientas</string>
     <string name="learn_basic_title">Básico</string>
     <string name="dialog_ok">De acuerdo</string>
-    <string name="create_save">Guardar</string>
+    <string name="action_save">Guardar</string>
     <string name="intro_rules">El objetivo del juego es llenar todas las casillas con números del 1 al 9. De modo que los valores no se repitan en ninguna columna, fila o casilla más pequeña (3x3)</string>
     <string name="action_clear_notes">Borrar notas</string>
     <string name="page_previous">Anterior</string>
@@ -253,7 +253,6 @@
     <string name="import_from_file_fail">Error al importar</string>
     <string name="import_from_file_title">Desde un archivo</string>
     <string name="import_saving">Guardando</string>
-    <string name="import_save">Guardar</string>
     <string name="game_id">Partida #%1$d</string>
     <string name="add_to_folder_create_new">Crear una nueva</string>
     <string name="add_to_folder_from_file">Importar desde un archivo</string>

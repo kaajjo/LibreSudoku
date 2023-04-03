@@ -162,7 +162,7 @@
     <string name="create_sudoku_title">Sudoku oluştur</string>
     <string name="create_set_from_string">Dizeden ayarla</string>
     <string name="dialog_ok">Tamam</string>
-    <string name="create_save">Kaydet</string>
+    <string name="action_save">Kaydet</string>
     <string name="create_from_string_text">Dize biçiminde bir bulmaca girin. Boş hücreler . veya 0 olarak gösterilir</string>
     <string name="create_incorrect_puzzle">Yanlış bulmaca</string>
     <string name="no_solution_text">Bu bulmacanın çözümü yok</string>

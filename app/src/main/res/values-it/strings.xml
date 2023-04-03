@@ -65,7 +65,7 @@
     <string name="create_sudoku_title">Crea sudoku</string>
     <string name="create_set_from_string">Imposta da stringa</string>
     <string name="libraries_licenses_title">Licenze open source</string>
-    <string name="create_save">Salva</string>
+    <string name="action_save">Salva</string>
     <string name="page_next">Successivo</string>
     <string name="can_continue_label">Puoi continuare</string>
     <string name="custom_sudoku_title">Sudoku personalizzato</string>

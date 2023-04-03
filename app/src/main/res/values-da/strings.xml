@@ -168,7 +168,7 @@
     <string name="can_continue_label">Kan fortsætte</string>
     <string name="create_sudoku_title">Opret en sudoku</string>
     <string name="dialog_ok">OK</string>
-    <string name="create_save">Gem</string>
+    <string name="action_save">Gem</string>
     <string name="create_from_string_hint">Spil</string>
     <string name="no_solution_text">Dette spil har ingen løsninger</string>
     <string name="create_import_set">Sæt</string>
@@ -232,7 +232,6 @@
     <string name="folder_empty_label">Denne mappe er tom</string>
     <string name="edit_name">Rediger navn</string>
     <string name="create_folder_name">Mappenavn</string>
-    <string name="import_save">Gem</string>
     <string name="help">Hjælp</string>
     <string name="import_saving">Gemmer</string>
     <string name="folders_help">Her kan du administrere din mappe og importere sudoku fra en fil</string>

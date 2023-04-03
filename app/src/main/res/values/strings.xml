@@ -178,7 +178,7 @@
     <string name="create_sudoku_title">Create a sudoku</string>
     <string name="create_set_from_string">Set from a string</string>
     <string name="dialog_ok">OK</string>
-    <string name="create_save">Save</string>
+    <string name="action_save">Save</string>
     <string name="create_from_string_text">Enter a puzzle in string form. Empty cells are indicated by a "." or a "0"</string>
     <string name="create_from_string_hint">Puzzle</string>
     <string name="create_incorrect_puzzle">Incorrect puzzle</string>
@@ -235,7 +235,6 @@
     <string name="import_from_file_fail">Failed to import</string>
     <string name="import_from_file_title">From a file</string>
     <string name="import_saving">Saving</string>
-    <string name="import_save">Save</string>
     <string name="action_edit">Edit</string>
     <string name="folder_empty_label">This folder is empty</string>
     <string name="dialog_delete_selected">Delete selected</string>

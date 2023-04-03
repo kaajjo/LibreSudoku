@@ -168,7 +168,7 @@
     <string name="custom_sudoku_title">Індивідуальний судоку</string>
     <string name="create_set_from_string">Задати з строки</string>
     <string name="dialog_ok">OK</string>
-    <string name="create_save">Зберегти</string>
+    <string name="action_save">Зберегти</string>
     <string name="create_from_string_hint">Пазл</string>
     <string name="custom_sudoku_no_added">Ви ще не додали жодного судоку</string>
     <string name="export_string_text">Виберіть текст у текстовому полі або просто натисніть кнопку копіювання</string>
@@ -192,7 +192,6 @@
     <string name="help">Довідка</string>
     <string name="folders_help">Тут ви можете керувати своєю папкою та імпортувати судоку з файлу</string>
     <string name="import_saving">Збереження</string>
-    <string name="import_save">Зберегти</string>
     <string name="action_edit">Редагувати</string>
     <string name="folder_empty_label">Ця папка пуста</string>
     <string name="dialog_delete_selected">Видалити вибрані</string>
