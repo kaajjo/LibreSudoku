@@ -488,11 +488,12 @@ fun SettingsScreen(
                         LocaleListCompat.forLanguageTags(localeKey)
                     }
                     AppCompatDelegate.setApplicationLocales(locale)
+                    viewModel.languagePickDialog = false
                 },
                 onDismiss = { viewModel.languagePickDialog = false }
             )
         } else if (viewModel.dateFormatDialog) {
-            SelectionDialog(
+            DateFormatDialog(
                 title = stringResource(R.string.pref_date_format),
                 entries = DateFormats.associateWith { dateFormatEntry ->
                     val dateString = ZonedDateTime.now().format(
@@ -515,11 +516,76 @@ fun SettingsScreen(
                     )
                     "${dateFormatEntry.ifEmpty { stringResource(R.string.label_default) }} ($dateString)"
                 },
+                customDateFormatText =
+                if (!DateFormats.contains(dateFormat))
+                    "$dateFormat (${
+                        ZonedDateTime.now().format(DateTimeFormatter.ofPattern(dateFormat))
+                    })"
+                else "Custom",
                 selected = dateFormat,
                 onSelect = { format ->
-                    viewModel.updateDateFormat(format)
+                    if (format == "custom") {
+                        viewModel.customFormatDialog = true
+                    } else {
+                        viewModel.updateDateFormat(format)
+                    }
+                    viewModel.dateFormatDialog = false
                 },
-                onDismiss = { viewModel.dateFormatDialog = false }
+                onDismiss = { viewModel.dateFormatDialog = false },
+
+                )
+        }
+
+        if (viewModel.customFormatDialog) {
+            var customDateFormat by remember { mutableStateOf(if (DateFormats.contains(dateFormat)) "" else dateFormat) }
+            var invalidCustomDateFormat by remember { mutableStateOf(false) }
+            AlertDialog(
+                title = {
+                    Column(Modifier.fillMaxWidth()) {
+                        Text(
+                            text = stringResource(R.string.pref_date_format_custom),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    }
+                },
+                text = {
+                    Column {
+                        Text(
+                            text = stringResource(R.string.pref_date_format_custom_summ),
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        OutlinedTextField(
+                            value = customDateFormat,
+                            onValueChange = { text -> customDateFormat = text },
+                            isError = invalidCustomDateFormat,
+                            label = {
+                                Text(stringResource(R.string.pref_date_format_custom_textfield_label))
+                            }
+                        )
+                    }
+                },
+                onDismissRequest = { viewModel.customFormatDialog = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            if (viewModel.checkCustomDateFormat(customDateFormat)) {
+                                viewModel.updateDateFormat(customDateFormat)
+                                invalidCustomDateFormat = false
+                                viewModel.customFormatDialog = false
+                            } else {
+                                invalidCustomDateFormat = true
+                            }
+                        }
+                    ) {
+                        Text(stringResource(R.string.create_save))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { viewModel.customFormatDialog = false }) {
+                        Text(stringResource(R.string.action_cancel))
+                    }
+                }
             )
         }
     }

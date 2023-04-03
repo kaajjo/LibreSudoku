@@ -110,7 +110,6 @@ fun SelectionDialog(
                                 .clip(MaterialTheme.shapes.small)
                                 .clickable {
                                     onSelect(item.first)
-                                    onDismiss()
                                 },
                             verticalAlignment = CenterVertically
                         ) {
@@ -118,11 +117,92 @@ fun SelectionDialog(
                                 selected = selected == item.first,
                                 onClick = {
                                     onSelect(item.first)
-                                    onDismiss()
                                 }
                             )
                             Text(
                                 text = item.second,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        }
+    )
+}
+
+@Composable
+fun DateFormatDialog(
+    title: String,
+    entries: Map<String, String>,
+    customDateFormatText: String,
+    selected: String,
+    onSelect: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        title = {
+            Column(Modifier.fillMaxWidth()) {
+                Text(
+                    text = title,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
+        },
+        text = {
+            Box {
+                val lazyListState = rememberLazyListState()
+
+                if (!lazyListState.isScrolledToStart()) Divider(Modifier.align(Alignment.TopCenter))
+                if (!lazyListState.isScrolledToEnd()) Divider(Modifier.align(Alignment.BottomCenter))
+
+                ScrollbarLazyColumn(state = lazyListState) {
+                    items(entries.toList()) { item ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.small)
+                                .clickable {
+                                    onSelect(item.first)
+                                },
+                            verticalAlignment = CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = selected == item.first,
+                                onClick = {
+                                    onSelect(item.first)
+                                }
+                            )
+                            Text(
+                                text = item.second,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.small)
+                                .clickable {
+                                    onSelect("custom")
+                                },
+                            verticalAlignment = CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = !entries.containsKey(selected),
+                                onClick = {
+                                    onSelect("custom")
+                                }
+                            )
+                            Text(
+                                text = customDateFormatText,
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         }

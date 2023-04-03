@@ -15,6 +15,7 @@ import com.kaajjo.libresudoku.ui.theme.AppTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,6 +39,7 @@ class SettingsViewModel
     var mistakesDialog by mutableStateOf(false)
     var languagePickDialog by mutableStateOf(false)
     var dateFormatDialog by mutableStateOf(false)
+    var customFormatDialog by mutableStateOf(false)
 
     var crashReportingEnabled by mutableStateOf(acraSharedPrefs.getAcraEnabled())
 
@@ -189,4 +191,13 @@ class SettingsViewModel
         viewModelScope.launch(Dispatchers.IO) {
             settingsDataManager.setSaveSelectedGameDifficultyType(enabled)
         }
+
+    fun checkCustomDateFormat(pattern: String): Boolean {
+        return try {
+            DateTimeFormatter.ofPattern(pattern)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 }
