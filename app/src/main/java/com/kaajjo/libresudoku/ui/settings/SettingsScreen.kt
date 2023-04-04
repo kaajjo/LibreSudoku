@@ -521,7 +521,7 @@ fun SettingsScreen(
                     "$dateFormat (${
                         ZonedDateTime.now().format(DateTimeFormatter.ofPattern(dateFormat))
                     })"
-                else "Custom",
+                else stringResource(R.string.pref_date_format_custom_label),
                 selected = dateFormat,
                 onSelect = { format ->
                     if (format == "custom") {
