@@ -539,53 +539,23 @@ fun SettingsScreen(
         if (viewModel.customFormatDialog) {
             var customDateFormat by remember { mutableStateOf(if (DateFormats.contains(dateFormat)) "" else dateFormat) }
             var invalidCustomDateFormat by remember { mutableStateOf(false) }
-            AlertDialog(
-                title = {
-                    Column(Modifier.fillMaxWidth()) {
-                        Text(
-                            text = stringResource(R.string.pref_date_format_custom),
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
-                    }
-                },
-                text = {
-                    Column {
-                        Text(
-                            text = stringResource(R.string.pref_date_format_custom_summ),
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-
-                        OutlinedTextField(
-                            value = customDateFormat,
-                            onValueChange = { text -> customDateFormat = text },
-                            isError = invalidCustomDateFormat,
-                            label = {
-                                Text(stringResource(R.string.pref_date_format_custom_textfield_label))
-                            }
-                        )
+            SetDateFormatPatternDialog(
+                onConfirm = {
+                    if (viewModel.checkCustomDateFormat(customDateFormat)) {
+                        viewModel.updateDateFormat(customDateFormat)
+                        invalidCustomDateFormat = false
+                        viewModel.customFormatDialog = false
+                    } else {
+                        invalidCustomDateFormat = true
                     }
                 },
                 onDismissRequest = { viewModel.customFormatDialog = false },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            if (viewModel.checkCustomDateFormat(customDateFormat)) {
-                                viewModel.updateDateFormat(customDateFormat)
-                                invalidCustomDateFormat = false
-                                viewModel.customFormatDialog = false
-                            } else {
-                                invalidCustomDateFormat = true
-                            }
-                        }
-                    ) {
-                        Text(stringResource(R.string.action_save))
-                    }
+                onTextValueChange = { text ->
+                    customDateFormat = text
+                    if (invalidCustomDateFormat) invalidCustomDateFormat = false
                 },
-                dismissButton = {
-                    TextButton(onClick = { viewModel.customFormatDialog = false }) {
-                        Text(stringResource(R.string.action_cancel))
-                    }
-                }
+                customDateFormat = customDateFormat,
+                invalidCustomDateFormat = invalidCustomDateFormat
             )
         }
     }

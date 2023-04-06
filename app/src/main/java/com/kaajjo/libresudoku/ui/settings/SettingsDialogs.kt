@@ -5,11 +5,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -19,6 +22,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.util.isScrolledToEnd
@@ -213,6 +217,60 @@ fun DateFormatDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        }
+    )
+}
+
+@Composable
+fun SetDateFormatPatternDialog(
+    onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit,
+    onTextValueChange: (String) -> Unit,
+    customDateFormat: String,
+    invalidCustomDateFormat: Boolean
+) {
+    AlertDialog(
+        title = {
+            Column(Modifier.fillMaxWidth()) {
+                Text(
+                    text = stringResource(R.string.pref_date_format_custom),
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
+        },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(R.string.pref_date_format_custom_summ),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                OutlinedTextField(
+                    value = customDateFormat,
+                    onValueChange = onTextValueChange,
+                    singleLine = true,
+                    isError = invalidCustomDateFormat,
+                    label = {
+                        Text(stringResource(R.string.pref_date_format_custom_textfield_label))
+                    },
+                    keyboardActions = KeyboardActions(
+                        onDone = { onConfirm() }
+                    )
+                )
+            }
+        },
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(
+                onClick = { onConfirm() }
+            ) {
+                Text(stringResource(R.string.action_save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
                 Text(stringResource(R.string.action_cancel))
             }
         }
