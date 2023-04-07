@@ -8,8 +8,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,6 +25,7 @@ import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
 import com.kaajjo.libresudoku.ui.components.PreferenceRowSwitch
+import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.settings.components.AppThemePreviewItem
 import com.kaajjo.libresudoku.ui.theme.AppColorScheme
 import com.kaajjo.libresudoku.ui.theme.AppTheme
@@ -69,23 +68,30 @@ fun SettingsScreen(
                 scrollBehavior = scrollBehavior
             )
         }
-    ) {
-        val highlightMistakes by viewModel.highlightMistakes.collectAsState(initial = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES)
-        val inputMethod by viewModel.inputMethod.collectAsState(initial = PreferencesConstants.DEFAULT_INPUT_METHOD)
-        val darkTheme by viewModel.darkTheme.collectAsState(initial = PreferencesConstants.DEFAULT_DARK_THEME)
-        val fontSize by viewModel.fontSize.collectAsState(initial = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
+    ) { paddingValues ->
+        val highlightMistakes by viewModel.highlightMistakes.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES)
+        val inputMethod by viewModel.inputMethod.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_INPUT_METHOD)
+        val darkTheme by viewModel.darkTheme.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_DARK_THEME)
+        val fontSize by viewModel.fontSize.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
         val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle(initialValue = "")
+        val dynamicColors by viewModel.dynamicColors.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_DYNAMIC_COLORS)
+        val amoledBlackState by viewModel.amoledBlack.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AMOLED_BLACK)
+        val currentTheme by viewModel.currentTheme.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_SELECTED_THEME)
+        val hintDisabled by viewModel.disableHints.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_HINTS_DISABLED)
+        val mistakesLimit by viewModel.mistakesLimit.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_MISTAKES_LIMIT)
+        val timerEnabled by viewModel.timer.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_SHOW_TIMER)
+        val resetTimer by viewModel.canResetTimer.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_GAME_RESET_TIMER)
+        val keepScreenOn by viewModel.keepScreenOn.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_KEEP_SCREEN_ON)
+        val autoEraseNotes by viewModel.autoEraseNotes.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AUTO_ERASE_NOTES)
+        val highlightIdentical by viewModel.highlightIdentical.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL)
+        val remainingUse by viewModel.remainingUse.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_REMAINING_USES)
 
-        Column(
+        ScrollbarLazyColumn(
             modifier = Modifier
+                .padding(paddingValues)
                 .fillMaxWidth()
-                .padding(it)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            ) {
+            item {
                 SettingsCategory(
                     title = stringResource(R.string.pref_appearance)
                 )
@@ -99,10 +105,9 @@ fun SettingsScreen(
                     },
                     onClick = { viewModel.darkModeDialog = true }
                 )
-                val dynamicColors by viewModel.dynamicColors.collectAsState(initial = PreferencesConstants.DEFAULT_DYNAMIC_COLORS)
-                val amoledBlackState by viewModel.amoledBlack.collectAsState(initial = PreferencesConstants.DEFAULT_AMOLED_BLACK)
-                val currentTheme by viewModel.currentTheme.collectAsState(initial = PreferencesConstants.DEFAULT_SELECTED_THEME)
+            }
 
+            item {
                 val currentThemeValue = when (currentTheme) {
                     PreferencesConstants.GREEN_THEME_KEY -> AppTheme.Green
                     PreferencesConstants.PEACH_THEME_KEY -> AppTheme.Peach
@@ -182,7 +187,9 @@ fun SettingsScreen(
                             )
                     }
                 }
+            }
 
+            item {
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_pure_black),
                     checked = amoledBlackState,
@@ -190,13 +197,17 @@ fun SettingsScreen(
                         viewModel.updateAmoledBlack(!amoledBlackState)
                     }
                 )
+            }
 
+            item {
                 PreferenceRow(
                     title = stringResource(R.string.pref_board_theme_title),
                     subtitle = stringResource(R.string.pref_board_theme_subtitle),
                     onClick = navigateBoardSettings
                 )
+            }
 
+            item {
                 PreferenceRow(
                     title = stringResource(R.string.pref_board_font_size),
                     subtitle = when (fontSize) {
@@ -207,7 +218,9 @@ fun SettingsScreen(
                     },
                     onClick = { viewModel.fontSizeDialog = true }
                 )
+            }
 
+            item {
                 var currentLanguage by remember {
                     mutableStateOf(
                         getCurrentLocaleString(context)
@@ -221,7 +234,9 @@ fun SettingsScreen(
                     subtitle = currentLanguage,
                     onClick = { viewModel.languagePickDialog = true }
                 )
+            }
 
+            item {
                 PreferenceRow(
                     title = stringResource(R.string.pref_date_format),
                     subtitle = "${dateFormat.ifEmpty { stringResource(R.string.label_default) }} (${
@@ -229,7 +244,9 @@ fun SettingsScreen(
                     })",
                     onClick = { viewModel.dateFormatDialog = true }
                 )
+            }
 
+            item {
                 Divider(
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -247,37 +264,43 @@ fun SettingsScreen(
                     },
                     onClick = { viewModel.inputMethodDialog = true }
                 )
+            }
 
-                val mistakesLimit by viewModel.mistakesLimit.collectAsState(initial = PreferencesConstants.DEFAULT_MISTAKES_LIMIT)
+            item {
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_mistakes_limit),
                     subtitle = stringResource(R.string.pref_mistakes_limit_summ),
                     checked = mistakesLimit,
                     onClick = { viewModel.updateMistakesLimit(!mistakesLimit) }
                 )
+            }
 
-                val hintDisabled by viewModel.disableHints.collectAsState(initial = PreferencesConstants.DEFAULT_HINTS_DISABLED)
+            item {
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_disable_hints),
                     subtitle = stringResource(R.string.pref_disable_hints_summ),
                     checked = hintDisabled,
                     onClick = { viewModel.updateHintDisabled(!hintDisabled) }
                 )
+            }
 
-                val timerEnabled by viewModel.timer.collectAsState(initial = PreferencesConstants.DEFAULT_SHOW_TIMER)
+            item {
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_show_timer),
                     checked = timerEnabled,
                     onClick = { viewModel.updateTimer(!timerEnabled) }
                 )
+            }
 
-                val resetTimer by viewModel.canResetTimer.collectAsState(initial = PreferencesConstants.DEFAULT_GAME_RESET_TIMER)
+            item {
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_reset_timer),
                     checked = resetTimer,
                     onClick = { viewModel.updateCanResetTimer(!resetTimer) }
                 )
+            }
 
+            item {
                 val funKeyboardOverNum by viewModel.funKeyboardOverNum.collectAsStateWithLifecycle(
                     initialValue = PreferencesConstants.DEFAULT_FUN_KEYBOARD_OVER_NUM
                 )
@@ -289,7 +312,9 @@ fun SettingsScreen(
                         viewModel.updateFunKeyboardOverNum(!funKeyboardOverNum)
                     }
                 )
+            }
 
+            item {
                 Divider(
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -308,8 +333,9 @@ fun SettingsScreen(
                     },
                     onClick = { viewModel.mistakesDialog = true }
                 )
+            }
 
-                val highlightIdentical by viewModel.highlightIdentical.collectAsState(initial = PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL)
+            item {
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_highlight_identical),
                     subtitle = stringResource(R.string.pref_highlight_identical_summ),
@@ -318,8 +344,9 @@ fun SettingsScreen(
                         viewModel.updateHighlightIdentical(!highlightIdentical)
                     }
                 )
+            }
 
-                val remainingUse by viewModel.remainingUse.collectAsState(initial = PreferencesConstants.DEFAULT_REMAINING_USES)
+            item {
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_remaining_uses),
                     subtitle = stringResource(R.string.pref_remaining_uses_summ),
@@ -327,13 +354,18 @@ fun SettingsScreen(
                     onClick = { viewModel.updateRemainingUse(!remainingUse) }
                 )
 
-                val autoEraseNotes by viewModel.autoEraseNotes.collectAsState(initial = PreferencesConstants.DEFAULT_AUTO_ERASE_NOTES)
+            }
+
+            item {
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_auto_erase_notes),
                     checked = autoEraseNotes,
                     onClick = { viewModel.updateAutoEraseNotes(!autoEraseNotes) }
                 )
+            }
 
+
+            item {
                 Divider(
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -341,7 +373,6 @@ fun SettingsScreen(
                 SettingsCategory(
                     title = stringResource(R.string.pref_other)
                 )
-
                 val saveLastSelectedDifficultyType by viewModel.saveLastSelectedDifficultyType
                     .collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_SAVE_LAST_SELECTED_DIFF_TYPE)
                 PreferenceRowSwitch(
@@ -352,8 +383,9 @@ fun SettingsScreen(
                         viewModel.updateSaveLastSelectedDifficultyType(!saveLastSelectedDifficultyType)
                     }
                 )
+            }
 
-                val keepScreenOn by viewModel.keepScreenOn.collectAsState(initial = PreferencesConstants.DEFAULT_KEEP_SCREEN_ON)
+            item {
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_keep_screen_on),
                     checked = keepScreenOn,
@@ -361,7 +393,9 @@ fun SettingsScreen(
                         viewModel.updateKeepScreenOn(!keepScreenOn)
                     }
                 )
+            }
 
+            item {
                 PreferenceRow(
                     title = stringResource(R.string.pref_reset_tipcards),
                     onClick = {
@@ -373,7 +407,9 @@ fun SettingsScreen(
                         }
                     }
                 )
+            }
 
+            item {
                 if (viewModel.launchedFromGame == null || viewModel.launchedFromGame == false) {
                     PreferenceRow(
                         title = stringResource(R.string.pref_delete_stats),
@@ -382,7 +418,9 @@ fun SettingsScreen(
                         }
                     )
                 }
+            }
 
+            item {
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_crash_reporting),
                     subtitle = stringResource(R.string.pref_crash_reporting_subtitle),
