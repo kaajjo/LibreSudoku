@@ -12,11 +12,7 @@ import androidx.compose.material.icons.rounded.GridOn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +32,9 @@ import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.ui.components.PreferenceRowSwitch
 import com.kaajjo.libresudoku.ui.components.board.Board
+import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTitle
+import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTopAppBar
+import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.rememberTopAppBarScrollBehavior
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,16 +42,12 @@ fun SettingsBoardTheme(
     viewModel: SettingsBoardThemeViewModel,
     navigateBack: () -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-        rememberTopAppBarState(),
-        canScroll = { true }
-    )
-
+    val scrollBehavior = rememberTopAppBarScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            LargeTopAppBar(
-                title = { Text(stringResource(R.string.board_theme_title)) },
+            CollapsingTopAppBar(
+                collapsingTitle = CollapsingTitle.medium(titleText = stringResource(R.string.board_theme_title)),
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(

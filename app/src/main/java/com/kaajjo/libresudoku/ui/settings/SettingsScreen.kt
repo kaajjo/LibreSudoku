@@ -26,6 +26,9 @@ import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
 import com.kaajjo.libresudoku.ui.components.PreferenceRowSwitch
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
+import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTitle
+import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTopAppBar
+import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.rememberTopAppBarScrollBehavior
 import com.kaajjo.libresudoku.ui.settings.components.AppThemePreviewItem
 import com.kaajjo.libresudoku.ui.theme.AppColorScheme
 import com.kaajjo.libresudoku.ui.theme.AppTheme
@@ -48,15 +51,15 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior = rememberTopAppBarScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_title)) },
+            CollapsingTopAppBar(
+                collapsingTitle = CollapsingTitle.medium(titleText = stringResource(R.string.settings_title)),
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
