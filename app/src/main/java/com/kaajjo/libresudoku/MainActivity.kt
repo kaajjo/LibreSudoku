@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity() {
                 amoled = amoledBlack,
                 appTheme = when (currentTheme) {
                     PreferencesConstants.GREEN_THEME_KEY -> AppTheme.Green
+                    PreferencesConstants.BLUE_THEME_KEY -> AppTheme.Blue
                     PreferencesConstants.PEACH_THEME_KEY -> AppTheme.Peach
                     PreferencesConstants.YELLOW_THEME_KEY -> AppTheme.Yellow
                     PreferencesConstants.LAVENDER_THEME_KEY -> AppTheme.Lavender

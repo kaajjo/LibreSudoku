@@ -25,6 +25,7 @@ class PreferencesConstants {
         const val YELLOW_THEME_KEY = "yellow"
         const val LAVENDER_THEME_KEY = "lavender"
         const val BLACK_AND_WHITE_THEME_KEY = "black_and_white"
+        const val BLUE_THEME_KEY = "blue"
 
         const val DEFAULT_DYNAMIC_COLORS = true
         const val DEFAULT_DARK_THEME = 0

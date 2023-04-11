@@ -73,6 +73,7 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
     suspend fun setCurrentTheme(appTheme: AppTheme) {
         val stringTheme = when (appTheme) {
             AppTheme.Green -> PreferencesConstants.GREEN_THEME_KEY
+            AppTheme.Blue -> PreferencesConstants.BLUE_THEME_KEY
             AppTheme.Peach -> PreferencesConstants.PEACH_THEME_KEY
             AppTheme.Yellow -> PreferencesConstants.YELLOW_THEME_KEY
             AppTheme.Lavender -> PreferencesConstants.LAVENDER_THEME_KEY

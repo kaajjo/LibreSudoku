@@ -9,6 +9,7 @@ class AppColorScheme {
     fun getTheme(appTheme: AppTheme, dark: Boolean = false): ColorScheme {
         return when (appTheme) {
             AppTheme.Green -> if (dark) greenDark else greenLight
+            AppTheme.Blue -> if (dark) blueDark else blueLight
             AppTheme.Peach -> if (dark) pinkDark else pinkLight
             AppTheme.Yellow -> if (dark) yellowDark else yellowLight
             AppTheme.Lavender -> if (dark) lavenderDark else lavenderLight
@@ -75,6 +76,7 @@ class AppColorScheme {
         inversePrimary = Color(0xFF1F6D19),
         surfaceTint = Color(0xFF55944F)
     )
+
     private val pinkLight = lightColorScheme(
         primary = Color(0xFF9C4144),
         onPrimary = Color(0xFFFFFFFF),
@@ -314,10 +316,72 @@ class AppColorScheme {
         inversePrimary = Color(0xFFE0E0E0),
         surfaceTint = Color(0xFFFFFFFF),
     )
+
+    private val blueLight = lightColorScheme(
+        primary = Color(0xFF085EB0),
+        onPrimary = Color(0xFFFFFFFF),
+        primaryContainer = Color(0xFFD5E3FF),
+        onPrimaryContainer = Color(0xFF001C3B),
+        secondary = Color(0xFF555F71),
+        onSecondary = Color(0xFFFFFFFF),
+        secondaryContainer = Color(0xFFD9E3F8),
+        onSecondaryContainer = Color(0xFF121C2B),
+        tertiary = Color(0xFF6E5676),
+        onTertiary = Color(0xFFFFFFFF),
+        tertiaryContainer = Color(0xFFF8D8FE),
+        onTertiaryContainer = Color(0xFF27132F),
+        error = Color(0xFFBA1A1A),
+        errorContainer = Color(0xFFFFDAD6),
+        onError = Color(0xFFFFFFFF),
+        onErrorContainer = Color(0xFF410002),
+        background = Color(0xFFFDFBFF),
+        onBackground = Color(0xFF1A1C1E),
+        inverseOnSurface = Color(0xFFF1F0F4),
+        inverseSurface = Color(0xFF2F3033),
+        inversePrimary = Color(0xFFA7C8FF),
+        surfaceTint = Color(0xFF085EB0),
+        outlineVariant = Color(0xFFC4C6CF),
+        scrim = Color(0xFF000000),
+        surface = Color(0xFFFDFBFF),
+        onSurface = Color(0xFF1A1C1E)
+    )
+
+    private val blueDark = darkColorScheme(
+        primary = Color(0xFFA7C8FF),
+        onPrimary = Color(0xFF003060),
+        primaryContainer = Color(0xFF004787),
+        onPrimaryContainer = Color(0xFFD5E3FF),
+        secondary = Color(0xFFBDC7DC),
+        onSecondary = Color(0xFF273141),
+        secondaryContainer = Color(0xFF3D4758),
+        onSecondaryContainer = Color(0xFFD9E3F8),
+        tertiary = Color(0xFFDBBDE2),
+        onTertiary = Color(0xFF3E2845),
+        tertiaryContainer = Color(0xFF553F5D),
+        onTertiaryContainer = Color(0xFFF8D8FE),
+        error = Color(0xFFFFB4AB),
+        errorContainer = Color(0xFF93000A),
+        onError = Color(0xFF690005),
+        onErrorContainer = Color(0xFFFFDAD6),
+        background = Color(0xFF1A1C1E),
+        onBackground = Color(0xFFE3E2E6),
+        outline = Color(0xFF8D9199),
+        inverseOnSurface = Color(0xFF1A1C1E),
+        inverseSurface = Color(0xFFE3E2E6),
+        inversePrimary = Color(0xFF085EB0),
+        surfaceTint = Color(0xFFA7C8FF),
+        outlineVariant = Color(0xFF43474E),
+        scrim = Color(0xFF000000),
+        surface = Color(0xFF1A1C1E),
+        onSurface = Color(0xFFC7C6CA),
+        surfaceVariant = Color(0xFF43474E),
+        onSurfaceVariant = Color(0xFFC4C6CF)
+    )
 }
 
 enum class AppTheme {
     Green,
+    Blue,
     Peach,
     Yellow,
     Lavender,

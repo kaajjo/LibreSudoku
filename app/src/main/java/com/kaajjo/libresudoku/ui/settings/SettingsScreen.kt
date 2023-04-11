@@ -113,6 +113,7 @@ fun SettingsScreen(
             item {
                 val currentThemeValue = when (currentTheme) {
                     PreferencesConstants.GREEN_THEME_KEY -> AppTheme.Green
+                    PreferencesConstants.BLUE_THEME_KEY -> AppTheme.Blue
                     PreferencesConstants.PEACH_THEME_KEY -> AppTheme.Peach
                     PreferencesConstants.YELLOW_THEME_KEY -> AppTheme.Yellow
                     PreferencesConstants.LAVENDER_THEME_KEY -> AppTheme.Lavender
@@ -167,6 +168,7 @@ fun SettingsScreen(
                         AppThemeItem(
                             title = when (theme) {
                                 AppTheme.Green -> stringResource(R.string.theme_green)
+                                AppTheme.Blue -> stringResource(R.string.theme_blue)
                                 AppTheme.Peach -> stringResource(R.string.theme_peach)
                                 AppTheme.Yellow -> stringResource(R.string.theme_yellow)
                                 AppTheme.Lavender -> stringResource(R.string.theme_lavender)
