@@ -259,4 +259,15 @@
     <string name="pref_date_format">Datoformat</string>
     <string name="pref_fun_keyboard_over_num">Funksjonspanel over verdiene</string>
     <string name="pref_fun_keyboard_over_num_subtitle">Plasserer funksjonspanelet over verdi-tastaturet</string>
+    <string name="pref_save_last_diff_and_type">Husk spilltype og vanskelighetsgrad</string>
+    <string name="stat_time_best">Beste: %1$s</string>
+    <string name="pref_save_last_diff_and_type_subtitle">Husk spilltype og vanskelighetsgrad fra siste spill</string>
+    <string name="hints_used">Hint: %1$d</string>
+    <string name="pref_date_format_custom_textfield_label">Mønster</string>
+    <string name="pref_date_format_custom_summ">Skriv inn mønster i henhold til Java sin DateTimeFormatter</string>
+    <string name="mistakes_made">Feil: %1$d</string>
+    <string name="notes_taken">Notater: %1$d</string>
+    <string name="stat_time_current">Nåværende: %1$s</string>
+    <string name="stat_time_average">Gjen.: %1$s</string>
+    <string name="pref_date_format_custom">Egendefinert datoformat</string>
 </resources>
