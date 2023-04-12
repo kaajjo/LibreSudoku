@@ -270,4 +270,8 @@
     <string name="stat_time_current">Actual: %1$s</string>
     <string name="stat_time_average">Promedio: %1$s</string>
     <string name="stat_time_best">Mejor: %1$s</string>
+    <string name="pref_date_format_custom">Formato de la fecha personalizado</string>
+    <string name="pref_date_format_custom_summ">Ingresa la forma de la fecha de acuerdo con Java DateTimeFormatter</string>
+    <string name="pref_date_format_custom_textfield_label">Patrón</string>
+    <string name="pref_date_format_custom_label">Personalizado</string>
 </resources>
