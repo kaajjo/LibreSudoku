@@ -171,7 +171,6 @@ class GameViewModel @Inject constructor(
     // mistakes
     // used for mistakes limit
     var mistakesCount by mutableStateOf(0)
-    var mistakesLimitDialog by mutableStateOf(false)
 
     // notes
     var notesToggled by mutableStateOf(false)
@@ -284,8 +283,7 @@ class GameViewModel @Inject constructor(
             mistakesMade++
             if (mistakesLimit.value) {
                 mistakesCount++
-                if (mistakesCount >= 3) {
-                    mistakesLimitDialog = true
+                if (mistakesCount >= PreferencesConstants.MISTAKES_LIMIT) {
                     pauseTimer()
                     giveUp()
                     endGame = true

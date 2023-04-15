@@ -3,6 +3,8 @@ package com.kaajjo.libresudoku.core
 // Default values for preferences
 class PreferencesConstants {
     companion object {
+        const val MISTAKES_LIMIT = 3
+
         // Game settings
         const val DEFAULT_MISTAKES_LIMIT = false
         const val DEFAULT_HINTS_DISABLED = false

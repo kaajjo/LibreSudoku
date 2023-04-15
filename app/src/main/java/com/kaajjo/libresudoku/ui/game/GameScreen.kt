@@ -1,7 +1,6 @@
 package com.kaajjo.libresudoku.ui.game
 
 import android.os.Build
-import android.text.format.DateUtils
 import android.view.HapticFeedbackConstants
 import android.view.View
 import androidx.compose.animation.AnimatedContent
@@ -10,21 +9,15 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.rounded.Cancel
-import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.Grade
-import androidx.compose.material.icons.rounded.Lightbulb
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -49,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -67,14 +59,12 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameType
-import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
 import com.kaajjo.libresudoku.ui.onboarding.FirstGameDialog
 import com.kaajjo.libresudoku.ui.util.ReverseArrangement
-import kotlin.time.toKotlinDuration
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
@@ -120,6 +110,11 @@ fun GameScreen(
         }
     }
 
+
+    val mistakesLimit by viewModel.mistakesLimit.collectAsStateWithLifecycle(
+        initialValue = PreferencesConstants.DEFAULT_MISTAKES_LIMIT
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -133,7 +128,7 @@ fun GameScreen(
                     }
                 },
                 actions = {
-                    AnimatedVisibility(visible = viewModel.endGame && (viewModel.mistakesCount >= 3 || viewModel.giveUp)) {
+                    AnimatedVisibility(visible = viewModel.endGame && (viewModel.mistakesCount >= PreferencesConstants.MISTAKES_LIMIT || viewModel.giveUp)) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -224,9 +219,6 @@ fun GameScreen(
                 ) {
                     TopBoardSection(stringResource(viewModel.gameDifficulty.resName))
 
-                    val mistakesLimit by viewModel.mistakesLimit.collectAsStateWithLifecycle(
-                        initialValue = PreferencesConstants.DEFAULT_MISTAKES_LIMIT
-                    )
                     if (mistakesLimit && errorHighlight != 0) {
                         TopBoardSection(
                             stringResource(
@@ -398,116 +390,19 @@ fun GameScreen(
                         initialValue = emptyList()
                     )
 
-                    Column(Modifier.fillMaxWidth()) {
-                        Text(
-                            text = stringResource(R.string.game_completed),
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(bottom = 8.dp)
-                        )
-
-                        Text(
-                            text = stringResource(R.string.time),
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            StatBoxWithBottomPadding(
-                                text = {
-                                    Text(
-                                        stringResource(
-                                            R.string.stat_time_current,
-                                            viewModel.timeText
-                                        )
-                                    )
-                                }
-                            )
-
-                            if (allRecords.isNotEmpty()) {
-                                StatBoxWithBottomPadding(
-                                    text = {
-                                        Text(
-                                            text = stringResource(
-                                                R.string.stat_time_average,
-                                                DateUtils.formatElapsedTime(allRecords.sumOf { it.time.seconds } / allRecords.count())
-                                            )
-                                        )
-                                    }
-                                )
-                                StatBoxWithBottomPadding(
-                                    text = {
-                                        Text(
-                                            text = stringResource(
-                                                R.string.stat_time_best,
-                                                allRecords.first().time
-                                                    .toKotlinDuration()
-                                                    .toFormattedString()
-                                            )
-                                        )
-                                    }
-                                )
-                            }
-                        }
-
-                        Text(
-                            text = stringResource(R.string.statistics),
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
-                        )
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            StatBoxWithBottomPadding(
-                                text = {
-                                    Text(
-                                        "${stringResource(viewModel.gameDifficulty.resName)} ${
-                                            stringResource(
-                                                viewModel.gameType.resName
-                                            )
-                                        }"
-                                    )
-                                },
-                                icon = { Icon(Icons.Rounded.Grade, contentDescription = null) }
-                            )
-                            StatBoxWithBottomPadding(
-                                text = {
-                                    Text(
-                                        stringResource(
-                                            R.string.hints_used,
-                                            viewModel.hintsUsed
-                                        )
-                                    )
-                                },
-                                icon = { Icon(Icons.Rounded.Lightbulb, contentDescription = null) }
-                            )
-                            StatBoxWithBottomPadding(
-                                text = {
-                                    Text(
-                                        stringResource(
-                                            R.string.mistakes_made,
-                                            viewModel.mistakesMade
-                                        )
-                                    )
-                                },
-                                icon = { Icon(Icons.Rounded.Cancel, contentDescription = null) }
-                            )
-                            StatBoxWithBottomPadding(
-                                text = {
-                                    Text(
-                                        stringResource(
-                                            R.string.notes_taken,
-                                            viewModel.notesTaken
-                                        )
-                                    )
-                                },
-                                icon = { Icon(Icons.Rounded.Edit, contentDescription = null) }
-                            )
-                        }
-                    }
+                    AfterGameStats(
+                        modifier = Modifier.fillMaxWidth(),
+                        difficulty = viewModel.gameDifficulty,
+                        type = viewModel.gameType,
+                        hintsUsed = viewModel.hintsUsed,
+                        mistakesMade = viewModel.mistakesMade,
+                        mistakesLimit = mistakesLimit,
+                        mistakesLimitCount = viewModel.mistakesCount,
+                        giveUp = viewModel.giveUp,
+                        notesTaken = viewModel.notesTaken,
+                        records = allRecords,
+                        timeText = viewModel.timeText
+                    )
                 }
             }
         }
@@ -573,30 +468,7 @@ fun GameScreen(
                 viewModel.giveUpDialog = false
                 viewModel.startTimer()
             },
-        )
-    } else if (viewModel.mistakesLimitDialog) {
-        AlertDialog(
-            title = { Text(stringResource(R.string.game_over)) },
-            text = { Text(stringResource(R.string.game_over_mistakes)) },
-            dismissButton = {
-                TextButton(onClick = navigateBack) {
-                    Text(stringResource(R.string.action_exit))
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.mistakesLimitDialog = false
-                    viewModel.endGame = true
-                }) {
-                    Text(stringResource(R.string.action_stay))
-                }
-            },
-            onDismissRequest = {
-                viewModel.mistakesLimitDialog = false
-                viewModel.endGame = true
-            },
-        )
-    }
+        )}
 
     LaunchedEffect(viewModel.mistakesMethod) {
         viewModel.checkMistakesAll()
@@ -736,40 +608,3 @@ fun OnLifecycleEvent(onEvent: (owner: LifecycleOwner, event: Lifecycle.Event) ->
 
 @Composable
 fun KeepScreenOn() = AndroidView({ View(it).apply { keepScreenOn = true } })
-
-@Composable
-fun StatBox(
-    text: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    icon: @Composable () -> Unit = { }
-) {
-    Box(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-    ) {
-        Row(
-            modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            icon()
-            text()
-        }
-    }
-}
-
-// TODO: Remove this when cross-axis arrangement support is added to FlowRow
-// https://android-review.googlesource.com/c/platform/frameworks/support/+/2478295
-@Composable
-fun StatBoxWithBottomPadding(
-    text: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    icon: @Composable () -> Unit = { }
-) {
-    StatBox(
-        text = text,
-        icon = icon,
-        modifier = modifier.padding(bottom = 8.dp)
-    )
-}

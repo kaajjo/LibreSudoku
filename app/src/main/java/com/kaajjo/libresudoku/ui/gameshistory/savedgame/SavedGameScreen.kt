@@ -293,7 +293,7 @@ fun SavedGameScreen(
                     Text(
                         text = viewModel.savedGame?.let {
                             when {
-                                it.mistakes >= 3 -> stringResource(R.string.saved_game_mistakes_limit)
+                                it.mistakes >= PreferencesConstants.MISTAKES_LIMIT -> stringResource(R.string.saved_game_mistakes_limit)
                                 it.giveUp -> stringResource(R.string.saved_game_give_up)
                                 it.completed && !it.canContinue -> stringResource(R.string.saved_game_completed)
                                 else -> stringResource(R.string.saved_game_in_progress)
