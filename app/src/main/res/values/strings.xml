@@ -145,7 +145,7 @@
     <string name="saved_game_completed">The game was completed</string>
     <string name="saved_game_give_up">You gave up</string>
     <string name="saved_game_in_progress">In progress</string>
-    <string name="saved_game_mistakes_limit">Mistake limit exceeded</string>
+    <string name="saved_game_mistakes_limit">Mistakes limit exceeded</string>
     <string name="learn_screen_title">Learn</string>
     <string name="learn_tab_sudoku">Sudoku</string>
     <string name="learn_tab_app">App</string>
