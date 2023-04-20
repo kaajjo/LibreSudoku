@@ -1,0 +1,6 @@
+Change date formats
+Option to remember the previously selected difficulty and game type
+Improved game completion screen
+New languages
+Other fixes and improvements
+Full changelog available on GitHub
