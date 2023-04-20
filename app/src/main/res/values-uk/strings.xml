@@ -102,9 +102,9 @@
     <string name="saved_game_difficulty">Складність: %1$s</string>
     <string name="saved_game_type">Тип: %1$s</string>
     <string name="saved_game_time">Час: %1$s</string>
-    <string name="saved_game_give_up">Гру не було завершено, ви здалися</string>
+    <string name="saved_game_give_up">Ви здалися</string>
     <string name="saved_game_in_progress">В процесі</string>
-    <string name="saved_game_mistakes_limit">Гра не було завершено, ви перевищили ліміт помилок</string>
+    <string name="saved_game_mistakes_limit">Перевищено ліміт помилок</string>
     <string name="learn_screen_title">Навчання</string>
     <string name="learn_tab_sudoku">Судоку</string>
     <string name="learn_tab_app">Додаток</string>

@@ -143,8 +143,8 @@
     <string name="saved_game_progress_percentage">Progreso %1$d%%</string>
     <string name="saved_game_type">Modo: %1$s</string>
     <string name="history_item_id">ID de juego: %1$d</string>
-    <string name="saved_game_mistakes_limit">El juego no se ha completado, has superado el límite de errores</string>
-    <string name="saved_game_give_up">El juego no fue completado, te rendiste</string>
+    <string name="saved_game_mistakes_limit">Límite de errores sobrepasados</string>
+    <string name="saved_game_give_up">Te has rendido</string>
     <string name="learn_sudoku_rules">Reglas de Sudoku</string>
     <string name="sudoku_rules_mistakes_highlight">Resaltar errores</string>
     <string name="naked_pairs_title">Pares desnudos</string>

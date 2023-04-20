@@ -138,9 +138,9 @@
     <string name="saved_game_type">Тип: %1$s</string>
     <string name="saved_game_time">Время: %1$s</string>
     <string name="saved_game_completed">Игра была завершена</string>
-    <string name="saved_game_give_up">Игра не была завершена, вы сдались</string>
+    <string name="saved_game_give_up">Вы сдались</string>
     <string name="saved_game_in_progress">В процессе</string>
-    <string name="saved_game_mistakes_limit">Игра не была завершена, вы превысили лимит ошибок</string>
+    <string name="saved_game_mistakes_limit">Превышен лимит ошибок</string>
     <string name="learn_screen_title">Обучение</string>
     <string name="learn_tab_sudoku">Судоку</string>
     <string name="learn_tab_app">Приложение</string>
