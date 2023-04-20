@@ -17,7 +17,6 @@
         tools:targetApi="tiramisu">
         <activity
             android:name=".MainActivity"
-            android:configChanges="keyboardHidden|layoutDirection|locale"
             android:exported="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
