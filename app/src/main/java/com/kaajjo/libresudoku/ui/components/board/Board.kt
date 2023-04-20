@@ -203,8 +203,8 @@ fun Board(
                     onTap = {
                         if (enabled) {
                             val totalOffset = it / zoom + offset
-                            val row = floor((totalOffset.y) / cellSize).toInt()
-                            val column = floor((totalOffset.x) / cellSize).toInt()
+                            val row = floor((totalOffset.y) / cellSize).toInt().coerceIn(board.indices)
+                            val column = floor((totalOffset.x) / cellSize).toInt().coerceIn(board.indices)
                             onClick(board[row][column])
                         }
                     },
