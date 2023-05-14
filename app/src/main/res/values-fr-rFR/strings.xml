@@ -6,7 +6,7 @@
     <string name="nav_bar_more">Plus</string>
     <string name="new_game">Nouveau jeu</string>
     <string name="dialog_new_game">Jeu en cours</string>
-    <string name="dialog_new_game_text">Vous avez une partie inachevé, voulez-vous vraiment en commencer une nouvelle?</string>
+    <string name="dialog_new_game_text">Vous avez déjà une partie en cours, voulez-vous vraiment en commencer une nouvelle \?</string>
     <string name="dialog_new_game_positive">Démarrer une nouvelle partie</string>
     <string name="action_cancel">Annuler</string>
     <string name="action_confirm">Oui</string>
@@ -54,7 +54,7 @@
     <string name="pref_mistakes_limit">Limite d\'erreurs</string>
     <string name="pref_mistakes_limit_summ">3 erreurs et c\'est fini</string>
     <string name="pref_disable_hints">Désactiver les conseils</string>
-    <string name="pref_disable_hints_summ">Vous n\'aimez pas les indices? Alors, supprimez-les!</string>
+    <string name="pref_disable_hints_summ">Vous n\'aimez pas les indices \? Supprimez-les!</string>
     <string name="pref_show_timer">Afficher la minuterie</string>
     <string name="pref_reset_timer">Remise à zéro de la minuterie lors de la réinitialisation du jeu</string>
     <string name="pref_assistance">Assistance</string>
