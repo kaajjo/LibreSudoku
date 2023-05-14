@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="difficulty_moderate">Średnie</string>
+    <string name="type_unspecified">Niezdefiniowany</string>
+    <string name="difficulty_hard">Trudne</string>
+    <string name="difficulty_custom">Niestandardowa</string>
+    <string name="type_default_9x9">9x9</string>
+    <string name="type_default_6x6">6x6</string>
+    <string name="more_title">Więcej</string>
+    <string name="pref_dark_theme_on">Włączony</string>
+    <string name="difficulty_challenge">Wyzwanie</string>
+    <string name="type_default_12x12">12x12</string>
+    <string name="pref_appearance">Wygląd</string>
+    <string name="pref_dark_theme_off">Wyłączony</string>
+    <string name="pref_dark_theme">Tryb ciemny</string>
+    <string name="dialog_new_game_text">Masz jeszcze nieukończoną grę, czy na pewno chcesz zacząć nową grę\?</string>
+    <string name="action_play">Graj</string>
+    <string name="dialog_new_game_positive">Zacznij nową</string>
+    <string name="difficulty_easy">Łatwe</string>
+    <string name="action_cancel">Anuluj</string>
+    <string name="action_delete">Usuń</string>
+    <string name="settings_title">Ustawienia</string>
+    <string name="action_confirm">Tak</string>
+    <string name="action_continue">Kontynuuj</string>
+    <string name="nav_bar_statistics">Statystyki</string>
+    <string name="new_game">Nowa gra</string>
+    <string name="dialog_new_game">Gra w toku</string>
+</resources>
