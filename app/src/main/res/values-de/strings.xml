@@ -267,4 +267,9 @@
     <string name="stat_time_average">Mittelw.: %1$s</string>
     <string name="stat_time_best">Beste: %1$s</string>
     <string name="pref_date_format_custom_textfield_label">Muster</string>
+    <string name="pref_date_format_custom_label">Benutzerdefiniert</string>
+    <string name="hints_used">Tipps: %1$d</string>
+    <string name="notes_taken">Notizen: %1$d</string>
+    <string name="pref_date_format_custom">Eigenes Datumsformat</string>
+    <string name="pref_date_format_custom_summ">Datumsmuster gemäß Java DateTimeFormatter eingeben</string>
 </resources>

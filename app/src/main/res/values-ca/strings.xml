@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_bar_home">Inici</string>
+    <string name="nav_bar_more">Més</string>
+    <string name="nav_bar_statistics">Estadístiques</string>
+    <string name="new_game">Nou joc</string>
+</resources>
