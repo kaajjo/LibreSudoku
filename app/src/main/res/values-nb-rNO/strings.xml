@@ -270,4 +270,6 @@
     <string name="stat_time_current">Nåværende: %1$s</string>
     <string name="stat_time_average">Gjen.: %1$s</string>
     <string name="pref_date_format_custom">Egendefinert datoformat</string>
+    <string name="pref_date_format_custom_label">Egendefinert</string>
+    <string name="theme_blue">Blå</string>
 </resources>
