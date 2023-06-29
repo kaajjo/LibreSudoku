@@ -17,4 +17,9 @@
     <locale android:name="sk" />
     <locale android:name="uk" />
     <locale android:name="hi" />
+    <locale android:name="ar" />
+    <locale android:name="ta" />
+    <locale android:name="zh-CN" />
+    <locale android:name="pl" />
+    <locale android:name="ca" />
 </locale-config>
