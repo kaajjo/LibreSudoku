@@ -25,4 +25,15 @@
     <string name="nav_bar_statistics">Statystyki</string>
     <string name="new_game">Nowa gra</string>
     <string name="dialog_new_game">Gra w toku</string>
+    <string name="pref_board_font_size_large">Duży</string>
+    <string name="pref_board_font_size_small">Mały</string>
+    <string name="pref_board_font_size_medium">Średni</string>
+    <string name="pref_input">Metoda wprowadzania</string>
+    <string name="pref_input_cell_first">Komórka pierwsza</string>
+    <string name="pref_input_digit_first">Wartość pierwsza</string>
+    <string name="nav_bar_home">Strona główna</string>
+    <string name="nav_bar_more">Więcej</string>
+    <string name="difficulty_unspecified">Niezdefiniowany</string>
+    <string name="difficulty_simple">Proste</string>
+    <string name="about_title">O alikacji</string>
 </resources>
