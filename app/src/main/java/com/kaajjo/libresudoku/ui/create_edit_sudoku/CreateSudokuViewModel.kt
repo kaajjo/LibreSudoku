@@ -16,7 +16,7 @@ import com.kaajjo.libresudoku.core.qqwing.QQWingController
 import com.kaajjo.libresudoku.core.utils.GameState
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
-import com.kaajjo.libresudoku.core.utils.UndoManager
+import com.kaajjo.libresudoku.core.utils.UndoRedoManager
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
@@ -81,6 +81,7 @@ class CreateSudokuViewModel @Inject constructor(
     var multipleSolutionsDialog by mutableStateOf(false)
     var noSolutionsDialog by mutableStateOf(false)
 
+
     var gameType by mutableStateOf(GameType.Default9x9)
     var gameDifficulty by mutableStateOf(GameDifficulty.Easy)
     var gameBoard by mutableStateOf(List(gameType.size) { row ->
@@ -98,7 +99,7 @@ class CreateSudokuViewModel @Inject constructor(
     var importTextFieldError by mutableStateOf(false)
 
     private val sudokuUtils = SudokuUtils()
-    private val undoManager = UndoManager(GameState(gameBoard, emptyList()))
+    private val undoRedoManager = UndoRedoManager(GameState(gameBoard, emptyList()))
 
     private var overrideInputMethodDF = false
     var digitFirstNumber = -1
@@ -120,7 +121,7 @@ class CreateSudokuViewModel @Inject constructor(
         return if (currCell.row >= 0 && currCell.col >= 0) {
             if ((inputMethod.value == 1 || overrideInputMethodDF) && digitFirstNumber > 0) {
                 processNumberInput(digitFirstNumber)
-                undoManager.addState(GameState(getBoardNoRef(), emptyList()))
+                undoRedoManager.addState(GameState(getBoardNoRef(), emptyList()))
             }
             true
         } else {
@@ -134,7 +135,7 @@ class CreateSudokuViewModel @Inject constructor(
                 overrideInputMethodDF = false
                 digitFirstNumber = 0
                 processNumberInput(number)
-                undoManager.addState(GameState(getBoardNoRef(), emptyList()))
+                undoRedoManager.addState(GameState(getBoardNoRef(), emptyList()))
             } else if (inputMethod.value == 1) {
                 digitFirstNumber = if (digitFirstNumber == number) 0 else number
                 currCell = Cell(-1, -1, digitFirstNumber)
@@ -190,20 +191,18 @@ class CreateSudokuViewModel @Inject constructor(
     fun toolbarClick(item: ToolBarItem) {
         when (item) {
             ToolBarItem.Undo -> {
-                if (undoManager.count() > 0) {
-                    val prevBoard = undoManager.getPrevState().board
-                    gameBoard =
-                        if (prevBoard.size == gameBoard.size) {
-                            prevBoard
-                        } else {
-                            List(gameType.size) { row ->
-                                List(gameType.size) { col ->
-                                    Cell(row, col, 0)
-                                }
-                            }
-                        }
+                if (undoRedoManager.canUndo()) {
+                    gameBoard = undoRedoManager.undo().board
+                    checkMistakes()
+                }
+            }
 
-                    undoManager.addState(GameState(getBoardNoRef(), emptyList()))
+            ToolBarItem.Redo -> {
+                if (undoRedoManager.canRedo()) {
+                    undoRedoManager.redo()?.let {
+                        gameBoard = it.board
+                    }
+                    checkMistakes()
                 }
             }
 
@@ -212,8 +211,9 @@ class CreateSudokuViewModel @Inject constructor(
                     val prevValue = gameBoard[currCell.row][currCell.col].value
                     gameBoard = setValueCell(0)
                     if (prevValue != 0) {
-                        undoManager.addState(GameState(getBoardNoRef(), emptyList()))
+                        undoRedoManager.addState(GameState(getBoardNoRef(), emptyList()))
                     }
+                    checkMistakes()
                 }
             }
 
@@ -327,6 +327,22 @@ class CreateSudokuViewModel @Inject constructor(
 
     fun changeGameDifficulty(gameDifficulty: GameDifficulty) {
         this.gameDifficulty = gameDifficulty
+    }
+
+    private fun checkMistakes() {
+        val new = getBoardNoRef()
+        for (i in new.indices) {
+            for (j in new.indices) {
+                if (new[i][j].value != 0) {
+                    new[i][j].error = !sudokuUtils.isValidCellDynamic(
+                        board = new,
+                        cell = new[i][j],
+                        type = gameType
+                    )
+                }
+            }
+        }
+        gameBoard = new
     }
 }
 

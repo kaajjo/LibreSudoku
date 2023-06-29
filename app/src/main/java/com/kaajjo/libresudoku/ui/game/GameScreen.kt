@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.rounded.Redo
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -327,11 +328,21 @@ fun GameScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.padding(vertical = 8.dp)
                         ) {
-                            ToolbarItem(
-                                modifier = Modifier.weight(1f),
-                                painter = painterResource(R.drawable.ic_round_undo_24),
-                                onClick = { viewModel.toolbarClick(ToolBarItem.Undo) }
-                            )
+                            Box(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                UndoRedoMenu(
+                                    expanded = viewModel.showUndoRedoMenu,
+                                    onDismiss = { viewModel.showUndoRedoMenu = false },
+                                    onRedoClick = { viewModel.toolbarClick(ToolBarItem.Redo) }
+                                )
+                                ToolbarItem(
+                                    painter = painterResource(R.drawable.ic_round_undo_24),
+                                    onClick = { viewModel.toolbarClick(ToolBarItem.Undo) },
+                                    onLongClick = { viewModel.showUndoRedoMenu = true }
+                                )
+
+                            }
                             val hintsDisabled by viewModel.disableHints.collectAsStateWithLifecycle(
                                 initialValue = PreferencesConstants.DEFAULT_HINTS_DISABLED
                             )
@@ -468,7 +479,8 @@ fun GameScreen(
                 viewModel.giveUpDialog = false
                 viewModel.startTimer()
             },
-        )}
+        )
+    }
 
     LaunchedEffect(viewModel.mistakesMethod) {
         viewModel.checkMistakesAll()
@@ -535,6 +547,36 @@ fun NotesMenu(
                     }
                 },
                 onClick = onRenderNotesClick
+            )
+        }
+    }
+}
+
+@Composable
+fun UndoRedoMenu(
+    expanded: Boolean,
+    onDismiss: () -> Unit,
+    onRedoClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    MaterialTheme(shapes = MaterialTheme.shapes.copy(extraSmall = MaterialTheme.shapes.large)) {
+        DropdownMenu(
+            modifier = modifier,
+            expanded = expanded,
+            onDismissRequest = { onDismiss() }
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.redo)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Redo,
+                        contentDescription = null
+                    )
+                },
+                onClick = {
+                    onRedoClick()
+                    onDismiss()
+                }
             )
         }
     }

@@ -16,7 +16,7 @@ import com.kaajjo.libresudoku.core.qqwing.QQWingController
 import com.kaajjo.libresudoku.core.utils.GameState
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
-import com.kaajjo.libresudoku.core.utils.UndoManager
+import com.kaajjo.libresudoku.core.utils.UndoRedoManager
 import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.database.model.Record
 import com.kaajjo.libresudoku.data.database.model.SavedGame
@@ -105,7 +105,7 @@ class GameViewModel @Inject constructor(
                     gameBoard = initialBoard
                 }
                 size = gameBoard.size
-                undoManager = UndoManager(GameState(gameBoard, notes))
+                undoRedoManager = UndoRedoManager(GameState(gameBoard, notes))
                 remainingUsesList = countRemainingUses(gameBoard)
             }
             saveGame()
@@ -128,6 +128,7 @@ class GameViewModel @Inject constructor(
     var restartDialog by mutableStateOf(false)
     var showMenu by mutableStateOf(false)
     var showNotesMenu by mutableStateOf(false)
+    var showUndoRedoMenu by mutableStateOf(false)
 
     // count remaining uses
     var remainingUse = appSettingsManager.remainingUse
@@ -181,7 +182,7 @@ class GameViewModel @Inject constructor(
     var solvedBoard = emptyList<List<Cell>>()
 
     var currCell by mutableStateOf(Cell(-1, -1, 0))
-    private var undoManager = UndoManager(GameState(gameBoard, notes))
+    private var undoRedoManager = UndoRedoManager(GameState(gameBoard, notes))
     private var sudokuUtils = SudokuUtils()
     var gameCompleted by mutableStateOf(false)
 
@@ -227,7 +228,7 @@ class GameViewModel @Inject constructor(
 
     fun clearNotes() {
         notes = emptyNotes()
-        undoManager.addState(
+        undoRedoManager.addState(
             GameState(gameBoard, notes)
         )
     }
@@ -322,20 +323,20 @@ class GameViewModel @Inject constructor(
                     if (!longTap) {
                         if ((remainingUsesList.size >= digitFirstNumber && remainingUsesList[digitFirstNumber - 1] > 0) || !remainingUse) {
                             processNumberInput(digitFirstNumber)
-                            undoManager.addState(GameState(gameBoard, notes))
+                            undoRedoManager.addState(GameState(gameBoard, notes))
                             if (notesToggled) currCell =
                                 Cell(currCell.row, currCell.col, digitFirstNumber)
                         }
                     } else if (!currCell.locked) {
                         gameBoard = setValueCell(0)
                         setNote(digitFirstNumber)
-                        undoManager.addState(GameState(gameBoard, notes))
+                        undoRedoManager.addState(GameState(gameBoard, notes))
                     }
                 } else if (eraseButtonToggled) {
                     val oldCell = currCell
                     processNumberInput(0)
                     if (oldCell.value != 0 && !oldCell.locked) {
-                        undoManager.addState(GameState(gameBoard, notes))
+                        undoRedoManager.addState(GameState(gameBoard, notes))
                     }
                 }
                 remainingUsesList = countRemainingUses(gameBoard)
@@ -355,7 +356,7 @@ class GameViewModel @Inject constructor(
                     overrideInputMethodDF = false
                     digitFirstNumber = 0
                     processNumberInput(number)
-                    undoManager.addState(GameState(gameBoard, notes))
+                    undoRedoManager.addState(GameState(gameBoard, notes))
                 } else if (inputMethod.value == 1) {
                     digitFirstNumber = if (digitFirstNumber == number) 0 else number
                     currCell = Cell(-1, -1, digitFirstNumber)
@@ -436,12 +437,22 @@ class GameViewModel @Inject constructor(
         if (gamePlaying) {
             when (item) {
                 ToolBarItem.Undo -> {
-                    if (undoManager.count() > 0) {
-                        undoManager.getPrevState().also {
+                    if (undoRedoManager.canUndo()) {
+                        undoRedoManager.undo().also {
                             gameBoard = it.board
                             notes = it.notes
                         }
-                        undoManager.addState(GameState(getBoardNoRef(), notes))
+                        checkMistakesAll()
+                    }
+                    remainingUsesList = countRemainingUses(gameBoard)
+                }
+
+                ToolBarItem.Redo -> {
+                    if (undoRedoManager.canRedo()) {
+                        undoRedoManager.redo()?.let {
+                            gameBoard = it.board
+                            notes = it.notes
+                        }
                         checkMistakesAll()
                     }
                     remainingUsesList = countRemainingUses(gameBoard)
@@ -468,7 +479,7 @@ class GameViewModel @Inject constructor(
                         notes = clearNotesAtCell(notes)
                         gameBoard = setValueCell(0)
                         if (prevValue != 0 || notesInCell != 0) {
-                            undoManager.addState(GameState(gameBoard, notes))
+                            undoRedoManager.addState(GameState(gameBoard, notes))
                         }
                     }
                 }
@@ -488,7 +499,7 @@ class GameViewModel @Inject constructor(
 
             duration = duration.plus(30.toDuration(DurationUnit.SECONDS))
             timeText = duration.toFormattedString()
-            undoManager.addState(GameState(gameBoard, notes))
+            undoRedoManager.addState(GameState(gameBoard, notes))
             hintsUsed++
         }
     }
@@ -503,7 +514,7 @@ class GameViewModel @Inject constructor(
         }
         digitFirstNumber = 0
         notesToggled = false
-        undoManager.clear()
+        undoRedoManager.clear()
 
         // init a new game with initial board
         gameBoard = initialBoard.map { items -> items.map { item -> item.copy() } }
@@ -555,7 +566,7 @@ class GameViewModel @Inject constructor(
 
     fun computeNotes() {
         notes = sudokuUtils.computeNotes(gameBoard, boardEntity.type)
-        undoManager.addState(GameState(gameBoard, notes))
+        undoRedoManager.addState(GameState(gameBoard, notes))
     }
 
     private fun autoEraseNotes(board: List<List<Cell>> = getBoardNoRef(), cell: Cell): List<Note> {
@@ -737,7 +748,7 @@ class GameViewModel @Inject constructor(
                         }
 
                         1 -> {
-                            // rule violations
+                            // rules violations
                             new[i][j].error =
                                 !sudokuUtils.isValidCellDynamic(new, new[i][j], boardEntity.type)
                         }
