@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="more_title">بیش‌تر</string>
+    <string name="about_title">درباره</string>
+    <string name="pref_dark_theme_follow">مطابقت با سیستم</string>
+    <string name="pref_input_cell_first">ابتدا سلول</string>
+    <string name="action_deleted">حذف شده</string>
+    <string name="theme_lavender">اسطوخودوس</string>
+    <string name="nav_bar_statistics">آمار</string>
+    <string name="nav_bar_home">خانه</string>
+    <string name="dialog_new_game">بازی در جریان</string>
+    <string name="pref_board_font_size_small">کوچک</string>
+    <string name="difficulty_easy">آسان</string>
+    <string name="nav_bar_more">بیش‌تر</string>
+    <string name="new_game">بازی جدید</string>
+    <string name="action_confirm">بله</string>
+    <string name="dialog_new_game_text">شما یک بازی ناتمام دارید، آیا بدون تردید می‌خواهید یک بازی جدید شروع کنید؟</string>
+    <string name="action_delete">حذف</string>
+    <string name="difficulty_unspecified">نامشخص</string>
+    <string name="dialog_new_game_positive">شروع جدید</string>
+    <string name="action_cancel">لغو</string>
+    <string name="action_continue">ادامه</string>
+    <string name="difficulty_simple">ساده</string>
+    <string name="difficulty_moderate">متوسط</string>
+    <string name="difficulty_hard">سخت</string>
+    <string name="type_unspecified">نامشخص</string>
+    <string name="pref_dark_theme_off">خاموش</string>
+    <string name="settings_title">تنظیمات</string>
+    <string name="pref_dark_theme">زمینه تاریک</string>
+    <string name="pref_dark_theme_on">روشن</string>
+    <string name="pref_board_font_size_large">بزرگ</string>
+    <string name="pref_board_font_size_medium">متوسط</string>
+    <string name="pref_delete_stats_summ">این عمل تمام آمار، بازی‌های ذخیره شده و رکوردهای شما را حذف می‌کند.این عمل را نمی‌توان واگرد کرد.</string>
+    <string name="theme_dynamic">پویا</string>
+    <string name="theme_green">سبز</string>
+    <string name="theme_peach">هلویی</string>
+    <string name="theme_yellow">زرد</string>
+    <string name="theme_black_and_white">سیاه و سفید</string>
+    <string name="pref_show_timer">نمایش زمان سنج</string>
+</resources>

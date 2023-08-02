@@ -6,7 +6,7 @@
     <string name="history_item_can_continue">你可以继续这场游戏</string>
     <string name="nav_bar_home">首页</string>
     <string name="nav_bar_more">更多</string>
-    <string name="dialog_new_game_positive">新游戏</string>
+    <string name="dialog_new_game_positive">开始新游戏</string>
     <string name="action_cancel">取消</string>
     <string name="action_confirm">确定</string>
     <string name="action_play">开始游戏</string>
@@ -200,7 +200,7 @@
     <string name="pref_boardtheme_accent_subtitle">让数独板更丰富多彩</string>
     <string name="export_string_title">导出为字符串</string>
     <string name="add_to_folder">添加到文件夹</string>
-    <string name="import_from_file_title">从文件导入</string>
+    <string name="import_from_file_title">自文件导入</string>
     <plurals name="delete_selected_in_folder">
         <item quantity="other">您确定要删除 %1$d 个游戏吗？</item>
     </plurals>
@@ -226,7 +226,7 @@
     <string name="type_unspecified">未指定</string>
     <string name="about_title">关于</string>
     <string name="difficulty_custom">自定义</string>
-    <string name="action_deleted">删除</string>
+    <string name="action_deleted">已删除</string>
     <string name="pref_dark_theme_follow">跟随系统</string>
     <string name="pref_board_font_size_large">大</string>
     <string name="pref_board_font_size">数独板字体大小</string>
@@ -269,4 +269,5 @@
     <string name="first_game_dialog_got_it">明白了</string>
     <string name="action_exit">退出</string>
     <string name="pref_crash_reporting_subtitle">帮助我们修复错误。应用本身不会发送日志，系统将提示您通过电子邮件发送崩溃报告</string>
+    <string name="redo">重做</string>
 </resources>
