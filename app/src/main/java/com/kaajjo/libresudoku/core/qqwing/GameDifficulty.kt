@@ -1,11 +1,8 @@
 package com.kaajjo.libresudoku.core.qqwing
 
-import android.os.Parcelable
 import com.kaajjo.libresudoku.R
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
-enum class GameDifficulty(val resName: Int) : Parcelable {
+enum class GameDifficulty(val resName: Int) {
     Unspecified(R.string.difficulty_unspecified),
     Simple(R.string.difficulty_simple),
     Easy(R.string.difficulty_easy),
