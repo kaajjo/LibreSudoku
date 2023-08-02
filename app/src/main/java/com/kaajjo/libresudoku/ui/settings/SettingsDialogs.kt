@@ -229,7 +229,8 @@ fun SetDateFormatPatternDialog(
     onDismissRequest: () -> Unit,
     onTextValueChange: (String) -> Unit,
     customDateFormat: String,
-    invalidCustomDateFormat: Boolean
+    invalidCustomDateFormat: Boolean,
+    datePreview: String = ""
 ) {
     AlertDialog(
         title = {
@@ -246,7 +247,10 @@ fun SetDateFormatPatternDialog(
                     text = stringResource(R.string.pref_date_format_custom_summ),
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-
+                Text(
+                    text = datePreview,
+                    modifier = Modifier.padding(bottom = 6.dp)
+                )
                 OutlinedTextField(
                     value = customDateFormat,
                     onValueChange = onTextValueChange,

@@ -5,11 +5,34 @@ import android.os.Build
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -72,7 +95,9 @@ fun SettingsScreen(
             )
         }
     ) { paddingValues ->
-        val highlightMistakes by viewModel.highlightMistakes.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES)
+        val highlightMistakes by viewModel.highlightMistakes.collectAsStateWithLifecycle(
+            initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES
+        )
         val inputMethod by viewModel.inputMethod.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_INPUT_METHOD)
         val darkTheme by viewModel.darkTheme.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_DARK_THEME)
         val fontSize by viewModel.fontSize.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
@@ -86,7 +111,9 @@ fun SettingsScreen(
         val resetTimer by viewModel.canResetTimer.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_GAME_RESET_TIMER)
         val keepScreenOn by viewModel.keepScreenOn.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_KEEP_SCREEN_ON)
         val autoEraseNotes by viewModel.autoEraseNotes.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AUTO_ERASE_NOTES)
-        val highlightIdentical by viewModel.highlightIdentical.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL)
+        val highlightIdentical by viewModel.highlightIdentical.collectAsStateWithLifecycle(
+            initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL
+        )
         val remainingUse by viewModel.remainingUse.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_REMAINING_USES)
 
         ScrollbarLazyColumn(
@@ -580,8 +607,17 @@ fun SettingsScreen(
         }
 
         if (viewModel.customFormatDialog) {
-            var customDateFormat by remember { mutableStateOf(if (DateFormats.contains(dateFormat)) "" else dateFormat) }
-            var invalidCustomDateFormat by remember { mutableStateOf(false) }
+            var customDateFormat by rememberSaveable {
+                mutableStateOf(
+                    if (DateFormats.contains(
+                            dateFormat
+                        )
+                    ) "" else dateFormat
+                )
+            }
+            var invalidCustomDateFormat by rememberSaveable { mutableStateOf(false) }
+            var dateFormatPreview by rememberSaveable { mutableStateOf("") }
+
             SetDateFormatPatternDialog(
                 onConfirm = {
                     if (viewModel.checkCustomDateFormat(customDateFormat)) {
@@ -596,9 +632,17 @@ fun SettingsScreen(
                 onTextValueChange = { text ->
                     customDateFormat = text
                     if (invalidCustomDateFormat) invalidCustomDateFormat = false
+
+                    dateFormatPreview = if (viewModel.checkCustomDateFormat(customDateFormat)) {
+                        ZonedDateTime.now()
+                            .format(DateTimeFormatter.ofPattern(customDateFormat))
+                    } else {
+                        ""
+                    }
                 },
                 customDateFormat = customDateFormat,
-                invalidCustomDateFormat = invalidCustomDateFormat
+                invalidCustomDateFormat = invalidCustomDateFormat,
+                datePreview = dateFormatPreview
             )
         }
     }
