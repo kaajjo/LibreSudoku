@@ -2,7 +2,13 @@ package com.kaajjo.libresudoku.ui.learn.learnsudoku
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -68,7 +74,7 @@ fun LearnBasic(
             ),
             listOf(Cell(0, 1))
         )
-        var step by remember { mutableStateOf(0) }
+        var step by remember { mutableIntStateOf(0) }
         LaunchedEffect(key1 = step) {
             when (step) {
                 0 -> board = sudokuParser.parseBoard(

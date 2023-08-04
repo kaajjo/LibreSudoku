@@ -29,12 +29,12 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +48,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -187,8 +188,8 @@ fun ImportFromFileScreen(
                     }
                 }
             }
-            Divider()
-            var span by remember { mutableStateOf(1) }
+            HorizontalDivider()
+            var span by remember { mutableIntStateOf(1) }
             ScrollbarLazyVerticalGrid(
                 state = lazyGridState,
                 columns = GridCells.Adaptive(130.dp),
@@ -208,7 +209,7 @@ fun ImportFromFileScreen(
                                 boardColors = LocalBoardColors.current
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            Divider()
+                            HorizontalDivider()
                         }
                     }
                 }

@@ -152,7 +152,7 @@ fun SavedGameScreen(
                     )
                 }
 
-                val pagerState = rememberPagerState()
+                val pagerState = rememberPagerState(pageCount = { 2 })
                 val pages = listOf(
                     stringResource(R.string.saved_game_current),
                     stringResource(R.string.saved_game_initial)
@@ -207,7 +207,6 @@ fun SavedGameScreen(
                 Column {
                     HorizontalPager(
                         state = pagerState,
-                        pageCount = 2,
                         modifier = Modifier
                             .wrapContentHeight()
                             .padding(top = 8.dp)

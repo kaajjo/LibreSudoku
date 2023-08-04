@@ -1,6 +1,7 @@
 package com.kaajjo.libresudoku
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -9,9 +10,23 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -24,12 +39,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import androidx.navigation.navOptions
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
@@ -99,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                 }
             ) {
                 val context = LocalContext.current
-                val navController = rememberAnimatedNavController()
+                val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
 
                 var bottomBarState by rememberSaveable { mutableStateOf(false) }
@@ -160,7 +175,7 @@ class MainActivity : AppCompatActivity() {
                         },
                         contentWindowInsets = WindowInsets(0.dp)
                     ) { paddingValues ->
-                        AnimatedNavHost(
+                        NavHost(
                             navController = navController,
                             startDestination = Route.HOME,
                             modifier = Modifier.padding(paddingValues)
@@ -374,7 +389,7 @@ class MainActivity : AppCompatActivity() {
                                 if (activity != null) {
                                     val intentData = activity.intent.data
                                     if (intentData != null) {
-                                        navController.navigate("import_sudoku_file?${intentData}?-1")
+                                        navController.navigate("import_sudoku_file?${Uri.encode(intentData.toString())}?-1")
                                     }
                                     LaunchedEffect(intentData) {
                                         if (activity.intent.data == null) {
@@ -398,7 +413,6 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavigationBar(
     navController: NavController,

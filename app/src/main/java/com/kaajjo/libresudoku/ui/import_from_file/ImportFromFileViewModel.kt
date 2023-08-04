@@ -2,6 +2,7 @@ package com.kaajjo.libresudoku.ui.import_from_file
 
 import android.net.Uri
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
@@ -39,7 +40,7 @@ class ImportFromFileViewModel @Inject constructor(
 
     // uid of the folder where to add the imported sudoku.
     // If uid = -1, a new folder will be created (ask the user for the folder name)
-    val folderUid by mutableStateOf(savedStateHandle.get<Long>("folder_uid") ?: -1L)
+    val folderUid by mutableLongStateOf(savedStateHandle.get<Long>("folder_uid") ?: -1L)
 
     var isLoading by mutableStateOf(true)
     var isSaved by mutableStateOf(false)

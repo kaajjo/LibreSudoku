@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.kaajjo.libresudoku"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.kaajjo.libresudoku"
         minSdk = 26
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 7
         versionName = "1.5.0"
 
@@ -42,11 +42,12 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.4"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -73,11 +74,8 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
 
     implementation(libs.navigation.compose)
-    implementation(libs.accompanist.navigation.animation)
 
     implementation(libs.accompanist.systemuicontroller)
-
-    implementation(libs.accompanist.pager)
     implementation(libs.accompanist.pager.indicators)
 
     implementation(libs.hilt)

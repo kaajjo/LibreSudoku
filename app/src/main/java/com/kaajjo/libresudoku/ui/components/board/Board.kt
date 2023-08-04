@@ -15,6 +15,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -90,11 +92,11 @@ fun Board(
         val maxWidth = constraints.maxWidth.toFloat()
 
         // single cell size
-        val cellSize by remember(size) { mutableStateOf(maxWidth / size.toFloat()) }
+        val cellSize by remember(size) { mutableFloatStateOf(maxWidth / size.toFloat()) }
         // div for notes in one row in cell
-        val cellSizeDivWidth by remember(size) { mutableStateOf(cellSize / ceil(sqrt(size.toFloat()))) }
+        val cellSizeDivWidth by remember(size) { mutableFloatStateOf(cellSize / ceil(sqrt(size.toFloat()))) }
         // div for note in one column in cell
-        val cellSizeDivHeight by remember(size) { mutableStateOf(cellSize / floor(sqrt(size.toFloat()))) }
+        val cellSizeDivHeight by remember(size) { mutableFloatStateOf(cellSize / floor(sqrt(size.toFloat()))) }
 
         val errorColor = boardColors.errorColor
         val foregroundColor = boardColors.foregroundColor
@@ -107,8 +109,8 @@ fun Board(
         // highlight (cells)
         val highlightColor = boardColors.highlightColor
 
-        val vertThick by remember(size) { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
-        val horThick by remember(size) { mutableStateOf(ceil(sqrt(size.toFloat())).toInt()) }
+        val vertThick by remember(size) { mutableIntStateOf(floor(sqrt(size.toFloat())).toInt()) }
+        val horThick by remember(size) { mutableIntStateOf(ceil(sqrt(size.toFloat())).toInt()) }
 
         var fontSizePx = with(LocalDensity.current) { mainTextSize.toPx() }
         var noteSizePx = with(LocalDensity.current) { noteTextSize.toPx() }
@@ -193,7 +195,7 @@ fun Board(
             }
         }
 
-        var zoom by remember(enabled) { mutableStateOf(1f) }
+        var zoom by remember(enabled) { mutableFloatStateOf(1f) }
         var offset by remember(enabled) { mutableStateOf(Offset.Zero) }
 
         val boardModifier = Modifier

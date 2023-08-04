@@ -35,11 +35,11 @@ import androidx.compose.material.icons.rounded.Help
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -55,6 +55,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -271,7 +272,7 @@ fun FoldersScreen(
                     }
                     items(folders) { item ->
                         val puzzlesCount by remember(viewModel.puzzlesCountInFolder) {
-                            mutableStateOf(
+                            mutableIntStateOf(
                                 viewModel.puzzlesCountInFolder
                                     .firstOrNull { it.first == item.uid }?.second ?: 0
                             )
@@ -289,7 +290,7 @@ fun FoldersScreen(
                                 }
                             }
                         )
-                        Divider()
+                        HorizontalDivider()
                     }
                 }
             }
@@ -412,7 +413,7 @@ fun FoldersScreen(
 
     LaunchedEffect(contentUri) {
         contentUri?.let {
-            navigateImportSudokuFile(it.toString())
+            navigateImportSudokuFile(Uri.encode(it.toString()))
         }
     }
 

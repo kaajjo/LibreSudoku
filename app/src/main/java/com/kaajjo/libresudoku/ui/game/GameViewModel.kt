@@ -1,6 +1,7 @@
 package com.kaajjo.libresudoku.ui.game
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.TextUnit
@@ -120,7 +121,7 @@ class GameViewModel @Inject constructor(
     var remainingUsesList = emptyList<Int>()
     val firstGame = appSettingsManager.firstGame
     private lateinit var boardEntity: SudokuBoard
-    var size by mutableStateOf(9)
+    var size by mutableIntStateOf(9)
     var gameType by mutableStateOf(GameType.Unspecified)
     var gameDifficulty by mutableStateOf(GameDifficulty.Unspecified)
 
@@ -171,7 +172,7 @@ class GameViewModel @Inject constructor(
 
     // mistakes
     // used for mistakes limit
-    var mistakesCount by mutableStateOf(0)
+    var mistakesCount by mutableIntStateOf(0)
 
     // notes
     var notesToggled by mutableStateOf(false)
@@ -187,7 +188,7 @@ class GameViewModel @Inject constructor(
     var gameCompleted by mutableStateOf(false)
 
     // Selected number for digit first method
-    var digitFirstNumber by mutableStateOf(0)
+    var digitFirstNumber by mutableIntStateOf(0)
     private val inputMethod = appSettingsManager.inputMethod
         .stateIn(
             scope = viewModelScope,

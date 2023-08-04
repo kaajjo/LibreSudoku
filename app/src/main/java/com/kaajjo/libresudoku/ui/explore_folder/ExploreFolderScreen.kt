@@ -76,6 +76,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -143,7 +144,7 @@ fun ExploreFolderScreen(
     LaunchedEffect(contentUri) {
         contentUri?.let { uri ->
             folder?.let { folder ->
-                navigateImportFromFile(Pair(uri.toString(), folder.uid))
+                navigateImportFromFile(Pair(Uri.encode(uri.toString()), folder.uid))
             }
         }
     }
@@ -199,7 +200,7 @@ fun ExploreFolderScreen(
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
             if (folder != null && games.isNotEmpty()) {
-                var expandedGameUid by rememberSaveable { mutableStateOf(-1L) }
+                var expandedGameUid by rememberSaveable { mutableLongStateOf(-1L) }
 
                 LaunchedEffect(viewModel.inSelectionMode) {
                     if (viewModel.inSelectionMode) expandedGameUid = -1L

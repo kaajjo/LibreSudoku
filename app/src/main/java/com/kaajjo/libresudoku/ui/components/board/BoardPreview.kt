@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -57,13 +59,13 @@ fun BoardPreview(
     ) {
         val maxWidth = constraints.maxWidth.toFloat()
 
-        val cellSize by remember(size) { mutableStateOf(maxWidth / size.toFloat()) }
+        val cellSize by remember(size) { mutableFloatStateOf(maxWidth / size.toFloat()) }
         val foregroundColor = boardColors.altForegroundColor
         val thickLineColor = boardColors.thickLineColor
         val thinLineColor = boardColors.thinLineColor
 
-        val vertThick by remember(size) { mutableStateOf(floor(sqrt(size.toFloat())).toInt()) }
-        val horThick by remember(size) { mutableStateOf(ceil(sqrt(size.toFloat())).toInt()) }
+        val vertThick by remember(size) { mutableIntStateOf(floor(sqrt(size.toFloat())).toInt()) }
+        val horThick by remember(size) { mutableIntStateOf(ceil(sqrt(size.toFloat())).toInt()) }
 
         val fontSizePx = with(LocalDensity.current) { mainTextSize.toPx() }
 
@@ -76,7 +78,7 @@ fun BoardPreview(
                 }
             )
         }
-        val width by remember { mutableStateOf(textPaint.measureText("1")) }
+        val width by remember { mutableFloatStateOf(textPaint.measureText("1")) }
         val boardStrokeWidth = with(LocalDensity.current) { 1.1.dp.toPx() }
         val thinLineWidth = with(LocalDensity.current) { 0.6.dp.toPx() }
         val thickLineWidth = with(LocalDensity.current) { 1.1.dp.toPx() }
