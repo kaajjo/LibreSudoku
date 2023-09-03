@@ -20,9 +20,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +48,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
@@ -57,23 +58,26 @@ import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.destinations.SavedGameScreenDestination
 import com.kaajjo.libresudoku.ui.components.AnimatedIconFilterChip
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
-import com.kaajjo.libresudoku.ui.create_edit_sudoku.GameStateFilter
 import com.kaajjo.libresudoku.ui.util.disableSplitMotionEvents
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import kotlin.math.sqrt
 import kotlin.time.toKotlinDuration
 
+@Destination(style = AnimatedNavigation::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GamesHistoryScreen(
-    navigateBack: () -> Unit,
-    navigateSavedGame: (Long) -> Unit,
-    viewModel: HistoryViewModel
+    viewModel: HistoryViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -86,7 +90,7 @@ fun GamesHistoryScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.history_title)) },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = { navigator.popBackStack() }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
@@ -148,13 +152,12 @@ fun GamesHistoryScreen(
                             difficulty = stringResource(game.second.difficulty.resName),
                             type = stringResource(game.second.type.resName),
                             onClick = {
-                                navigateSavedGame(game.first.uid)
-
+                                navigator.navigate(SavedGameScreenDestination(gameUid = game.first.uid))
                             },
                             dateTimeFormatter = AppSettingsManager.dateFormat(dateFormat)
                         )
                         if (index < filteredAndSortedBoards.size - 1) {
-                            Divider(
+                            HorizontalDivider(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clip(CircleShape)

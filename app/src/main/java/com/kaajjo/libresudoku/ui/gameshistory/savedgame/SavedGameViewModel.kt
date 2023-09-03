@@ -20,6 +20,7 @@ import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import com.kaajjo.libresudoku.domain.usecase.folder.GetFolderUseCase
+import com.kaajjo.libresudoku.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +41,8 @@ class SavedGameViewModel
     themeSettingsManager: ThemeSettingsManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    val boardUid = savedStateHandle.get<Long>("uid")
+    val navArgs: SavedGameScreenNavArgs = savedStateHandle.navArgs()
+    val boardUid = navArgs.gameUid
 
     val fontSize = appSettingsManager.fontSize
     val dateFormat = appSettingsManager.dateFormat
@@ -64,8 +66,8 @@ class SavedGameViewModel
 
     fun updateGameDetails() {
         viewModelScope.launch(Dispatchers.IO) {
-            boardEntity = boardRepository.get(boardUid ?: 0)
-            savedGame = savedGameRepository.get(boardUid ?: 0)
+            boardEntity = boardRepository.get(boardUid)
+            savedGame = savedGameRepository.get(boardUid)
 
             boardEntity?.let { boardEntity ->
                 savedGame?.let { savedGame ->

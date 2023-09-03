@@ -18,6 +18,7 @@ import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.domain.usecase.folder.InsertFolderUseCase
+import com.kaajjo.libresudoku.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,11 +37,13 @@ class ImportFromFileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val fileUri: Uri? by mutableStateOf(savedStateHandle.get<String>("uri")?.toUri())
+    private val _navArgs: ImportFromFileScreenNavArgs = savedStateHandle.navArgs()
+    var fileUri: Uri? by mutableStateOf(_navArgs.fileUri?.toUri())
+
 
     // uid of the folder where to add the imported sudoku.
     // If uid = -1, a new folder will be created (ask the user for the folder name)
-    val folderUid by mutableLongStateOf(savedStateHandle.get<Long>("folder_uid") ?: -1L)
+    val folderUid by mutableLongStateOf(_navArgs.folderUid)
 
     var isLoading by mutableStateOf(true)
     var isSaved by mutableStateOf(false)

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.2.0-alpha14"
+agp = "8.2.0-beta01"
 kotlin = "1.9.0"
 room = "2.5.2"
 aboutLibraries = '10.6.1'
@@ -17,6 +17,7 @@ accompanist-systemuicontroller = "0.28.0"
 navigation-compose = "2.7.0-rc01"
 acra = "5.9.7"
 ksp = "1.9.0-1.0.12"
+compose-destinations = "1.9.51"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx"}
@@ -45,6 +46,8 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 aboutLibraries = { group = "com.mikepenz", name = "aboutlibraries-compose", version.ref = "aboutLibraries" }
 acra-dialog = { group = "ch.acra", name = "acra-dialog", version.ref = "acra" }
 acra-mail = { group = "ch.acra", name = "acra-mail", version.ref = "acra" }
+compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "animations-core", version.ref = "compose-destinations" }
+compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "compose-destinations" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

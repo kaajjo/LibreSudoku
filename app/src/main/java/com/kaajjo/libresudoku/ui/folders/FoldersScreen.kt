@@ -74,25 +74,30 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.destinations.ExploreFolderScreenDestination
+import com.kaajjo.libresudoku.destinations.ImportFromFileScreenDestination
+import com.kaajjo.libresudoku.destinations.SavedGameScreenDestination
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.sqrt
 
+@Destination(style = AnimatedNavigation::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoldersScreen(
-    viewModel: FoldersViewModel,
-    navigateBack: () -> Unit,
-    navigateExploreFolder: (Int) -> Unit,
-    navigateImportSudokuFile: (String) -> Unit,
-    navigateViewSavedGame: (Long) -> Unit
+    viewModel: FoldersViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -137,7 +142,7 @@ fun FoldersScreen(
                         Text(stringResource(R.string.title_folders))
                     },
                     navigationIcon = {
-                        IconButton(onClick = navigateBack) {
+                        IconButton(onClick = { navigator.popBackStack() }) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_round_arrow_back_24),
                                 contentDescription = null
@@ -209,7 +214,7 @@ fun FoldersScreen(
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = navigateBack) {
+                        IconButton(onClick = { navigator.popBackStack() }) {
                             Icon(
                                 imageVector = Icons.Rounded.Close,
                                 contentDescription = null
@@ -250,7 +255,13 @@ fun FoldersScreen(
                                         ElevatedCard(
                                             modifier = Modifier
                                                 .clip(CardDefaults.elevatedShape)
-                                                .clickable { navigateViewSavedGame(it.uid) },
+                                                .clickable {
+                                                    navigator.navigate(
+                                                        SavedGameScreenDestination(
+                                                            gameUid = it.uid
+                                                        )
+                                                    )
+                                                },
                                         ) {
                                             Box(
                                                 modifier = Modifier
@@ -281,7 +292,7 @@ fun FoldersScreen(
                             name = item.name,
                             puzzlesCount = puzzlesCount,
                             onClick = {
-                                navigateExploreFolder(item.uid.toInt())
+                                navigator.navigate(ExploreFolderScreenDestination(folderUid = item.uid))
                             },
                             onLongClick = {
                                 viewModel.selectedFolder = item
@@ -413,7 +424,7 @@ fun FoldersScreen(
 
     LaunchedEffect(contentUri) {
         contentUri?.let {
-            navigateImportSudokuFile(Uri.encode(it.toString()))
+            navigator.navigate(ImportFromFileScreenDestination(fileUri = it.toString()))
         }
     }
 

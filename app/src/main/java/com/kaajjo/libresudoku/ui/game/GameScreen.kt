@@ -5,14 +5,12 @@ import android.view.HapticFeedbackConstants
 import android.view.View
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -52,6 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -61,22 +60,26 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.destinations.SettingsScreenDestination
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
 import com.kaajjo.libresudoku.ui.onboarding.FirstGameDialog
 import com.kaajjo.libresudoku.ui.util.ReverseArrangement
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
-    ExperimentalLayoutApi::class
+@Destination(
+    style = AnimatedNavigation::class,
+    navArgsDelegate = GameScreenNavArgs::class
 )
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreen(
-    navigateBack: () -> Unit,
-    navigateSettings: () -> Unit,
-    viewModel: GameViewModel
+    viewModel: GameViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
     val localView = LocalView.current // vibration
 
@@ -94,7 +97,7 @@ fun GameScreen(
     var restartButtonAngleState by remember { mutableFloatStateOf(0f) }
     val restartButtonAnimation: Float by animateFloatAsState(
         targetValue = restartButtonAngleState,
-        animationSpec = tween(durationMillis = 250)
+        animationSpec = tween(durationMillis = 250), label = "restartButtonAnimation"
     )
 
     LaunchedEffect(Unit) {
@@ -122,7 +125,7 @@ fun GameScreen(
             TopAppBar(
                 title = { },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = { navigator.popBackStack() }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
@@ -139,7 +142,8 @@ fun GameScreen(
                             ) {
                                 AnimatedContent(
                                     if (viewModel.showSolution) stringResource(R.string.action_show_mine_sudoku)
-                                    else stringResource(R.string.action_show_solution)
+                                    else stringResource(R.string.action_show_solution),
+                                    label = "Show solution/mine button"
                                 ) {
                                     Text(it)
                                 }
@@ -149,7 +153,8 @@ fun GameScreen(
 
                     AnimatedVisibility(visible = !viewModel.endGame) {
                         val rotationAngle by animateFloatAsState(
-                            targetValue = if (viewModel.gamePlaying) 0f else 360f
+                            targetValue = if (viewModel.gamePlaying) 0f else 360f,
+                            label = "Play/Pause game icon rotation"
                         )
                         IconButton(onClick = {
                             if (!viewModel.gamePlaying) viewModel.startTimer() else viewModel.pauseTimer()
@@ -194,7 +199,7 @@ fun GameScreen(
                                     viewModel.giveUpDialog = true
                                 },
                                 onSettingsClick = {
-                                    navigateSettings()
+                                    navigator.navigate(SettingsScreenDestination(launchedFromGame = true))
                                     viewModel.showMenu = false
                                 }
                             )
@@ -254,8 +259,14 @@ fun GameScreen(
                 val positionLines by viewModel.positionLines.collectAsStateWithLifecycle(
                     initialValue = PreferencesConstants.DEFAULT_POSITION_LINES
                 )
-                val boardBlur by animateDpAsState(targetValue = if (viewModel.gamePlaying || viewModel.endGame) 0.dp else 10.dp)
-                val scale by animateFloatAsState(targetValue = if (viewModel.gamePlaying || viewModel.endGame) 1f else 0.90f)
+                val boardBlur by animateDpAsState(
+                    targetValue = if (viewModel.gamePlaying || viewModel.endGame) 0.dp else 10.dp,
+                    label = "Game board blur"
+                )
+                val scale by animateFloatAsState(
+                    targetValue = if (viewModel.gamePlaying || viewModel.endGame) 1f else 0.90f,
+                    label = "Game board scale"
+                )
                 val crossHighlight by viewModel.crossHighlight.collectAsStateWithLifecycle(
                     initialValue = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT
                 )
@@ -303,7 +314,7 @@ fun GameScreen(
                 initialValue = PreferencesConstants.DEFAULT_FUN_KEYBOARD_OVER_NUM
             )
 
-            AnimatedContent(!viewModel.endGame) { contentState ->
+            AnimatedContent(!viewModel.endGame, label = "") { contentState ->
                 if (contentState) {
                     Column(
                         verticalArrangement = if (funKeyboardOverNum) ReverseArrangement else Arrangement.Top

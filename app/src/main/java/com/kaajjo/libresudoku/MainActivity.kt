@@ -1,76 +1,51 @@
 package com.kaajjo.libresudoku
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import androidx.navigation.navDeepLink
 import androidx.navigation.navOptions
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
-import com.kaajjo.libresudoku.ui.components.animatedComposable
-import com.kaajjo.libresudoku.ui.create_edit_sudoku.CreateSudokuScreen
-import com.kaajjo.libresudoku.ui.explore_folder.ExploreFolderScreen
-import com.kaajjo.libresudoku.ui.folders.FoldersScreen
-import com.kaajjo.libresudoku.ui.game.GameScreen
-import com.kaajjo.libresudoku.ui.gameshistory.GamesHistoryScreen
-import com.kaajjo.libresudoku.ui.gameshistory.savedgame.SavedGameScreen
-import com.kaajjo.libresudoku.ui.home.HomeScreen
-import com.kaajjo.libresudoku.ui.import_from_file.ImportFromFileScreen
-import com.kaajjo.libresudoku.ui.learn.LearnScreen
-import com.kaajjo.libresudoku.ui.more.MoreScreen
-import com.kaajjo.libresudoku.ui.more.about.AboutLibrariesScreen
-import com.kaajjo.libresudoku.ui.more.about.AboutScreen
-import com.kaajjo.libresudoku.ui.onboarding.WelcomeScreen
-import com.kaajjo.libresudoku.ui.settings.SettingsScreen
-import com.kaajjo.libresudoku.ui.settings.boardtheme.SettingsBoardTheme
-import com.kaajjo.libresudoku.ui.statistics.StatisticsScreen
+import com.kaajjo.libresudoku.destinations.HomeScreenDestination
+import com.kaajjo.libresudoku.destinations.ImportFromFileScreenDestination
+import com.kaajjo.libresudoku.destinations.MoreScreenDestination
+import com.kaajjo.libresudoku.destinations.StatisticsScreenDestination
+import com.kaajjo.libresudoku.destinations.WelcomeScreenDestination
+import com.kaajjo.libresudoku.ui.components.navigation_bar.NavigationBarComponent
 import com.kaajjo.libresudoku.ui.theme.AppTheme
 import com.kaajjo.libresudoku.ui.theme.BoardColors
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.ui.theme.SudokuBoardColorsImpl
-import com.kaajjo.libresudoku.ui.util.Route
 import com.kaajjo.libresudoku.ui.util.findActivity
+import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.annotation.DeepLink
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -82,7 +57,6 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var settings: AppSettingsManager
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -113,7 +87,6 @@ class MainActivity : AppCompatActivity() {
                     else -> AppTheme.Green
                 }
             ) {
-                val context = LocalContext.current
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
 
@@ -121,16 +94,16 @@ class MainActivity : AppCompatActivity() {
 
                 LaunchedEffect(navBackStackEntry) {
                     bottomBarState = when (navBackStackEntry?.destination?.route) {
-                        Route.STATISTICS, Route.HOME, Route.MORE -> true
+                        StatisticsScreenDestination.route, HomeScreenDestination.route, MoreScreenDestination.route -> true
                         else -> false
                     }
                 }
                 LaunchedEffect(firstLaunch) {
                     if (firstLaunch) {
                         navController.navigate(
-                            route = Route.WELCOME_SCREEN,
+                            route = WelcomeScreenDestination.route,
                             navOptions = navOptions {
-                                popUpTo(Route.HOME) {
+                                popUpTo(HomeScreenDestination.route) {
                                     inclusive = true
                                 }
                             }
@@ -168,301 +141,17 @@ class MainActivity : AppCompatActivity() {
                 CompositionLocalProvider(LocalBoardColors provides boardColors) {
                     Scaffold(
                         bottomBar = {
-                            NavigationBar(
-                                navController = navController,
-                                bottomBarState = bottomBarState
-                            )
+                            NavigationBarComponent(navController, bottomBarState)
                         },
-                        contentWindowInsets = WindowInsets(0.dp)
+                        contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp)
                     ) { paddingValues ->
-                        NavHost(
+                        DestinationsNavHost(
+                            navGraph = NavGraphs.root,
                             navController = navController,
-                            startDestination = Route.HOME,
+                            startRoute = NavGraphs.root.startRoute,
                             modifier = Modifier.padding(paddingValues)
-                        ) {
-                            animatedComposable(Route.HOME) {
-                                HomeScreen(
-                                    navigatePlayGame = {
-                                        navController.navigate("game/${it.first}/${it.second}")
-                                    },
-                                    hiltViewModel()
-                                )
-                            }
-
-                            animatedComposable(Route.MORE) {
-                                MoreScreen(
-                                    navigateSettings = { navController.navigate("settings/?fromGame=false") },
-                                    navigateLearn = { navController.navigate(Route.LEARN) },
-                                    navigateAbout = { navController.navigate(Route.ABOUT) },
-                                    navigateImport = { navController.navigate(Route.FOLDERS) }
-                                )
-                            }
-
-                            animatedComposable(Route.ABOUT) {
-                                AboutScreen(
-                                    navigateBack = { navController.popBackStack() },
-                                    navigateOpenSourceLicenses = { navController.navigate(Route.OPEN_SOURCE_LICENSES) }
-                                )
-                            }
-
-                            animatedComposable(Route.WELCOME_SCREEN) {
-                                WelcomeScreen(
-                                    navigateToGame = {
-                                        navController.popBackStack()
-                                        navController.navigate(Route.HOME)
-                                    },
-                                    hiltViewModel()
-                                )
-                            }
-
-                            animatedComposable(Route.STATISTICS) {
-                                StatisticsScreen(
-                                    navigateHistory = { navController.navigate(Route.HISTORY) },
-                                    navigateSavedGame = { navController.navigate("saved_game/${it}") },
-                                    hiltViewModel()
-                                )
-                            }
-
-                            animatedComposable(Route.HISTORY) {
-                                GamesHistoryScreen(
-                                    navigateBack = { navController.popBackStack() },
-                                    navigateSavedGame = { uid ->
-                                        navController.navigate(
-                                            "saved_game/${uid}"
-                                        )
-                                    },
-                                    hiltViewModel()
-                                )
-                            }
-
-                            animatedComposable(Route.LEARN) {
-                                LearnScreen { navController.popBackStack() }
-                            }
-
-                            animatedComposable(Route.OPEN_SOURCE_LICENSES) {
-                                AboutLibrariesScreen { navController.popBackStack() }
-                            }
-
-                            animatedComposable(
-                                route = "create_edit_sudoku/{game_uid}/{folder_uid}",
-                                arguments = listOf(
-                                    navArgument("game_uid") {
-                                        type = NavType.LongType
-                                    }, // used for editing
-                                    navArgument("folder_uid") {
-                                        type = NavType.LongType
-                                    } // folder where to save
-                                )
-                            ) {
-                                CreateSudokuScreen(
-                                    navigateBack = { navController.popBackStack() },
-                                    hiltViewModel()
-                                )
-                            }
-                            animatedComposable(
-                                route = Route.SETTINGS,
-                                arguments = listOf(navArgument("fromGame") {
-                                    defaultValue = false
-                                    type = NavType.BoolType
-                                })
-                            ) {
-                                SettingsScreen(
-                                    navigateBack = { navController.popBackStack() },
-                                    hiltViewModel(),
-                                    navigateBoardSettings = { navController.navigate("settings_board_theme") }
-                                )
-                            }
-
-                            animatedComposable(
-                                route = Route.GAME,
-                                arguments = listOf(
-                                    navArgument(name = "uid") { type = NavType.LongType },
-                                    navArgument(name = "saved") {
-                                        type = NavType.BoolType
-                                        defaultValue = false
-                                    }
-                                )
-                            ) {
-                                GameScreen(
-                                    navigateBack = { navController.popBackStack() },
-                                    navigateSettings = {
-                                        navController.navigate("settings/?fromGame=true")
-                                    },
-                                    hiltViewModel()
-                                )
-                            }
-
-                            animatedComposable(
-                                route = Route.SAVED_GAME,
-                                arguments = listOf(navArgument("uid") { type = NavType.LongType })
-                            ) {
-                                SavedGameScreen(
-                                    navigateBack = { navController.popBackStack() },
-                                    navigatePlayGame = { uid ->
-                                        navController.navigate(
-                                            "game/${uid}/${true}"
-                                        ) {
-                                            popUpTo(Route.HISTORY)
-                                        }
-                                    },
-                                    navigateToFolder = { uid ->
-                                        navController.navigate("explore_folder/$uid") {
-                                            popUpTo("history")
-                                        }
-                                    },
-                                    hiltViewModel()
-                                )
-                            }
-
-                            animatedComposable(Route.FOLDERS) {
-                                FoldersScreen(
-                                    viewModel = hiltViewModel(),
-                                    navigateBack = { navController.popBackStack() },
-                                    navigateExploreFolder = { uid ->
-                                        navController.navigate("explore_folder/$uid")
-                                    },
-                                    navigateImportSudokuFile = { uri ->
-                                        navController.navigate("import_sudoku_file?$uri?-1")
-                                    },
-                                    navigateViewSavedGame = { uid ->
-                                        navController.navigate("saved_game/${uid}")
-                                    }
-                                )
-                            }
-
-                            animatedComposable(
-                                route = "import_sudoku_file?{uri}?{folder_uid}",
-                                arguments = listOf(
-                                    navArgument("uri") { type = NavType.StringType },
-                                    navArgument("folder_uid") { type = NavType.LongType }
-                                )
-                            ) {
-                                ImportFromFileScreen(
-                                    viewModel = hiltViewModel(),
-                                    navigateBack = {
-                                        val activity = context.findActivity()
-                                        activity?.intent?.data = null
-
-                                        navController.navigateUp()
-                                    }
-                                )
-                            }
-
-                            animatedComposable(
-                                route = "explore_folder/{uid}",
-                                arguments = listOf(navArgument("uid") { type = NavType.LongType })
-                            ) {
-                                ExploreFolderScreen(
-                                    viewModel = hiltViewModel(),
-                                    navigateBack = { navController.popBackStack() },
-                                    navigatePlayGame = { args ->
-                                        navController.navigate(
-                                            "game/${args.first}/${args.second}"
-                                        ) {
-                                            popUpTo("explore_folder/${args.third}")
-                                        }
-                                    },
-                                    navigateImportFromFile = { args ->
-                                        // First - uri. Second = folder uid
-                                        navController.navigate("import_sudoku_file?${args.first}?${args.second}")
-                                    },
-                                    navigateEditGame = { args ->
-                                        navController.navigate("create_edit_sudoku/${args.first}/${args.second}")
-                                    },
-                                    navigateCreateSudoku = { folderUid ->
-                                        navController.navigate("create_edit_sudoku/-1/$folderUid")
-                                    }
-                                )
-                            }
-
-                            animatedComposable(
-                                route = "import_sudoku_file_deeplink",
-                                deepLinks = listOf(
-                                    navDeepLink {
-                                        uriPattern = "content://"
-                                        mimeType = "*/*"
-                                        action = Intent.ACTION_VIEW
-                                    }
-                                )
-                            ) {
-                                val activity = context.findActivity()
-                                if (activity != null) {
-                                    val intentData = activity.intent.data
-                                    if (intentData != null) {
-                                        navController.navigate("import_sudoku_file?${Uri.encode(intentData.toString())}?-1")
-                                    }
-                                    LaunchedEffect(intentData) {
-                                        if (activity.intent.data == null) {
-                                            activity.finish()
-                                        }
-                                    }
-                                }
-                            }
-
-                            animatedComposable(Route.SETTINGS_BOARD_THEME) {
-                                SettingsBoardTheme(
-                                    viewModel = hiltViewModel(),
-                                    navigateBack = { navController.popBackStack() }
-                                )
-                            }
-                        }
+                        )
                     }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun NavigationBar(
-    navController: NavController,
-    bottomBarState: Boolean
-) {
-    var selectedScreen by remember { mutableStateOf(Route.HOME) }
-    val navBarScreens = listOf(
-        Pair(Route.STATISTICS, R.string.nav_bar_statistics),
-        Pair(Route.HOME, R.string.nav_bar_home),
-        Pair(Route.MORE, R.string.nav_bar_more),
-    )
-    val navBarIcons = listOf(
-        painterResource(R.drawable.ic_round_info_24),
-        painterResource(R.drawable.ic_round_home_24),
-        painterResource(R.drawable.ic_round_more_horiz_24)
-    )
-    AnimatedContent(
-        targetState = bottomBarState
-    ) { visible ->
-        if (visible) {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-            LaunchedEffect(currentDestination) {
-                currentDestination?.let {
-                    selectedScreen = it.route ?: ""
-                }
-            }
-
-            NavigationBar {
-                navBarScreens.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
-                                painter = navBarIcons[index],
-                                contentDescription = null
-                            )
-                        },
-                        selected = selectedScreen == item.first,
-                        label = {
-                            Text(
-                                text = stringResource(item.second),
-                                fontWeight = FontWeight.Bold
-                            )
-                        },
-                        onClick = {
-                            navController.navigate(item.first) {
-                                launchSingleTop = true
-                            }
-                        }
-                    )
                 }
             }
         }
@@ -481,4 +170,34 @@ class MainActivityViewModel
     val firstLaunch = appSettingsManager.firstLaunch
     val currentTheme = themeSettingsManager.currentTheme
     val monetSudokuBoard = themeSettingsManager.monetSudokuBoard
+}
+
+@Destination(
+    deepLinks = [
+        DeepLink(
+            uriPattern = "content://",
+            mimeType = "*/*",
+            action = Intent.ACTION_VIEW
+        )
+    ]
+)
+@Composable
+fun HandleImportFromFileDeepLink(
+    navigator: DestinationsNavigator
+) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        val activity = context.findActivity()
+        if (activity != null) {
+            val intentData = activity.intent.data
+            if (intentData != null) {
+                navigator.navigate(
+                    ImportFromFileScreenDestination(
+                        fileUri = intentData.toString(),
+                        fromDeepLink = true
+                    )
+                )
+            }
+        }
+    }
 }

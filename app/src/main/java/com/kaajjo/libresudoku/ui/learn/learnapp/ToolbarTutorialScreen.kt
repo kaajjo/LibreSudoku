@@ -6,16 +6,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.learn.components.TutorialBase
 import com.kaajjo.libresudoku.ui.onboarding.FirstGameScreen
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@Destination(style = AnimatedNavigation::class)
 @Composable
-fun ToolbarTutorialScreen(helpNavController: NavController) {
+fun ToolbarTutorialScreen(navigator: DestinationsNavigator) {
     TutorialBase(
         title = stringResource(R.string.learn_app_toolbar),
-        helpNavController = helpNavController
+        navigator = navigator
     ) {
         FirstGameScreen()
         Text(

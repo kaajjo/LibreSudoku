@@ -21,22 +21,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.destinations.HomeScreenDestination
 import com.kaajjo.libresudoku.ui.components.board.Board
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Destination
 @Composable
 fun WelcomeScreen(
-    navigateToGame: () -> Unit,
-    viewModel: WelcomeViewModel
+    viewModel: WelcomeViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
     Column(
         modifier = Modifier
@@ -62,7 +67,8 @@ fun WelcomeScreen(
                 board = viewModel.previewBoard,
                 onFinishedClick = {
                     viewModel.setFirstLaunch()
-                    navigateToGame()
+                    navigator.popBackStack()
+                    navigator.navigate(HomeScreenDestination())
                 }
             )
         }

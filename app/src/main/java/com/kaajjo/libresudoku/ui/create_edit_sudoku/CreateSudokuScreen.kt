@@ -42,23 +42,31 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
 import com.kaajjo.libresudoku.ui.util.ReverseArrangement
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@Destination(
+    style = AnimatedNavigation::class,
+    navArgsDelegate = CreateSudokuScreenNavArgs::class
+)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateSudokuScreen(
-    navigateBack: () -> Unit,
-    viewModel: CreateSudokuViewModel
+    viewModel: CreateSudokuViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
     var importStringDialog by remember { mutableStateOf(false) }
     Scaffold(
@@ -73,7 +81,7 @@ fun CreateSudokuScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = { navigator.popBackStack() }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
@@ -168,7 +176,7 @@ fun CreateSudokuScreen(
                     enabled = !viewModel.gameBoard.flatten().all { it.value == 0 },
                     onClick = {
                         if (viewModel.saveGame()) {
-                            navigateBack()
+                            navigator.popBackStack()
                         }
                     }) {
                     Text(stringResource(R.string.action_save))
@@ -330,7 +338,6 @@ private fun GameTypeMenu(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ImportStringSudokuDialog(
     textValue: String,

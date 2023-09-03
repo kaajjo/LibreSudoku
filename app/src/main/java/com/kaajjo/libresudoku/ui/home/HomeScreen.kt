@@ -1,7 +1,6 @@
 package com.kaajjo.libresudoku.ui.home
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -38,14 +37,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.destinations.GameScreenDestination
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.runBlocking
 
+@Destination(style = AnimatedNavigation::class)
+@RootNavGraph(start = true)
 @Composable
 fun HomeScreen(
-    navigatePlayGame: (Pair<Long, Boolean>) -> Unit,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
     var continueGameDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -63,7 +70,12 @@ fun HomeScreen(
             runBlocking {
                 //viewModel.saveToDatabase()
                 val saved = lastGame?.completed ?: false
-                navigatePlayGame(Pair(viewModel.insertedBoardUid, saved))
+                navigator.navigate(
+                    GameScreenDestination(
+                        gameUid = viewModel.insertedBoardUid,
+                        playedBefore = saved
+                    )
+                )
             }
         }
 
@@ -90,7 +102,12 @@ fun HomeScreen(
             if (lastGame != null && !lastGame!!.completed) {
                 Button(onClick = {
                     lastGame?.let {
-                        navigatePlayGame(Pair(it.uid, true))
+                        navigator.navigate(
+                            GameScreenDestination(
+                                gameUid = it.uid,
+                                playedBefore = true
+                            )
+                        )
                     }
                 }) {
                     Text(stringResource(R.string.action_continue))
@@ -189,7 +206,6 @@ fun GeneratingDialog(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HorizontalPicker(
     modifier: Modifier = Modifier,
@@ -212,7 +228,7 @@ fun HorizontalPicker(
         }
         AnimatedContent(
             targetState = text,
-            transitionSpec = { fadeIn() togetherWith fadeOut() }
+            transitionSpec = { fadeIn() togetherWith fadeOut() }, label = "Animated text"
         ) { text ->
             Text(text)
         }
