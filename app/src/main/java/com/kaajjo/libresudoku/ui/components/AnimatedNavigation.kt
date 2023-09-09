@@ -1,45 +1,38 @@
 package com.kaajjo.libresudoku.ui.components
 
-import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.runtime.Composable
-import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDeepLink
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
+import com.ramcosta.composedestinations.spec.DestinationStyle
 
-fun NavGraphBuilder.animatedComposable(
-    route: String,
-    arguments: List<NamedNavArgument> = emptyList(),
-    deepLinks: List<NavDeepLink> = emptyList(),
-    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
-) = composable(
-    route = route,
-    arguments = arguments,
-    deepLinks = deepLinks,
-    enterTransition = {
-        fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+object AnimatedNavigation : DestinationStyle.Animated {
+
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.enterTransition(): EnterTransition {
+        return fadeIn(animationSpec = tween(220, delayMillis = 90)) +
                 scaleIn(
                     initialScale = 0.92f,
                     animationSpec = tween(220, delayMillis = 90)
                 )
-    },
-    exitTransition = {
-        fadeOut(animationSpec = tween(90))
-    },
-    popEnterTransition = {
-        fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+    }
+
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition(): EnterTransition {
+        return fadeIn(animationSpec = tween(220, delayMillis = 90)) +
                 scaleIn(
                     initialScale = 0.92f,
                     animationSpec = tween(220, delayMillis = 90)
                 )
-    },
-    popExitTransition = {
-        fadeOut(animationSpec = tween(90))
-    },
-    content = content
-)
+    }
+
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.popExitTransition(): ExitTransition {
+        return fadeOut(animationSpec = tween(90))
+    }
+
+    override fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition(): ExitTransition {
+        return fadeOut(animationSpec = tween(90))
+    }
+}

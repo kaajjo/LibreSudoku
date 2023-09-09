@@ -93,4 +93,7 @@ dependencies {
     implementation(libs.acra.mail)
 
     implementation(libs.aboutLibraries)
+
+    implementation(libs.compose.destinations)
+    ksp(libs.compose.destinations.ksp)
 }

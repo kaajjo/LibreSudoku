@@ -12,23 +12,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.SudokuParser
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.learn.components.TutorialBase
 import com.kaajjo.libresudoku.ui.learn.components.TutorialBottomContent
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@Destination(style = AnimatedNavigation::class)
 @Composable
 fun LearnBasic(
-    helpNavController: NavController
+    navigator: DestinationsNavigator
 ) {
     TutorialBase(
         title = stringResource(R.string.learn_basic_title),
-        helpNavController = helpNavController
+        navigator = navigator
     ) {
         val sudokuParser = SudokuParser()
         var board by remember {
@@ -82,11 +85,13 @@ fun LearnBasic(
                     GameType.Default9x9,
                     emptySeparator = '.'
                 )
+
                 3 -> board = sudokuParser.parseBoard(
                     "2...7..38.....6.7.3...4.6....8.2.7..1.......6..7.3.4....4.8...986.4.....91..6...2",
                     GameType.Default9x9,
                     emptySeparator = '.'
                 )
+
                 5 -> board = sudokuParser.parseBoard(
                     "24..7..38.....6.7.3...4.6....8.2.7..1.......6..7.3.4....4.8...986.4.....91..6...2",
                     GameType.Default9x9,

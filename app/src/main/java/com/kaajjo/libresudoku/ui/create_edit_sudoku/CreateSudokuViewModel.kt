@@ -7,7 +7,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
@@ -23,6 +22,7 @@ import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.domain.usecase.board.GetBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.board.InsertBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.board.UpdateBoardUseCase
+import com.kaajjo.libresudoku.navArgs
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -41,8 +41,9 @@ class CreateSudokuViewModel @Inject constructor(
     private val insertBoardUseCase: InsertBoardUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    val gameUid = savedStateHandle.get<Long>("game_uid") ?: -1L
-    private val folderUid = savedStateHandle.get<Long>("folder_uid")
+    private val _navArgs: CreateSudokuScreenNavArgs = savedStateHandle.navArgs()
+    val gameUid = _navArgs.gameUid
+    private val folderUid = _navArgs.folderUid
 
     init {
         if (gameUid != -1L) {
@@ -344,11 +345,4 @@ class CreateSudokuViewModel @Inject constructor(
         }
         gameBoard = new
     }
-}
-
-enum class GameStateFilter(val resName: Int) {
-    All(R.string.filter_all),
-    Completed(R.string.filter_completed),
-    InProgress(R.string.filter_in_progress),
-    NotStarted(R.string.filter_not_started)
 }

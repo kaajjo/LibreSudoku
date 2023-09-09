@@ -14,9 +14,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,10 +41,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.destinations.SettingsBoardThemeDestination
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
 import com.kaajjo.libresudoku.ui.components.PreferenceRowSwitch
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
@@ -56,6 +58,8 @@ import com.kaajjo.libresudoku.ui.settings.components.AppThemePreviewItem
 import com.kaajjo.libresudoku.ui.theme.AppColorScheme
 import com.kaajjo.libresudoku.ui.theme.AppTheme
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.xmlpull.v1.XmlPullParser
 import java.time.ZonedDateTime
@@ -65,17 +69,39 @@ import java.time.format.DateTimeFormatterBuilder
 import java.time.format.FormatStyle
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Destination(style = AnimatedNavigation::class)
 @Composable
 fun SettingsScreen(
-    navigateBack: () -> Unit,
-    viewModel: SettingsViewModel,
-    navigateBoardSettings: () -> Unit
+    viewModel: SettingsViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator,
+    launchedFromGame: Boolean = false
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val scrollBehavior = rememberTopAppBarScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val highlightMistakes by viewModel.highlightMistakes.collectAsStateWithLifecycle(
+        initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES
+    )
+    val inputMethod by viewModel.inputMethod.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_INPUT_METHOD)
+    val darkTheme by viewModel.darkTheme.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_DARK_THEME)
+    val fontSize by viewModel.fontSize.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
+    val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle(initialValue = "")
+    val dynamicColors by viewModel.dynamicColors.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_DYNAMIC_COLORS)
+    val amoledBlackState by viewModel.amoledBlack.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AMOLED_BLACK)
+    val currentTheme by viewModel.currentTheme.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_SELECTED_THEME)
+    val hintDisabled by viewModel.disableHints.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_HINTS_DISABLED)
+    val mistakesLimit by viewModel.mistakesLimit.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_MISTAKES_LIMIT)
+    val timerEnabled by viewModel.timer.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_SHOW_TIMER)
+    val resetTimer by viewModel.canResetTimer.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_GAME_RESET_TIMER)
+    val keepScreenOn by viewModel.keepScreenOn.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_KEEP_SCREEN_ON)
+    val autoEraseNotes by viewModel.autoEraseNotes.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AUTO_ERASE_NOTES)
+    val highlightIdentical by viewModel.highlightIdentical.collectAsStateWithLifecycle(
+        initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL
+    )
+    val remainingUse by viewModel.remainingUse.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_REMAINING_USES)
+
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -84,7 +110,7 @@ fun SettingsScreen(
             CollapsingTopAppBar(
                 collapsingTitle = CollapsingTitle.medium(titleText = stringResource(R.string.settings_title)),
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = { navigator.popBackStack() }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
@@ -95,27 +121,6 @@ fun SettingsScreen(
             )
         }
     ) { paddingValues ->
-        val highlightMistakes by viewModel.highlightMistakes.collectAsStateWithLifecycle(
-            initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES
-        )
-        val inputMethod by viewModel.inputMethod.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_INPUT_METHOD)
-        val darkTheme by viewModel.darkTheme.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_DARK_THEME)
-        val fontSize by viewModel.fontSize.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
-        val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle(initialValue = "")
-        val dynamicColors by viewModel.dynamicColors.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_DYNAMIC_COLORS)
-        val amoledBlackState by viewModel.amoledBlack.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AMOLED_BLACK)
-        val currentTheme by viewModel.currentTheme.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_SELECTED_THEME)
-        val hintDisabled by viewModel.disableHints.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_HINTS_DISABLED)
-        val mistakesLimit by viewModel.mistakesLimit.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_MISTAKES_LIMIT)
-        val timerEnabled by viewModel.timer.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_SHOW_TIMER)
-        val resetTimer by viewModel.canResetTimer.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_GAME_RESET_TIMER)
-        val keepScreenOn by viewModel.keepScreenOn.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_KEEP_SCREEN_ON)
-        val autoEraseNotes by viewModel.autoEraseNotes.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AUTO_ERASE_NOTES)
-        val highlightIdentical by viewModel.highlightIdentical.collectAsStateWithLifecycle(
-            initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL
-        )
-        val remainingUse by viewModel.remainingUse.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_REMAINING_USES)
-
         ScrollbarLazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
@@ -235,7 +240,7 @@ fun SettingsScreen(
                 PreferenceRow(
                     title = stringResource(R.string.pref_board_theme_title),
                     subtitle = stringResource(R.string.pref_board_theme_subtitle),
-                    onClick = navigateBoardSettings
+                    onClick = { navigator.navigate(SettingsBoardThemeDestination()) }
                 )
             }
 
@@ -279,7 +284,7 @@ fun SettingsScreen(
             }
 
             item {
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -347,7 +352,7 @@ fun SettingsScreen(
             }
 
             item {
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -398,7 +403,7 @@ fun SettingsScreen(
 
 
             item {
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -441,8 +446,8 @@ fun SettingsScreen(
                 )
             }
 
-            item {
-                if (viewModel.launchedFromGame == null || viewModel.launchedFromGame == false) {
+            if (!launchedFromGame) {
+                item {
                     PreferenceRow(
                         title = stringResource(R.string.pref_delete_stats),
                         onClick = {

@@ -12,24 +12,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.SudokuParser
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.learn.components.TutorialBase
 import com.kaajjo.libresudoku.ui.learn.components.TutorialBottomContent
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@Destination(style = AnimatedNavigation::class)
 @Composable
 fun LearnHiddenPairs(
-    helpNavController: NavController
+    navigator: DestinationsNavigator
 ) {
     TutorialBase(
         title = stringResource(R.string.learn_hidden_pairs_title),
-        helpNavController = helpNavController
+        navigator = navigator
     ) {
         val sudokuParser = SudokuParser()
         val board by remember {
@@ -95,6 +98,7 @@ fun LearnHiddenPairs(
                         Note(5, 5, 9)
                     )
                 }
+
                 1 -> {
                     notes = listOf(
                         Note(3, 4, 4),

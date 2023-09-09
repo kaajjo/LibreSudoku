@@ -29,6 +29,7 @@ import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import com.kaajjo.libresudoku.domain.usecase.board.GetBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.board.UpdateBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.record.GetAllRecordsUseCase
+import com.kaajjo.libresudoku.navArgs
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -58,11 +59,12 @@ class GameViewModel @Inject constructor(
     private val getAllRecordsUseCase: GetAllRecordsUseCase
 ) : ViewModel() {
     init {
+        val navArgs: GameScreenNavArgs = savedStateHandle.navArgs()
         val sudokuParser = SudokuParser()
-        val continueSaved = savedStateHandle.get<Boolean>("saved")
+        val continueSaved = navArgs.playedBefore
 
         viewModelScope.launch(Dispatchers.IO) {
-            boardEntity = getBoardUseCase(savedStateHandle["uid"] ?: 1L)
+            boardEntity = getBoardUseCase(navArgs.gameUid)
             val savedGame = savedGameRepository.get(boardEntity.uid)
 
             withContext(Dispatchers.Main) {
@@ -100,7 +102,7 @@ class GameViewModel @Inject constructor(
             }
 
             withContext(Dispatchers.Main) {
-                if (savedGame != null && continueSaved!!) {
+                if (savedGame != null && continueSaved) {
                     restoreSavedGame(savedGame)
                 } else {
                     gameBoard = initialBoard

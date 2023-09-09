@@ -4,7 +4,6 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -65,31 +64,41 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyVerticalGrid
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
+import com.kaajjo.libresudoku.ui.util.findActivity
 import com.kaajjo.libresudoku.ui.util.isScrolledToStart
 import com.kaajjo.libresudoku.ui.util.isScrollingUp
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import java.io.InputStreamReader
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@Destination(
+    navArgsDelegate = ImportFromFileScreenNavArgs::class,
+    style = AnimatedNavigation::class
+)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImportFromFileScreen(
-    viewModel: ImportFromFileViewModel,
-    navigateBack: () -> Unit
+    viewModel: ImportFromFileViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator,
+    navArgs: ImportFromFileScreenNavArgs
 ) {
     BackHandler {
-        navigateBack()
+        navigator.popBackStack()
     }
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
     val gamesToImport by viewModel.sudokuListToImport.collectAsStateWithLifecycle(emptyList())
+
     LaunchedEffect(viewModel.fileUri) {
         viewModel.fileUri?.let { fileUri ->
             val inputStream = context.contentResolver.openInputStream(fileUri)
@@ -114,7 +123,13 @@ fun ImportFromFileScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = {
+                        if (navArgs.fromDeepLink) {
+                            context.findActivity()?.finish()
+                        } else {
+                            navigator.popBackStack()
+                        }
+                    }) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
                             contentDescription = null
@@ -158,9 +173,15 @@ fun ImportFromFileScreen(
                 ) {
                     Box {
                         var gameTypeMenuExpanded by remember { mutableStateOf(false) }
-                        val dropDownIconRotation by animateFloatAsState(if (gameTypeMenuExpanded) 180f else 0f)
+                        val dropDownIconRotation by animateFloatAsState(
+                            if (gameTypeMenuExpanded) 180f else 0f,
+                            label = "Dropdown arrow rotation"
+                        )
                         TextButton(onClick = { gameTypeMenuExpanded = !gameTypeMenuExpanded }) {
-                            AnimatedContent(stringResource(viewModel.difficultyForImport.resName)) { text ->
+                            AnimatedContent(
+                                stringResource(viewModel.difficultyForImport.resName),
+                                label = "Animated difficultly text"
+                            ) { text ->
                                 Text(text)
                             }
                             Icon(
@@ -311,7 +332,11 @@ fun ImportFromFileScreen(
 
     LaunchedEffect(viewModel.isSaved) {
         if (viewModel.isSaved) {
-            navigateBack()
+            if (navArgs.fromDeepLink) {
+                context.findActivity()?.finish()
+            } else {
+                navigator.popBackStack()
+            }
         }
     }
     val importError by viewModel.importError.collectAsStateWithLifecycle()
@@ -322,7 +347,11 @@ fun ImportFromFileScreen(
                 context.getString(R.string.import_from_file_fail),
                 Toast.LENGTH_SHORT
             ).show()
-            navigateBack()
+            if (navArgs.fromDeepLink) {
+                context.findActivity()?.finish()
+            } else {
+                navigator.popBackStack()
+            }
         }
     }
 }

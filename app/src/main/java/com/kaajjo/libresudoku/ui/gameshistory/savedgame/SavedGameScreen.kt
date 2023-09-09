@@ -60,6 +60,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
@@ -67,20 +68,27 @@ import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.destinations.ExploreFolderScreenDestination
+import com.kaajjo.libresudoku.destinations.GameScreenDestination
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.util.pagerTabIndicatorOffsetM3
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import kotlin.time.toKotlinDuration
 
+@Destination(
+    style = AnimatedNavigation::class,
+    navArgsDelegate = SavedGameScreenNavArgs::class
+)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun SavedGameScreen(
-    navigateBack: () -> Unit,
-    navigatePlayGame: (Long) -> Unit,
-    navigateToFolder: (Long) -> Unit,
-    viewModel: SavedGameViewModel
+    viewModel: SavedGameViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
     val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle(
         initialValue = ""
@@ -93,9 +101,9 @@ fun SavedGameScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.game_id, viewModel.boardUid ?: -1)) },
+                title = { Text(stringResource(R.string.game_id, viewModel.boardUid)) },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = { navigator.popBackStack() }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
@@ -251,7 +259,7 @@ fun SavedGameScreen(
                                     contentDescription = null
                                 )
                             },
-                            onClick = { navigateToFolder(it.uid) },
+                            onClick = { navigator.navigate(ExploreFolderScreenDestination(folderUid = it.uid)) },
                             label = { Text(it.name) }
                         )
                     }
@@ -292,7 +300,10 @@ fun SavedGameScreen(
                     Text(
                         text = viewModel.savedGame?.let {
                             when {
-                                it.mistakes >= PreferencesConstants.MISTAKES_LIMIT -> stringResource(R.string.saved_game_mistakes_limit)
+                                it.mistakes >= PreferencesConstants.MISTAKES_LIMIT -> stringResource(
+                                    R.string.saved_game_mistakes_limit
+                                )
+
                                 it.giveUp -> stringResource(R.string.saved_game_give_up)
                                 it.completed && !it.canContinue -> stringResource(R.string.saved_game_completed)
                                 else -> stringResource(R.string.saved_game_in_progress)
@@ -326,7 +337,7 @@ fun SavedGameScreen(
                     if (viewModel.savedGame!!.canContinue) {
                         FilledTonalButton(
                             modifier = Modifier.align(Alignment.CenterHorizontally),
-                            onClick = { navigatePlayGame(viewModel.savedGame!!.uid) }
+                            onClick = { navigator.navigate(GameScreenDestination(gameUid = viewModel.savedGame!!.uid)) }
                         ) {
                             Text(stringResource(R.string.action_continue))
                         }

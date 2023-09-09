@@ -23,20 +23,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.BuildConfig
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.destinations.AboutLibrariesScreenDestination
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@Destination(style = AnimatedNavigation::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
-    navigateBack: () -> Unit,
-    navigateOpenSourceLicenses: () -> Unit,
+    navigator: DestinationsNavigator
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.about_title)) },
                 navigationIcon = {
-                    IconButton(onClick = navigateBack) {
+                    IconButton(onClick = { navigator.popBackStack() }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
                             contentDescription = null
@@ -97,7 +101,7 @@ fun AboutScreen(
             PreferenceRow(
                 title = stringResource(R.string.libraries_licenses_title),
                 painter = painterResource(R.drawable.ic_outline_info_24),
-                onClick = navigateOpenSourceLicenses
+                onClick = { navigator.navigate(AboutLibrariesScreenDestination()) }
             )
         }
     }

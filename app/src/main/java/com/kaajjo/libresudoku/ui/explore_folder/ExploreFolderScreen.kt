@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
@@ -57,12 +56,12 @@ import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -90,6 +89,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
@@ -97,28 +97,33 @@ import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
+import com.kaajjo.libresudoku.destinations.CreateSudokuScreenDestination
+import com.kaajjo.libresudoku.destinations.GameScreenDestination
+import com.kaajjo.libresudoku.destinations.ImportFromFileScreenDestination
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import com.kaajjo.libresudoku.ui.util.isScrolledToEnd
 import com.kaajjo.libresudoku.ui.util.isScrolledToStart
 import com.kaajjo.libresudoku.ui.util.isScrollingUp
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import kotlin.math.sqrt
 import kotlin.time.toKotlinDuration
 
+@Destination(
+    style = AnimatedNavigation::class,
+    navArgsDelegate = ExploreFolderScreenNavArgs::class
+)
 @OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
-    ExperimentalFoundationApi::class
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
 )
 @Composable
 fun ExploreFolderScreen(
-    viewModel: ExploreFolderViewModel,
-    navigateBack: () -> Unit,
-    navigatePlayGame: (Triple<Long, Boolean, Long>) -> Unit,
-    navigateImportFromFile: (Pair<String, Long>) -> Unit,
-    navigateEditGame: (Pair<Long, Long>) -> Unit,
-    navigateCreateSudoku: (Long) -> Unit
+    viewModel: ExploreFolderViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
@@ -144,7 +149,12 @@ fun ExploreFolderScreen(
     LaunchedEffect(contentUri) {
         contentUri?.let { uri ->
             folder?.let { folder ->
-                navigateImportFromFile(Pair(Uri.encode(uri.toString()), folder.uid))
+                navigator.navigate(
+                    ImportFromFileScreenDestination(
+                        fileUri = uri.toString(),
+                        folderUid = folder.uid
+                    )
+                )
             }
         }
     }
@@ -155,7 +165,10 @@ fun ExploreFolderScreen(
 
     Scaffold(
         topBar = {
-            AnimatedContent(viewModel.inSelectionMode) { inSelectionMode ->
+            AnimatedContent(
+                viewModel.inSelectionMode,
+                label = "TopAppBar InSelection"
+            ) { inSelectionMode ->
                 if (inSelectionMode) {
                     SelectionTopAppbar(
                         title = { Text(viewModel.selectedBoardsList.size.toString()) },
@@ -174,7 +187,7 @@ fun ExploreFolderScreen(
                                 )
                             }
                         },
-                        navigateBack = navigateBack,
+                        navigateBack = { navigator.popBackStack() },
                         onImportMenuClick = {
                             addSudokuBottomSheet = true
                         }
@@ -239,7 +252,12 @@ fun ExploreFolderScreen(
                             },
                             onPlayClick = { viewModel.prepareSudokuToPlay(game.first) },
                             onEditClick = {
-                                navigateEditGame(Pair(game.first.uid, folder!!.uid))
+                                navigator.navigate(
+                                    CreateSudokuScreenDestination(
+                                        gameUid = game.first.uid,
+                                        folderUid = folder!!.uid
+                                    )
+                                )
                             },
                             onDeleteClick = {
                                 deleteBoardDialogBoard = game.first
@@ -268,7 +286,7 @@ fun ExploreFolderScreen(
     LaunchedEffect(viewModel.readyToPlay, viewModel.gameUidToPlay) {
         if (viewModel.readyToPlay) {
             viewModel.gameUidToPlay?.let {
-                navigatePlayGame(Triple(it, viewModel.isPlayedBefore, folder!!.uid))
+                navigator.navigate(GameScreenDestination(it, viewModel.isPlayedBefore))
                 viewModel.readyToPlay = false
             }
         }
@@ -362,7 +380,11 @@ fun ExploreFolderScreen(
                                     when (index) {
                                         0 -> {
                                             folder?.let {
-                                                navigateCreateSudoku(it.uid)
+                                                navigator.navigate(
+                                                    CreateSudokuScreenDestination(
+                                                        folderUid = it.uid
+                                                    )
+                                                )
                                             }
                                         }
 
@@ -669,8 +691,12 @@ private fun MoveSudokuToFolderDialog(
                 Box {
                     val lazyListState = rememberLazyListState()
 
-                    if (!lazyListState.isScrolledToStart()) Divider(Modifier.align(Alignment.TopCenter))
-                    if (!lazyListState.isScrolledToEnd()) Divider(Modifier.align(Alignment.BottomCenter))
+                    if (!lazyListState.isScrolledToStart()) HorizontalDivider(
+                        Modifier.align(
+                            Alignment.TopCenter
+                        )
+                    )
+                    if (!lazyListState.isScrolledToEnd()) HorizontalDivider(Modifier.align(Alignment.BottomCenter))
 
                     ScrollbarLazyColumn(state = lazyListState) {
                         items(availableFolders) { folder ->

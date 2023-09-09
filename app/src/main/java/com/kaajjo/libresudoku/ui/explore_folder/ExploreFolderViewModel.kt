@@ -16,6 +16,7 @@ import com.kaajjo.libresudoku.domain.usecase.board.GetBoardsInFolderWithSavedUse
 import com.kaajjo.libresudoku.domain.usecase.board.UpdateBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.GetFolderUseCase
 import com.kaajjo.libresudoku.domain.usecase.folder.GetFoldersUseCase
+import com.kaajjo.libresudoku.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,7 +33,7 @@ class ExploreFolderViewModel @Inject constructor(
     getFoldersUseCase: GetFoldersUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val folderUid = savedStateHandle.get<Long>("uid") ?: 0
+    private val folderUid = savedStateHandle.navArgs<ExploreFolderScreenNavArgs>().folderUid
 
     val folder = getFolderUseCase(folderUid)
     val games = getBoardsInFolderWithSavedUseCase(folderUid)
