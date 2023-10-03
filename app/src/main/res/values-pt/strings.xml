@@ -9,7 +9,7 @@
     <string name="nav_bar_more">Mais</string>
     <string name="new_game">Novo jogo</string>
     <string name="dialog_new_game">Jogo em andamento</string>
-    <string name="dialog_new_game_text">Tem um jogo em andamento, realmente deseja começar um novo\?</string>
+    <string name="dialog_new_game_text">Você tem um jogo em andamento, realmente deseja começar um novo\?</string>
     <string name="dialog_new_game_positive">Novo jogo</string>
     <string name="action_cancel">Cancelar</string>
     <string name="action_confirm">Sim</string>
@@ -41,9 +41,9 @@
     <string name="pref_board_font_size_large">Grande</string>
     <string name="pref_input">Método de entrada</string>
     <string name="pref_input_cell_first">Primeira cécula</string>
-    <string name="pref_input_digit_first">Primeiro digíto</string>
-    <string name="pref_delete_stats">Remover todas as estatisticas</string>
-    <string name="pref_delete_stats_summ">Esta ação excluirá todas as suas estatísticas, jogos salvos e recordes e não poderá ser desfeita</string>
+    <string name="pref_input_digit_first">Valor primeiro</string>
+    <string name="pref_delete_stats">Limpar todas as estatísticas</string>
+    <string name="pref_delete_stats_summ">Esta ação excluirá todas as suas estatísticas, jogos salvos e recordes. não poderá ser desfeita</string>
     <string name="action_deleted">Remover</string>
     <string name="pref_app_theme">Tema</string>
     <string name="theme_dynamic">Dinâmico</string>
@@ -65,10 +65,10 @@
     <string name="pref_mistakes_check_off">Desligar</string>
     <string name="pref_mistakes_check_violations">Violações de regras</string>
     <string name="pref_mistakes_check_final">Solução final</string>
-    <string name="pref_highlight_identical">Destacar números idênticos</string>
-    <string name="pref_highlight_identical_summ">Quando seleciona um número num quadro, as células com os mesmos números serão destacadas</string>
+    <string name="pref_highlight_identical">Destacar valores idênticos</string>
+    <string name="pref_highlight_identical_summ">A seleção de um valor no quadro destaca as células com o mesmo valor</string>
     <string name="pref_remaining_uses">Usos restantes</string>
-    <string name="pref_remaining_uses_summ">O quantidade restante de usos será exibida no teclado</string>
+    <string name="pref_remaining_uses_summ">O número de usos restantes de um valor é exibido no teclado</string>
     <string name="pref_position_lines">Posição da linha</string>
     <string name="pref_position_lines_summ">A linha e a coluna da célula selecionada serão destacadas</string>
     <string name="pref_auto_erase_notes">Remover notas automaticamente</string>
