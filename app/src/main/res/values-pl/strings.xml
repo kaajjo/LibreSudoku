@@ -157,7 +157,7 @@
     <string name="edit_name">Edytuj nazwę</string>
     <string name="export">Eksportuj</string>
     <string name="folders_help">Tutaj możesz zarządzać swoim folderem i importować Sudoku z pliku</string>
-    <string name="folder_name">Folder: %1$s</string>
+    <string name="folder_name">Katalog: %1$s</string>
     <plurals name="number_puzzles_to_import">
         <item quantity="one">%1$d łamigłówka do importu</item>
         <item quantity="few">%1$d łamigłówki do importu</item>
@@ -267,4 +267,16 @@
     <string name="export_string_state_copied">Skopiowany</string>
     <string name="sort_descending">Malejąco</string>
     <string name="create_import_set">Ustaw</string>
+    <string name="theme_blue">Niebieski</string>
+    <string name="redo">Alternatywny</string>
+    <string name="hints_used">Wskazówki: %1$d</string>
+    <string name="mistakes_made">Błędy: %1$d</string>
+    <string name="stat_time_current">Aktualny: %1$s</string>
+    <string name="notes_taken">Notatki: %1$d</string>
+    <string name="stat_time_average">Średni: %1$s</string>
+    <string name="stat_time_best">Najlepszy: %1$s</string>
+    <string name="pref_date_format_custom">Niestandardowy format daty</string>
+    <string name="pref_date_format_custom_label">Niestandardowy</string>
+    <string name="pref_date_format_custom_summ">Wprowadź wzorzec daty zgodnie z Java DateTimeFormatter</string>
+    <string name="pref_date_format_custom_textfield_label">Wzór</string>
 </resources>
