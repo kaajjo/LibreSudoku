@@ -9,12 +9,14 @@ import com.kaajjo.libresudoku.data.database.dao.FolderDao
 import com.kaajjo.libresudoku.data.database.dao.RecordDao
 import com.kaajjo.libresudoku.data.database.dao.SavedGameDao
 import com.kaajjo.libresudoku.data.database.repository.BoardRepositoryImpl
+import com.kaajjo.libresudoku.data.database.repository.DatabaseRepositoryImpl
 import com.kaajjo.libresudoku.data.database.repository.FolderRepositoryImpl
 import com.kaajjo.libresudoku.data.database.repository.RecordRepositoryImpl
 import com.kaajjo.libresudoku.data.database.repository.SavedGameRepositoryImpl
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.domain.repository.BoardRepository
+import com.kaajjo.libresudoku.domain.repository.DatabaseRepository
 import com.kaajjo.libresudoku.domain.repository.FolderRepository
 import com.kaajjo.libresudoku.domain.repository.RecordRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
@@ -29,6 +31,11 @@ const val ACRA_SHARED_PREFS_NAME = "acra_shared_pref"
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
+
+    @Provides
+    @Singleton
+    fun provideDatabaseRepository(appDatabase: AppDatabase): DatabaseRepository
+        = DatabaseRepositoryImpl(appDatabase)
 
     @Provides
     @Singleton

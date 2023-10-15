@@ -11,6 +11,7 @@ import com.kaajjo.libresudoku.data.database.converters.GameDifficultyConverter
 import com.kaajjo.libresudoku.data.database.converters.GameTypeConverter
 import com.kaajjo.libresudoku.data.database.converters.ZonedDateTimeConverter
 import com.kaajjo.libresudoku.data.database.dao.BoardDao
+import com.kaajjo.libresudoku.data.database.dao.DatabaseDao
 import com.kaajjo.libresudoku.data.database.dao.FolderDao
 import com.kaajjo.libresudoku.data.database.dao.RecordDao
 import com.kaajjo.libresudoku.data.database.dao.SavedGameDao
@@ -41,6 +42,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun savedGameDao(): SavedGameDao
 
     abstract fun folderDao(): FolderDao
+
+    abstract  fun databaseDao(): DatabaseDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null

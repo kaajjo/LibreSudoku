@@ -11,5 +11,6 @@ interface RecordRepository {
     fun getAllSortByTime(): Flow<List<Record>>
     fun getAll(difficulty: GameDifficulty, type: GameType): Flow<List<Record>>
     suspend fun insert(record: Record)
+    suspend fun insert(records: List<Record>)
     suspend fun delete(record: Record)
 }

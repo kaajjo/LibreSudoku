@@ -1,6 +1,11 @@
 package com.kaajjo.libresudoku.data.database.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +35,9 @@ interface SavedGameDao {
 
     @Insert
     suspend fun insert(savedGame: SavedGame): Long
+
+    @Insert
+    suspend fun insert(savedGames: List<SavedGame>)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(savedGame: SavedGame)

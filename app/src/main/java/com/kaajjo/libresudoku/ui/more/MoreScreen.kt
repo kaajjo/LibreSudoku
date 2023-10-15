@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.rounded.SettingsBackupRestore
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.destinations.AboutScreenDestination
+import com.kaajjo.libresudoku.destinations.BackupScreenDestination
 import com.kaajjo.libresudoku.destinations.FoldersScreenDestination
 import com.kaajjo.libresudoku.destinations.LearnScreenDestination
 import com.kaajjo.libresudoku.destinations.SettingsScreenDestination
@@ -60,6 +62,11 @@ fun MoreScreen(
             title = stringResource(R.string.settings_title),
             painter = painterResource(R.drawable.ic_settings_24),
             onClick = { navigator.navigate(SettingsScreenDestination()) }
+        )
+        PreferenceRow(
+            title = stringResource(R.string.backup_restore_title),
+            painter = rememberVectorPainter(image = Icons.Rounded.SettingsBackupRestore),
+            onClick = { navigator.navigate(BackupScreenDestination()) }
         )
         PreferenceRow(
             title = stringResource(R.string.title_folders),

@@ -1,10 +1,10 @@
 [versions]
-agp = "8.2.0-beta01"
+agp = "8.2.0-beta06"
 kotlin = "1.9.0"
-room = "2.5.2"
+room = "2.6.0-beta01"
 aboutLibraries = '10.6.1'
 compose = '1.5.0-rc01'
-hilt = "2.46"
+hilt = "2.48"
 hilt-navigation = "1.0.0"
 datastore-preferences = "1.0.0"
 appcompat = "1.7.0-alpha03"
@@ -18,6 +18,11 @@ navigation-compose = "2.7.0-rc01"
 acra = "5.9.7"
 ksp = "1.9.0-1.0.12"
 compose-destinations = "1.9.51"
+serialization-json = "1.6.0"
+documentFile = "1.0.1"
+workRuntimeKtx = "2.8.1"
+hilt-work = "1.1.0-alpha01"
+hilt-common = "1.1.0-alpha01"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx"}
@@ -48,6 +53,12 @@ acra-dialog = { group = "ch.acra", name = "acra-dialog", version.ref = "acra" }
 acra-mail = { group = "ch.acra", name = "acra-mail", version.ref = "acra" }
 compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "animations-core", version.ref = "compose-destinations" }
 compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "compose-destinations" }
+serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization-json" }
+documentFile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentFile"}
+workRuntimeKtx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt-work" }
+hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hilt-common" }
+hilt-common-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-common" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -55,5 +66,5 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

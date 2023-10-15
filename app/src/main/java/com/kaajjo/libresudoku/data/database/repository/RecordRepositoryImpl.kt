@@ -15,5 +15,6 @@ class RecordRepositoryImpl(
     override fun getAllSortByTime(): Flow<List<Record>> = recordDao.getAllSortByTime()
     override fun getAll(difficulty: GameDifficulty, type: GameType) = recordDao.getAll(difficulty, type)
     override suspend fun insert(record: Record) = recordDao.insert(record)
+    override suspend fun insert(records: List<Record>) = recordDao.insert(records)
     override suspend fun delete(record: Record) = recordDao.delete(record)
 }

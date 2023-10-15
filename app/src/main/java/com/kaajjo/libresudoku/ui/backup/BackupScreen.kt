@@ -1,0 +1,570 @@
+package com.kaajjo.libresudoku.ui.backup
+
+import android.content.Intent
+import android.net.Uri
+import android.os.Environment
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.TipsAndUpdates
+import androidx.compose.material.icons.rounded.ContentCopy
+import androidx.compose.material.icons.rounded.SettingsBackupRestore
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.core.PreferencesConstants
+import com.kaajjo.libresudoku.data.backup.BackupData
+import com.kaajjo.libresudoku.data.backup.BackupWorker
+import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
+import com.kaajjo.libresudoku.ui.components.GrantPermissionCard
+import com.kaajjo.libresudoku.ui.components.PreferenceRow
+import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
+import com.kaajjo.libresudoku.ui.components.SelectionDialog
+import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTitle
+import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTopAppBar
+import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.rememberTopAppBarScrollBehavior
+import com.kaajjo.libresudoku.ui.settings.SettingsCategory
+import com.kaajjo.libresudoku.ui.util.isScrolledToEnd
+import com.kaajjo.libresudoku.ui.util.isScrolledToStart
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.launch
+
+private val autoBackupIntervalEntries = mapOf(
+    0L to R.string.autobackup_never,
+    24L to R.string.daily,
+    48L to R.string.every_2_days,
+    120L to R.string.every_5_days,
+    168L to R.string.weekly,
+)
+
+@Destination(style = AnimatedNavigation::class)
+@Composable
+fun BackupScreen(
+    navigator: DestinationsNavigator,
+    viewModel: BackupScreenViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val scrollBehavior = rememberTopAppBarScrollBehavior()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val backupUri by viewModel.backupUri.collectAsStateWithLifecycle()
+
+    var backupOptionsDialog by rememberSaveable { mutableStateOf(false) }
+    var autoBackupsNumberDialog by rememberSaveable { mutableStateOf(false) }
+    var autoBackupIntervalDialog by rememberSaveable { mutableStateOf(false) }
+    var restoreDialog by rememberSaveable { mutableStateOf(false) }
+
+    var autoBackupAvailable by remember { mutableStateOf(false) }
+
+    val autoBackupsNumber by viewModel.autoBackupsNumber.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AUTO_BACKUPS_NUMBER)
+    val autoBackupInterval by viewModel.autoBackupInterval.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AUTOBACKUP_INTERVAL)
+
+    LaunchedEffect(Unit) {
+        autoBackupAvailable = context.contentResolver
+            .persistedUriPermissions.any { it.uri == backupUri.toUri() }
+    }
+
+    val requestDirectoryAccess = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree(),
+        onResult = { uri ->
+            if (uri != null) {
+                context.contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+
+                viewModel.setBackupDirectory(uri.toString())
+
+                autoBackupAvailable =
+                    context.contentResolver.persistedUriPermissions.any { it.uri == uri }
+            }
+        }
+    )
+
+    val saveBackupFile = rememberLauncherForActivityResult(
+        contract = CreateDocument("application/json"),
+        onResult = { uri ->
+            if (uri != null) {
+                viewModel.saveBackupTo(
+                    outputStream = context.contentResolver.openOutputStream(uri),
+                    onComplete = { exception ->
+                        if (exception != null) {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(context.getString(R.string.save_backup_error))
+                            }
+                        } else {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(context.getString(R.string.save_backup_success))
+                            }
+                        }
+                    }
+                )
+            }
+        }
+    )
+
+    val selectFileToRestore = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+        onResult = { uri ->
+            if (uri != null) {
+                context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    inputStream.bufferedReader().use {
+                        viewModel.prepareBackupToRestore(
+                            it.readText(),
+                            onComplete = {
+                                restoreDialog = true
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    )
+
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            CollapsingTopAppBar(
+                collapsingTitle = CollapsingTitle.medium(titleText = stringResource(R.string.backup_restore_title)),
+                navigationIcon = {
+                    IconButton(onClick = { navigator.popBackStack() }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_round_arrow_back_24),
+                            contentDescription = null
+                        )
+                    }
+                },
+                scrollBehavior = scrollBehavior
+            )
+        }
+    ) { paddingValues ->
+        ScrollbarLazyColumn(
+            modifier = Modifier.padding(paddingValues),
+            contentPadding = PaddingValues(top = 8.dp)
+        ) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .clip(MaterialTheme.shapes.large)
+                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.SettingsBackupRestore,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .weight(0.15f)
+                            .padding(horizontal = 12.dp)
+                    )
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 12.dp, end = 12.dp, bottom = 12.dp)
+                            .clip(MaterialTheme.shapes.medium)
+                            .weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        ActionRow(
+                            title = stringResource(R.string.action_create_backup),
+                            subtitle = stringResource(R.string.create_backup_description),
+                            onClick = { backupOptionsDialog = true }
+                        )
+                        ActionRow(
+                            title = stringResource(R.string.action_restore),
+                            subtitle = stringResource(R.string.restore_description),
+                            onClick = { selectFileToRestore.launch(arrayOf("application/json")) }
+                        )
+                    }
+
+                }
+            }
+            item {
+                SettingsCategory(title = stringResource(R.string.auto_backups))
+            }
+            if (!autoBackupAvailable) {
+                item {
+                    GrantPermissionCard(
+                        title = stringResource(R.string.auto_backup_folder_access),
+                        details = stringResource(R.string.auto_backup_folder_access_description),
+                        painter = rememberVectorPainter(image = Icons.Default.TipsAndUpdates),
+                        confirmButton = {
+                            Button(
+                                onClick = { requestDirectoryAccess.launch(null) },
+                                modifier = Modifier.align(Alignment.End)
+                            ) {
+                                Text(stringResource(R.string.action_grant))
+                            }
+                        },
+                        modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp)
+                    )
+                }
+            }
+            item {
+                PreferenceRow(
+                    title = stringResource(R.string.auto_backups_frequency),
+                    subtitle = if (autoBackupIntervalEntries[autoBackupInterval] != null)
+                        stringResource(autoBackupIntervalEntries[autoBackupInterval]!!)
+                    else
+                        pluralStringResource(
+                            R.plurals.every_x_hours,
+                            autoBackupInterval.toInt(),
+                            autoBackupInterval.toInt()
+                        ),
+                    enabled = autoBackupAvailable,
+                    onClick = { autoBackupIntervalDialog = true }
+                )
+            }
+            item {
+                PreferenceRow(
+                    title = stringResource(R.string.auto_backups_directory),
+                    subtitle = if (autoBackupAvailable) getReadableURI(backupUri.toUri()) else "",
+                    enabled = autoBackupAvailable,
+                    onClick = {
+                        requestDirectoryAccess.launch(null)
+                    }
+                )
+            }
+            item {
+                PreferenceRow(
+                    title = stringResource(R.string.auto_backups_max),
+                    subtitle = autoBackupsNumber.toString(),
+                    enabled = autoBackupAvailable,
+                    onClick = {
+                        autoBackupsNumberDialog = true
+                    }
+                )
+            }
+        }
+    }
+
+    if (backupOptionsDialog) {
+        val options = listOf(
+            R.string.backup_option_games,
+            R.string.backup_option_settings,
+        )
+        var selectedOptions by rememberSaveable {
+            mutableStateOf(listOf(0))
+        }
+
+        AlertDialog(
+            title = {
+                Column(Modifier.fillMaxWidth()) {
+                    Text(
+                        text = stringResource(R.string.action_create_backup),
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
+            },
+            text = {
+                Column {
+                    options.forEachIndexed { index, text ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.small)
+                                .clickable(enabled = index != 0) {
+                                    selectedOptions = if (selectedOptions.contains(index)) {
+                                        selectedOptions - index
+                                    } else {
+                                        selectedOptions + index
+                                    }
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = selectedOptions.contains(index),
+                                onCheckedChange = {
+                                    selectedOptions = if (selectedOptions.contains(index)) {
+                                        selectedOptions - index
+                                    } else {
+                                        selectedOptions + index
+                                    }
+                                },
+                                enabled = index != 0
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = stringResource(text),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                }
+            },
+            onDismissRequest = { backupOptionsDialog = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.createBackup(
+                        backupSettings = selectedOptions.contains(1),
+                        onCreated = { backupCreated ->
+                            if (backupCreated) {
+                                saveBackupFile.launch(BackupData.nameManual)
+                            } else {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        context.getString(R.string.creating_backup_error)
+                                    )
+                                }
+                            }
+                        }
+                    )
+                    backupOptionsDialog = false
+                }) {
+                    Text(stringResource(R.string.action_create))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { backupOptionsDialog = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        )
+    } else if (autoBackupIntervalDialog) {
+        SelectionDialog(
+            selectedValue = autoBackupInterval,
+            title = stringResource(R.string.auto_backups_frequency),
+            onDismiss = { autoBackupIntervalDialog = false },
+            entries = autoBackupIntervalEntries.mapNotNull { (key, value) ->
+                key to stringResource(value)
+            }.toMap(),
+            onSelect = { value ->
+                viewModel.setAutoBackupInterval(value)
+                BackupWorker.setupWorker(context, value)
+                autoBackupIntervalDialog = false
+            }
+        )
+    } else if (autoBackupsNumberDialog) {
+        SelectionDialog(
+            selectedValue = autoBackupsNumber,
+            title = stringResource(R.string.auto_backups_max),
+            entries = listOf(1, 2, 3, 4, 5).associateWith { it.toString() },
+            onDismiss = { autoBackupsNumberDialog = false },
+            onSelect = { value ->
+                viewModel.setAutoBackupsNumber(value)
+                autoBackupsNumberDialog = false
+            }
+        )
+    } else if (restoreDialog) {
+        AlertDialog(
+            title = { Text(stringResource(R.string.restoring_backup)) },
+            text = {
+                Column {
+                    Text(
+                        text = stringResource(R.string.restore_existing_data_alert),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    var restoreSettings by rememberSaveable {
+                        mutableStateOf(true)
+                    }
+                    viewModel.backupData?.let { backupData ->
+                        if (backupData.settings != null) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier
+                                    .clip(MaterialTheme.shapes.small)
+                                    .fillMaxWidth()
+                                    .clickable { restoreSettings = !restoreSettings },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Checkbox(
+                                    checked = restoreSettings,
+                                    onCheckedChange = { restoreSettings = !restoreSettings })
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = stringResource(R.string.backup_restore_settings)
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            onDismissRequest = { restoreDialog = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.restoreBackup(
+                            onComplete = {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        context.getString(R.string.restore_backup_success)
+                                    )
+                                }
+                            }
+                        )
+                        restoreDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.action_restore))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { restoreDialog = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        )
+    } else if (viewModel.restoreError) {
+        AlertDialog(
+            title = {
+                Text(stringResource(R.string.restore_backup_error))
+            },
+            text = {
+                val clipboardManager = LocalClipboardManager.current
+                Column {
+                    Box {
+                        val lazyListState = rememberLazyListState()
+
+                        if (!lazyListState.isScrolledToStart()) HorizontalDivider(
+                            Modifier.align(
+                                Alignment.TopCenter
+                            )
+                        )
+                        if (!lazyListState.isScrolledToEnd()) HorizontalDivider(
+                            Modifier.align(
+                                Alignment.BottomCenter
+                            )
+                        )
+
+                        ScrollbarLazyColumn(state = lazyListState) {
+                            item {
+                                Card(
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                                    )
+                                ) {
+                                    Text(
+                                        text = viewModel.restoreExceptionString,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight(500),
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    Button(
+                        onClick = { clipboardManager.setText(AnnotatedString(text = viewModel.restoreExceptionString)) },
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Icon(Icons.Rounded.ContentCopy, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.export_string_copy))
+                    }
+                }
+            },
+            onDismissRequest = { viewModel.restoreError = false },
+            confirmButton = {
+                TextButton(onClick = { viewModel.restoreError = false }) {
+                    Text(stringResource(R.string.dialog_ok))
+                }
+            }
+        )
+    }
+}
+@Composable
+private fun ActionRow(
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.extraSmall)
+            .background(
+                MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp)
+            )
+            .clickable(onClick = onClick)
+    ) {
+        Column(
+            modifier = Modifier.padding(
+                top = 12.dp,
+                bottom = 12.dp,
+                start = 12.dp
+            ),
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f)
+            )
+        }
+    }
+}
+
+/**
+ * Get readable path from URI
+ */
+private fun getReadableURI(uri: Uri): String {
+    val path = uri.path.toString()
+    return if (!path.contains("primary:")) {
+        // TODO: readable name from other sources
+        return path
+    } else {
+        Environment.getExternalStorageDirectory().absolutePath + "/" + path.split("primary:").last()
+    }
+}

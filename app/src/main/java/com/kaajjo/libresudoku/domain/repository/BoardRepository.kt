@@ -18,7 +18,7 @@ interface BoardRepository {
     fun getBoardsInFolderFlow(uid: Long): Flow<List<SudokuBoard>>
     fun getBoardsInFolder(uid: Long): List<SudokuBoard>
     suspend fun get(uid: Long): SudokuBoard
-    suspend fun insert(boards: List<SudokuBoard>)
+    suspend fun insert(boards: List<SudokuBoard>): List<Long>
     suspend fun insert(board: SudokuBoard): Long
     suspend fun delete(board: SudokuBoard)
     suspend fun delete(boards: List<SudokuBoard>)

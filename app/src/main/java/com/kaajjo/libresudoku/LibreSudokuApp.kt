@@ -2,6 +2,8 @@ package com.kaajjo.libresudoku
 
 import android.app.Application
 import android.content.Context
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import com.kaajjo.libresudoku.di.ACRA_SHARED_PREFS_NAME
 import dagger.hilt.android.HiltAndroidApp
 import org.acra.config.dialog
@@ -9,9 +11,10 @@ import org.acra.config.mailSender
 import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
 import java.time.LocalDate
+import javax.inject.Inject
 
 @HiltAndroidApp
-class LibreSudokuApp : Application() {
+class LibreSudokuApp : Application(), Configuration.Provider {
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
 
@@ -39,4 +42,12 @@ class LibreSudokuApp : Application() {
             }
         }
     }
+
+    @Inject
+    lateinit var hiltWorkerFactory: HiltWorkerFactory
+    override fun getWorkManagerConfiguration(): Configuration =
+        Configuration.Builder()
+            .setWorkerFactory(hiltWorkerFactory)
+            .build()
+
 }

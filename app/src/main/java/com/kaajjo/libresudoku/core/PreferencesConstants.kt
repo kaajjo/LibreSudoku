@@ -20,6 +20,8 @@ class PreferencesConstants {
         const val DEFAULT_INPUT_METHOD = 1
         const val DEFAULT_FUN_KEYBOARD_OVER_NUM = false
         const val DEFAULT_SAVE_LAST_SELECTED_DIFF_TYPE = true
+        const val DEFAULT_AUTOBACKUP_INTERVAL = 24L
+        const val DEFAULT_AUTO_BACKUPS_NUMBER = 3
 
         // Theme settings
         const val GREEN_THEME_KEY = "green"
