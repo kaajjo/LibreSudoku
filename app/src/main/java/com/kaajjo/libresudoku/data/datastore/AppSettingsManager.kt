@@ -13,6 +13,9 @@ import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import kotlinx.coroutines.flow.map
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.chrono.IsoChronology
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
@@ -89,6 +92,8 @@ class AppSettingsManager(context: Context) {
 
     // Max number of automatic backup files
     private val autoBackupsNumberKey = intPreferencesKey("auto_backups_max_number")
+
+    private val lastBackupDateKey = longPreferencesKey("last_backup_date")
 
     suspend fun setFirstLaunch(value: Boolean) {
         dataStore.edit { settings ->
@@ -347,6 +352,23 @@ class AppSettingsManager(context: Context) {
         prefs[autoBackupsNumberKey] ?: PreferencesConstants.DEFAULT_AUTO_BACKUPS_NUMBER
     }
 
+    suspend fun setLastBackupDate(date: ZonedDateTime) {
+        dataStore.edit {  settings ->
+            settings[lastBackupDateKey] = date.toInstant().epochSecond
+        }
+    }
+
+    val lastBackupDate = dataStore.data.map { prefs ->
+        val date = prefs[lastBackupDateKey]
+        if (date != null) {
+            ZonedDateTime.ofInstant(
+                Instant.ofEpochSecond(date),
+                ZoneId.systemDefault()
+            )
+        } else {
+            null
+        }
+    }
     companion object {
         fun dateFormat(format: String): DateTimeFormatter = when (format) {
             "" -> {

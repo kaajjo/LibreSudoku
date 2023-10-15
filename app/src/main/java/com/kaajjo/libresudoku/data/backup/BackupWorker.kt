@@ -103,6 +103,8 @@ class BackupWorker @AssistedInject constructor(
                         outputStream?.close()
                     }
                     backupSuccessfull = true
+
+                    appSettingsManager.setLastBackupDate(ZonedDateTime.now())
                 }
                 val autoBackupsNumber = runBlocking { appSettingsManager.autoBackupsNumber.first() }
 

@@ -8,7 +8,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,7 +21,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material.icons.rounded.ContentCopy
-import androidx.compose.material.icons.rounded.SettingsBackupRestore
+import androidx.compose.material.icons.rounded.FileDownload
+import androidx.compose.material.icons.rounded.FileUpload
+import androidx.compose.material.icons.rounded.History
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -49,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -67,6 +69,7 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.data.backup.BackupData
 import com.kaajjo.libresudoku.data.backup.BackupWorker
+import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.GrantPermissionCard
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
@@ -112,6 +115,8 @@ fun BackupScreen(
 
     val autoBackupsNumber by viewModel.autoBackupsNumber.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AUTO_BACKUPS_NUMBER)
     val autoBackupInterval by viewModel.autoBackupInterval.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AUTOBACKUP_INTERVAL)
+    val lastBackupDate by viewModel.lastBackupDate.collectAsStateWithLifecycle(initialValue = null)
+    val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle(initialValue = "")
 
     LaunchedEffect(Unit) {
         autoBackupAvailable = context.contentResolver
@@ -197,41 +202,33 @@ fun BackupScreen(
             modifier = Modifier.padding(paddingValues),
             contentPadding = PaddingValues(top = 8.dp)
         ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .clip(MaterialTheme.shapes.large)
-                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.SettingsBackupRestore,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .weight(0.15f)
-                            .padding(horizontal = 12.dp)
+            lastBackupDate?.let { date ->
+                item {
+                    CardRow(
+                        text = stringResource(
+                            R.string.last_backup_date,
+                            date.format(AppSettingsManager.dateFormat(dateFormat))
+                        ),
+                        icon = Icons.Rounded.History,
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    Column(
-                        modifier = Modifier
-                            .padding(top = 12.dp, end = 12.dp, bottom = 12.dp)
-                            .clip(MaterialTheme.shapes.medium)
-                            .weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        ActionRow(
-                            title = stringResource(R.string.action_create_backup),
-                            subtitle = stringResource(R.string.create_backup_description),
-                            onClick = { backupOptionsDialog = true }
-                        )
-                        ActionRow(
-                            title = stringResource(R.string.action_restore),
-                            subtitle = stringResource(R.string.restore_description),
-                            onClick = { selectFileToRestore.launch(arrayOf("application/json")) }
-                        )
-                    }
-
                 }
+            }
+            item {
+                PreferenceRow(
+                    title = stringResource(R.string.action_create_backup),
+                    subtitle = stringResource(R.string.create_backup_description),
+                    painter = rememberVectorPainter(image = Icons.Rounded.FileUpload),
+                    onClick = { backupOptionsDialog = true }
+                )
+            }
+            item {
+                PreferenceRow(
+                    title = stringResource(R.string.action_restore),
+                    subtitle = stringResource(R.string.restore_description),
+                    painter = rememberVectorPainter(image = Icons.Rounded.FileDownload),
+                    onClick = { selectFileToRestore.launch(arrayOf("application/json")) }
+                )
             }
             item {
                 SettingsCategory(title = stringResource(R.string.auto_backups))
@@ -519,40 +516,28 @@ fun BackupScreen(
         )
     }
 }
+
 @Composable
-private fun ActionRow(
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit,
+fun CardRow(
+    text: String,
+    icon: ImageVector,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
+            .padding(horizontal = 12.dp)
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(5.dp))
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.extraSmall)
-            .background(
-                MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp)
-            )
-            .clickable(onClick = onClick)
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
-            modifier = Modifier.padding(
-                top = 12.dp,
-                bottom = 12.dp,
-                start = 12.dp
-            ),
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(Modifier.height(2.dp))
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f)
-            )
-        }
+        Icon(
+            imageVector = icon,
+            contentDescription = null
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(text)
     }
 }
 

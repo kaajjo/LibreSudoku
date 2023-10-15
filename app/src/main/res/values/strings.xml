@@ -315,4 +315,5 @@
     <string name="action_grant">Grant</string>
     <string name="action_create">Create</string>
     <string name="restore_existing_data_alert">Existing data will be deleted!</string>
+    <string name="last_backup_date">Most recent backup: %1$s</string>
 </resources>
