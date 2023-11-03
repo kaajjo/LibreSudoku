@@ -19,6 +19,8 @@ class SavedGameRepositoryImpl(
 
     override suspend fun insert(savedGame: SavedGame): Long = savedGameDao.insert(savedGame)
 
+    override suspend fun insert(savedGames: List<SavedGame>) = savedGameDao.insert(savedGames)
+
     override suspend fun update(savedGame: SavedGame) = savedGameDao.update(savedGame)
 
     override suspend fun delete(savedGame: SavedGame) = savedGameDao.delete(savedGame)

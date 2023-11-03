@@ -84,6 +84,12 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
         }
     }
 
+    suspend fun setCurrentTheme(appTheme: String) {
+        dataStore.edit { settings ->
+            settings[currentThemeKey] = appTheme
+        }
+    }
+
     val currentTheme = dataStore.data.map { preferences ->
         preferences[currentThemeKey] ?: PreferencesConstants.DEFAULT_SELECTED_THEME
     }

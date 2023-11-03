@@ -10,6 +10,7 @@ interface SavedGameRepository {
     fun getWithBoards(): Flow<Map<SavedGame, SudokuBoard>>
     fun getLast(): Flow<SavedGame?>
     suspend fun insert(savedGame: SavedGame): Long
+    suspend fun insert(savedGames: List<SavedGame>)
     suspend fun update(savedGame: SavedGame)
     suspend fun delete(savedGame: SavedGame)
 }

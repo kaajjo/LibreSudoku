@@ -39,12 +39,15 @@ fun PreferenceRow(
     onClick: () -> Unit = { },
     onLongClick: (() -> Unit)? = null,
     subtitle: String? = null,
+    enabled: Boolean = true,
     action: @Composable (() -> Unit)? = null,
     shape: Shape = MaterialTheme.shapes.medium
 ) {
     val height = if (subtitle != null) 72.dp else 56.dp
 
-    val titleStyle = MaterialTheme.typography.bodyLarge
+    val titleStyle = MaterialTheme.typography.bodyLarge.copy(
+        color = MaterialTheme.colorScheme.onSurface
+    )
     val subtitleTextStyle = MaterialTheme.typography.bodyMedium.copy(
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
     )
@@ -56,7 +59,8 @@ fun PreferenceRow(
             .clip(shape)
             .combinedClickable(
                 onLongClick = onLongClick,
-                onClick = onClick
+                onClick = onClick,
+                enabled = enabled
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -66,7 +70,7 @@ fun PreferenceRow(
                 modifier = Modifier
                     .padding(start = 12.dp, end = 14.dp)
                     .size(24.dp),
-                tint = MaterialTheme.colorScheme.secondary,
+                tint = MaterialTheme.colorScheme.secondary.copy(alpha = if (enabled) 1f else 0.6f),
                 contentDescription = null,
             )
         }
@@ -78,12 +82,14 @@ fun PreferenceRow(
             Text(
                 text = title,
                 style = titleStyle,
+                color = titleStyle.color.copy(alpha = if (enabled) 1f else 0.6f)
             )
             if (subtitle != null) {
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
                     text = subtitle,
                     style = subtitleTextStyle,
+                    color = subtitleTextStyle.color.copy(alpha = if (enabled) 1f else 0.6f),
                 )
             }
         }
@@ -103,10 +109,11 @@ fun PreferenceRow(
 fun PreferenceRowSwitch(
     modifier: Modifier = Modifier,
     title: String,
+    checked: Boolean,
     painter: Painter? = null,
     onClick: () -> Unit = { },
     subtitle: String? = null,
-    checked: Boolean,
+    enabled: Boolean = true
 ) {
     val icon: (@Composable () -> Unit)? = if (checked) {
         {
@@ -130,9 +137,11 @@ fun PreferenceRowSwitch(
             Switch(
                 thumbContent = icon,
                 checked = checked,
-                onCheckedChange = { onClick() }
+                onCheckedChange = { onClick() },
+                enabled = enabled
             )
         },
+        enabled = enabled
     )
 }
 

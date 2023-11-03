@@ -32,6 +32,9 @@ interface FolderDao {
     @Insert
     suspend fun insert(folder: Folder): Long
 
+    @Insert
+    suspend fun insert(folders: List<Folder>): List<Long>
+
     @Update
     suspend fun update(folder: Folder)
 

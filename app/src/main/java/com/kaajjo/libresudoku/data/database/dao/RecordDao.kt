@@ -32,4 +32,7 @@ interface RecordDao {
 
     @Insert
     suspend fun insert(record: Record)
+
+    @Insert
+    suspend fun insert(recrods: List<Record>)
 }

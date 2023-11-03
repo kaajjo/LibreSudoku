@@ -6,12 +6,16 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import kotlinx.coroutines.flow.map
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.chrono.IsoChronology
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
@@ -79,6 +83,17 @@ class AppSettingsManager(context: Context) {
     // last selected difficulty and type
     private val lastSelectedGameDifficultyTypeKey =
         stringPreferencesKey("last_selected_difficulty_type")
+
+    // URI for automatic backups
+    private val backupUriKey = stringPreferencesKey("backup_persistent_uri")
+
+    // Interval in hours between automatic backups
+    private val autoBackupIntervalKey = longPreferencesKey("auto_backup_interval")
+
+    // Max number of automatic backup files
+    private val autoBackupsNumberKey = intPreferencesKey("auto_backups_max_number")
+
+    private val lastBackupDateKey = longPreferencesKey("last_backup_date")
 
     suspend fun setFirstLaunch(value: Boolean) {
         dataStore.edit { settings ->
@@ -309,6 +324,51 @@ class AppSettingsManager(context: Context) {
         Pair(gameDifficulty, gameType)
     }
 
+    suspend fun setBackupUri(uri: String) {
+        dataStore.edit { settings ->
+            settings[backupUriKey] = uri
+        }
+    }
+
+    val backupUri = dataStore.data.map { prefs -> prefs[backupUriKey] ?: "" }
+
+    suspend fun setAutoBackupInterval(hours: Long) {
+        dataStore.edit { settings ->
+            settings[autoBackupIntervalKey] = hours
+        }
+    }
+
+    val autoBackupInterval = dataStore.data.map { prefs ->
+        prefs[autoBackupIntervalKey] ?: PreferencesConstants.DEFAULT_AUTOBACKUP_INTERVAL
+    }
+
+    suspend fun setAutoBackupsNumber(value: Int) {
+        dataStore.edit { settings ->
+            settings[autoBackupsNumberKey] = value
+        }
+    }
+
+    val autoBackupsNumber = dataStore.data.map { prefs ->
+        prefs[autoBackupsNumberKey] ?: PreferencesConstants.DEFAULT_AUTO_BACKUPS_NUMBER
+    }
+
+    suspend fun setLastBackupDate(date: ZonedDateTime) {
+        dataStore.edit {  settings ->
+            settings[lastBackupDateKey] = date.toInstant().epochSecond
+        }
+    }
+
+    val lastBackupDate = dataStore.data.map { prefs ->
+        val date = prefs[lastBackupDateKey]
+        if (date != null) {
+            ZonedDateTime.ofInstant(
+                Instant.ofEpochSecond(date),
+                ZoneId.systemDefault()
+            )
+        } else {
+            null
+        }
+    }
     companion object {
         fun dateFormat(format: String): DateTimeFormatter = when (format) {
             "" -> {

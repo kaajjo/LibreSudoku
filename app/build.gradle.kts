@@ -3,8 +3,8 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.ksp)
     alias(libs.plugins.aboutLibraries)
-    alias(libs.plugins.kapt)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.serialization)
 }
 
 android {
@@ -80,7 +80,7 @@ dependencies {
 
     implementation(libs.hilt)
     implementation(libs.hilt.navigation)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
@@ -96,4 +96,12 @@ dependencies {
 
     implementation(libs.compose.destinations)
     ksp(libs.compose.destinations.ksp)
+
+    implementation(libs.serialization.json)
+    implementation(libs.documentFile)
+    implementation(libs.workRuntimeKtx)
+    implementation(libs.hilt.work)
+    implementation(libs.hilt.common)
+    ksp(libs.hilt.common.compiler)
+    ksp(libs.hilt.work)
 }

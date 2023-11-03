@@ -19,6 +19,8 @@ class FolderRepositoryImpl(
 
     override suspend fun insert(folder: Folder): Long = folderDao.insert(folder)
 
+    override suspend fun insert(folders: List<Folder>): List<Long> = folderDao.insert(folders)
+
     override suspend fun update(folder: Folder) = folderDao.update(folder)
 
     override suspend fun delete(folder: Folder) = folderDao.delete(folder)

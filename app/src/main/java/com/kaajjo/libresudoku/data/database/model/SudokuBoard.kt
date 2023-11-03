@@ -6,7 +6,9 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(
     tableName = "board",
     foreignKeys = [
