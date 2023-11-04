@@ -36,8 +36,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -165,7 +165,7 @@ fun SavedGameScreen(
                     stringResource(R.string.saved_game_current),
                     stringResource(R.string.saved_game_initial)
                 )
-                TabRow(
+                SecondaryTabRow(
                     selectedTabIndex = pagerState.currentPage,
                     divider = { },
                     indicator = { tabPositions ->
@@ -337,7 +337,13 @@ fun SavedGameScreen(
                     if (viewModel.savedGame!!.canContinue) {
                         FilledTonalButton(
                             modifier = Modifier.align(Alignment.CenterHorizontally),
-                            onClick = { navigator.navigate(GameScreenDestination(gameUid = viewModel.savedGame!!.uid)) }
+                            onClick = {
+                                navigator.navigate(
+                                    GameScreenDestination(
+                                        gameUid = viewModel.savedGame!!.uid, playedBefore = true
+                                    )
+                                )
+                            }
                         ) {
                             Text(stringResource(R.string.action_continue))
                         }
