@@ -24,7 +24,7 @@ class HistoryViewModel
     val games = savedGameRepository.getWithBoards()
 
     var sortType by mutableStateOf(SortType.Descending)
-    var sortEntry by mutableStateOf(SortEntry.GameID)
+    var sortEntry by mutableStateOf(SortEntry.DateStarted)
     var filterDifficulties by mutableStateOf(emptyList<GameDifficulty>())
     var filterGameTypes by mutableStateOf(emptyList<GameType>())
     var filterByGameState by mutableStateOf(GameStateFilter.All)
@@ -67,7 +67,7 @@ class HistoryViewModel
         var result = applyFilterDifficulties(games)
         result = applyFilterTypes(result)
         result = applyFilterByGameState(result)
-        result = applySort(result)
+        result = applySort(result, descending = sortType == SortType.Descending)
         return result
     }
 
@@ -105,18 +105,17 @@ class HistoryViewModel
         }
     }
 
-    private fun applySort(games: List<Pair<SavedGame, SudokuBoard>>): List<Pair<SavedGame, SudokuBoard>> {
-        return if (sortType == SortType.Ascending) {
-            when (sortEntry) {
-                SortEntry.GameID -> games.sortedBy { it.first.uid }
-                SortEntry.Timer -> games.sortedBy { it.first.timer }
-            }
-        } else {
-            when (sortEntry) {
-                SortEntry.GameID -> games.sortedByDescending { it.first.uid }
-                SortEntry.Timer -> games.sortedByDescending { it.first.timer }
-            }
+    private fun applySort(games: List<Pair<SavedGame, SudokuBoard>>, descending: Boolean): List<Pair<SavedGame, SudokuBoard>> {
+        return when (sortEntry) {
+            SortEntry.GameID -> games.sortedBy(descending = descending) { it.first.uid }
+            SortEntry.Timer -> games.sortedBy(descending = descending) { it.first.timer }
+            SortEntry.DateStarted -> games.sortedBy(descending = descending) { it.first.startedAt }
+            SortEntry.DatePlayed -> games.sortedBy(descending = descending) { it.first.lastPlayed }
         }
+    }
+
+    private inline fun <T, R : Comparable<R>> Iterable<T>.sortedBy(descending: Boolean = false, crossinline selector: (T) -> R?): List<T> {
+        return if (descending) sortedWith(compareByDescending(selector)) else sortedWith(compareBy(selector))
     }
 }
 
@@ -126,6 +125,9 @@ enum class SortType(val resName: Int) {
 }
 
 enum class SortEntry(val resName: Int) {
-    GameID(R.string.sort_by_game_id),
-    Timer(R.string.sort_by_timer)
+    DateStarted(R.string.date_started),
+    DatePlayed(R.string.date_last_played),
+    Timer(R.string.sort_by_timer),
+    GameID(R.string.sort_by_game_id)
+
 }

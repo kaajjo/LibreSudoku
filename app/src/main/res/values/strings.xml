@@ -316,4 +316,7 @@
     <string name="action_create">Create</string>
     <string name="restore_existing_data_alert">Existing data will be deleted!</string>
     <string name="last_backup_date">Most recent backup: %1$s</string>
+
+    <string name="date_started">Date started</string>
+    <string name="date_last_played">Date last played</string>
 </resources>
