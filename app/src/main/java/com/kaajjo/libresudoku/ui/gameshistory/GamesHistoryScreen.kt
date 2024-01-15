@@ -1,5 +1,6 @@
 package com.kaajjo.libresudoku.ui.gameshistory
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowDownward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -44,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -68,6 +72,7 @@ import com.kaajjo.libresudoku.ui.util.disableSplitMotionEvents
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.sqrt
 import kotlin.time.toKotlinDuration
@@ -154,7 +159,8 @@ fun GamesHistoryScreen(
                             onClick = {
                                 navigator.navigate(SavedGameScreenDestination(gameUid = game.first.uid))
                             },
-                            dateTimeFormatter = AppSettingsManager.dateFormat(dateFormat)
+                            dateTimeFormatter = AppSettingsManager.dateFormat(dateFormat),
+                            date = game.first.startedAt
                         )
                         if (index < filteredAndSortedBoards.size - 1) {
                             HorizontalDivider(
@@ -185,13 +191,22 @@ fun GamesHistoryScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     item {
-                        FilterChip(
-                            selected = viewModel.sortType == SortType.Ascending,
-                            label = { Text(stringResource(R.string.sort_ascending)) },
-                            onClick = {
-                                viewModel.switchSortType()
-                            }
+                        val iconRotation by animateFloatAsState(
+                            if (viewModel.sortType == SortType.Descending) {
+                                0f
+                            } else {
+                                180f
+                            }, label = ""
                         )
+                        IconButton(onClick = {
+                            viewModel.sortType = if (viewModel.sortType == SortType.Ascending) SortType.Descending else SortType.Ascending
+                        }) {
+                            Icon(
+                                modifier = Modifier.rotate(iconRotation),
+                                imageVector = Icons.Rounded.ArrowDownward,
+                                contentDescription = null
+                            )
+                        }
                     }
                     items(enumValues<SortEntry>().toList()) {
                         FilterChip(
@@ -284,7 +299,8 @@ fun SudokuHistoryItem(
     savedGame: SavedGame,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = { },
-    dateTimeFormatter: DateTimeFormatter
+    dateTimeFormatter: DateTimeFormatter,
+    date: ZonedDateTime?
 ) {
     Box(
         modifier = modifier
@@ -326,15 +342,15 @@ fun SudokuHistoryItem(
                 }
 
 
-                if (savedGame.startedAt != null) {
+                if (date != null) {
                     val startedAtDate by remember(savedGame) {
                         mutableStateOf(
-                            savedGame.startedAt.format(dateTimeFormatter)
+                            date.format(dateTimeFormatter)
                         )
                     }
                     val startedAtTime by remember(savedGame) {
                         mutableStateOf(
-                            savedGame.startedAt.format(DateTimeFormatter.ofPattern("HH:mm"))
+                            date.format(DateTimeFormatter.ofPattern("HH:mm"))
                         )
                     }
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
