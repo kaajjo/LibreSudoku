@@ -45,8 +45,8 @@ class LibreSudokuApp : Application(), Configuration.Provider {
 
     @Inject
     lateinit var hiltWorkerFactory: HiltWorkerFactory
-    override fun getWorkManagerConfiguration(): Configuration =
-        Configuration.Builder()
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
             .setWorkerFactory(hiltWorkerFactory)
             .build()
 
