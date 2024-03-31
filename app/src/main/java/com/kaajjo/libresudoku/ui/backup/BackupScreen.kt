@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.TipsAndUpdates
+import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material.icons.rounded.FileUpload
@@ -238,7 +238,7 @@ fun BackupScreen(
                     GrantPermissionCard(
                         title = stringResource(R.string.auto_backup_folder_access),
                         details = stringResource(R.string.auto_backup_folder_access_description),
-                        painter = rememberVectorPainter(image = Icons.Default.TipsAndUpdates),
+                        painter = rememberVectorPainter(image = Icons.Outlined.Folder),
                         confirmButton = {
                             Button(
                                 onClick = { requestDirectoryAccess.launch(null) },
