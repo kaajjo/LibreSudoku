@@ -46,6 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.destinations.SettingsBoardThemeDestination
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
@@ -55,9 +56,9 @@ import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTitle
 import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTopAppBar
 import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.rememberTopAppBarScrollBehavior
 import com.kaajjo.libresudoku.ui.settings.components.AppThemePreviewItem
-import com.kaajjo.libresudoku.ui.theme.AppColorScheme
-import com.kaajjo.libresudoku.ui.theme.AppTheme
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.materialkolor.PaletteStyle
+import com.materialkolor.rememberDynamicColorScheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
@@ -90,7 +91,6 @@ fun SettingsScreen(
     val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle(initialValue = "")
     val dynamicColors by viewModel.dynamicColors.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_DYNAMIC_COLORS)
     val amoledBlackState by viewModel.amoledBlack.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AMOLED_BLACK)
-    val currentTheme by viewModel.currentTheme.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_SELECTED_THEME)
     val hintDisabled by viewModel.disableHints.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_HINTS_DISABLED)
     val mistakesLimit by viewModel.mistakesLimit.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_MISTAKES_LIMIT)
     val timerEnabled by viewModel.timer.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_SHOW_TIMER)
@@ -101,6 +101,16 @@ fun SettingsScreen(
         initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL
     )
     val remainingUse by viewModel.remainingUse.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_REMAINING_USES)
+    val currentPaletteStyle by viewModel.paletteStyle.collectAsStateWithLifecycle(initialValue = PaletteStyle.TonalSpot)
+    val currentSeedColor by viewModel.seedColor.collectAsStateWithLifecycle(
+        initialValue = Color(
+            PreferencesConstants.DEFAULT_THEME_SEED_COLOR
+        )
+    )
+
+    var paletteStyleDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         modifier = Modifier
@@ -143,16 +153,6 @@ fun SettingsScreen(
             }
 
             item {
-                val currentThemeValue = when (currentTheme) {
-                    PreferencesConstants.GREEN_THEME_KEY -> AppTheme.Green
-                    PreferencesConstants.BLUE_THEME_KEY -> AppTheme.Blue
-                    PreferencesConstants.PEACH_THEME_KEY -> AppTheme.Peach
-                    PreferencesConstants.YELLOW_THEME_KEY -> AppTheme.Yellow
-                    PreferencesConstants.LAVENDER_THEME_KEY -> AppTheme.Lavender
-                    PreferencesConstants.BLACK_AND_WHITE_THEME_KEY -> AppTheme.BlackAndWhite
-                    else -> AppTheme.Green
-                }
-
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     text = stringResource(R.string.pref_app_theme)
@@ -162,7 +162,6 @@ fun SettingsScreen(
                         .fillMaxWidth()
                         .padding(top = 8.dp, bottom = 8.dp)
                 ) {
-                    val appTheme = AppColorScheme()
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         item {
                             LibreSudokuTheme(
@@ -196,36 +195,56 @@ fun SettingsScreen(
                             }
                         }
                     }
-                    items(enumValues<AppTheme>()) { theme ->
+                    items(
+                        listOf(
+                            Color.Green to context.getString(R.string.theme_green),
+                            Color.Red to context.getString(R.string.theme_peach),
+                            Color.Yellow to context.getString(R.string.theme_yellow),
+                            Color.Blue to context.getString(R.string.theme_blue),
+                            Color(0xFFC97820) to context.getString(R.string.theme_orange),
+                            Color.Cyan to context.getString(R.string.theme_cyan),
+                            Color.Magenta to context.getString(R.string.theme_lavender)
+                        )
+                    ) {
                         AppThemeItem(
-                            title = when (theme) {
-                                AppTheme.Green -> stringResource(R.string.theme_green)
-                                AppTheme.Blue -> stringResource(R.string.theme_blue)
-                                AppTheme.Peach -> stringResource(R.string.theme_peach)
-                                AppTheme.Yellow -> stringResource(R.string.theme_yellow)
-                                AppTheme.Lavender -> stringResource(R.string.theme_lavender)
-                                AppTheme.BlackAndWhite -> stringResource(R.string.theme_black_and_white)
-                            },
-                            colorScheme = appTheme.getTheme(
-                                theme, when (darkTheme) {
+                            title = it.second,
+                            colorScheme = rememberDynamicColorScheme(
+                                seedColor = it.first,
+                                isDark = when (darkTheme) {
                                     0 -> isSystemInDarkTheme()
                                     1 -> false
                                     else -> true
-                                }
+                                },
+                                style = currentPaletteStyle
                             ),
                             onClick = {
                                 viewModel.updateDynamicColors(false)
-                                viewModel.updateCurrentTheme(theme)
+                                viewModel.updateCurrentSeedColor(it.first)
                             },
-                            selected = currentThemeValue == theme && !dynamicColors,
+                            selected = currentSeedColor == it.first && !dynamicColors,
                             amoledBlack = amoledBlackState,
                             darkTheme = darkTheme,
-
-                            )
+                        )
                     }
                 }
             }
-
+            item {
+                PreferenceRow(
+                    title = stringResource(R.string.pref_monet_style),
+                    subtitle = when (currentPaletteStyle) {
+                        PaletteStyle.TonalSpot -> stringResource(R.string.monet_tonalspot)
+                        PaletteStyle.Neutral -> stringResource(R.string.monet_neutral)
+                        PaletteStyle.Vibrant -> stringResource(R.string.monet_vibrant)
+                        PaletteStyle.Expressive -> stringResource(R.string.monet_expressive)
+                        PaletteStyle.Rainbow -> stringResource(R.string.monet_rainbow)
+                        PaletteStyle.FruitSalad -> stringResource(R.string.monet_fruitsalad)
+                        PaletteStyle.Monochrome -> stringResource(R.string.monet_monochrome)
+                        PaletteStyle.Fidelity -> stringResource(R.string.monet_fidelity)
+                        PaletteStyle.Content -> stringResource(R.string.monet_content)
+                    },
+                    onClick = { paletteStyleDialog = true }
+                )
+            }
             item {
                 PreferenceRowSwitch(
                     title = stringResource(R.string.pref_pure_black),
@@ -609,6 +628,27 @@ fun SettingsScreen(
                 onDismiss = { viewModel.dateFormatDialog = false },
 
                 )
+        } else if (paletteStyleDialog) {
+            SelectionDialog(
+                title = stringResource(R.string.pref_monet_style),
+                selections = listOf(
+                    stringResource(R.string.monet_tonalspot),
+                    stringResource(R.string.monet_neutral),
+                    stringResource(R.string.monet_vibrant),
+                    stringResource(R.string.monet_expressive),
+                    stringResource(R.string.monet_rainbow),
+                    stringResource(R.string.monet_fruitsalad),
+                    stringResource(R.string.monet_monochrome),
+                    stringResource(R.string.monet_fidelity),
+                    stringResource(R.string.monet_content)
+                ),
+                selected = ThemeSettingsManager.paletteStyles.find { it.first == currentPaletteStyle }?.second
+                    ?: 0,
+                onSelect = { index ->
+                    viewModel.updatePaletteStyle(index)
+                },
+                onDismiss = { paletteStyleDialog = false }
+            )
         }
 
         if (viewModel.customFormatDialog) {

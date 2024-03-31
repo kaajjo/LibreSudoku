@@ -48,9 +48,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -69,6 +72,7 @@ import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import com.kaajjo.libresudoku.ui.util.disableSplitMotionEvents
+import com.materialkolor.ktx.harmonize
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
@@ -361,22 +365,37 @@ fun SudokuHistoryItem(
 
                 Spacer(modifier = Modifier.height(12.dp))
                 if (savedGame.canContinue) {
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = MaterialTheme.colorScheme.primaryContainer,
-                                shape = MaterialTheme.shapes.large
-                            )
-                            .padding(vertical = 4.dp, horizontal = 8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.can_continue_label),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
+                    ColorfulBadge(
+                        text = stringResource(R.string.can_continue_label)
+                    )
                 }
             }
         }
+    }
+}
+
+
+@Composable
+fun ColorfulBadge(
+    text: String,
+    modifier: Modifier = Modifier,
+    foreground: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    background: Color = MaterialTheme.colorScheme.primaryContainer.harmonize(other = Color.Green),
+    style: TextStyle = MaterialTheme.typography.labelSmall,
+    shape: Shape = MaterialTheme.shapes.medium
+) {
+    Box(
+        modifier = modifier
+            .background(
+                color = background,
+                shape = shape
+            )
+            .padding(vertical = 4.dp, horizontal = 8.dp)
+    ) {
+        Text(
+            text = text,
+            style = style,
+            color = foreground
+        )
     }
 }

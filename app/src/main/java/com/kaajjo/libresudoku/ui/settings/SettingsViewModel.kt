@@ -3,6 +3,7 @@ package com.kaajjo.libresudoku.ui.settings
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +12,6 @@ import com.kaajjo.libresudoku.data.datastore.AcraSharedPrefs
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.data.datastore.TipCardsDataStore
-import com.kaajjo.libresudoku.ui.theme.AppTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -150,13 +150,10 @@ class SettingsViewModel
         }
     }
 
-    val currentTheme by lazy {
-        appThemeDataStore.currentTheme
-    }
-
-    fun updateCurrentTheme(theme: AppTheme) {
+    val seedColor by lazy { appThemeDataStore.themeColorSeed }
+    fun updateCurrentSeedColor(seedColor: Color) {
         viewModelScope.launch(Dispatchers.IO) {
-            appThemeDataStore.setCurrentTheme(theme)
+            appThemeDataStore.setCurrentThemeColor(seedColor)
         }
     }
 
@@ -200,4 +197,10 @@ class SettingsViewModel
             false
         }
     }
+
+    val paletteStyle by lazy { appThemeDataStore.themePaletteStyle }
+    fun updatePaletteStyle(index: Int) =
+        viewModelScope.launch(Dispatchers.IO) {
+            appThemeDataStore.setPaletteStyle(ThemeSettingsManager.paletteStyles[index].first)
+        }
 }

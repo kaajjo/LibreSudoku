@@ -3,15 +3,16 @@ package com.kaajjo.libresudoku.data.datastore
 import android.content.Context
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.kaajjo.libresudoku.core.PreferencesConstants
-import com.kaajjo.libresudoku.ui.theme.AppTheme
+import com.materialkolor.PaletteStyle
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -31,13 +32,16 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
     // amoled black theme, 0 - disabled, 1 enabled
     private val amoledBlackKey = booleanPreferencesKey("amoled_black")
 
-    // current app theme
-    private val currentThemeKey = stringPreferencesKey("current_theme")
-
     // colorful sudoku board with dynamic theme colors
     private val monetSudokuBoardKey = booleanPreferencesKey("monet_sudoku_board")
 
     private val boardCrossHighlightKey = booleanPreferencesKey("board_cross_highlight")
+
+    // seed color for the custom dynamic color scheme
+    private val themeSeedColorKey = intPreferencesKey("theme_seed_color")
+
+    // palette style for the custom dynamic color scheme
+    private val paletteStyleKey = intPreferencesKey("palette_style")
 
     suspend fun setDynamicColors(enabled: Boolean) {
         dataStore.edit { settings ->
@@ -70,30 +74,6 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
         preferences[amoledBlackKey] ?: PreferencesConstants.DEFAULT_AMOLED_BLACK
     }
 
-    suspend fun setCurrentTheme(appTheme: AppTheme) {
-        val stringTheme = when (appTheme) {
-            AppTheme.Green -> PreferencesConstants.GREEN_THEME_KEY
-            AppTheme.Blue -> PreferencesConstants.BLUE_THEME_KEY
-            AppTheme.Peach -> PreferencesConstants.PEACH_THEME_KEY
-            AppTheme.Yellow -> PreferencesConstants.YELLOW_THEME_KEY
-            AppTheme.Lavender -> PreferencesConstants.LAVENDER_THEME_KEY
-            AppTheme.BlackAndWhite -> PreferencesConstants.BLACK_AND_WHITE_THEME_KEY
-        }
-        dataStore.edit { settings ->
-            settings[currentThemeKey] = stringTheme
-        }
-    }
-
-    suspend fun setCurrentTheme(appTheme: String) {
-        dataStore.edit { settings ->
-            settings[currentThemeKey] = appTheme
-        }
-    }
-
-    val currentTheme = dataStore.data.map { preferences ->
-        preferences[currentThemeKey] ?: PreferencesConstants.DEFAULT_SELECTED_THEME
-    }
-
     suspend fun setMonetSudokuBoard(enabled: Boolean) {
         dataStore.edit { settings ->
             settings[monetSudokuBoardKey] = enabled
@@ -112,5 +92,45 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
 
     val boardCrossHighlight = dataStore.data.map { preferences ->
         preferences[boardCrossHighlightKey] ?: PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT
+    }
+
+    suspend fun setCurrentThemeColor(color: Color) {
+        dataStore.edit { prefs ->
+            prefs[themeSeedColorKey] = color.toArgb()
+        }
+    }
+
+    val themeColorSeed = dataStore.data.map { prefs ->
+        Color(prefs[themeSeedColorKey] ?: Color.Green.toArgb())
+    }
+
+    suspend fun setPaletteStyle(style: PaletteStyle) {
+        dataStore.edit { prefs ->
+            val index = paletteStyles.find { it.first == style }?.second ?: 1
+            prefs[paletteStyleKey] = index
+        }
+    }
+
+    val themePaletteStyle = dataStore.data.map { prefs ->
+        val index = prefs[paletteStyleKey] ?: 1
+        if (index in paletteStyles.indices) {
+            paletteStyles[index].first
+        } else {
+            paletteStyles.first().first
+        }
+    }
+
+    companion object {
+        val paletteStyles = listOf(
+            PaletteStyle.TonalSpot to 0,
+            PaletteStyle.Neutral to 1,
+            PaletteStyle.Vibrant to 2,
+            PaletteStyle.Expressive to 3,
+            PaletteStyle.Rainbow to 4,
+            PaletteStyle.FruitSalad to 5,
+            PaletteStyle.Monochrome to 6,
+            PaletteStyle.Fidelity to 7,
+            PaletteStyle.Content to 8,
+        )
     }
 }

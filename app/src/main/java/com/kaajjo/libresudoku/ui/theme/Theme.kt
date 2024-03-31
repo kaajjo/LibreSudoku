@@ -10,6 +10,8 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.materialkolor.PaletteStyle
+import com.materialkolor.rememberDynamicColorScheme
 
 @Composable
 fun LibreSudokuTheme(
@@ -17,11 +19,17 @@ fun LibreSudokuTheme(
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     amoled: Boolean = false,
-    appTheme: AppTheme = AppTheme.Green,
+    colorSeed: Color = Color.Green,
+    paletteStyle: PaletteStyle = PaletteStyle.TonalSpot,
     content: @Composable () -> Unit,
 ) {
-    val appColorScheme = AppColorScheme()
-    val currentTheme = appColorScheme.getTheme(appTheme, darkTheme)
+    
+    val currentTheme = rememberDynamicColorScheme(
+        seedColor = colorSeed,
+        isDark = darkTheme,
+        style = paletteStyle
+    )
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current

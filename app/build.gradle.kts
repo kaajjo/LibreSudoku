@@ -104,4 +104,5 @@ dependencies {
     implementation(libs.hilt.common)
     ksp(libs.hilt.common.compiler)
     ksp(libs.hilt.work)
+    implementation(libs.materialKolor)
 }

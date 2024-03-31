@@ -12,13 +12,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -37,11 +37,11 @@ import com.kaajjo.libresudoku.destinations.MoreScreenDestination
 import com.kaajjo.libresudoku.destinations.StatisticsScreenDestination
 import com.kaajjo.libresudoku.destinations.WelcomeScreenDestination
 import com.kaajjo.libresudoku.ui.components.navigation_bar.NavigationBarComponent
-import com.kaajjo.libresudoku.ui.theme.AppTheme
 import com.kaajjo.libresudoku.ui.theme.BoardColors
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.ui.theme.SudokuBoardColorsImpl
 import com.kaajjo.libresudoku.ui.util.findActivity
+import com.materialkolor.PaletteStyle
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
@@ -64,11 +64,13 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val mainViewModel: MainActivityViewModel = hiltViewModel()
 
-            val dynamicColors by mainViewModel.dc.collectAsState(isSystemInDarkTheme())
-            val darkTheme by mainViewModel.darkTheme.collectAsState(PreferencesConstants.DEFAULT_DARK_THEME)
-            val amoledBlack by mainViewModel.amoledBlack.collectAsState(PreferencesConstants.DEFAULT_AMOLED_BLACK)
-            val firstLaunch by mainViewModel.firstLaunch.collectAsState(false)
-            val currentTheme by mainViewModel.currentTheme.collectAsState(PreferencesConstants.DEFAULT_SELECTED_THEME)
+            val dynamicColors by mainViewModel.dc.collectAsStateWithLifecycle(isSystemInDarkTheme())
+            val darkTheme by mainViewModel.darkTheme.collectAsStateWithLifecycle(PreferencesConstants.DEFAULT_DARK_THEME)
+            val amoledBlack by mainViewModel.amoledBlack.collectAsStateWithLifecycle(PreferencesConstants.DEFAULT_AMOLED_BLACK)
+            val firstLaunch by mainViewModel.firstLaunch.collectAsStateWithLifecycle(false)
+            val colorSeed by mainViewModel.colorSeed.collectAsStateWithLifecycle(initialValue = Color.Red)
+            val paletteStyle by mainViewModel.paletteStyle.collectAsStateWithLifecycle(initialValue = PaletteStyle.TonalSpot)
+
             LibreSudokuTheme(
                 darkTheme = when (darkTheme) {
                     1 -> false
@@ -77,15 +79,8 @@ class MainActivity : AppCompatActivity() {
                 },
                 dynamicColor = dynamicColors,
                 amoled = amoledBlack,
-                appTheme = when (currentTheme) {
-                    PreferencesConstants.GREEN_THEME_KEY -> AppTheme.Green
-                    PreferencesConstants.BLUE_THEME_KEY -> AppTheme.Blue
-                    PreferencesConstants.PEACH_THEME_KEY -> AppTheme.Peach
-                    PreferencesConstants.YELLOW_THEME_KEY -> AppTheme.Yellow
-                    PreferencesConstants.LAVENDER_THEME_KEY -> AppTheme.Lavender
-                    PreferencesConstants.BLACK_AND_WHITE_THEME_KEY -> AppTheme.BlackAndWhite
-                    else -> AppTheme.Green
-                }
+                colorSeed = colorSeed,
+                paletteStyle = paletteStyle
             ) {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -168,8 +163,9 @@ class MainActivityViewModel
     val darkTheme = themeSettingsManager.darkTheme
     val amoledBlack = themeSettingsManager.amoledBlack
     val firstLaunch = appSettingsManager.firstLaunch
-    val currentTheme = themeSettingsManager.currentTheme
     val monetSudokuBoard = themeSettingsManager.monetSudokuBoard
+    val colorSeed = themeSettingsManager.themeColorSeed
+    val paletteStyle = themeSettingsManager.themePaletteStyle
 }
 
 @Destination(

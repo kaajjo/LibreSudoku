@@ -1,5 +1,7 @@
 package com.kaajjo.libresudoku.data.backup
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
@@ -28,9 +30,9 @@ data class SettingsBackup(
     val maxAutoBackups: Int = PreferencesConstants.DEFAULT_AUTO_BACKUPS_NUMBER,
     val dynamicColors: Boolean = PreferencesConstants.DEFAULT_DYNAMIC_COLORS,
     val darkTheme: Int = PreferencesConstants.DEFAULT_DARK_THEME,
-    val currentTheme: String = PreferencesConstants.DEFAULT_SELECTED_THEME,
     val monetSudokuBoard: Boolean = PreferencesConstants.DEFAULT_MONET_SUDOKU_BOARD,
-    val boardCrossHighlight: Boolean = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT
+    val boardCrossHighlight: Boolean = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT,
+    val currentThemeSeedColor: Int = PreferencesConstants.DEFAULT_THEME_SEED_COLOR
 ) {
     suspend fun setSettings(settings: AppSettingsManager, themeSettings: ThemeSettingsManager) {
         settings.setInputMethod(inputMethod)
@@ -53,9 +55,9 @@ data class SettingsBackup(
 
         themeSettings.setDynamicColors(dynamicColors)
         themeSettings.setDarkTheme(darkTheme)
-        themeSettings.setCurrentTheme(currentTheme)
         themeSettings.setMonetSudokuBoard(monetSudokuBoard)
         themeSettings.setBoardCrossHighlight(boardCrossHighlight)
+        themeSettings.setCurrentThemeColor(Color(currentThemeSeedColor))
     }
 
     companion object {
@@ -83,9 +85,9 @@ data class SettingsBackup(
                 maxAutoBackups = runBlocking { settings.autoBackupsNumber.first() },
                 dynamicColors = runBlocking { themeSettings.dynamicColors.first() },
                 darkTheme = runBlocking { themeSettings.darkTheme.first() },
-                currentTheme = runBlocking { themeSettings.currentTheme.first() },
                 monetSudokuBoard = runBlocking { themeSettings.monetSudokuBoard.first() },
-                boardCrossHighlight = runBlocking { themeSettings.boardCrossHighlight.first() }
+                boardCrossHighlight = runBlocking { themeSettings.boardCrossHighlight.first() },
+                currentThemeSeedColor = runBlocking { themeSettings.themeColorSeed.first().toArgb() }
             )
         }
     }

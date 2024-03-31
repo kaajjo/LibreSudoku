@@ -23,6 +23,7 @@ documentFile = "1.0.1"
 workRuntimeKtx = "2.9.0"
 hilt-work = "1.2.0"
 hilt-common = "1.2.0"
+materialKolor = "1.4.4"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx"}
@@ -59,6 +60,7 @@ workRuntimeKtx = { group = "androidx.work", name = "work-runtime-ktx", version.r
 hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt-work" }
 hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hilt-common" }
 hilt-common-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-common" }
+materialKolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialKolor" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

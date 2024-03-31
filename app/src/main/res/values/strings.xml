@@ -319,4 +319,17 @@
 
     <string name="date_started">Date started</string>
     <string name="date_last_played">Date last played</string>
+
+    <string name="pref_monet_style">Monet style</string>
+    <string name="monet_tonalspot">Tonal Spot</string>
+    <string name="monet_neutral">Neutral</string>
+    <string name="monet_vibrant">Vibrant</string>
+    <string name="monet_expressive">Expressive</string>
+    <string name="monet_rainbow">Rainbow</string>
+    <string name="monet_fruitsalad">Fruit Salad</string>
+    <string name="monet_monochrome">Monochrome</string>
+    <string name="monet_fidelity">Fidelity</string>
+    <string name="monet_content">Content</string>
+    <string name="theme_orange">Orange</string>
+    <string name="theme_cyan">Cyan</string>
 </resources>
