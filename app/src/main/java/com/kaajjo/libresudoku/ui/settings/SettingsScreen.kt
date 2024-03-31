@@ -87,7 +87,6 @@ fun SettingsScreen(
     )
     val inputMethod by viewModel.inputMethod.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_INPUT_METHOD)
     val darkTheme by viewModel.darkTheme.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_DARK_THEME)
-    val fontSize by viewModel.fontSize.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
     val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle(initialValue = "")
     val dynamicColors by viewModel.dynamicColors.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_DYNAMIC_COLORS)
     val amoledBlackState by viewModel.amoledBlack.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_AMOLED_BLACK)
@@ -260,19 +259,6 @@ fun SettingsScreen(
                     title = stringResource(R.string.pref_board_theme_title),
                     subtitle = stringResource(R.string.pref_board_theme_subtitle),
                     onClick = { navigator.navigate(SettingsBoardThemeDestination()) }
-                )
-            }
-
-            item {
-                PreferenceRow(
-                    title = stringResource(R.string.pref_board_font_size),
-                    subtitle = when (fontSize) {
-                        0 -> stringResource(R.string.pref_board_font_size_small)
-                        1 -> stringResource(R.string.pref_board_font_size_medium)
-                        2 -> stringResource(R.string.pref_board_font_size_large)
-                        else -> ""
-                    },
-                    onClick = { viewModel.fontSizeDialog = true }
                 )
             }
 
@@ -515,20 +501,6 @@ fun SettingsScreen(
                     viewModel.updateDarkTheme(index)
                 },
                 onDismiss = { viewModel.darkModeDialog = false }
-            )
-        } else if (viewModel.fontSizeDialog) {
-            SelectionDialog(
-                title = stringResource(R.string.pref_board_font_size),
-                selections = listOf(
-                    stringResource(R.string.pref_board_font_size_small),
-                    stringResource(R.string.pref_board_font_size_medium),
-                    stringResource(R.string.pref_board_font_size_large)
-                ),
-                selected = fontSize,
-                onSelect = { index ->
-                    viewModel.updateFontSize(index)
-                },
-                onDismiss = { viewModel.fontSizeDialog = false }
             )
         } else if (viewModel.inputMethodDialog) {
             SelectionDialog(

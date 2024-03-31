@@ -7,22 +7,24 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.rounded.FormatSize
 import androidx.compose.material.icons.rounded.GridGoldenratio
 import androidx.compose.material.icons.rounded.GridOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,12 +32,16 @@ import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
+import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.utils.SudokuUtils
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
+import com.kaajjo.libresudoku.ui.components.PreferenceRow
 import com.kaajjo.libresudoku.ui.components.PreferenceRowSwitch
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTitle
 import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTopAppBar
 import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.rememberTopAppBarScrollBehavior
+import com.kaajjo.libresudoku.ui.settings.SelectionDialog
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -46,6 +52,22 @@ fun SettingsBoardTheme(
     navigator: DestinationsNavigator
 ) {
     val scrollBehavior = rememberTopAppBarScrollBehavior()
+    val positionLines by viewModel.positionLines.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_POSITION_LINES)
+    val highlightMistakes by viewModel.highlightMistakes.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES)
+    val boardCrossHighlight by viewModel.crossHighlight.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT)
+    val fontSize by viewModel.fontSize.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
+
+    val fontSizeValue by remember(fontSize) {
+        mutableStateOf(
+            SudokuUtils().getFontSize(GameType.Default9x9, fontSize)
+        )
+    }
+
+    var fontSizeDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -69,14 +91,12 @@ fun SettingsBoardTheme(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            val positionLines by viewModel.positionLines.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_POSITION_LINES)
-            val highlightMistakes by viewModel.highlightMistakes.collectAsState(initial = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES)
-            val boardCrossHighlight by viewModel.crossHighlight.collectAsState(initial = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT)
             BoardPreviewTheme(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
                 positionLines = positionLines,
                 errosHighlight = highlightMistakes != 0,
-                crossHighlight = boardCrossHighlight
+                crossHighlight = boardCrossHighlight,
+                fontSize = fontSizeValue
             )
 
             val monetSudokuBoard by viewModel.monetSudokuBoard.collectAsStateWithLifecycle(
@@ -107,6 +127,33 @@ fun SettingsBoardTheme(
                 painter = rememberVectorPainter(Icons.Rounded.GridOn),
                 onClick = { viewModel.updateBoardCrossHighlight(!boardCrossHighlight) }
             )
+            PreferenceRow(
+                title = stringResource(R.string.pref_board_font_size),
+                subtitle = when (fontSize) {
+                    0 -> stringResource(R.string.pref_board_font_size_small)
+                    1 -> stringResource(R.string.pref_board_font_size_medium)
+                    2 -> stringResource(R.string.pref_board_font_size_large)
+                    else -> ""
+                },
+                painter = rememberVectorPainter(Icons.Rounded.FormatSize),
+                onClick = { fontSizeDialog = true }
+            )
+        }
+
+        if (fontSizeDialog) {
+            SelectionDialog(
+                title = stringResource(R.string.pref_board_font_size),
+                selections = listOf(
+                    stringResource(R.string.pref_board_font_size_small),
+                    stringResource(R.string.pref_board_font_size_medium),
+                    stringResource(R.string.pref_board_font_size_large)
+                ),
+                selected = fontSize,
+                onSelect = { index ->
+                    viewModel.updateFontSize(index)
+                },
+                onDismiss = { fontSizeDialog = false }
+            )
         }
     }
 }
@@ -116,6 +163,7 @@ private fun BoardPreviewTheme(
     positionLines: Boolean,
     errosHighlight: Boolean,
     crossHighlight: Boolean,
+    fontSize: TextUnit,
     modifier: Modifier = Modifier
 ) {
     val previewBoard = listOf(
@@ -229,6 +277,7 @@ private fun BoardPreviewTheme(
         boardColors = LocalBoardColors.current,
         positionLines = positionLines,
         errorsHighlight = errosHighlight,
-        crossHighlight = crossHighlight
+        crossHighlight = crossHighlight,
+        mainTextSize = fontSize
     )
 }

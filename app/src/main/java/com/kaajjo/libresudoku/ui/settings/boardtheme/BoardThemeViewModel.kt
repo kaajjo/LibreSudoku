@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,6 +35,13 @@ class SettingsBoardThemeViewModel @Inject constructor(
     fun updateBoardCrossHighlight(enabled: Boolean) {
         viewModelScope.launch {
             themeSettingsManager.setBoardCrossHighlight(enabled)
+        }
+    }
+
+    val fontSize = appSettingsManager.fontSize
+    fun updateFontSize(value: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            appSettingsManager.setFontSize(value)
         }
     }
 }

@@ -34,7 +34,6 @@ class SettingsViewModel
     var resetStatsDialog by mutableStateOf(false)
 
     var darkModeDialog by mutableStateOf(false)
-    var fontSizeDialog by mutableStateOf(false)
     var inputMethodDialog by mutableStateOf(false)
     var mistakesDialog by mutableStateOf(false)
     var languagePickDialog by mutableStateOf(false)
@@ -140,13 +139,6 @@ class SettingsViewModel
     fun deleteAllTables() {
         viewModelScope.launch(Dispatchers.IO) {
             appDatabase.clearAllTables()
-        }
-    }
-
-    val fontSize = settingsDataManager.fontSize
-    fun updateFontSize(value: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            settingsDataManager.setFontSize(value)
         }
     }
 
