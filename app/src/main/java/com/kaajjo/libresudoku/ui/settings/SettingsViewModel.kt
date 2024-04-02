@@ -195,4 +195,11 @@ class SettingsViewModel
         viewModelScope.launch(Dispatchers.IO) {
             appThemeDataStore.setPaletteStyle(ThemeSettingsManager.paletteStyles[index].first)
         }
+
+    val isUserDefinedSeedColor by lazy { appThemeDataStore.isUserDefinedSeedColor }
+    fun updateIsUserDefinedSeedColor(value: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            appThemeDataStore.setIsUserDefinedSeedColor(value)
+        }
+    }
 }

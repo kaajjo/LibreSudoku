@@ -32,7 +32,9 @@ data class SettingsBackup(
     val darkTheme: Int = PreferencesConstants.DEFAULT_DARK_THEME,
     val monetSudokuBoard: Boolean = PreferencesConstants.DEFAULT_MONET_SUDOKU_BOARD,
     val boardCrossHighlight: Boolean = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT,
-    val currentThemeSeedColor: Int = PreferencesConstants.DEFAULT_THEME_SEED_COLOR
+    val currentThemeSeedColor: Int = PreferencesConstants.DEFAULT_THEME_SEED_COLOR,
+    val paletteStyle: Int = PreferencesConstants.DEFAULT_PALETTE_STYLE,
+    val isUserDefinedSeedColor: Boolean = false
 ) {
     suspend fun setSettings(settings: AppSettingsManager, themeSettings: ThemeSettingsManager) {
         settings.setInputMethod(inputMethod)
@@ -58,6 +60,8 @@ data class SettingsBackup(
         themeSettings.setMonetSudokuBoard(monetSudokuBoard)
         themeSettings.setBoardCrossHighlight(boardCrossHighlight)
         themeSettings.setCurrentThemeColor(Color(currentThemeSeedColor))
+        themeSettings.setPaletteStyle(ThemeSettingsManager.getPaletteStyle(paletteStyle))
+        themeSettings.setIsUserDefinedSeedColor(isUserDefinedSeedColor)
     }
 
     companion object {
@@ -87,7 +91,9 @@ data class SettingsBackup(
                 darkTheme = runBlocking { themeSettings.darkTheme.first() },
                 monetSudokuBoard = runBlocking { themeSettings.monetSudokuBoard.first() },
                 boardCrossHighlight = runBlocking { themeSettings.boardCrossHighlight.first() },
-                currentThemeSeedColor = runBlocking { themeSettings.themeColorSeed.first().toArgb() }
+                currentThemeSeedColor = runBlocking { themeSettings.themeColorSeed.first().toArgb() },
+                paletteStyle = runBlocking { ThemeSettingsManager.getPaletteIndex(themeSettings.themePaletteStyle.first()) },
+                isUserDefinedSeedColor = runBlocking { themeSettings.isUserDefinedSeedColor.first() }
             )
         }
     }

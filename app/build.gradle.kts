@@ -105,4 +105,5 @@ dependencies {
     ksp(libs.hilt.common.compiler)
     ksp(libs.hilt.work)
     implementation(libs.materialKolor)
+    implementation(libs.colorPicker)
 }

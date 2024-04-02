@@ -3,17 +3,23 @@ package com.kaajjo.libresudoku.ui.settings
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,10 +41,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -56,6 +65,7 @@ import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTitle
 import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTopAppBar
 import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.rememberTopAppBarScrollBehavior
 import com.kaajjo.libresudoku.ui.settings.components.AppThemePreviewItem
+import com.kaajjo.libresudoku.ui.settings.components.ColorPickerDialog
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.materialkolor.PaletteStyle
 import com.materialkolor.rememberDynamicColorScheme
@@ -70,6 +80,7 @@ import java.time.format.DateTimeFormatterBuilder
 import java.time.format.FormatStyle
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalStdlibApi::class)
 @Destination(style = AnimatedNavigation::class)
 @Composable
 fun SettingsScreen(
@@ -106,8 +117,14 @@ fun SettingsScreen(
             PreferencesConstants.DEFAULT_THEME_SEED_COLOR
         )
     )
+    val isUserDefinedSeedColor by viewModel.isUserDefinedSeedColor.collectAsStateWithLifecycle(
+        initialValue = false
+    )
 
     var paletteStyleDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var colorPickerDialog by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -182,6 +199,7 @@ fun SettingsScreen(
                                         selected = dynamicColors,
                                         onClick = {
                                             viewModel.updateDynamicColors(true)
+                                            viewModel.updateIsUserDefinedSeedColor(false)
                                         },
                                         colorScheme = MaterialTheme.colorScheme,
                                         shapes = MaterialTheme.shapes
@@ -219,11 +237,45 @@ fun SettingsScreen(
                             onClick = {
                                 viewModel.updateDynamicColors(false)
                                 viewModel.updateCurrentSeedColor(it.first)
+                                viewModel.updateIsUserDefinedSeedColor(false)
                             },
-                            selected = currentSeedColor == it.first && !dynamicColors,
+                            selected = currentSeedColor == it.first && !dynamicColors && !isUserDefinedSeedColor,
                             amoledBlack = amoledBlackState,
                             darkTheme = darkTheme,
                         )
+                    }
+
+                    item {
+                        Box {
+                            AppThemeItem(
+                                title = stringResource(R.string.theme_custom),
+                                colorScheme = rememberDynamicColorScheme(
+                                    seedColor = currentSeedColor,
+                                    isDark = when (darkTheme) {
+                                        0 -> isSystemInDarkTheme()
+                                        1 -> false
+                                        else -> true
+                                    },
+                                    style = currentPaletteStyle
+                                ),
+                                onClick = {
+                                    viewModel.updateDynamicColors(false)
+                                    viewModel.updateIsUserDefinedSeedColor(true)
+                                    colorPickerDialog = true
+                                },
+                                selected = isUserDefinedSeedColor,
+                                amoledBlack = amoledBlackState,
+                                darkTheme = darkTheme,
+                            )
+                            Icon(
+                                imageVector = Icons.Rounded.Edit,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(top = 8.dp, end = 16.dp)
+                                    .align(Alignment.TopEnd)
+                                    .size(24.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -621,6 +673,60 @@ fun SettingsScreen(
                 },
                 onDismiss = { paletteStyleDialog = false }
             )
+        } else if (colorPickerDialog) {
+            val clipboardManager = LocalClipboardManager.current
+            var currentColor by remember {
+                mutableStateOf(currentSeedColor.toArgb())
+            }
+            ColorPickerDialog(
+                currentColor = currentColor,
+                onConfirm = {
+                    viewModel.updateCurrentSeedColor(Color(currentColor))
+                    colorPickerDialog = false
+                },
+                onDismiss = {
+                    colorPickerDialog = false
+                },
+                onHexColorClick = {
+                    clipboardManager.setText(
+                        AnnotatedString(
+                            "#" + currentColor.toHexString(
+                                HexFormat.UpperCase
+                            )
+                        )
+                    )
+                },
+                onRandomColorClick = {
+                    currentColor = (Math.random() * 16777215).toInt() or (0xFF shl 24)
+                },
+                onColorChange = {
+                    currentColor = it
+                },
+                onPaste = {
+                    val clipboardContent = clipboardManager.getText()
+                    var parsedColor: Int? = null
+                    if (clipboardContent != null) {
+                        try {
+                            parsedColor = android.graphics.Color.parseColor(
+                                clipboardContent.text
+                            )
+                        } catch (_: Exception) {
+
+                        }
+                    }
+                    if (parsedColor != null) {
+                        currentColor = parsedColor
+                    } else {
+                        Toast
+                            .makeText(
+                                context,
+                                context.getString(R.string.parse_color_fail),
+                                Toast.LENGTH_SHORT
+                            )
+                            .show()
+                    }
+                }
+            )
         }
 
         if (viewModel.customFormatDialog) {
@@ -786,3 +892,4 @@ private fun getDisplayName(lang: String?): String {
     }
     return locale!!.getDisplayName(locale).replaceFirstChar { it.uppercase(locale) }
 }
+

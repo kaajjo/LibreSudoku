@@ -29,5 +29,6 @@ class PreferencesConstants {
         const val DEFAULT_MONET_SUDOKU_BOARD = true
         const val DEFAULT_BOARD_CROSS_HIGHLIGHT = false
         const val DEFAULT_THEME_SEED_COLOR = -16711936 /* Color.Green.toArgb() */
+        const val DEFAULT_PALETTE_STYLE = 0
     }
 }
