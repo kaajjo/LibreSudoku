@@ -1,35 +1,72 @@
 package com.kaajjo.libresudoku.ui.onboarding
 
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Language
+import androidx.compose.material.icons.rounded.Restore
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
+import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
+import com.kaajjo.libresudoku.destinations.BackupScreenDestination
 import com.kaajjo.libresudoku.destinations.HomeScreenDestination
+import com.kaajjo.libresudoku.destinations.SettingsScreenDestination
 import com.kaajjo.libresudoku.ui.components.board.Board
+import com.kaajjo.libresudoku.ui.settings.SelectionDialog
+import com.kaajjo.libresudoku.ui.util.getCurrentLocaleString
+import com.kaajjo.libresudoku.ui.util.getCurrentLocaleTag
+import com.kaajjo.libresudoku.ui.util.getLangs
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,72 +80,176 @@ fun WelcomeScreen(
     viewModel: WelcomeViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .systemBarsPadding(),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
+    Scaffold { paddingValues ->
+        val context = LocalContext.current
+        var languagePickDialog by rememberSaveable {
+            mutableStateOf(false)
+        }
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
+                .systemBarsPadding(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                text = stringResource(R.string.onboard_title),
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Medium
             )
-            FirstPage(
-                selectedCellChanged = { viewModel.selectedCell = it },
-                selectedCell = viewModel.selectedCell,
-                board = viewModel.previewBoard,
-                onFinishedClick = {
-                    viewModel.setFirstLaunch()
-                    navigator.popBackStack()
-                    navigator.navigate(HomeScreenDestination())
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(stringResource(R.string.intro_rules))
+                    Board(
+                        board = viewModel.previewBoard,
+                        size = 9,
+                        selectedCell = viewModel.selectedCell,
+                        onClick = { cell -> viewModel.selectedCell = cell },
+                        boardColors = LocalBoardColors.current
+                    )
+
+                    Button(
+                        onClick = {
+                            viewModel.setFirstLaunch()
+                            navigator.popBackStack()
+                            navigator.navigate(HomeScreenDestination())
+                        },
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Text(stringResource(R.string.action_start))
+                    }
+                    var currentLanguage by remember {
+                        mutableStateOf(
+                            getCurrentLocaleString(context)
+                        )
+                    }
+                    LaunchedEffect(languagePickDialog) {
+                        currentLanguage = getCurrentLocaleString(context)
+                    }
+
+                    ItemRowBigIcon(
+                        title = stringResource(R.string.pref_app_language),
+                        icon = Icons.Rounded.Language,
+                        subtitle = currentLanguage,
+                        onClick = { languagePickDialog = true },
+                    )
+                    ItemRowBigIcon(
+                        title = stringResource(R.string.onboard_restore_backup),
+                        icon = Icons.Rounded.Restore,
+                        subtitle = stringResource(R.string.onboard_restore_backup_description),
+                        onClick = {
+                            navigator.navigate(BackupScreenDestination)
+                        }
+                    )
+                    ItemRowBigIcon(
+                        title = stringResource(R.string.settings_title),
+                        icon = Icons.Rounded.Settings,
+                        subtitle = stringResource(R.string.onboard_settings_description),
+                        onClick = {
+                            navigator.navigate(SettingsScreenDestination(false))
+                        }
+                    )
                 }
+            }
+        }
+
+        if (languagePickDialog) {
+            SelectionDialog(
+                title = stringResource(R.string.pref_app_language),
+                entries = getLangs(context),
+                selected = getCurrentLocaleTag(),
+                onSelect = { localeKey ->
+                    val locale = if (localeKey == "") {
+                        LocaleListCompat.getEmptyLocaleList()
+                    } else {
+                        LocaleListCompat.forLanguageTags(localeKey)
+                    }
+                    AppCompatDelegate.setApplicationLocales(locale)
+                    languagePickDialog = false
+                },
+                onDismiss = { languagePickDialog = false }
             )
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FirstPage(
-    selectedCellChanged: (Cell) -> Unit,
-    selectedCell: Cell,
-    board: List<List<Cell>>,
-    onFinishedClick: () -> Unit
+fun ItemRowBigIcon(
+    title: String,
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    trailing: @Composable () -> Unit = { },
+    onClick: () -> Unit = { },
+    subtitle: String? = null,
+    shape: Shape = MaterialTheme.shapes.large,
+    onLongClick: ((() -> Unit))? = null,
+    titleStyle: TextStyle = MaterialTheme.typography.titleMedium,
+    subtitleStyle: TextStyle = MaterialTheme.typography.titleSmall.copy(fontSize = 12.sp),
+    containerColor: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
+    iconBackground: Color = MaterialTheme.colorScheme.secondaryContainer,
+    iconSize: Dp = 42.dp
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(containerColor)
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(12.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(stringResource(R.string.intro_what_is_sudoku))
-            Text(stringResource(R.string.intro_rules))
-            Board(
-                board = board,
-                size = 9,
-                selectedCell = selectedCell,
-                onClick = { cell -> selectedCellChanged(cell) },
-                boardColors = LocalBoardColors.current
-            )
-            Text(stringResource(R.string.onboard_recommendation_prefs))
-            FilledTonalButton(
-                onClick = onFinishedClick,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
             ) {
-                Text(stringResource(R.string.action_start))
+                Box(
+                    modifier = Modifier.background(
+                        color = iconBackground,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(iconSize)
+                            .padding(6.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Column {
+                    Text(
+                        text = title,
+                        style = titleStyle
+                    )
+                    if (subtitle != null) {
+                        Text(
+                            text = subtitle,
+                            style = subtitleStyle,
+                            color = LocalContentColor.current.copy(alpha = 0.8f)
+                        )
+                    }
+                }
             }
+            trailing()
         }
     }
 }
@@ -120,106 +261,20 @@ class WelcomeViewModel
 ) : ViewModel() {
     var selectedCell by mutableStateOf(Cell(-1, -1, 0))
 
-    val previewBoard = listOf(
-        listOf(
-            Cell(0, 0, 0),
-            Cell(0, 1, 0),
-            Cell(0, 2, 1),
-            Cell(0, 3, 0),
-            Cell(0, 4, 0),
-            Cell(0, 5, 0),
-            Cell(0, 6, 9),
-            Cell(0, 7, 0),
-            Cell(0, 8, 0)
-        ),
-        listOf(
-            Cell(1, 0, 0),
-            Cell(1, 1, 2),
-            Cell(1, 2, 0),
-            Cell(1, 3, 0),
-            Cell(1, 4, 1),
-            Cell(1, 5, 7),
-            Cell(1, 6, 0),
-            Cell(1, 7, 5),
-            Cell(1, 8, 4)
-        ),
-        listOf(
-            Cell(2, 0, 5),
-            Cell(2, 1, 0),
-            Cell(2, 2, 0),
-            Cell(2, 3, 0),
-            Cell(2, 4, 2),
-            Cell(2, 5, 4),
-            Cell(2, 6, 0),
-            Cell(2, 7, 0),
-            Cell(2, 8, 3)
-        ),
-        listOf(
-            Cell(3, 0, 2),
-            Cell(3, 1, 8),
-            Cell(3, 2, 0),
-            Cell(3, 3, 0),
-            Cell(3, 4, 0),
-            Cell(3, 5, 0),
-            Cell(3, 6, 0),
-            Cell(3, 7, 9),
-            Cell(3, 8, 0)
-        ),
-        listOf(
-            Cell(4, 0, 0),
-            Cell(4, 1, 0),
-            Cell(4, 2, 5),
-            Cell(4, 3, 2),
-            Cell(4, 4, 0),
-            Cell(4, 5, 0),
-            Cell(4, 6, 0),
-            Cell(4, 7, 4),
-            Cell(4, 8, 7)
-        ),
-        listOf(
-            Cell(5, 0, 0),
-            Cell(5, 1, 7),
-            Cell(5, 2, 4),
-            Cell(5, 3, 0),
-            Cell(5, 4, 9),
-            Cell(5, 5, 0),
-            Cell(5, 6, 0),
-            Cell(5, 7, 0),
-            Cell(5, 8, 1)
-        ),
-        listOf(
-            Cell(6, 0, 0),
-            Cell(6, 1, 0),
-            Cell(6, 2, 0),
-            Cell(6, 3, 0),
-            Cell(6, 4, 0),
-            Cell(6, 5, 0),
-            Cell(6, 6, 0),
-            Cell(6, 7, 0),
-            Cell(6, 8, 0)
-        ),
-        listOf(
-            Cell(7, 0, 0),
-            Cell(7, 1, 0),
-            Cell(7, 2, 9),
-            Cell(7, 3, 0),
-            Cell(7, 4, 0),
-            Cell(7, 5, 5),
-            Cell(7, 6, 0),
-            Cell(7, 7, 0),
-            Cell(7, 8, 0)
-        ),
-        listOf(
-            Cell(8, 0, 0),
-            Cell(8, 1, 0),
-            Cell(8, 2, 3),
-            Cell(8, 3, 0),
-            Cell(8, 4, 4),
-            Cell(8, 5, 0),
-            Cell(8, 6, 0),
-            Cell(8, 7, 0),
-            Cell(8, 8, 0)
-        ),
+    // all heart shaped
+    val previewBoard = SudokuParser().parseBoard(
+        board = listOf(
+    "072000350340502018100030009800000003030000070050000020008000600000103000760050041",
+    "017000230920608054400010009200000001060000020040000090002000800000503000390020047",
+    "052000180480906023600020007500000008020000060030000090005000300000708000370060014",
+    "025000860360208017700010003600000002040000090030000070006000100000507000490030058",
+    "049000380280309056600050007300000002010000030070000090003000800000604000420080013",
+    "071000420490802073300060009200000007060000090010000080007000900000703000130090068",
+    "023000190150402086800050004700000008090000030080000010008000700000306000530070029",
+    "097000280280706013300080007600000002040000060030000090001000400000105000860040051",
+    "049000180160904023700010004200000008090000060080000050005000600000706000470020031"
+        ).random(),
+        gameType = GameType.Default9x9
     )
 
     fun setFirstLaunch(value: Boolean = false) {

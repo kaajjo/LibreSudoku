@@ -1,8 +1,6 @@
 package com.kaajjo.libresudoku.ui.settings
 
-import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -67,12 +65,14 @@ import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.rememberTopAppB
 import com.kaajjo.libresudoku.ui.settings.components.AppThemePreviewItem
 import com.kaajjo.libresudoku.ui.settings.components.ColorPickerDialog
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
+import com.kaajjo.libresudoku.ui.util.getCurrentLocaleString
+import com.kaajjo.libresudoku.ui.util.getCurrentLocaleTag
+import com.kaajjo.libresudoku.ui.util.getLangs
 import com.materialkolor.PaletteStyle
 import com.materialkolor.rememberDynamicColorScheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import org.xmlpull.v1.XmlPullParser
 import java.time.ZonedDateTime
 import java.time.chrono.IsoChronology
 import java.time.format.DateTimeFormatter
@@ -835,61 +835,4 @@ fun AppThemeItem(
     }
 }
 
-
-private fun getCurrentLocaleString(context: Context): String {
-    val langs = getLangs(context)
-    langs.forEach {
-        Log.d("lang", "${it.key} ${it.value}")
-    }
-    val locales = AppCompatDelegate.getApplicationLocales()
-    if (locales == LocaleListCompat.getEmptyLocaleList()) {
-        return context.getString(R.string.label_default)
-    }
-    return getDisplayName(locales.toLanguageTags())
-}
-
-private fun getCurrentLocaleTag(): String {
-    val locales = AppCompatDelegate.getApplicationLocales()
-    if (locales == LocaleListCompat.getEmptyLocaleList()) {
-        return ""
-    }
-    return locales.toLanguageTags()
-}
-
-private fun getLangs(context: Context): Map<String, String> {
-    val langs = mutableListOf<Pair<String, String>>()
-    val parser = context.resources.getXml(R.xml.locales_config)
-    var eventType = parser.eventType
-    while (eventType != XmlPullParser.END_DOCUMENT) {
-        if (eventType == XmlPullParser.START_TAG && parser.name == "locale") {
-            for (i in 0 until parser.attributeCount) {
-                if (parser.getAttributeName(i) == "name") {
-                    val langTag = parser.getAttributeValue(i)
-                    val displayName = getDisplayName(langTag)
-                    if (displayName.isNotEmpty()) {
-                        langs.add(Pair(langTag, displayName))
-                    }
-                }
-            }
-        }
-        eventType = parser.next()
-    }
-
-    langs.sortBy { it.second }
-    langs.add(0, Pair("", context.getString(R.string.label_default)))
-
-    return langs.toMap()
-}
-
-private fun getDisplayName(lang: String?): String {
-    if (lang == null) {
-        return ""
-    }
-
-    val locale = when (lang) {
-        "" -> LocaleListCompat.getAdjustedDefault()[0]
-        else -> Locale.forLanguageTag(lang)
-    }
-    return locale!!.getDisplayName(locale).replaceFirstChar { it.uppercase(locale) }
-}
 

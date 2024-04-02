@@ -335,4 +335,8 @@
     <string name="theme_custom">Custom</string>
     <string name="color_picker_title">Pick a color</string>
     <string name="parse_color_fail">Not a color</string>
+
+    <string name="onboard_restore_backup">Restore backup</string>
+    <string name="onboard_restore_backup_description">Do you already have a backup? Restore it now</string>
+    <string name="onboard_settings_description">Tune the app to your liking</string>
 </resources>
