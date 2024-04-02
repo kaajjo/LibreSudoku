@@ -108,13 +108,13 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
 
     suspend fun setPaletteStyle(style: PaletteStyle) {
         dataStore.edit { prefs ->
-            val index = paletteStyles.find { it.first == style }?.second ?: 1
+            val index = paletteStyles.find { it.first == style }?.second ?: 0
             prefs[paletteStyleKey] = index
         }
     }
 
     val themePaletteStyle = dataStore.data.map { prefs ->
-        val index = prefs[paletteStyleKey] ?: 1
+        val index = prefs[paletteStyleKey] ?: 0
         if (index in paletteStyles.indices) {
             paletteStyles[index].first
         } else {
