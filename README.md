@@ -10,7 +10,7 @@
 </div>
 
 ![LibreSudoku Banner](https://github.com/kaajjo/Libre-Sudoku/assets/87094439/20b710de-4074-4e2e-8b94-04b55507874f")
-Open Source sudoku application designed to be as user friendly and customizable as possible
+Open Source sudoku application designed to be as user friendly and customizable as possible \
 Built with [Jetpack Compose](https://developer.android.com/jetpack/compose) and [Material3](https://m3.material.io/)
 
 ## 📱 Screenshots 
@@ -44,6 +44,7 @@ You can help to translate LibreSudoku into your language at [Hosted Weblate](htt
 
 ## Credits
 This project uses a modified version of [QQWing](https://github.com/stephenostermiller/qqwing) - sudoku puzzle generator and solver\
-Some of the UI elements are inspired by [Tachiyomi](https://github.com/tachiyomiorg/tachiyomi)
+Some of the UI elements are inspired by [Tachiyomi](https://github.com/tachiyomiorg/tachiyomi and [Seal](https://github.com/JunkFood02/Seal). These apps are great 💘
+
 ## License
 [![](https://img.shields.io/github/license/kaajjo/libre-sudoku)](https://github.com/kaajjo/libre-sudoku/blob/main/LICENSE)
