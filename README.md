@@ -9,7 +9,8 @@
 
 </div>
 
-Open Source sudoku application designed to be as user friendly and customizable as possible \
+![LibreSudoku Banner](https://github.com/kaajjo/Libre-Sudoku/assets/87094439/20b710de-4074-4e2e-8b94-04b55507874f")
+Open Source sudoku application designed to be as user friendly and customizable as possible
 Built with [Jetpack Compose](https://developer.android.com/jetpack/compose) and [Material3](https://m3.material.io/)
 
 ## 📱 Screenshots 
