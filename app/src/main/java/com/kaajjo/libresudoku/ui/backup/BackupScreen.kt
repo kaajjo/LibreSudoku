@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.rounded.ContentCopy
@@ -79,6 +80,7 @@ import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTitle
 import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTopAppBar
 import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.rememberTopAppBarScrollBehavior
 import com.kaajjo.libresudoku.ui.settings.SettingsCategory
+import com.kaajjo.libresudoku.ui.theme.ColorUtils.harmonizeWithPrimary
 import com.kaajjo.libresudoku.ui.util.isScrolledToEnd
 import com.kaajjo.libresudoku.ui.util.isScrolledToStart
 import com.ramcosta.composedestinations.annotation.Destination
@@ -527,15 +529,22 @@ fun CardRow(
         modifier = modifier
             .padding(horizontal = 12.dp)
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(5.dp))
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp))
             .fillMaxWidth()
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null
-        )
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant.harmonizeWithPrimary())
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.padding(6.dp)
+            )
+        }
         Spacer(Modifier.width(8.dp))
         Text(text)
     }
