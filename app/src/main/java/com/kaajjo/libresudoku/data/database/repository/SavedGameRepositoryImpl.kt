@@ -17,6 +17,8 @@ class SavedGameRepositoryImpl(
 
     override fun getLast(): Flow<SavedGame?> = savedGameDao.getLast()
 
+    override fun getLastPlayable(limit: Int): Flow<Map<SavedGame, SudokuBoard>> = savedGameDao.getLastPlayable(limit)
+
     override suspend fun insert(savedGame: SavedGame): Long = savedGameDao.insert(savedGame)
 
     override suspend fun insert(savedGames: List<SavedGame>) = savedGameDao.insert(savedGames)

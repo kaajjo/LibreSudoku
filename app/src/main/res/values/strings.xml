@@ -339,4 +339,8 @@
     <string name="onboard_restore_backup">Restore backup</string>
     <string name="onboard_restore_backup_description">Do you already have a backup? Restore it now</string>
     <string name="onboard_settings_description">Tune the app to your liking</string>
+    <plurals name="last_x_games">
+        <item quantity="one">Last %1$d game</item>
+        <item quantity="other">Last %1$d games</item>
+    </plurals>
 </resources>

@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+
 @HiltViewModel
 class HomeViewModel
 @Inject constructor(
@@ -33,6 +34,10 @@ class HomeViewModel
 
     val lastSavedGame = savedGameRepository.getLast()
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    private val lastGamesLimit = 5
+    val lastGames = savedGameRepository.getLastPlayable(limit = lastGamesLimit)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
     var insertedBoardUid = -1L
 

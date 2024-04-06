@@ -33,6 +33,15 @@ interface SavedGameDao {
     )
     fun getLast(): Flow<SavedGame?>
 
+    @Query(
+        "SELECT * FROM saved_game " +
+                "JOIN board on saved_game.board_uid == board.uid " +
+                "WHERE saved_game.can_continue == 1 " +
+                "ORDER BY last_played DESC " +
+                "LIMIT :limit "
+    )
+    fun getLastPlayable(limit: Int): Flow<Map<SavedGame, SudokuBoard>>
+
     @Insert
     suspend fun insert(savedGame: SavedGame): Long
 
