@@ -316,4 +316,28 @@
     <string name="restore_existing_data_alert">Существующие данные будут удалены!</string>
     <string name="date_started">Дата начала</string>
     <string name="date_last_played">Дата последней игры</string>
+    <string name="monet_tonalspot">Тональное пятно</string>
+    <string name="monet_vibrant">Яркий</string>
+    <string name="monet_expressive">Выразительный</string>
+    <string name="monet_rainbow">Радуга</string>
+    <string name="monet_monochrome">Монохромный</string>
+    <string name="monet_fidelity">Точность</string>
+    <string name="monet_content">Содержание</string>
+    <string name="theme_cyan">Голубая</string>
+    <string name="pref_monet_style">Стиль Monet</string>
+    <string name="monet_neutral">Нейтральный</string>
+    <string name="monet_fruitsalad">Фруктовый салат</string>
+    <string name="theme_orange">Оранжевая</string>
+    <string name="parse_color_fail">Не цвет</string>
+    <string name="theme_custom">Своя</string>
+    <string name="color_picker_title">Выберите цвет</string>
+    <string name="onboard_restore_backup">Восстановить копию</string>
+    <string name="onboard_settings_description">Настройте приложение под ваш вкус</string>
+    <string name="onboard_restore_backup_description">У вас уже есть резервная копия? Восстановите ее</string>
+    <plurals name="last_x_games">
+        <item quantity="one">Последняя %1$d игра</item>
+        <item quantity="few">Последние %1$d игры</item>
+        <item quantity="many">Последние %1$d игр</item>
+        <item quantity="other">Последние %1$d игр</item>
+    </plurals>
 </resources>

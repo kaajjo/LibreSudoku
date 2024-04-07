@@ -269,7 +269,6 @@
     <string name="pref_date_format">Date format</string>
     <string name="pref_save_last_diff_and_type">Remember type and difficulty</string>
     <string name="pref_save_last_diff_and_type_subtitle">Remember the last game\'s type and difficulty</string>
-
     <string name="hints_used">Hints: %1$d</string>
     <string name="mistakes_made">Mistakes: %1$d</string>
     <string name="notes_taken">Notes: %1$d</string>
@@ -282,7 +281,6 @@
     <string name="pref_date_format_custom_label">Custom</string>
     <string name="theme_blue">Blue</string>
     <string name="redo">Redo</string>
-
     <string name="backup_restore_title">Backup &amp; restore</string>
     <string name="action_create_backup">Backup</string>
     <string name="create_backup_description">Create backup file</string>
@@ -306,7 +304,7 @@
     <string name="every_2_days">Every 2 days</string>
     <string name="every_5_days">Every 5 days</string>
     <string name="weekly">Weekly</string>
-    <plurals name="every_x_hours" >
+    <plurals name="every_x_hours">
         <item quantity="one">Every %1$d hour</item>
         <item quantity="other">Every %1$d hours</item>
     </plurals>
@@ -316,10 +314,8 @@
     <string name="action_create">Create</string>
     <string name="restore_existing_data_alert">Existing data will be deleted!</string>
     <string name="last_backup_date">Most recent backup: %1$s</string>
-
     <string name="date_started">Date started</string>
     <string name="date_last_played">Date last played</string>
-
     <string name="pref_monet_style">Monet style</string>
     <string name="monet_tonalspot">Tonal Spot</string>
     <string name="monet_neutral">Neutral</string>
@@ -335,7 +331,6 @@
     <string name="theme_custom">Custom</string>
     <string name="color_picker_title">Pick a color</string>
     <string name="parse_color_fail">Not a color</string>
-
     <string name="onboard_restore_backup">Restore backup</string>
     <string name="onboard_restore_backup_description">Do you already have a backup? Restore it now</string>
     <string name="onboard_settings_description">Tune the app to your liking</string>
