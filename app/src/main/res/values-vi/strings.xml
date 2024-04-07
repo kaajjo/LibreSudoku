@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_new_game_positive">Bắt đầu mới</string>
+    <string name="nav_bar_home">Home</string>
+    <string name="pref_input">Phương thức nhập</string>
+    <string name="pref_board_font_size_large">Lớn</string>
+    <string name="pref_pure_black">Chủ đề tối đen tuyền</string>
+    <string name="difficulty_hard">Khó</string>
+    <string name="difficulty_moderate">Vừa phải</string>
+    <string name="pref_dark_theme_off">Tắt</string>
+    <string name="pref_dark_theme_on">Bật</string>
+    <string name="date_last_played">Ngày chơi gần nhất</string>
+    <string name="history_no_games">Bạn chưa chơi</string>
+    <string name="pref_app_theme">Chủ đề ứng dụng</string>
+    <string name="pref_remaining_uses_summ">Số lần sử dụng còn lại của một số được hiển thị trên bàn phím</string>
+    <string name="dialog_new_game">Trò chơi đang diễn ra</string>
+    <string name="pref_board_font_size_medium">Vừa</string>
+    <string name="settings_title">Thiết đặt</string>
+    <string name="dialog_new_game_text">Bạn có một ván còn dang dở, bạn có thực sự muốn bắt đầu một ván mới không?</string>
+    <string name="pref_mistakes_limit">Giới hạn số lỗi</string>
+    <string name="difficulty_custom">Tùy chỉnh</string>
+    <string name="pref_gameplay">Lối chơi</string>
+    <string name="last_played_section_title">Các ván đã chơi gần đây</string>
+    <string name="pref_board_font_size">Kích thước font chữ bảng</string>
+    <string name="pref_delete_stats_summ">Hành động này sẽ xóa tất cả số liệu thống kê, ván chơi và hồ sơ đã lưu của bạn. Nó không thể được hoàn tác</string>
+    <string name="pref_board_font_size_small">Nhỏ</string>
+    <string name="theme_dynamic">Năng động</string>
+    <string name="action_play">Chơi</string>
+    <string name="theme_yellow">Vàng</string>
+    <string name="new_game">New game</string>
+    <string name="theme_green">Lục</string>
+    <string name="difficulty_easy">Dễ</string>
+    <string name="pref_input_digit_first">Số trước</string>
+    <string name="action_deleted">Đã xóa</string>
+    <string name="difficulty_simple">Đơn giản</string>
+    <string name="pref_delete_stats">Lau hết số liệu thống kê</string>
+    <string name="difficulty_challenge">Thử thách</string>
+    <string name="pref_input_cell_first">Ô trước</string>
+    <string name="action_delete">Xóa bỏ</string>
+    <string name="theme_black_and_white">Đen và trắng</string>
+    <string name="pref_dark_theme">Chủ đề tối</string>
+    <string name="action_continue">Tiếp tục</string>
+    <string name="action_cancel">Hủy bỏ</string>
+    <string name="pref_dark_theme_follow">Theo hệ thống</string>
+    <string name="nav_bar_more">More</string>
+    <string name="nav_bar_statistics">Statistics</string>
+</resources>
