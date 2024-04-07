@@ -262,4 +262,6 @@
     <string name="pref_crash_reporting_subtitle">Ajude-nos a corrigir erros. O aplicativo não envia nenhum log por si só, você será solicitado a enviar um relatório de falha por e-mail</string>
     <string name="pref_fun_keyboard_over_num">Teclado de função sobre os números</string>
     <string name="pref_fun_keyboard_over_num_subtitle">Coloque o teclado de função acima dos números</string>
+    <string name="pref_date_format">Formato da data</string>
+    <string name="pref_save_last_diff_and_type">Lembrar tipo e dificuldade</string>
 </resources>
