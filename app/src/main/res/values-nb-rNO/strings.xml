@@ -272,4 +272,5 @@
     <string name="pref_date_format_custom">Egendefinert datoformat</string>
     <string name="pref_date_format_custom_label">Egendefinert</string>
     <string name="theme_blue">Blå</string>
+    <string name="redo">Gjenta</string>
 </resources>
