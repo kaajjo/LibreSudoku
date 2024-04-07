@@ -314,4 +314,6 @@
     <string name="action_grant">Предоставить</string>
     <string name="autobackup_never">Никогда</string>
     <string name="restore_existing_data_alert">Существующие данные будут удалены!</string>
+    <string name="date_started">Дата начала</string>
+    <string name="date_last_played">Дата последней игры</string>
 </resources>
