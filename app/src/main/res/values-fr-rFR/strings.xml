@@ -274,4 +274,25 @@
     <string name="stat_time_average">Moyen : %1$s</string>
     <string name="pref_date_format_custom">Format de date personnalisé</string>
     <string name="pref_date_format_custom_textfield_label">Modèle</string>
+    <string name="restore_description">Restaurer une sauvegarde depuis un fichier</string>
+    <string name="auto_backup_folder_access_description">Pour que les sauvegardes automatiques puissent s\'effectuer correctement, vous devez autoriser l\'accès à un dossier. L\'application créera des fichiers sauvegardes dans le répertoire que vous choisirez</string>
+    <string name="action_create_backup">Sauvegarde</string>
+    <string name="create_backup_description">Créer un fichier de sauvegarde</string>
+    <string name="action_restore">Restaurer</string>
+    <string name="save_backup_success">Sauvegarde effectuée</string>
+    <string name="restoring_backup">Restauration</string>
+    <string name="restore_backup_success">Sauvegarde restaurée</string>
+    <string name="backup_restore_settings">Restauration des paramètres</string>
+    <string name="auto_backups">Sauvegardes automatiques</string>
+    <string name="auto_backups_frequency">Fréquence des sauvegardes</string>
+    <string name="backup_option_games">Jeux et dossiers</string>
+    <string name="backup_option_settings">Paramètres</string>
+    <string name="autobackup_never">Jamais</string>
+    <string name="every_2_days">Tous les deux jours</string>
+    <string name="daily">Tous les jours</string>
+    <string name="every_5_days">Tous les 5 jours</string>
+    <string name="weekly">Toutes les semaines</string>
+    <string name="action_create">Créer</string>
+    <string name="restore_existing_data_alert">Les données existantes seront effacées !</string>
+    <string name="last_backup_date">Sauvegarde la plus récente : %1$s</string>
 </resources>
