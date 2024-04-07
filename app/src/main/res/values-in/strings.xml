@@ -181,7 +181,6 @@
     <string name="action_give_up">Menyerah</string>
     <string name="pref_app_language">Bahasa aplikasi</string>
     <string name="theme_black_and_white">Hitam putih</string>
-    <string name="theme_lavender"></string>
     <string name="notes_taken">Catatan: %1$d</string>
     <string name="pref_mistakes_check_violations">Pelanggaran aturan</string>
     <string name="difficulty_unspecified">Tak diketahui</string>
