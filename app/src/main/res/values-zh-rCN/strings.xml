@@ -32,8 +32,8 @@
     <string name="pref_delete_stats_summ">此操作将删除您的所有统计信息、保存的游戏和记录。此操作无法撤消</string>
     <string name="theme_yellow">黄色</string>
     <string name="pref_app_theme">应用主题</string>
-    <string name="theme_peach">桃子</string>
-    <string name="theme_lavender">薰衣草</string>
+    <string name="theme_peach">桃红</string>
+    <string name="theme_lavender">淡紫色</string>
     <string name="theme_black_and_white">黑白</string>
     <string name="pref_pure_black">纯黑色深色主题</string>
     <string name="pref_gameplay">玩法</string>
@@ -304,4 +304,22 @@
     <string name="action_grant">获取</string>
     <string name="autobackup_never">从不</string>
     <string name="restore_existing_data_alert">现有的数据将会被删除！</string>
+    <string name="onboard_settings_description">根据您的喜好调整应用程序</string>
+    <string name="theme_custom">自定义</string>
+    <string name="color_picker_title">选择一种颜色</string>
+    <string name="parse_color_fail">不是颜色</string>
+    <string name="pref_monet_style">莫奈风格</string>
+    <string name="monet_tonalspot">色调点</string>
+    <string name="monet_fruitsalad">水果沙拉</string>
+    <string name="theme_orange">橙色</string>
+    <string name="onboard_restore_backup">恢复备份</string>
+    <string name="onboard_restore_backup_description">您已经有备份了吗？立即恢复</string>
+    <string name="monet_neutral">中性</string>
+    <string name="monet_vibrant">鲜艳</string>
+    <string name="monet_expressive">表现力</string>
+    <string name="monet_rainbow">彩虹</string>
+    <string name="monet_monochrome">单色</string>
+    <string name="monet_fidelity">逼真</string>
+    <string name="monet_content">内容</string>
+    <string name="theme_cyan">青色</string>
 </resources>
