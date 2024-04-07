@@ -104,13 +104,13 @@
     <string name="history_item_id">Spil-ID: %1$d</string>
     <string name="history_item_can_continue">Du kan fortsætte dette spil</string>
     <string name="saved_game_current">Nuværende</string>
-    <string name="saved_game_initial">Initial</string>
+    <string name="saved_game_initial">Oprindelig</string>
     <string name="saved_game_progress">Fremgang %1$d/%2$d</string>
     <string name="saved_game_progress_percentage">Fremgang %1$d%%</string>
     <string name="saved_game_difficulty">Sværhedsgrad: %1$s</string>
     <string name="saved_game_type">Type: %1$s</string>
     <string name="saved_game_time">Tid: %1$s</string>
-    <string name="saved_game_give_up">Spillet blev ikke gennemført, du gav op</string>
+    <string name="saved_game_give_up">Du opgav</string>
     <string name="saved_game_in_progress">I gang</string>
     <string name="learn_screen_title">Lær</string>
     <string name="learn_tab_sudoku">Sudoku</string>
@@ -143,7 +143,7 @@
     <string name="action_show_solution">Vis løsning</string>
     <string name="intro_what_is_sudoku">En klassisk sudoku ser således ud</string>
     <string name="naked_pairs_explanation">To celler deler de samme to blyantmærker. Lige nu kan vi ikke sige, hvilken der er 2\'eren og hvilken der er 3\'eren.
-\nMen fordi Sudoku-reglerne fortæller os, at hver blok kun kan have én 2\'er og kun én 3\'er kan vi antage, at en af dem er 2\'eren og den anden er 3\'eren.</string>
+\nMen fordi Sudoku-reglerne fortæller os, at hver blok kun kan have én 2\'er og kun én 3\'er kan vi antage, at en af dem er 2\'eren og den anden er 3\'eren</string>
     <string name="statistics">Statistik</string>
     <string name="games">Spil</string>
     <string name="delete_record_dialog">Vil du slette #%1$d-rekorden\? Det kan ikke fortrydes</string>
@@ -155,7 +155,7 @@
     <string name="saved_game_screen_title">Spil #%1$d</string>
     <string name="empty_screen_something_went_wrong">Ups! Noget gik galt…</string>
     <string name="saved_game_completed">Spillet blev gennemført</string>
-    <string name="saved_game_mistakes_limit">Spillet er ikke blevet gennemført, du har overskredet fejlgrænsen</string>
+    <string name="saved_game_mistakes_limit">Fejlgrænse overskredet</string>
     <string name="learn_app_toolbar_notes_menu">Du kan trykke længe på noteknappen for at åbne notemenuen, hvor du kan rydde eller beregne noter og skifte deres synlighed</string>
     <string name="sudoku_rules_mistakes">Der er en fejl her, kan du få øje på den\? Måske endda to</string>
     <string name="sudoku_rules_mistakes_explanation">Den første fejl er to 2\'ere i det sjette felt. Huske reglen om, at der ikke må være dubletnumre i en boks\? Den anden fejl er tallet 6 i række 2, kolonne 8 (R2C8), fordi der allerede er 6 i denne kolonne i R5C8</string>
@@ -209,8 +209,8 @@
     <string name="pref_crash_reporting_subtitle">Hjælp os med at rette fejl. Appen sender ikke logfiler af sig selv, du vil blive bedt om at sende en nedbrudsrapport via email</string>
     <string name="pref_fun_keyboard_over_num">Funktionspanel over værdierne</string>
     <string name="pref_fun_keyboard_over_num_subtitle">Placer funktionspanelet over værditastaturet</string>
-    <string name="learn_basic_5">Den samme logik gælder for rækker og kolonner. Se på den første række. Tallet 4 i R7C3 blokerer den tredje kolonne i vores række. Tallet 4 i R3C5 blokerer to kolonner på én gang (4 og 6), fordi der ikke kan være andre firere i samme blok. R6C7 blokerer kolonne 7</string>
-    <string name="learn_basic_3">Tallet 8 i R7C5 blokerer også hele rækken i vores blok</string>
+    <string name="learn_basic_5">Den samme logik gælder for rækker og kolonner. Se på den første række. Tallet 4 i R7C3 blokerer den tredje kolonne i vores række. Tallet 4 i R3C5 blokerer to kolonner på én gang (4 og 6), fordi der ikke kan være andre firere i samme boks. R6C7 blokerer kolonne 7</string>
+    <string name="learn_basic_3">Derudover blokerer tallet 8 i R7C5 også hele rækken i vores boks</string>
     <string name="learn_basic_2">Lad os nu tage et kig på tallet 8. Tallet 8 i række 4, kolonne 3 (R4C3) blokerer hele kolonnen i vores boks. Så nummer 8 kan ikke stå der</string>
     <string name="create_incorrect_puzzle">Forkert spil</string>
     <string name="learn_basic_6">Derfor står vi kun tilbage med én celle, som kan indeholde tallet 4. Dette er celle R1C3</string>
@@ -258,4 +258,54 @@
     </plurals>
     <string name="create_set_from_string">Indstil fra en streng</string>
     <string name="pref_cross_highlight">Korsfremhævning</string>
+    <string name="pref_save_last_diff_and_type_subtitle">Husk forrige spils type og sværhedsgrad</string>
+    <string name="pref_date_format_custom">Brugerdefineret datoformat</string>
+    <string name="stat_time_current">Nuværende: %1$s</string>
+    <string name="pref_date_format">Datoformat</string>
+    <string name="pref_save_last_diff_and_type">Husk type og sværhedsgrad</string>
+    <string name="stat_time_average">Gns.: %1$s</string>
+    <string name="mistakes_made">Fejl: %1$d</string>
+    <string name="hints_used">Tips: %1$d</string>
+    <string name="notes_taken">Noter: %1$d</string>
+    <string name="stat_time_best">Bedste: %1$s</string>
+    <string name="action_create">Opret</string>
+    <string name="restore_backup_error">Gendannelse mislykket</string>
+    <string name="action_restore">Gendan</string>
+    <string name="restoring_backup">Gendanner</string>
+    <string name="last_backup_date">Seneste sikkerhedskopi: %1$s</string>
+    <string name="pref_date_format_custom_label">Brugerdefineret</string>
+    <string name="theme_blue">Blå</string>
+    <string name="creating_backup_error">Sikkerhedskopiering mislykket</string>
+    <string name="auto_backups_max">Maks. antal automatiske sikkerhedskopier</string>
+    <string name="pref_date_format_custom_summ">Indtast datomønster ifølge Java DateTimeFormatter</string>
+    <string name="auto_backups_directory">Filsti for sikkerhedskopier</string>
+    <string name="pref_date_format_custom_textfield_label">Mønster</string>
+    <string name="date_last_played">Dato sidst spillet</string>
+    <string name="backup_option_settings">Indstillinger</string>
+    <string name="create_backup_description">Lav sikkerhedskopi</string>
+    <string name="backup_option_games">Spil og mapper</string>
+    <string name="restore_description">Gendan din sikkerhedskopi fra fil</string>
+    <string name="action_create_backup">Sikkerhedskopiér</string>
+    <string name="auto_backups_frequency">Frekvens for sikkerhedskopiering</string>
+    <string name="daily">Dagligt</string>
+    <string name="backup_restore_title">Sikkerhedskopiér og gendan</string>
+    <string name="restore_backup_success">Sikkerhedskopi gendannet</string>
+    <string name="auto_backup_folder_access_description">For automatisk sikkerhedskopiering skal du give adgangstilladelse til en mappe. App\'en vil oprette sikkerhedskopier i mappen, du vælger</string>
+    <string name="backup_restore_settings">Gendan indstillinger</string>
+    <string name="every_5_days">Hver 5. dag</string>
+    <string name="every_2_days">Hver 2. dag</string>
+    <string name="save_backup_error">Lagring af sikkerhedskopifil mislykkedes</string>
+    <string name="weekly">Ugentligt</string>
+    <string name="auto_backups">Automatisk sikkerhedskopiering</string>
+    <plurals name="every_x_hours">
+        <item quantity="one">Hver time</item>
+        <item quantity="other">Hver %1$d. time</item>
+    </plurals>
+    <string name="date_started">Dato startet</string>
+    <string name="redo">Gentag</string>
+    <string name="auto_backup_folder_access">Mappeadgang for automatisk sikkerhedskopiering</string>
+    <string name="save_backup_success">Sikkerhedskopi gemt</string>
+    <string name="action_grant">Tillad</string>
+    <string name="autobackup_never">Aldrig</string>
+    <string name="restore_existing_data_alert">Eksisterende data vil blive slettet!</string>
 </resources>
