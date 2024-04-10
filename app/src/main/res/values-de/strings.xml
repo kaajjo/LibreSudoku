@@ -272,4 +272,6 @@
     <string name="notes_taken">Notizen: %1$d</string>
     <string name="pref_date_format_custom">Eigenes Datumsformat</string>
     <string name="pref_date_format_custom_summ">Datumsmuster gemäß Java DateTimeFormatter eingeben</string>
+    <string name="action_restore">Wiederherstellen</string>
+    <string name="redo">Wiederholen</string>
 </resources>

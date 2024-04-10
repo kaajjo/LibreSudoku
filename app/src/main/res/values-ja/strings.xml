@@ -57,4 +57,14 @@
     <string name="pref_dark_theme_follow">システムのテーマに合わせる</string>
     <string name="nav_bar_more">メニュー</string>
     <string name="nav_bar_statistics">統計</string>
+    <string name="win_streak">連勝</string>
+    <string name="learn_tab_sudoku">数独</string>
+    <string name="win_rate">勝率</string>
+    <string name="saved_game_screen_title">ゲーム #%1$d</string>
+    <string name="learn_tab_app">アプリ</string>
+    <string name="game_over">ゲームオーバー</string>
+    <string name="games">ゲーム</string>
+    <string name="win_rate_percentage">%1$d%%</string>
+    <string name="statistics">統計</string>
+    <string name="onboard_title">ようこそ</string>
 </resources>

@@ -72,4 +72,5 @@
     <string name="dialog_no">Nei</string>
     <string name="action_show_notes">Vis merknadar</string>
     <string name="action_give_up">Gjev opp</string>
+    <string name="nav_bar_statistics">Statistikk</string>
 </resources>
