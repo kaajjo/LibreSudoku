@@ -10,15 +10,21 @@ import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.rounded.FormatSize
 import androidx.compose.material.icons.rounded.GridGoldenratio
 import androidx.compose.material.icons.rounded.GridOn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -32,6 +38,7 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
@@ -44,6 +51,7 @@ import com.kaajjo.libresudoku.ui.settings.SelectionDialog
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Destination(style = AnimatedNavigation::class)
 @Composable
 fun SettingsBoardTheme(
@@ -66,6 +74,14 @@ fun SettingsBoardTheme(
         mutableStateOf(false)
     }
 
+    val gameTypes = listOf(
+        GameType.Default6x6,
+        GameType.Default9x9,
+        GameType.Default12x12,
+    )
+    var selectedBoardType by remember {
+        mutableStateOf(GameType.Default9x9)
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -90,12 +106,33 @@ fun SettingsBoardTheme(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
+            SingleChoiceSegmentedButtonRow(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 8.dp)
+            ) {
+                gameTypes.forEachIndexed { index, item ->
+                    SegmentedButton(
+                        selected = selectedBoardType == item,
+                        onClick = {
+                            selectedBoardType = item
+                        },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index,
+                            count = gameTypes.size
+                        )
+                    ) {
+                        Text(stringResource(id = item.resName))
+                    }
+                }
+            }
             BoardPreviewTheme(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
                 positionLines = positionLines,
-                errosHighlight = highlightMistakes != 0,
+                errorsHighlight = highlightMistakes != 0,
                 crossHighlight = boardCrossHighlight,
-                fontSize = fontSizeValue
+                fontSize = fontSizeValue,
+                gameType = selectedBoardType
             )
 
             val monetSudokuBoard by viewModel.monetSudokuBoard.collectAsStateWithLifecycle(
@@ -160,121 +197,36 @@ fun SettingsBoardTheme(
 @Composable
 private fun BoardPreviewTheme(
     positionLines: Boolean,
-    errosHighlight: Boolean,
+    errorsHighlight: Boolean,
     crossHighlight: Boolean,
     fontSize: TextUnit,
+    gameType: GameType,
     modifier: Modifier = Modifier
 ) {
-    val previewBoard = listOf(
-        listOf(
-            Cell(0, 0, 0, locked = true),
-            Cell(0, 1, 0, locked = true),
-            Cell(0, 2, 1, locked = true),
-            Cell(0, 3, 0, locked = true),
-            Cell(0, 4, 0, locked = true),
-            Cell(0, 5, 0, locked = true),
-            Cell(0, 6, 9, locked = true),
-            Cell(0, 7, 0, locked = true),
-            Cell(0, 8, 0, locked = true)
-        ),
-        listOf(
-            Cell(1, 0, 0, locked = true),
-            Cell(1, 1, 2, locked = false),
-            Cell(1, 2, 0, locked = true),
-            Cell(1, 3, 0, locked = true),
-            Cell(1, 4, 1, locked = true),
-            Cell(1, 5, 7, locked = true),
-            Cell(1, 6, 0, locked = true),
-            Cell(1, 7, 5, locked = true),
-            Cell(1, 8, 4, locked = true)
-        ),
-        listOf(
-            Cell(2, 0, 5, locked = false),
-            Cell(2, 1, 0, locked = true),
-            Cell(2, 2, 0, locked = true),
-            Cell(2, 3, 0, locked = true),
-            Cell(2, 4, 2, locked = true),
-            Cell(2, 5, 4, locked = true),
-            Cell(2, 6, 0, locked = true),
-            Cell(2, 7, 0, locked = true),
-            Cell(2, 8, 3, locked = true)
-        ),
-        listOf(
-            Cell(3, 0, 2, locked = true),
-            Cell(3, 1, 8, locked = true),
-            Cell(3, 2, 0, locked = true),
-            Cell(3, 3, 0, locked = true),
-            Cell(3, 4, 0, locked = true),
-            Cell(3, 5, 0, locked = true),
-            Cell(3, 6, 0, locked = true),
-            Cell(3, 7, 9, locked = true),
-            Cell(3, 8, 0, locked = true)
-        ),
-        listOf(
-            Cell(4, 0, 0, locked = true),
-            Cell(4, 1, 0, locked = true),
-            Cell(4, 2, 5, locked = true),
-            Cell(4, 3, 2, locked = true),
-            Cell(4, 4, 9, error = true),
-            Cell(4, 5, 0, locked = true),
-            Cell(4, 6, 0, locked = true),
-            Cell(4, 7, 4, locked = true),
-            Cell(4, 8, 7, locked = true)
-        ),
-        listOf(
-            Cell(5, 0, 0, locked = true),
-            Cell(5, 1, 7, locked = true),
-            Cell(5, 2, 4, locked = true),
-            Cell(5, 3, 0, locked = true),
-            Cell(5, 4, 9, locked = false),
-            Cell(5, 5, 0, locked = true),
-            Cell(5, 6, 0, locked = true),
-            Cell(5, 7, 0, locked = true),
-            Cell(5, 8, 1, locked = false)
-        ),
-        listOf(
-            Cell(6, 0, 0, locked = true),
-            Cell(6, 1, 0, locked = true),
-            Cell(6, 2, 0, locked = true),
-            Cell(6, 3, 0, locked = true),
-            Cell(6, 4, 0, locked = true),
-            Cell(6, 5, 0, locked = true),
-            Cell(6, 6, 0, locked = true),
-            Cell(6, 7, 0, locked = true),
-            Cell(6, 8, 0, locked = true)
-        ),
-        listOf(
-            Cell(7, 0, 0, locked = true),
-            Cell(7, 1, 0, locked = true),
-            Cell(7, 2, 9, locked = true),
-            Cell(7, 3, 0, locked = true),
-            Cell(7, 4, 0, locked = true),
-            Cell(7, 5, 5, locked = true),
-            Cell(7, 6, 0, locked = true),
-            Cell(7, 7, 0, locked = true),
-            Cell(7, 8, 0, locked = true)
-        ),
-        listOf(
-            Cell(8, 0, 0, locked = true),
-            Cell(8, 1, 0, locked = true),
-            Cell(8, 2, 3, locked = true),
-            Cell(8, 3, 0, locked = true),
-            Cell(8, 4, 4, locked = true),
-            Cell(8, 5, 0, locked = true),
-            Cell(8, 6, 0, locked = true),
-            Cell(8, 7, 0, locked = true),
-            Cell(8, 8, 0, locked = true)
-        ),
+    val previewBoard = SudokuParser().parseBoard(
+        board = when (gameType) {
+            GameType.Default6x6 -> {
+                "200005003600320041140063002300600002"
+            }
+            GameType.Default9x9 -> {
+                "025000860360208017700010003600000002040000090030000070006000100000507000490030058"
+            }
+            GameType.Default12x12 -> {
+                "09030000010a00501a0067b910700000050000920000000006407000000250000160300b0000205000000017000003088300b000a006003804090b659000ab007004002400000000"
+            }
+            else -> ""
+        },
+        gameType = gameType
     )
-    var selectedCell by remember { mutableStateOf(Cell(-1, -1, 0)) }
+    var selectedCell by remember(gameType) { mutableStateOf(Cell(-1, -1, 0)) }
     Board(
         modifier = modifier,
         board = previewBoard,
-        size = 9,
+        size = gameType.size,
         selectedCell = selectedCell,
         onClick = { cell -> selectedCell = if (selectedCell == cell) Cell(-1, -1, 0) else cell },
         positionLines = positionLines,
-        errorsHighlight = errosHighlight,
+        errorsHighlight = errorsHighlight,
         crossHighlight = crossHighlight,
         mainTextSize = fontSize
     )
