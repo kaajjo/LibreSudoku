@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
 import com.kaajjo.libresudoku.core.qqwing.GameType
@@ -80,7 +81,7 @@ fun Board(
     renderNotes: Boolean = true,
     cellsToHighlight: List<Cell>? = null,
     zoomable: Boolean = false,
-    boardColors: SudokuBoardColors,
+    boardColors: SudokuBoardColors = LocalBoardColors.current,
     crossHighlight: Boolean = false
 ) {
     BoxWithConstraints(

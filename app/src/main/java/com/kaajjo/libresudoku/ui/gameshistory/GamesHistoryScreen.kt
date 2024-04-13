@@ -57,7 +57,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
@@ -324,8 +323,7 @@ fun SudokuHistoryItem(
             ) {
                 BoardPreview(
                     size = sqrt(board.length.toFloat()).toInt(),
-                    boardString = board,
-                    boardColors = LocalBoardColors.current
+                    boardString = board
                 )
             }
             Column(

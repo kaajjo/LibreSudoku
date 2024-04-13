@@ -66,7 +66,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
@@ -226,8 +225,7 @@ fun ImportFromFileScreen(
                         ) {
                             BoardPreview(
                                 size = 9,
-                                boardString = item,
-                                boardColors = LocalBoardColors.current
+                                boardString = item
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             HorizontalDivider()

@@ -76,7 +76,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.destinations.ExploreFolderScreenDestination
 import com.kaajjo.libresudoku.destinations.ImportFromFileScreenDestination
@@ -271,8 +270,7 @@ fun FoldersScreen(
                                             ) {
                                                 BoardPreview(
                                                     size = sqrt(it.currentBoard.length.toFloat()).toInt(),
-                                                    boardString = it.currentBoard,
-                                                    boardColors = LocalBoardColors.current
+                                                    boardString = it.currentBoard
                                                 )
                                             }
                                         }

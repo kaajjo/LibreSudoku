@@ -58,7 +58,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
@@ -211,7 +210,6 @@ fun SavedGameScreen(
                                 mainTextSize = fontSizeValue,
                                 selectedCell = Cell(-1, -1),
                                 onClick = { },
-                                boardColors = LocalBoardColors.current,
                                 crossHighlight = crossHighlight
                             )
 
@@ -221,7 +219,6 @@ fun SavedGameScreen(
                                 mainTextSize = fontSizeValue,
                                 selectedCell = Cell(-1, -1),
                                 onClick = { },
-                                boardColors = LocalBoardColors.current,
                                 crossHighlight = crossHighlight
                             )
                         }

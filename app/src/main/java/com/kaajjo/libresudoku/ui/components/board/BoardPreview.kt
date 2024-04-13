@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.ui.theme.BoardColors
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
@@ -49,7 +50,7 @@ fun BoardPreview(
         12 -> 9.sp
         else -> 22.sp
     },
-    boardColors: SudokuBoardColors
+    boardColors: SudokuBoardColors = LocalBoardColors.current
 ) {
     BoxWithConstraints(
         modifier = modifier

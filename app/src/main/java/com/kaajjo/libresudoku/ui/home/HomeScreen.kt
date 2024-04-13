@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.database.model.SavedGame
@@ -344,8 +343,7 @@ fun SavedSudokuPreview(
                 ) {
                     BoardPreview(
                         size = sqrt(board.length.toFloat()).toInt(),
-                        boardString = board,
-                        boardColors = LocalBoardColors.current
+                        boardString = board
                     )
                 }
                 Column(

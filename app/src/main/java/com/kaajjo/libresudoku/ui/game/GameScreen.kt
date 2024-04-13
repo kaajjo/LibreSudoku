@@ -55,7 +55,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
@@ -305,7 +304,6 @@ fun GameScreen(
                     questions = !(viewModel.gamePlaying || viewModel.endGame) && Build.VERSION.SDK_INT < Build.VERSION_CODES.R,
                     renderNotes = renderNotes && !viewModel.showSolution,
                     zoomable = viewModel.gameType == GameType.Default12x12,
-                    boardColors = LocalBoardColors.current,
                     crossHighlight = crossHighlight
                 )
             }

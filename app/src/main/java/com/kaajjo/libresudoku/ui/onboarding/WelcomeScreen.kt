@@ -53,7 +53,6 @@ import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.qqwing.GameType
@@ -116,8 +115,7 @@ fun WelcomeScreen(
                         board = viewModel.previewBoard,
                         size = 9,
                         selectedCell = viewModel.selectedCell,
-                        onClick = { cell -> viewModel.selectedCell = cell },
-                        boardColors = LocalBoardColors.current
+                        onClick = { cell -> viewModel.selectedCell = cell }
                     )
 
                     Button(

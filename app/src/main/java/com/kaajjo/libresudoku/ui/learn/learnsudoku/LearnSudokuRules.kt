@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
@@ -160,8 +159,7 @@ fun LearnSudokuRules(
                 board = previewBoard,
                 size = 9,
                 selectedCell = selectedCell,
-                onClick = { selectedCell = it },
-                boardColors = LocalBoardColors.current
+                onClick = { selectedCell = it }
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(stringResource(R.string.sudoku_rules_mistakes))
@@ -199,8 +197,7 @@ fun LearnSudokuRules(
                 size = 9,
                 errorsHighlight = highlightError,
                 selectedCell = secondSelectedCell,
-                onClick = { secondSelectedCell = it },
-                boardColors = LocalBoardColors.current
+                onClick = { secondSelectedCell = it }
             )
             Text(stringResource(R.string.sudoku_rules_mistakes_explanation))
         }

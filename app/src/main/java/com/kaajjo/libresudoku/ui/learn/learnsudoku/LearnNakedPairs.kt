@@ -12,7 +12,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
@@ -135,8 +134,7 @@ fun LearnNakedPairs(
                 notes = notes,
                 cellsToHighlight = if (step < stepsCell.size) stepsCell[step] else null,
                 onClick = { },
-                selectedCell = Cell(-1, -1),
-                boardColors = LocalBoardColors.current
+                selectedCell = Cell(-1, -1)
             )
             TutorialBottomContent(
                 steps = steps,

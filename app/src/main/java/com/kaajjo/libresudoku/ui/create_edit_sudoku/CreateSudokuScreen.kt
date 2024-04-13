@@ -44,7 +44,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
@@ -202,7 +201,6 @@ fun CreateSudokuScreen(
                     viewModel.processInput(cell = cell)
                 },
                 identicalNumbersHighlight = highlightIdentical,
-                boardColors = LocalBoardColors.current,
                 positionLines = positionLines,
                 crossHighlight = crossHighlight
             )

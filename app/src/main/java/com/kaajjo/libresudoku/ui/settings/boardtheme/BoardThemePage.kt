@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
@@ -274,7 +273,6 @@ private fun BoardPreviewTheme(
         size = 9,
         selectedCell = selectedCell,
         onClick = { cell -> selectedCell = if (selectedCell == cell) Cell(-1, -1, 0) else cell },
-        boardColors = LocalBoardColors.current,
         positionLines = positionLines,
         errorsHighlight = errosHighlight,
         crossHighlight = crossHighlight,
