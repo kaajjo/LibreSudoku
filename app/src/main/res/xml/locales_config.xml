@@ -23,4 +23,8 @@
     <locale android:name="pl" />
     <locale android:name="ca" />
     <locale android:name="fa" />
+    <locale android:name="el" />
+    <locale android:name="in" />
+    <locale android:name="ja" />
+    <locale android:name="vi" />
 </locale-config>
