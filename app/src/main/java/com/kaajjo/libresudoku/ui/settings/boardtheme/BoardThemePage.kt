@@ -64,12 +64,6 @@ fun SettingsBoardTheme(
     val boardCrossHighlight by viewModel.crossHighlight.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT)
     val fontSize by viewModel.fontSize.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
 
-    val fontSizeValue by remember(fontSize) {
-        mutableStateOf(
-            SudokuUtils().getFontSize(GameType.Default9x9, fontSize)
-        )
-    }
-
     var fontSizeDialog by rememberSaveable {
         mutableStateOf(false)
     }
@@ -83,6 +77,12 @@ fun SettingsBoardTheme(
         mutableStateOf(GameType.Default9x9)
     }
 
+    val fontSizeValue by remember(fontSize, selectedBoardType) {
+        mutableStateOf(
+            SudokuUtils().getFontSize(selectedBoardType, fontSize)
+        )
+    }
+    
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
