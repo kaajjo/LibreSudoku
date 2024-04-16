@@ -44,7 +44,14 @@ You can help to translate LibreSudoku into your language at [Hosted Weblate](htt
 
 ## Credits
 This project uses a modified version of [QQWing](https://github.com/stephenostermiller/qqwing) - sudoku puzzle generator and solver\
-Some of the UI elements are inspired by [Tachiyomi](https://github.com/tachiyomiorg/tachiyomi) and [Seal](https://github.com/JunkFood02/Seal). These apps are great 💘
+
+† [Tachiyomi](https://github.com/tachiyomiorg/tachiyomi)
+
+[Seal](https://github.com/JunkFood02/Seal)
+
+[Open Sudoku](https://gitlab.com/opensudoku/opensudoku)
+
+[Privacy Friendly Sudoku](https://github.com/SecUSo/privacy-friendly-sudoku)
 
 ## License
 [![](https://img.shields.io/github/license/kaajjo/libre-sudoku)](https://github.com/kaajjo/libre-sudoku/blob/main/LICENSE)
