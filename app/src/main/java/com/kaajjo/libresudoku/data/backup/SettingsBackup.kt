@@ -52,7 +52,7 @@ data class SettingsBackup(
         settings.setFunKeyboardOverNum(funKeyboardOverNum)
         settings.setDateFormat(dateFormat)
         settings.setSaveSelectedGameDifficultyType(saveSelectedGameDifficulty)
-        settings.setAutoBackupInterval(autoBackupInteral)
+        settings.setAutoBackupInterval(autoBackupInterval)
         settings.setAutoBackupsNumber(maxAutoBackups)
 
         themeSettings.setDynamicColors(dynamicColors)
@@ -85,7 +85,7 @@ data class SettingsBackup(
                 funKeyboardOverNum = runBlocking { settings.funKeyboardOverNumbers.first() },
                 dateFormat = runBlocking { settings.dateFormat.first() },
                 saveSelectedGameDifficulty = runBlocking { settings.saveSelectedGameDifficultyType.first() },
-                autoBackupInteral = runBlocking { settings.autoBackupInterval.first() },
+                autoBackupInterval = runBlocking { settings.autoBackupInterval.first() },
                 maxAutoBackups = runBlocking { settings.autoBackupsNumber.first() },
                 dynamicColors = runBlocking { themeSettings.dynamicColors.first() },
                 darkTheme = runBlocking { themeSettings.darkTheme.first() },
