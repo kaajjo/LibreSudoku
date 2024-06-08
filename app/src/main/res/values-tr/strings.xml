@@ -308,4 +308,26 @@
         <item quantity="other">%1$d oyunu silmek istediğinizden emin misiniz?</item>
     </plurals>
     <string name="redo">Yinele</string>
+    <string name="onboard_restore_backup">Yedeklemeyi geri yükle</string>
+    <string name="onboard_restore_backup_description">Zaten bir yedeklemeniz var mı? Şimdi geri yükleyin</string>
+    <string name="onboard_settings_description">Uygulamayı istediğiniz gibi ayarlayın</string>
+    <string name="theme_custom">Özel</string>
+    <string name="monet_expressive">Açıklayıcı</string>
+    <string name="monet_monochrome">Tek Renkli</string>
+    <string name="monet_rainbow">Gökkuşağı</string>
+    <string name="monet_fruitsalad">Meyve Salatası</string>
+    <string name="monet_fidelity">Güven</string>
+    <string name="monet_content">Memnun</string>
+    <string name="theme_orange">Turuncu</string>
+    <string name="theme_cyan">Camgöbeği</string>
+    <string name="color_picker_title">Renk seç</string>
+    <string name="parse_color_fail">Renk değil</string>
+    <string name="pref_monet_style">Monet tarzı</string>
+    <string name="monet_tonalspot">Tonlamalı Nokta</string>
+    <string name="monet_neutral">Nötr</string>
+    <string name="monet_vibrant">Canlı</string>
+    <plurals name="last_x_games">
+        <item quantity="one">Son %1$d oyun</item>
+        <item quantity="other">Son %1$d oyun</item>
+    </plurals>
 </resources>
