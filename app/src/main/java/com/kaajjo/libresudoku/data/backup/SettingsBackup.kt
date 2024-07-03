@@ -26,7 +26,7 @@ data class SettingsBackup(
     val funKeyboardOverNum: Boolean = PreferencesConstants.DEFAULT_FUN_KEYBOARD_OVER_NUM,
     val dateFormat: String = "",
     val saveSelectedGameDifficulty: Boolean = PreferencesConstants.DEFAULT_SAVE_LAST_SELECTED_DIFF_TYPE,
-    val autoBackupInteral: Long = PreferencesConstants.DEFAULT_AUTOBACKUP_INTERVAL,
+    val autoBackupInterval: Long = PreferencesConstants.DEFAULT_AUTOBACKUP_INTERVAL,
     val maxAutoBackups: Int = PreferencesConstants.DEFAULT_AUTO_BACKUPS_NUMBER,
     val dynamicColors: Boolean = PreferencesConstants.DEFAULT_DYNAMIC_COLORS,
     val darkTheme: Int = PreferencesConstants.DEFAULT_DARK_THEME,
@@ -52,7 +52,7 @@ data class SettingsBackup(
         settings.setFunKeyboardOverNum(funKeyboardOverNum)
         settings.setDateFormat(dateFormat)
         settings.setSaveSelectedGameDifficultyType(saveSelectedGameDifficulty)
-        settings.setAutoBackupInterval(autoBackupInteral)
+        settings.setAutoBackupInterval(autoBackupInterval)
         settings.setAutoBackupsNumber(maxAutoBackups)
 
         themeSettings.setDynamicColors(dynamicColors)
@@ -85,7 +85,7 @@ data class SettingsBackup(
                 funKeyboardOverNum = runBlocking { settings.funKeyboardOverNumbers.first() },
                 dateFormat = runBlocking { settings.dateFormat.first() },
                 saveSelectedGameDifficulty = runBlocking { settings.saveSelectedGameDifficultyType.first() },
-                autoBackupInteral = runBlocking { settings.autoBackupInterval.first() },
+                autoBackupInterval = runBlocking { settings.autoBackupInterval.first() },
                 maxAutoBackups = runBlocking { settings.autoBackupsNumber.first() },
                 dynamicColors = runBlocking { themeSettings.dynamicColors.first() },
                 darkTheme = runBlocking { themeSettings.darkTheme.first() },
