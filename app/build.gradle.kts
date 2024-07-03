@@ -45,7 +45,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
     packaging {
         resources {
@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
     implementation(libs.material.icons.extended)
+    implementation(project(":Color-Picker"))
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
@@ -105,5 +106,4 @@ dependencies {
     ksp(libs.hilt.common.compiler)
     ksp(libs.hilt.work)
     implementation(libs.materialKolor)
-    implementation(libs.colorPicker)
 }

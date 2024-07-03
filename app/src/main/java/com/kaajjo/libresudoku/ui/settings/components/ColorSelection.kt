@@ -40,10 +40,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
+import com.kaajjo.color_picker.picker.selector.SelectorRectSaturationValueHSV
+import com.kaajjo.color_picker.picker.ui.slider.SliderHueHSV
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.theme.ColorUtils.harmonizeWithPrimary
-import com.smarttoolfactory.colorpicker.selector.SelectorRectSaturationValueHSV
-import com.smarttoolfactory.colorpicker.slider.SliderHueHSV
 
 @Composable
 fun ColorSelection(

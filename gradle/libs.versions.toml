@@ -1,17 +1,17 @@
 [versions]
-agp = "8.2.0-rc02"
-kotlin = "1.9.0"
+agp = "8.2.2"
+kotlin = "1.9.24"
 room = "2.6.1"
 aboutLibraries = '10.6.1'
-compose = '1.6.4'
-hilt = "2.48"
+compose = '1.6.8'
+hilt = "2.49"
 hilt-navigation = "1.2.0"
-datastore-preferences = "1.0.0"
-appcompat = "1.7.0-alpha03"
-lifecycle-runtime = "2.7.0"
-core-ktx = "1.12.0"
-activity-compose = "1.8.2"
-material3 = "1.3.0-alpha03"
+datastore-preferences = "1.1.1"
+appcompat = "1.7.0"
+lifecycle-runtime = "2.8.3"
+core-ktx = "1.13.1"
+activity-compose = "1.9.0"
+material3 = "1.3.0-beta04"
 accompanist-pager = "0.28.0"
 accompanist-systemuicontroller = "0.28.0"
 navigation-compose = "2.7.7"
@@ -24,7 +24,10 @@ workRuntimeKtx = "2.9.0"
 hilt-work = "1.2.0"
 hilt-common = "1.2.0"
 materialKolor = "1.4.4"
-colorPicker = "1.2.0"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+foundationAndroid = "1.6.8"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx"}
@@ -62,7 +65,11 @@ hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt-w
 hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hilt-common" }
 hilt-common-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-common" }
 materialKolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialKolor" }
-colorPicker = { group = "com.github.SmartToolFactory", name = "Compose-Color-Picker-Bundle", version.ref = "colorPicker" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+material = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
+foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
