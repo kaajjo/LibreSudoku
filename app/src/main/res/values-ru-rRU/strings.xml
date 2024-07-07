@@ -71,7 +71,8 @@
     <string name="pref_reset_tipcards">Сбросить все тип карточки</string>
     <string name="pref_tipcards_reset">Тип карточки сброшены!</string>
     <string name="about_version">Версия</string>
-    <string name="about_github_project">Проект на GitHub</string>
+    <string name="about_github_project">GitHub</string>
+    <string name="about_github_source_code">Исходный код GitHub</string>
     <string name="action_give_up">Сдаться</string>
     <string name="action_reset_game">Начать заново</string>
     <string name="dialog_yes">Да</string>
@@ -169,7 +170,8 @@
     <string name="learn_hidden_pairs_title">Скрытые пары</string>
     <string name="learn_hidden_pairs_1">Скрытые пары это почти то же самое, что и голые пары, только с одним отличием, они скрыты среди других. Эти две клетки имеют кое-что общее, а именно, в них могут стоять цифры 6 и 9, и это единственные две клетки в этом блоке, где они могут стоять</string>
     <string name="learn_hidden_pairs_2">Из этого можно сделать вывод, что эти две клетки будут содержать именно эти две цифры, и никакие другие. Так что, мы можем убрать ненужные заметки из этих клеток. Как и с голыми парами, это точно также работает со строками и столбцами</string>
-    <string name="libraries_licenses_title">Open Source лицензии</string>
+    <string name="libraries_licenses">Лицензии</string>
+    <string name="libraries_licenses_title">Лицензии открытого ПО</string>
     <string name="can_continue_label">Можно продолжить</string>
     <string name="action_show_mine_sudoku">Показать свое</string>
     <string name="custom_sudoku_title">Кастомное судоку</string>
@@ -202,6 +204,7 @@
     <string name="sort_by_game_id">ID</string>
     <string name="sort_label">Сортировка</string>
     <string name="filter_label">Фильтр</string>
+    <string name="weblate" translatable="false">Weblate</string>
     <string name="help_translate">Помочь с переводом</string>
     <string name="create_folder">Создать папку</string>
     <string name="delete_folder">Удалить папку</string>
@@ -340,4 +343,13 @@
         <item quantity="many">Последние %1$d игр</item>
         <item quantity="other">Последние %1$d игр</item>
     </plurals>
+
+    <string name="telegram" translatable="false">Telegram</string>
+    <string name="telegram_link">Присоединяйтесь в Telegram</string>
+    <string name="donation_title">Пожертвование</string>
+    <string name="donation_description">Это приложение бесплатно и без реклам навсегда. Вы моежет поддержать меня ниже</string>
+    <string name="crypto_bitcoin" translatable="false">Bitcoin</string>
+    <string name="crypto_ton" translatable="false">TON</string>
+    <string name="crypto_usdt" translatable="false">USDT (TRC20)</string>
+    <string name="card_mir" translatable="false">MIR</string>
 </resources>

@@ -76,7 +76,8 @@
     <string name="pref_app_language">App language</string>
     <string name="label_default">Default</string>
     <string name="about_version">Version</string>
-    <string name="about_github_project">Project on GitHub</string>
+    <string name="about_github_project">GitHub</string>
+    <string name="about_github_source_code">Source code on GitHub</string>
     <string name="action_give_up">Give up</string>
     <string name="action_reset_game">Reset the game</string>
     <string name="dialog_yes">Yes</string>
@@ -172,6 +173,7 @@
     <string name="page_previous">Previous</string>
     <string name="page_next">Next</string>
     <string name="no_value_default" translatable="false">--</string>
+    <string name="libraries_licenses">Licenses</string>
     <string name="libraries_licenses_title">Open Source Licenses</string>
     <string name="can_continue_label">Can continue</string>
     <string name="custom_sudoku_title">Custom sudoku</string>
@@ -204,6 +206,7 @@
     <string name="sort_by_game_id">ID</string>
     <string name="sort_label">Sort</string>
     <string name="filter_label">Filter</string>
+    <string name="weblate" translatable="false">Weblate</string>
     <string name="help_translate">Help translate</string>
     <string name="title_folders">Folders</string>
     <string name="create_folder">Create a folder</string>
@@ -338,4 +341,13 @@
         <item quantity="one">Last %1$d game</item>
         <item quantity="other">Last %1$d games</item>
     </plurals>
+
+    <string name="telegram" translatable="false">Telegram</string>
+    <string name="telegram_link">Join us on Telegram</string>
+    <string name="donation_title">Donation</string>
+    <string name="donation_description">This app is free and ad-free forever. You can support me below</string>
+    <string name="crypto_bitcoin" translatable="false">Bitcoin</string>
+    <string name="crypto_ton" translatable="false">TON</string>
+    <string name="crypto_usdt" translatable="false">USDT (TRC20)</string>
+    <string name="card_mir" translatable="false">MIR</string>
 </resources>
