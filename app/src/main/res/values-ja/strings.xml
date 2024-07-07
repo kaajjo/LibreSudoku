@@ -67,4 +67,20 @@
     <string name="win_rate_percentage">%1$d%%</string>
     <string name="statistics">統計</string>
     <string name="onboard_title">ようこそ</string>
+    <string name="pref_mistakes_check_off">無効</string>
+    <string name="pref_mistakes_check_violations">ルール違反</string>
+    <string name="action_start">開始</string>
+    <string name="dialog_generating">生成中…</string>
+    <string name="history_title">履歴</string>
+    <string name="saved_game_difficulty">難易度: %1$s</string>
+    <string name="page_previous">前</string>
+    <string name="page_next">次</string>
+    <string name="sort_ascending">昇順</string>
+    <string name="sort_descending">降順</string>
+    <string name="theme_blue">青</string>
+    <string name="redo">繰り返す</string>
+    <string name="daily">毎日</string>
+    <string name="weekly">毎週</string>
+    <string name="monet_rainbow">虹</string>
+    <string name="monet_fruitsalad">フルーツサラダ</string>
 </resources>

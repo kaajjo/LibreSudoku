@@ -322,4 +322,7 @@
     <string name="monet_fidelity">逼真</string>
     <string name="monet_content">内容</string>
     <string name="theme_cyan">青色</string>
+    <plurals name="last_x_games">
+        <item quantity="other">最后的 %1$d 个游戏</item>
+    </plurals>
 </resources>

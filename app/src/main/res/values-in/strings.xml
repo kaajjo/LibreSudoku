@@ -57,7 +57,7 @@
     <string name="export_string_state_copied">Disalin</string>
     <string name="export_string_copy">Menyalin</string>
     <string name="create_sudoku_title">Buat sudoku</string>
-    <string name="export_string_state_error">Error</string>
+    <string name="export_string_state_error">Kesalahan</string>
     <string name="saved_game_give_up">Kamu menyerah</string>
     <string name="pref_date_format_custom_textfield_label">Pola</string>
     <string name="pref_dark_theme_on">Hidup</string>
@@ -210,4 +210,67 @@
     <string name="nav_bar_more">Lainnya</string>
     <string name="nav_bar_statistics">Statistik</string>
     <string name="game_not_started">Belum dimulai</string>
+    <string name="filter_in_progress">Sedang dalam proses</string>
+    <string name="filter_not_started">Belum dimulai</string>
+    <string name="sort_ascending">Urutkan naik</string>
+    <string name="sort_descending">Urutkan menurun</string>
+    <string name="sort_label">Urutkan</string>
+    <string name="help_translate">Bantu terjemahkan</string>
+    <string name="title_folders">Folder</string>
+    <string name="create_folder">Buat folder</string>
+    <string name="delete_folder">Hapus folder</string>
+    <string name="edit_name">Edit nama</string>
+    <string name="export">Ekspor</string>
+    <string name="create_folder_name">Nama folder</string>
+    <string name="folder_import">Impor</string>
+    <string name="dialog_delete_folder_text">Folder berjudul %1$s akan dihapus</string>
+    <string name="help">Bantuan</string>
+    <string name="folders_help">Di sini Anda dapat mengatur folder dan mengimpor sudoku dari file</string>
+    <string name="import_from_file_fail">Gagal mengimpor</string>
+    <string name="import_from_file_title">Dari file</string>
+    <string name="import_saving">Menyimpan</string>
+    <string name="folder_empty_label">Folder ini kosong</string>
+    <string name="dialog_delete_selected">Hapus yang dipilih</string>
+    <string name="explore_folder_add_sudoku">Tambah sudoku</string>
+    <plurals name="delete_selected_in_folder">
+        <item quantity="other">Yakin ingin menghapus permainan %1$d?</item>
+    </plurals>
+    <string name="game_id">Permainan #%1$d</string>
+    <string name="add_to_folder">Tambah ke folder</string>
+    <string name="add_to_folder_create_new">Buat baru</string>
+    <string name="add_to_folder_from_file">Impor dari file</string>
+    <string name="last_played_section_title">Babak yang baru saja dimainkan</string>
+    <string name="pref_boardtheme_accent">Terapkan warna aksen</string>
+    <string name="pref_boardtheme_accent_subtitle">Jadikan papan sudoku Anda lebih berwarna</string>
+    <string name="pref_board_theme_title">Tema papan sudoku</string>
+    <string name="pref_board_theme_subtitle">Atur tampilan papan sudoku</string>
+    <string name="board_theme_title">Tema papan</string>
+    <string name="action_move_selected">Pindahkan yang dipilih</string>
+    <string name="move_games_to_folder_subtitle">Pilih folder yang menjadi tujuan babak yang dipilih</string>
+    <string name="pref_cross_highlight_subtitle">Sorot beberapa kotak pada papan</string>
+    <string name="pref_cross_highlight">Silang sorotan</string>
+    <string name="dialog_crash_report_text">Ups, LibreSudoku baru saja macet. Apakah Anda ingin mengirimkan laporan macet ke para pengembang?</string>
+    <string name="pref_crash_reporting">Melaporkan aplikasi macet</string>
+    <string name="folder_import_supported_types">Berikut adalah jenis file yang didukung:
+\n.sdm (atau file .txt berstruktur sama)
+\n.opensudoku
+\n.1gsudoku</string>
+    <string name="backup_restore_title">Pencadangan &amp; pemulihan</string>
+    <string name="action_create_backup">Cadangkan</string>
+    <string name="create_backup_description">Buat file cadangan</string>
+    <string name="sort_by_timer">Pengatur waktu</string>
+    <string name="sort_by_game_id">ID</string>
+    <string name="filter_label">Saring</string>
+    <string name="folder_name">Folder: %1$s</string>
+    <plurals name="number_puzzles_to_import">
+        <item quantity="other">%1$d teka-teki untuk diimpor</item>
+    </plurals>
+    <plurals name="puzzles_in_folder">
+        <item quantity="other">%1$d teka-teki</item>
+    </plurals>
+    <string name="action_edit">Sunting</string>
+    <string name="edit_sudoku">Sunting sudoku</string>
+    <string name="pref_crash_reporting_subtitle">Bantu kami memperbaiki bug. Aplikasi tidak mengirim log dengan sendirinya, Anda akan diminta untuk mengirim laporan kerusakan melalui email</string>
+    <string name="pref_fun_keyboard_over_num">Panel fungsi di atas nilai</string>
+    <string name="theme_lavender">Lavender</string>
 </resources>

@@ -316,4 +316,19 @@
     <string name="action_grant">Udziel</string>
     <string name="autobackup_never">Nigdy</string>
     <string name="restore_existing_data_alert">Istniejące dane zostaną usunięte!</string>
+    <string name="monet_fruitsalad">Sałatka owocowa</string>
+    <string name="monet_monochrome">Monochromatyczny</string>
+    <string name="onboard_restore_backup">Przywróć z kopii zapasowej</string>
+    <string name="onboard_settings_description">Dostosuj aplikację do swoich preferencji</string>
+    <string name="color_picker_title">Wybierz kolor</string>
+    <string name="monet_neutral">Neutralny</string>
+    <string name="monet_rainbow">Tęcza</string>
+    <string name="monet_content">Treść</string>
+    <string name="theme_orange">Pomarańczowy</string>
+    <plurals name="last_x_games">
+        <item quantity="one">Ostatnia %1$d gra</item>
+        <item quantity="few">Ostatnie %1$d gry</item>
+        <item quantity="many">Ostatnie %1$d gier</item>
+        <item quantity="other">Ostatnie %1$d gier</item>
+    </plurals>
 </resources>
