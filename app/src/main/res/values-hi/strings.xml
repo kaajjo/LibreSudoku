@@ -70,7 +70,7 @@
     <string name="pref_keep_screen_on">स्क्रीन को चालू रखें</string>
     <string name="pref_app_language">ऐप भाषा</string>
     <string name="about_version">संस्करण</string>
-    <string name="about_github_project">GitHub पर परियोजना</string>
+    <string name="about_github_project">GitHub</string>
     <string name="action_give_up">हार मान लें</string>
     <string name="action_reset_game">गेम रीसेट करें</string>
     <string name="dialog_yes">हाॅं</string>
@@ -330,4 +330,9 @@
         <item quantity="one">अंतिम %1$d खेल</item>
         <item quantity="other">अंतिम %1$d खेल</item>
     </plurals>
+    <string name="about_github_source_code">GitHub पर स्रोत कोड</string>
+    <string name="donation_title">अनुदान</string>
+    <string name="donation_description">यह ऐप हमेशा के लिए मुफ़्त और विज्ञापन-मुक्त है। आप नीचे मेरा समर्थन कर सकते हैं</string>
+    <string name="libraries_licenses">लाइसेंस</string>
+    <string name="telegram_link">टेलीग्राम पर हमसे जुड़ें</string>
 </resources>
