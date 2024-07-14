@@ -1,7 +1,6 @@
 package com.kaajjo.libresudoku.ui.components.board
 
 import android.graphics.Paint
-import android.graphics.Rect
 import android.util.TypedValue
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -23,8 +22,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -41,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.kaajjo.libresudoku.LocalBoardColors
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
+import com.kaajjo.libresudoku.core.qqwing.Cage
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.ui.theme.BoardColors
@@ -82,7 +85,8 @@ fun Board(
     cellsToHighlight: List<Cell>? = null,
     zoomable: Boolean = false,
     boardColors: SudokuBoardColors = LocalBoardColors.current,
-    crossHighlight: Boolean = false
+    crossHighlight: Boolean = false,
+    cages: List<Cage> = emptyList()
 ) {
     BoxWithConstraints(
         modifier = modifier
@@ -115,6 +119,7 @@ fun Board(
 
         var fontSizePx = with(LocalDensity.current) { mainTextSize.toPx() }
         var noteSizePx = with(LocalDensity.current) { noteTextSize.toPx() }
+        var killerSumSizePx = with(LocalDensity.current) { noteTextSize.toPx() * 0.9f }
 
         val thinLineWidth = with(LocalDensity.current) { 1.3.dp.toPx() }
         val thickLineWidth = with(LocalDensity.current) { 1.3.dp.toPx() }
@@ -162,6 +167,16 @@ fun Board(
             )
         }
 
+        var killerSumPaint by remember {
+            mutableStateOf(
+                Paint().apply {
+                    color = notesColor.toArgb()
+                    isAntiAlias = true
+                    textSize = killerSumSizePx
+                }
+            )
+        }
+
         val context = LocalContext.current
         LaunchedEffect(mainTextSize, noteTextSize, boardColors) {
             fontSizePx = TypedValue.applyDimension(
@@ -172,6 +187,11 @@ fun Board(
             noteSizePx = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP,
                 noteTextSize.value,
+                context.resources.displayMetrics
+            )
+            killerSumSizePx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                noteTextSize.value * 0.9f,
                 context.resources.displayMetrics
             )
             textPaint = Paint().apply {
@@ -194,6 +214,11 @@ fun Board(
                 isAntiAlias = true
                 textSize = fontSizePx
             }
+            killerSumPaint = Paint().apply {
+                color = notesColor.toArgb()
+                isAntiAlias = true
+                textSize = killerSumSizePx
+            }
         }
 
         var zoom by remember(enabled) { mutableFloatStateOf(1f) }
@@ -206,8 +231,14 @@ fun Board(
                     onTap = {
                         if (enabled) {
                             val totalOffset = it / zoom + offset
-                            val row = floor((totalOffset.y) / cellSize).toInt().coerceIn(board.indices)
-                            val column = floor((totalOffset.x) / cellSize).toInt().coerceIn(board.indices)
+                            val row =
+                                floor((totalOffset.y) / cellSize)
+                                    .toInt()
+                                    .coerceIn(board.indices)
+                            val column =
+                                floor((totalOffset.x) / cellSize)
+                                    .toInt()
+                                    .coerceIn(board.indices)
                             onClick(board[row][column])
                         }
                     },
@@ -258,34 +289,33 @@ fun Board(
         Canvas(
             modifier = if (zoomable) boardModifier.then(zoomModifier) else boardModifier
         ) {
+            val cornerRadius = CornerRadius(15f, 15f)
+
             if (selectedCell.row >= 0 && selectedCell.col >= 0) {
                 // current cell
-                drawRect(
-                    color = highlightColor.copy(alpha = 0.2f),
-                    topLeft = Offset(
-                        x = selectedCell.col * cellSize,
-                        y = selectedCell.row * cellSize
-                    ),
-                    size = Size(cellSize, cellSize)
-                )
-                if (positionLines) {
-                    // vertical position line
-                    drawRect(
-                        color = highlightColor.copy(alpha = 0.1f),
-                        topLeft = Offset(
+                drawRoundCell(
+                    row = selectedCell.row,
+                    col = selectedCell.col,
+                    gameSize = size,
+                    rect = Rect(
+                        offset = Offset(
                             x = selectedCell.col * cellSize,
-                            y = 0f
-                        ),
-                        size = Size(cellSize, maxWidth)
-                    )
-                    // horizontal position line
-                    drawRect(
-                        color = highlightColor.copy(alpha = 0.1f),
-                        topLeft = Offset(
-                            x = 0f,
                             y = selectedCell.row * cellSize
                         ),
-                        size = Size(maxWidth, cellSize)
+                        size = Size(cellSize, cellSize)
+                    ),
+                    color = highlightColor.copy(alpha = 0.2f),
+                    cornerRadius = cornerRadius
+                )
+                if (positionLines) {
+                    drawPositionLines(
+                        row = selectedCell.row,
+                        col = selectedCell.col,
+                        gameSize = size,
+                        color = highlightColor.copy(alpha = 0.1f),
+                        cellSize = cellSize,
+                        lineLength = maxWidth,
+                        cornerRadius = cornerRadius
                     )
                 }
             }
@@ -293,26 +323,38 @@ fun Board(
                 for (i in 0 until size) {
                     for (j in 0 until size) {
                         if (board[i][j].value == selectedCell.value && board[i][j].value != 0) {
-                            drawRect(
-                                color = highlightColor.copy(alpha = 0.2f),
-                                topLeft = Offset(
-                                    x = board[i][j].col * cellSize,
-                                    y = board[i][j].row * cellSize
+                            drawRoundCell(
+                                row = board[i][j].row,
+                                col = board[i][j].col,
+                                gameSize = size,
+                                rect = Rect(
+                                    offset = Offset(
+                                        x = board[i][j].col * cellSize,
+                                        y = board[i][j].row * cellSize
+                                    ),
+                                    size = Size(cellSize, cellSize)
                                 ),
-                                size = Size(cellSize, cellSize)
+                                color = highlightColor.copy(alpha = 0.2f),
+                                cornerRadius = cornerRadius
                             )
                         }
                     }
                 }
             }
             cellsToHighlight?.forEach {
-                drawRect(
+                drawRoundCell(
+                    row = it.row,
+                    col = it.col,
+                    gameSize = size,
                     color = highlightColor.copy(alpha = 0.3f),
-                    topLeft = Offset(
-                        x = it.col * cellSize,
-                        y = it.row * cellSize
+                    rect = Rect(
+                        Offset(
+                            x = it.col * cellSize,
+                            y = it.row * cellSize
+                        ),
+                        size = Size(cellSize, cellSize)
                     ),
-                    size = Size(cellSize, cellSize)
+                    cornerRadius = cornerRadius
                 )
             }
 
@@ -387,6 +429,35 @@ fun Board(
                     }
                 }
             }
+
+            if (cages.isNotEmpty()) {
+                cages.forEach { cage ->
+                    val noteBounds = android.graphics.Rect()
+                    val textToDraw = cage.sum.toString()
+                    killerSumPaint.getTextBounds(textToDraw, 0, textToDraw.length, noteBounds)
+                    // get top left cell
+                    val cellWithSum = cage.cells.minWith(
+                        compareBy<Cell> { it.row }.thenBy { it.col }
+                    )
+                    drawIntoCanvas { canvas ->
+                        canvas.nativeCanvas.drawText(
+                            textToDraw,
+                            cellWithSum.col * cellSize + (cellSize * 0.05f),
+                            cellWithSum.row * cellSize + noteBounds.height() + (cellSize * 0.05f),
+                            killerSumPaint
+                        )
+                    }
+
+                    drawKillerCage(
+                        cage = cage,
+                        cellWithSum = cellWithSum,
+                        cellSize = cellSize,
+                        strokeWidth = thickLineWidth,
+                        color = thinLineColor,
+                        cornerTextPadding = Offset(noteBounds.width().toFloat(), noteBounds.height().toFloat())
+                    )
+                }
+            }
         }
     }
 }
@@ -428,7 +499,7 @@ private fun DrawScope.drawNumbers(
 
                     val textToDraw =
                         if (questions) "?" else board[i][j].value.toString(16).uppercase()
-                    val textBounds = Rect()
+                    val textBounds = android.graphics.Rect()
                     textPaint.getTextBounds(textToDraw, 0, 1, textBounds)
                     val textWidth = paint.measureText(textToDraw)
 
@@ -452,7 +523,7 @@ private fun DrawScope.drawNotes(
     cellSizeDivWidth: Float,
     cellSizeDivHeight: Float
 ) {
-    val noteBounds = Rect()
+    val noteBounds = android.graphics.Rect()
     paint.getTextBounds("1", 0, 1, noteBounds)
 
     drawIntoCanvas { canvas ->
@@ -475,62 +546,52 @@ private fun DrawScope.drawNotes(
     }
 }
 
-private fun getNoteColumnNumber(number: Int, size: Int): Int {
-    if (size == 9 || size == 6) {
-        return when (number) {
-            1, 2, 3 -> 0
-            4, 5, 6 -> 1
-            7, 8, 9 -> 2
-            else -> 0
-        }
-    } else if (size == 12) {
-        return when (number) {
-            1, 2, 3, 4 -> 0
-            5, 6, 7, 8 -> 1
-            9, 10, 11, 12 -> 2
-            else -> 0
-        }
+private fun DrawScope.drawRoundCell(
+    row: Int,
+    col: Int,
+    gameSize: Int,
+    rect: Rect,
+    color: Color,
+    cornerRadius: CornerRadius = CornerRadius.Zero
+) {
+    val path = Path().apply {
+        addRoundRect(
+            roundRectForCell(
+                row = row,
+                col = col,
+                gameSize = gameSize,
+                rect = rect,
+                cornerRadius = cornerRadius
+            )
+        )
     }
-    return 0
+    drawPath(
+        path = path,
+        color = color
+    )
 }
 
-private fun getNoteRowNumber(number: Int, size: Int): Int {
-    if (size == 9 || size == 6) {
-        return when (number) {
-            1, 4, 7 -> 0
-            2, 5, 8 -> 1
-            3, 6, 9 -> 2
-            else -> 0
-        }
-    } else if (size == 12) {
-        return when (number) {
-            1, 5, 9 -> 0
-            2, 6, 10 -> 1
-            3, 7, 11 -> 2
-            4, 8, 12 -> 3
-            else -> 0
-        }
-    }
-    return 0
+private fun roundRectForCell(
+    row: Int,
+    col: Int,
+    gameSize: Int,
+    rect: Rect,
+    cornerRadius: CornerRadius
+): RoundRect {
+    val topLeft = if (row == 0 && col == 0) cornerRadius  else CornerRadius.Zero
+    val topRight = if (row == 0 && col == gameSize - 1)cornerRadius else CornerRadius.Zero
+    val bottomLeft = if (row == gameSize - 1 && col == 0) cornerRadius else CornerRadius.Zero
+    val bottomRight = if (row == gameSize - 1 && col == gameSize - 1) cornerRadius else CornerRadius.Zero
+
+    return RoundRect(
+        rect = rect,
+        topLeft = topLeft,
+        topRight = topRight,
+        bottomLeft = bottomLeft,
+        bottomRight = bottomRight
+    )
 }
 
-private fun getSectionHeightForSize(size: Int): Int {
-    return when (size) {
-        6 -> GameType.Default6x6.sectionHeight
-        9 -> GameType.Default9x9.sectionHeight
-        12 -> GameType.Default12x12.sectionHeight
-        else -> GameType.Default9x9.sectionHeight
-    }
-}
-
-private fun getSectionWidthForSize(size: Int): Int {
-    return when (size) {
-        6 -> GameType.Default6x6.sectionWidth
-        9 -> GameType.Default9x9.sectionWidth
-        12 -> GameType.Default12x12.sectionWidth
-        else -> GameType.Default9x9.sectionWidth
-    }
-}
 
 @LightDarkPreview
 @Composable

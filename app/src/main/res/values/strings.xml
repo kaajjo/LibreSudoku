@@ -23,6 +23,9 @@
     <string name="type_default_6x6">6x6</string>
     <string name="type_default_9x9">9x9</string>
     <string name="type_default_12x12">12x12</string>
+    <string name="type_killer_9x9">Killer 9x9</string>
+    <string name="type_killer_6x6">Killer 6x6</string>
+    <string name="type_killer_12x12">Killer 12x12</string>
     <string name="type_unspecified">Unspecified</string>
     <string name="settings_title">Settings</string>
     <string name="more_title">More</string>
@@ -350,4 +353,6 @@
     <string name="crypto_ton" translatable="false">TON</string>
     <string name="crypto_usdt" translatable="false">USDT (TRC20)</string>
     <string name="card_mir" translatable="false">MIR</string>
+
+
 </resources>

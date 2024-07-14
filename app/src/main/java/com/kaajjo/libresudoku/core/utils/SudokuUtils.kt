@@ -139,7 +139,7 @@ class SudokuUtils {
                 }
             }
 
-            GameType.Default9x9 -> {
+            GameType.Default9x9, GameType.Killer9x9 -> {
                 when (factor) {
                     1 -> 28.sp
                     2 -> 36.sp
@@ -147,7 +147,7 @@ class SudokuUtils {
                 }
             }
 
-            GameType.Default12x12 -> {
+            GameType.Default12x12, GameType.Killer12x12 -> {
                 when (factor) {
                     1 -> 24.sp
                     2 -> 32.sp
@@ -155,7 +155,7 @@ class SudokuUtils {
                 }
             }
 
-            GameType.Default6x6 -> {
+            GameType.Default6x6, GameType.Killer6x6 -> {
                 when (factor) {
                     1 -> 34.sp
                     2 -> 40.sp

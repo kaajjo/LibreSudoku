@@ -210,7 +210,8 @@ fun SavedGameScreen(
                                 mainTextSize = fontSizeValue,
                                 selectedCell = Cell(-1, -1),
                                 onClick = { },
-                                crossHighlight = crossHighlight
+                                crossHighlight = crossHighlight,
+                                cages = viewModel.killerCages
                             )
 
                             1 -> Board(
@@ -219,7 +220,8 @@ fun SavedGameScreen(
                                 mainTextSize = fontSizeValue,
                                 selectedCell = Cell(-1, -1),
                                 onClick = { },
-                                crossHighlight = crossHighlight
+                                crossHighlight = crossHighlight,
+                                cages = viewModel.killerCages
                             )
                         }
                     }
