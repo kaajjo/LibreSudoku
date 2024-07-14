@@ -130,7 +130,11 @@ fun AboutScreen(
                     .align(Alignment.CenterHorizontally)
             ) {
                 Text(
-                    "Версия ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                    stringResource(
+                        R.string.app_version,
+                        BuildConfig.VERSION_NAME,
+                        BuildConfig.VERSION_CODE
+                    ),
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
                 )

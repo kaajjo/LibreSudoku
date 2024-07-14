@@ -355,4 +355,5 @@
     <string name="crypto_ton" translatable="false">TON</string>
     <string name="crypto_usdt" translatable="false">USDT (TRC20)</string>
     <string name="card_mir" translatable="false">MIR</string>
+    <string name="app_version">Версия %1$s (%2$s)</string>
 </resources>
