@@ -2,7 +2,10 @@ package com.kaajjo.libresudoku.core.utils
 
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
+import com.kaajjo.libresudoku.core.qqwing.Cage
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class SudokuParser {
     private val emptySeparators = listOf('0', '.')
@@ -98,6 +101,17 @@ class SudokuParser {
 
     private fun boardDigitToInt(char: Char): Int {
         return char.digitToInt(radix)
+    }
+
+    fun killerSudokuCagesToString(cages: List<Cage>): String {
+        val json = Json {
+            encodeDefaults = true
+        }
+        return json.encodeToString(cages)
+    }
+    fun parseKillerSudokuCages(cagesString: String): List<Cage> {
+        val json = Json { ignoreUnknownKeys = true }
+        return json.decodeFromString<List<Cage>>(cagesString)
     }
 }
 

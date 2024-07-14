@@ -303,8 +303,9 @@ fun GameScreen(
                     enabled = viewModel.gamePlaying && !viewModel.endGame,
                     questions = !(viewModel.gamePlaying || viewModel.endGame) && Build.VERSION.SDK_INT < Build.VERSION_CODES.R,
                     renderNotes = renderNotes && !viewModel.showSolution,
-                    zoomable = viewModel.gameType == GameType.Default12x12,
-                    crossHighlight = crossHighlight
+                    zoomable = viewModel.gameType == GameType.Default12x12 || viewModel.gameType == GameType.Killer12x12,
+                    crossHighlight = crossHighlight,
+                    cages = viewModel.cages
                 )
             }
 

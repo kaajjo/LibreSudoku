@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
+import com.kaajjo.libresudoku.core.qqwing.Cage
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
 import com.kaajjo.libresudoku.data.database.model.Folder
@@ -52,6 +53,7 @@ class SavedGameViewModel
 
     var parsedInitialBoard by mutableStateOf(emptyList<List<Cell>>())
     var parsedCurrentBoard by mutableStateOf(emptyList<List<Cell>>())
+    var killerCages by mutableStateOf(emptyList<Cage>())
     var notes by mutableStateOf(emptyList<Note>())
 
     var exportDialog by mutableStateOf(false)
@@ -88,6 +90,9 @@ class SavedGameViewModel
                                     }
                                 }
                         notes = sudokuParser.parseNotes(savedGame.notes)
+                        if (boardEntity.killerCages != null) {
+                            killerCages = sudokuParser.parseKillerSudokuCages(boardEntity.killerCages)
+                        }
                     }
                 }
 

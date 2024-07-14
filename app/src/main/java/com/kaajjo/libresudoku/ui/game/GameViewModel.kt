@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
 import com.kaajjo.libresudoku.core.PreferencesConstants
+import com.kaajjo.libresudoku.core.qqwing.Cage
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.QQWingController
@@ -89,6 +90,9 @@ class GameViewModel @Inject constructor(
                         boardEntity.solvedBoard,
                         boardEntity.type
                     )
+                    boardEntity.killerCages?.let { cagesString ->
+                        cages = sudokuParser.parseKillerSudokuCages(cagesString)
+                    }
                     for (i in solvedBoard.indices) {
                         for (j in solvedBoard.indices) {
                             solvedBoard[i][j].locked = initialBoard[i][j].locked
@@ -183,6 +187,7 @@ class GameViewModel @Inject constructor(
     private lateinit var initialBoard: List<List<Cell>>
     var gameBoard by mutableStateOf(List(9) { row -> List(9) { col -> Cell(row, col, 0) } })
     var solvedBoard = emptyList<List<Cell>>()
+    var cages by mutableStateOf(emptyList<Cage>())
 
     var currCell by mutableStateOf(Cell(-1, -1, 0))
     private var undoRedoManager = UndoRedoManager(GameState(gameBoard, notes))

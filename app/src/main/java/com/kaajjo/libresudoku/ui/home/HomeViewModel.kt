@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
+import com.kaajjo.libresudoku.core.qqwing.CageGenerator
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.QQWingController
@@ -51,7 +52,10 @@ class HomeViewModel
     private val types = listOf(
         GameType.Default9x9,
         GameType.Default6x6,
-        GameType.Default12x12
+        GameType.Default12x12,
+        GameType.Killer9x9,
+        GameType.Killer12x12,
+        GameType.Killer6x6
     )
 
     val lastSelectedGameDifficultyType = appSettingsManager.lastSelectedGameDifficultyType
@@ -111,6 +115,7 @@ class HomeViewModel
             val solved = qqWingController.solve(generated, gameTypeToGenerate)
             isSolving = false
 
+
             if (!qqWingController.isImpossible && qqWingController.solutionCount == 1) {
                 for (i in 0 until size) {
                     for (j in 0 until size) {
@@ -119,6 +124,8 @@ class HomeViewModel
                     }
                 }
 
+                val generator = CageGenerator(solvedPuzzle, gameTypeToGenerate)
+                val cages = generator.generate(2, 5)
                 withContext(Dispatchers.IO) {
                     val sudokuParser = SudokuParser()
                     insertedBoardUid = boardRepository.insert(
@@ -127,7 +134,8 @@ class HomeViewModel
                             initialBoard = sudokuParser.boardToString(puzzle),
                             solvedBoard = sudokuParser.boardToString(solvedPuzzle),
                             difficulty = selectedDifficulty,
-                            type = selectedType
+                            type = selectedType,
+                            killerCages = SudokuParser().killerSudokuCagesToString(cages)
                         )
                     )
                 }

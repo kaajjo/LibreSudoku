@@ -128,7 +128,10 @@ fun StatisticsScreen(
                 types = listOf(
                     Pair(GameType.Default9x9, stringResource(R.string.type_default_9x9)),
                     Pair(GameType.Default6x6, stringResource(R.string.type_default_6x6)),
-                    Pair(GameType.Default12x12, stringResource(R.string.type_default_12x12))
+                    Pair(GameType.Default12x12, stringResource(R.string.type_default_12x12)),
+                    Pair(GameType.Killer9x9, stringResource(R.string.type_killer_9x9)),
+                    Pair(GameType.Killer6x6, stringResource(R.string.type_killer_6x6)),
+                    Pair(GameType.Killer12x12, stringResource(R.string.type_killer_12x12))
                 ),
                 selected = viewModel.selectedType,
                 onSelected = { viewModel.setType(it) }

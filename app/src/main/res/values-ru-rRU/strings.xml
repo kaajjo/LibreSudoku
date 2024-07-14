@@ -20,6 +20,9 @@
     <string name="type_default_6x6">6x6</string>
     <string name="type_default_9x9">9x9</string>
     <string name="type_default_12x12">12x12</string>
+    <string name="type_killer_9x9">Киллер 9x9</string>
+    <string name="type_killer_6x6">Киллер 6x6</string>
+    <string name="type_killer_12x12">Киллер 12x12</string>
     <string name="type_unspecified">Неопределенный</string>
     <string name="settings_title">Настройки</string>
     <string name="more_title">Больше</string>
