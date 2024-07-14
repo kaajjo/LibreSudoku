@@ -8,18 +8,12 @@ class CageGenerator(
     private val board: List<List<Cell>>,
     private val type: GameType
 ) {
-    private var unusedCells = mutableListOf<Cell>()
-
-
-    init {
-        unusedCells = board.flatten().toMutableList()
-    }
+    private var unusedCells: MutableList<Cell> = board.flatten().toMutableList()
 
     private fun generateCage(startCell: Cell, requiredSize: Int = 2, id: Int = 0): Cage? {
         if (unusedCells.isEmpty() || !unusedCells.contains(startCell)) {
             return null
         }
-        println("Generating cage")
         unusedCells.remove(startCell)
 
         var cage = Cage(
@@ -28,7 +22,6 @@ class CageGenerator(
         )
 
         if(getUnusedNeighbors(startCell).isEmpty()) {
-            println("No neighbors")
             return cage
         }
 
@@ -51,24 +44,21 @@ class CageGenerator(
             if (neighbors.isEmpty()) {
                 return cage
             }
-            println("Found neighbors")
-            println("Selecting random cell")
+
             var cell: Cell? = null
             for(i in neighbors) {
-                // select random neighbor to add in cage
+                // select a random neighbor to add in a cage
                 val tempCell = neighbors.random()
                 if (cage.cells.all { it.value != tempCell.value } && unusedCells.contains(tempCell)) {
                     cell = tempCell
                 }
             }
             if (cell != null) {
-                println("Selected ${cell.toString()}")
                 unusedCells.remove(cell)
                 cage = cage.copy(
                     cells = cage.cells + cell
                 )
             } else {
-                println("Couldn't find cell break")
                 break
             }
         }
@@ -111,7 +101,7 @@ class CageGenerator(
             neighbors.add(board[row][col + 1])
         }
         if (row < type.size - 1) {
-            neighbors.add(board[row][col])
+            neighbors.add(board[row + 1][col])
         }
 
         return neighbors
