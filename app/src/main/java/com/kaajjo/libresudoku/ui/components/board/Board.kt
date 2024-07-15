@@ -23,13 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
@@ -100,8 +96,6 @@ fun Board(
         val cellSize by remember(size) { mutableFloatStateOf(maxWidth / size.toFloat()) }
         // div for notes in one row in cell
         val cellSizeDivWidth by remember(size) { mutableFloatStateOf(cellSize / ceil(sqrt(size.toFloat()))) }
-        // div for note in one column in cell
-        val cellSizeDivHeight by remember(size) { mutableFloatStateOf(cellSize / floor(sqrt(size.toFloat()))) }
 
         val errorColor = boardColors.errorColor
         val foregroundColor = boardColors.foregroundColor
@@ -123,6 +117,8 @@ fun Board(
 
         val thinLineWidth = with(LocalDensity.current) { 1.3.dp.toPx() }
         val thickLineWidth = with(LocalDensity.current) { 1.3.dp.toPx() }
+
+        val killerSumBounds by remember { mutableStateOf(android.graphics.Rect()) }
 
         // paints
         // numbers
@@ -406,35 +402,25 @@ fun Board(
                     notes = notes,
                     cellSize = cellSize,
                     cellSizeDivWidth = cellSizeDivWidth,
-                    cellSizeDivHeight = cellSizeDivHeight
+                    killerSumBounds = killerSumBounds
                 )
             }
 
             // doesn't look good on 6x6
             if (crossHighlight && size != 6) {
-                val sectionHeight = getSectionHeightForSize(size)
-                val sectionWidth = getSectionWidthForSize(size)
-                for (i in 0 until size / sectionWidth) {
-                    for (j in 0 until size / sectionHeight) {
-                        if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) {
-                            drawRect(
-                                color = highlightColor.copy(alpha = 0.1f),
-                                topLeft = Offset(
-                                    x = i * sectionWidth * cellSize,
-                                    y = j * sectionHeight * cellSize
-                                ),
-                                size = Size(cellSize * sectionWidth, cellSize * sectionHeight)
-                            )
-                        }
-                    }
-                }
+                drawCrossSelection(
+                    gameSize = size,
+                    sectionWidth = getSectionWidthForSize(size),
+                    sectionHeight = getSectionHeightForSize(size),
+                    color = highlightColor.copy(alpha = 0.1f),
+                    cellSize = cellSize
+                )
             }
 
             if (cages.isNotEmpty()) {
                 cages.forEach { cage ->
-                    val noteBounds = android.graphics.Rect()
                     val textToDraw = cage.sum.toString()
-                    killerSumPaint.getTextBounds(textToDraw, 0, textToDraw.length, noteBounds)
+                    killerSumPaint.getTextBounds(textToDraw, 0, textToDraw.length, killerSumBounds)
                     // get top left cell
                     val cellWithSum = cage.cells.minWith(
                         compareBy<Cell> { it.row }.thenBy { it.col }
@@ -443,7 +429,7 @@ fun Board(
                         canvas.nativeCanvas.drawText(
                             textToDraw,
                             cellWithSum.col * cellSize + (cellSize * 0.05f),
-                            cellWithSum.row * cellSize + noteBounds.height() + (cellSize * 0.05f),
+                            cellWithSum.row * cellSize + killerSumBounds.height() + (cellSize * 0.05f),
                             killerSumPaint
                         )
                     }
@@ -454,142 +440,12 @@ fun Board(
                         cellSize = cellSize,
                         strokeWidth = thickLineWidth,
                         color = thinLineColor,
-                        cornerTextPadding = Offset(noteBounds.width().toFloat(), noteBounds.height().toFloat())
+                        cornerTextPadding = Offset(killerSumBounds.width().toFloat(), killerSumBounds.height().toFloat())
                     )
                 }
             }
         }
     }
-}
-
-private fun DrawScope.drawBoardFrame(
-    thickLineColor: Color,
-    thickLineWidth: Float,
-    maxWidth: Float,
-    cornerRadius: CornerRadius
-) {
-    drawRoundRect(
-        color = thickLineColor,
-        topLeft = Offset.Zero,
-        size = Size(maxWidth, maxWidth),
-        cornerRadius = cornerRadius,
-        style = Stroke(width = thickLineWidth)
-    )
-}
-
-private fun DrawScope.drawNumbers(
-    size: Int,
-    board: List<List<Cell>>,
-    highlightErrors: Boolean,
-    errorTextPaint: Paint,
-    lockedTextPaint: Paint,
-    textPaint: Paint,
-    questions: Boolean,
-    cellSize: Float
-) {
-    drawIntoCanvas { canvas ->
-        for (i in 0 until size) {
-            for (j in 0 until size) {
-                if (board[i][j].value != 0) {
-                    val paint = when {
-                        board[i][j].error && highlightErrors -> errorTextPaint
-                        board[i][j].locked -> lockedTextPaint
-                        else -> textPaint
-                    }
-
-                    val textToDraw =
-                        if (questions) "?" else board[i][j].value.toString(16).uppercase()
-                    val textBounds = android.graphics.Rect()
-                    textPaint.getTextBounds(textToDraw, 0, 1, textBounds)
-                    val textWidth = paint.measureText(textToDraw)
-
-                    canvas.nativeCanvas.drawText(
-                        textToDraw,
-                        board[i][j].col * cellSize + (cellSize - textWidth) / 2f,
-                        board[i][j].row * cellSize + (cellSize + textBounds.height()) / 2f,
-                        paint
-                    )
-                }
-            }
-        }
-    }
-}
-
-private fun DrawScope.drawNotes(
-    size: Int,
-    paint: Paint,
-    notes: List<Note>,
-    cellSize: Float,
-    cellSizeDivWidth: Float,
-    cellSizeDivHeight: Float
-) {
-    val noteBounds = android.graphics.Rect()
-    paint.getTextBounds("1", 0, 1, noteBounds)
-
-    drawIntoCanvas { canvas ->
-        notes.forEach { note ->
-            val textToDraw = note.value.toString(16).uppercase()
-            val noteTextMeasure = paint.measureText(textToDraw)
-            canvas.nativeCanvas.drawText(
-                textToDraw,
-                note.col * cellSize + cellSizeDivWidth / 2f + (cellSizeDivWidth * getNoteRowNumber(
-                    note.value,
-                    size
-                )) - noteTextMeasure / 2f,
-                note.row * cellSize + cellSizeDivHeight / 2f + (cellSizeDivHeight * getNoteColumnNumber(
-                    note.value,
-                    size
-                )) + noteBounds.height() / 2f,
-                paint
-            )
-        }
-    }
-}
-
-private fun DrawScope.drawRoundCell(
-    row: Int,
-    col: Int,
-    gameSize: Int,
-    rect: Rect,
-    color: Color,
-    cornerRadius: CornerRadius = CornerRadius.Zero
-) {
-    val path = Path().apply {
-        addRoundRect(
-            roundRectForCell(
-                row = row,
-                col = col,
-                gameSize = gameSize,
-                rect = rect,
-                cornerRadius = cornerRadius
-            )
-        )
-    }
-    drawPath(
-        path = path,
-        color = color
-    )
-}
-
-private fun roundRectForCell(
-    row: Int,
-    col: Int,
-    gameSize: Int,
-    rect: Rect,
-    cornerRadius: CornerRadius
-): RoundRect {
-    val topLeft = if (row == 0 && col == 0) cornerRadius  else CornerRadius.Zero
-    val topRight = if (row == 0 && col == gameSize - 1)cornerRadius else CornerRadius.Zero
-    val bottomLeft = if (row == gameSize - 1 && col == 0) cornerRadius else CornerRadius.Zero
-    val bottomRight = if (row == gameSize - 1 && col == gameSize - 1) cornerRadius else CornerRadius.Zero
-
-    return RoundRect(
-        rect = rect,
-        topLeft = topLeft,
-        topRight = topRight,
-        bottomLeft = bottomLeft,
-        bottomRight = bottomRight
-    )
 }
 
 
