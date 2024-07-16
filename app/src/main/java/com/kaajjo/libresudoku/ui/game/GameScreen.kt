@@ -1,8 +1,10 @@
 package com.kaajjo.libresudoku.ui.game
 
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.view.HapticFeedbackConstants
 import android.view.View
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -44,10 +46,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,6 +64,7 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.destinations.SettingsScreenDestination
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.board.Board
@@ -81,6 +87,8 @@ fun GameScreen(
     navigator: DestinationsNavigator
 ) {
     val localView = LocalView.current // vibration
+    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
 
     val firstGame by viewModel.firstGame.collectAsStateWithLifecycle(initialValue = false)
     if (firstGame) {
@@ -200,6 +208,22 @@ fun GameScreen(
                                 onSettingsClick = {
                                     navigator.navigate(SettingsScreenDestination(launchedFromGame = true))
                                     viewModel.showMenu = false
+                                },
+                                onExportClick = {
+                                    val stringBoard = SudokuParser().boardToString(viewModel.gameBoard, emptySeparator = '.')
+                                    clipboardManager.setText(
+                                        AnnotatedString(
+                                            stringBoard.uppercase()
+                                        )
+                                    )
+
+                                    if (SDK_INT < 33) {
+                                        Toast.makeText(
+                                            context,
+                                            R.string.export_string_state_copied,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                             )
                         }
@@ -301,7 +325,7 @@ fun GameScreen(
                     errorsHighlight = errorHighlight != 0,
                     positionLines = positionLines,
                     enabled = viewModel.gamePlaying && !viewModel.endGame,
-                    questions = !(viewModel.gamePlaying || viewModel.endGame) && Build.VERSION.SDK_INT < Build.VERSION_CODES.R,
+                    questions = !(viewModel.gamePlaying || viewModel.endGame) && SDK_INT < Build.VERSION_CODES.R,
                     renderNotes = renderNotes && !viewModel.showSolution,
                     zoomable = viewModel.gameType == GameType.Default12x12 || viewModel.gameType == GameType.Killer12x12,
                     crossHighlight = crossHighlight,
@@ -599,6 +623,7 @@ fun GameMenu(
     onDismiss: () -> Unit,
     onGiveUpClick: () -> Unit,
     onSettingsClick: () -> Unit,
+    onExportClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     MaterialTheme(shapes = MaterialTheme.shapes.copy(extraSmall = MaterialTheme.shapes.large)) {
@@ -618,6 +643,13 @@ fun GameMenu(
                 text = { Text(stringResource(R.string.settings_title)) },
                 onClick = {
                     onSettingsClick()
+                    onDismiss()
+                }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.export)) },
+                onClick = {
+                    onExportClick()
                     onDismiss()
                 }
             )
