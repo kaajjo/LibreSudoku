@@ -104,7 +104,7 @@
     <string name="pref_keep_screen_on">Mantener la pantalla despierta</string>
     <string name="pref_remaining_uses_summ">El número de usos restantes de un valor se muestra en el teclado</string>
     <string name="pref_app_language">Idioma de aplicación</string>
-    <string name="about_github_project">Proyecto en GitHub</string>
+    <string name="about_github_project">GitHub</string>
     <string name="pref_position_lines_summ">Se resaltan la fila y la columna de la celda seleccionada</string>
     <string name="pref_position_lines">Líneas de posición</string>
     <string name="action_give_up">Rendirse</string>
@@ -335,4 +335,13 @@
         <item quantity="many">Últimos %1$d juegos</item>
         <item quantity="other">Últimos %1$d juegos</item>
     </plurals>
+    <string name="libraries_licenses">Licencias</string>
+    <string name="about_github_source_code">Código fuente en GitHub</string>
+    <string name="donation_title">Donación</string>
+    <string name="telegram_link">Únase a nosotros en Telegram</string>
+    <string name="donation_description">Esta aplicación es gratuita y no tiene publicidad para siempre. Puedes apoyarme a continuación</string>
+    <string name="app_version">Versión %1$s (%2$s)</string>
+    <string name="type_killer_12x12">Asesino 12x12</string>
+    <string name="type_killer_9x9">Asesino 9x9</string>
+    <string name="type_killer_6x6">Asesino 6x6</string>
 </resources>

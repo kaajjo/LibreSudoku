@@ -61,7 +61,7 @@
     <string name="pref_app_language">Uygulama dili</string>
     <string name="label_default">Varsayılan</string>
     <string name="about_version">Sürüm</string>
-    <string name="about_github_project">Proje GitHub\'da</string>
+    <string name="about_github_project">GitHub</string>
     <string name="action_reset_game">Oyunu sıfırla</string>
     <string name="action_give_up">Vazgeç</string>
     <string name="onboard_title">Hoş geldin</string>
@@ -330,4 +330,13 @@
         <item quantity="one">Son %1$d oyun</item>
         <item quantity="other">Son %1$d oyun</item>
     </plurals>
+    <string name="about_github_source_code">Kaynak kodu GitHub\'da</string>
+    <string name="donation_description">Bu uygulama sonsuza kadar ücretsiz ve reklamsızdır. Beni aşağıdaki şekilde destekleyebilirsiniz</string>
+    <string name="libraries_licenses">Lisanslar</string>
+    <string name="telegram_link">Telegram\'da bize katılın</string>
+    <string name="donation_title">Bağış</string>
+    <string name="type_killer_9x9">Kazık 9x9</string>
+    <string name="type_killer_6x6">Kazık 6x6</string>
+    <string name="type_killer_12x12">Kazık 12x12</string>
+    <string name="app_version">Sürüm %1$s (%2$s)</string>
 </resources>
