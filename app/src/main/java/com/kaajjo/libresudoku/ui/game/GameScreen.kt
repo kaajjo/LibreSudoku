@@ -117,8 +117,8 @@ fun GameScreen(
 
     LaunchedEffect(viewModel.gameCompleted) {
         if (viewModel.gameCompleted) {
-            viewModel.onGameComplete()
             viewModel.endGame = true
+            viewModel.onGameComplete()
         }
     }
 

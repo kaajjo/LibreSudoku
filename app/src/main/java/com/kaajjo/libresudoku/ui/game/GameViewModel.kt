@@ -672,6 +672,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun onGameComplete() {
+        if (endGame) return
         viewModelScope.launch(Dispatchers.IO) {
             saveGame()
             recordRepository.insert(
