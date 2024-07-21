@@ -90,8 +90,6 @@ dependencies {
     implementation(libs.datastore.preferences)
 
     implementation(libs.appcompat)
-    implementation(libs.acra.dialog)
-    implementation(libs.acra.mail)
 
     implementation(libs.aboutLibraries)
 

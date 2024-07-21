@@ -2,7 +2,6 @@ package com.kaajjo.libresudoku.di
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import com.kaajjo.libresudoku.data.database.AppDatabase
 import com.kaajjo.libresudoku.data.database.dao.BoardDao
 import com.kaajjo.libresudoku.data.database.dao.FolderDao
@@ -36,11 +35,6 @@ class AppModule {
     @Singleton
     fun provideDatabaseRepository(appDatabase: AppDatabase): DatabaseRepository
         = DatabaseRepositoryImpl(appDatabase)
-
-    @Provides
-    @Singleton
-    fun provideAcraSharedPrefs(@ApplicationContext context: Context): SharedPreferences
-        = context.getSharedPreferences(ACRA_SHARED_PREFS_NAME, Context.MODE_PRIVATE)
 
     @Provides
     @Singleton

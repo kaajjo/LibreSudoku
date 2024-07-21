@@ -16,9 +16,13 @@
         android:theme="@style/Theme.LibreSudoku"
         tools:targetApi="tiramisu">
         <activity
+            android:name=".ui.app_crash.CrashActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LibreSudoku" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.LibreSudoku">
             <intent-filter>
@@ -26,7 +30,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter android:label="Import sudoku">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

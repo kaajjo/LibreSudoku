@@ -513,17 +513,6 @@ fun SettingsScreen(
                     )
                 }
             }
-
-            item {
-                PreferenceRowSwitch(
-                    title = stringResource(R.string.pref_crash_reporting),
-                    subtitle = stringResource(R.string.pref_crash_reporting_subtitle),
-                    checked = viewModel.crashReportingEnabled,
-                    onClick = {
-                        viewModel.updateCrashReportingEnabled(!viewModel.crashReportingEnabled)
-                    }
-                )
-            }
         }
 
         if (viewModel.mistakesDialog) {

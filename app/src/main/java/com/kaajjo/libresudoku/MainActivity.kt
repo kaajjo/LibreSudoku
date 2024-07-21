@@ -29,6 +29,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.kaajjo.libresudoku.core.PreferencesConstants
+import com.kaajjo.libresudoku.core.utils.GlobalExceptionHandler
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
 import com.kaajjo.libresudoku.destinations.HomeScreenDestination
@@ -36,6 +37,7 @@ import com.kaajjo.libresudoku.destinations.ImportFromFileScreenDestination
 import com.kaajjo.libresudoku.destinations.MoreScreenDestination
 import com.kaajjo.libresudoku.destinations.StatisticsScreenDestination
 import com.kaajjo.libresudoku.destinations.WelcomeScreenDestination
+import com.kaajjo.libresudoku.ui.app_crash.CrashActivity
 import com.kaajjo.libresudoku.ui.components.navigation_bar.NavigationBarComponent
 import com.kaajjo.libresudoku.ui.theme.BoardColors
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
@@ -60,6 +62,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        if (!BuildConfig.DEBUG) {
+            GlobalExceptionHandler.initialize(applicationContext, CrashActivity::class.java)
+        }
 
         setContent {
             val mainViewModel: MainActivityViewModel = hiltViewModel()
