@@ -421,10 +421,7 @@ fun Board(
                 cages.forEach { cage ->
                     val textToDraw = cage.sum.toString()
                     killerSumPaint.getTextBounds(textToDraw, 0, textToDraw.length, killerSumBounds)
-                    // get top left cell
-                    val cellWithSum = cage.cells.minWith(
-                        compareBy<Cell> { it.row }.thenBy { it.col }
-                    )
+                    val cellWithSum = cage.cells.first()
                     drawIntoCanvas { canvas ->
                         canvas.nativeCanvas.drawText(
                             textToDraw,
