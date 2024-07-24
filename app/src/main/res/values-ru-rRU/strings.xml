@@ -346,6 +346,7 @@
         <item quantity="many">Последние %1$d игр</item>
         <item quantity="other">Последние %1$d игр</item>
     </plurals>
+
     <string name="telegram" translatable="false">Telegram</string>
     <string name="telegram_link">Присоединяйтесь в Telegram</string>
     <string name="donation_title">Пожертвование</string>
@@ -355,6 +356,12 @@
     <string name="crypto_usdt" translatable="false">USDT (TRC20)</string>
     <string name="card_mir" translatable="false">MIR</string>
     <string name="app_version">Версия %1$s (%2$s)</string>
+    <string name="hosted_weblate">Вы можете помочь с переводом на Hosted Webalte</string>
+    <string name="perf_appearance_summary">Темная тема, цветовая схема, тема поля, формат даты…</string>
+    <string name="perf_gameplay_summary">Метод ввода, лимит ошибок, таймер…</string>
+    <string name="perf_assistance_summary">Проверка ошибок, подсветка одинаковых чисел, оставшиеся использования…</string>
+    <string name="perf_other_summary">Запоминать сложность и тип, не выключать экран, сброс статистики…</string>
+    <string name="pref_board_theme_summary">Применять акцентные цвета, выделение позиции, размер шрифта…</string>
 
     <string name="action_share_crash_log">Поделиться логами</string>
     <string name="action_restart_app">Перезапустить приложение</string>

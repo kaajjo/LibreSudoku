@@ -23,6 +23,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:configChanges="locale|layoutDirection"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.LibreSudoku">
             <intent-filter>

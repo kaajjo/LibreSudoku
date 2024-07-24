@@ -17,8 +17,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Redo
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.rounded.Redo
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -48,7 +48,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -59,13 +58,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.SudokuParser
-import com.kaajjo.libresudoku.destinations.SettingsScreenDestination
+import com.kaajjo.libresudoku.destinations.SettingsCategoriesScreenDestination
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.board.Board
 import com.kaajjo.libresudoku.ui.game.components.DefaultGameKeyboard
@@ -206,7 +206,7 @@ fun GameScreen(
                                     viewModel.giveUpDialog = true
                                 },
                                 onSettingsClick = {
-                                    navigator.navigate(SettingsScreenDestination(launchedFromGame = true))
+                                    navigator.navigate(SettingsCategoriesScreenDestination(launchedFromGame = true))
                                     viewModel.showMenu = false
                                 },
                                 onExportClick = {
@@ -604,7 +604,7 @@ fun UndoRedoMenu(
                 text = { Text(stringResource(R.string.redo)) },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Rounded.Redo,
+                        imageVector = Icons.AutoMirrored.Rounded.Redo,
                         contentDescription = null
                     )
                 },
