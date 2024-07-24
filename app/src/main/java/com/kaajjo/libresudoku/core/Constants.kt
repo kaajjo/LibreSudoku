@@ -1,6 +1,7 @@
 package com.kaajjo.libresudoku.core
 
 const val GITHUB_REPOSITORY = "https://github.com/kaajjo/Libre-Sudoku"
+const val GITHUB_NEW_ISSUE = "https://github.com/kaajjo/Libre-Sudoku/issues/new"
 const val WEBLATE_ENGAGE = "https://hosted.weblate.org/engage/libresudoku/"
 const val TELEGRAM_CHANNEL = "https://t.me/libresudoku"
 const val CRYPTO_BTC = "bc1qhpx222kmk5v6tqrra524fezwjqr0lhjq77ee8q"

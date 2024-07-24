@@ -362,4 +362,7 @@
     <string name="pref_board_theme_summary">Apply accent colors, position lines, font size…</string>
 
 
+    <string name="action_share_crash_log">Share crash log</string>
+    <string name="action_restart_app">Restart the app</string>
+    <string name="crash_screen_title">Whoops, something went wrong</string>
 </resources>

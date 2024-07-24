@@ -1,6 +1,5 @@
 package com.kaajjo.libresudoku.core.qqwing
 
-import android.util.Log
 import com.kaajjo.libresudoku.core.Cell
 import kotlin.random.Random
 
@@ -30,7 +29,6 @@ class CageGenerator(
 
             val cageCells = cage.cells.toMutableList()
             // searching for any cell with at lest 1 unused neighbor
-            println("Searching neighbors")
             for (i in cageCells.indices) {
                 val cell = cageCells.random()
                 cageCells.remove(cell)
@@ -66,6 +64,7 @@ class CageGenerator(
         return cage
     }
 
+
     fun generate(minSize: Int = 2, maxSize: Int = 6): List<Cage> {
         val cages = mutableListOf<Cage>()
 
@@ -77,9 +76,14 @@ class CageGenerator(
                 id = id
             )
             if (cage != null) {
-                cages.add(cage.copy(sum = cage.cells.sumOf { it.value }))
-            } else {
-                Log.d("KillerSudokuCageGen", "Couldn't generate cage")
+                // calculating total sum
+                // sorting cells by min row and min col
+                cages.add(
+                    cage.copy(
+                        sum = cage.cells.sumOf { it.value },
+                        cells = cage.cells.sortedWith(compareBy<Cell> { it.row }.thenBy { it.col })
+                    )
+                )
             }
             id += 1
         }

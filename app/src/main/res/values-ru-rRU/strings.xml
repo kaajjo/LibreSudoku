@@ -350,7 +350,7 @@
     <string name="telegram" translatable="false">Telegram</string>
     <string name="telegram_link">Присоединяйтесь в Telegram</string>
     <string name="donation_title">Пожертвование</string>
-    <string name="donation_description">Это приложение бесплатно и без реклам навсегда. Вы моежет поддержать меня ниже</string>
+    <string name="donation_description">Это приложение бесплатно и без реклам навсегда. Вы можете поддержать меня ниже</string>
     <string name="crypto_bitcoin" translatable="false">Bitcoin</string>
     <string name="crypto_ton" translatable="false">TON</string>
     <string name="crypto_usdt" translatable="false">USDT (TRC20)</string>
@@ -362,4 +362,8 @@
     <string name="perf_assistance_summary">Проверка ошибок, подсветка одинаковых чисел, оставшиеся использования…</string>
     <string name="perf_other_summary">Запоминать сложность и тип, не выключать экран, сброс статистики…</string>
     <string name="pref_board_theme_summary">Применять акцентные цвета, выделение позиции, размер шрифта…</string>
+
+    <string name="action_share_crash_log">Поделиться логами</string>
+    <string name="action_restart_app">Перезапустить приложение</string>
+    <string name="crash_screen_title">Упс, что-то пошло не так</string>
 </resources>
