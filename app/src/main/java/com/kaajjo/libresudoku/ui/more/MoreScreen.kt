@@ -24,7 +24,7 @@ import com.kaajjo.libresudoku.destinations.AboutScreenDestination
 import com.kaajjo.libresudoku.destinations.BackupScreenDestination
 import com.kaajjo.libresudoku.destinations.FoldersScreenDestination
 import com.kaajjo.libresudoku.destinations.LearnScreenDestination
-import com.kaajjo.libresudoku.destinations.SettingsScreenDestination
+import com.kaajjo.libresudoku.destinations.SettingsCategoriesScreenDestination
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
 import com.ramcosta.composedestinations.annotation.Destination
@@ -61,7 +61,7 @@ fun MoreScreen(
         PreferenceRow(
             title = stringResource(R.string.settings_title),
             painter = painterResource(R.drawable.ic_settings_24),
-            onClick = { navigator.navigate(SettingsScreenDestination()) }
+            onClick = { navigator.navigate(SettingsCategoriesScreenDestination()) }
         )
         PreferenceRow(
             title = stringResource(R.string.backup_restore_title),

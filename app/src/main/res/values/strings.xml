@@ -354,6 +354,12 @@
     <string name="crypto_usdt" translatable="false">USDT (TRC20)</string>
     <string name="card_mir" translatable="false">MIR</string>
     <string name="app_version">Version %1$s (%2$s)</string>
+    <string name="hosted_weblate">You can help with translation on Hosted Weblate</string>
+    <string name="perf_appearance_summary">Dark theme, color scheme, board theme, date format…</string>
+    <string name="perf_gameplay_summary">Input method, mistake limit, timer…</string>
+    <string name="perf_assistance_summary">Mistakes checking, highlight identical values, remaining uses…</string>
+    <string name="perf_other_summary">Remember type and difficulty, keep screen awake, reset stats…</string>
+    <string name="pref_board_theme_summary">Apply accent colors, position lines, font size…</string>
 
 
 </resources>

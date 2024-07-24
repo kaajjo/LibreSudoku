@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.ui.util.LightDarkPreview
@@ -41,12 +43,13 @@ fun PreferenceRow(
     subtitle: String? = null,
     enabled: Boolean = true,
     action: @Composable (() -> Unit)? = null,
-    shape: Shape = MaterialTheme.shapes.medium
+    shape: Shape = RoundedCornerShape(0.dp)
 ) {
-    val height = if (subtitle != null) 72.dp else 56.dp
+    val height = if (subtitle != null) 85.dp else 65.dp
 
-    val titleStyle = MaterialTheme.typography.bodyLarge.copy(
-        color = MaterialTheme.colorScheme.onSurface
+    val titleStyle = MaterialTheme.typography.titleLarge.copy(
+        color = MaterialTheme.colorScheme.onSurface,
+        fontSize = 20.sp
     )
     val subtitleTextStyle = MaterialTheme.typography.bodyMedium.copy(
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
@@ -61,22 +64,22 @@ fun PreferenceRow(
                 onLongClick = onLongClick,
                 onClick = onClick,
                 enabled = enabled
-            ),
+            )
+            .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (painter != null) {
             Icon(
                 painter = painter,
                 modifier = Modifier
-                    .padding(start = 12.dp, end = 14.dp)
+                    .padding(horizontal = 16.dp)
                     .size(24.dp),
-                tint = MaterialTheme.colorScheme.secondary.copy(alpha = if (enabled) 1f else 0.6f),
                 contentDescription = null,
             )
         }
         Column(
             Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = if (painter != null) 0.dp else 16.dp)
                 .weight(1f),
         ) {
             Text(
@@ -89,7 +92,7 @@ fun PreferenceRow(
                     modifier = Modifier.padding(top = 4.dp),
                     text = subtitle,
                     style = subtitleTextStyle,
-                    color = subtitleTextStyle.color.copy(alpha = if (enabled) 1f else 0.6f),
+                    color = subtitleTextStyle.color.copy(alpha = 0.75f),
                 )
             }
         }

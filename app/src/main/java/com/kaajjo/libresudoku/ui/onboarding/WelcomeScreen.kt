@@ -1,6 +1,5 @@
 package com.kaajjo.libresudoku.ui.onboarding
 
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -29,11 +28,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +46,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -60,12 +56,10 @@ import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.destinations.BackupScreenDestination
 import com.kaajjo.libresudoku.destinations.HomeScreenDestination
-import com.kaajjo.libresudoku.destinations.SettingsScreenDestination
+import com.kaajjo.libresudoku.destinations.SettingsCategoriesScreenDestination
+import com.kaajjo.libresudoku.destinations.SettingsLanguageScreenDestination
 import com.kaajjo.libresudoku.ui.components.board.Board
-import com.kaajjo.libresudoku.ui.settings.SelectionDialog
 import com.kaajjo.libresudoku.ui.util.getCurrentLocaleString
-import com.kaajjo.libresudoku.ui.util.getCurrentLocaleTag
-import com.kaajjo.libresudoku.ui.util.getLangs
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -79,11 +73,14 @@ fun WelcomeScreen(
     viewModel: WelcomeViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
+    val context = LocalContext.current
+    val currentLanguage by remember {
+        mutableStateOf(
+            getCurrentLocaleString(context)
+        )
+    }
+
     Scaffold { paddingValues ->
-        val context = LocalContext.current
-        var languagePickDialog by rememberSaveable {
-            mutableStateOf(false)
-        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -128,20 +125,12 @@ fun WelcomeScreen(
                     ) {
                         Text(stringResource(R.string.action_start))
                     }
-                    var currentLanguage by remember {
-                        mutableStateOf(
-                            getCurrentLocaleString(context)
-                        )
-                    }
-                    LaunchedEffect(languagePickDialog) {
-                        currentLanguage = getCurrentLocaleString(context)
-                    }
 
                     ItemRowBigIcon(
                         title = stringResource(R.string.pref_app_language),
                         icon = Icons.Rounded.Language,
                         subtitle = currentLanguage,
-                        onClick = { languagePickDialog = true },
+                        onClick = { navigator.navigate(SettingsLanguageScreenDestination()) },
                     )
                     ItemRowBigIcon(
                         title = stringResource(R.string.onboard_restore_backup),
@@ -156,29 +145,11 @@ fun WelcomeScreen(
                         icon = Icons.Rounded.Settings,
                         subtitle = stringResource(R.string.onboard_settings_description),
                         onClick = {
-                            navigator.navigate(SettingsScreenDestination(false))
+                            navigator.navigate(SettingsCategoriesScreenDestination(false))
                         }
                     )
                 }
             }
-        }
-
-        if (languagePickDialog) {
-            SelectionDialog(
-                title = stringResource(R.string.pref_app_language),
-                entries = getLangs(context),
-                selected = getCurrentLocaleTag(),
-                onSelect = { localeKey ->
-                    val locale = if (localeKey == "") {
-                        LocaleListCompat.getEmptyLocaleList()
-                    } else {
-                        LocaleListCompat.forLanguageTags(localeKey)
-                    }
-                    AppCompatDelegate.setApplicationLocales(locale)
-                    languagePickDialog = false
-                },
-                onDismiss = { languagePickDialog = false }
-            )
         }
     }
 }
@@ -259,18 +230,18 @@ class WelcomeViewModel
 ) : ViewModel() {
     var selectedCell by mutableStateOf(Cell(-1, -1, 0))
 
-    // all heart shaped
+    // all heart shaped ❤
     val previewBoard = SudokuParser().parseBoard(
         board = listOf(
-    "072000350340502018100030009800000003030000070050000020008000600000103000760050041",
-    "017000230920608054400010009200000001060000020040000090002000800000503000390020047",
-    "052000180480906023600020007500000008020000060030000090005000300000708000370060014",
-    "025000860360208017700010003600000002040000090030000070006000100000507000490030058",
-    "049000380280309056600050007300000002010000030070000090003000800000604000420080013",
-    "071000420490802073300060009200000007060000090010000080007000900000703000130090068",
-    "023000190150402086800050004700000008090000030080000010008000700000306000530070029",
-    "097000280280706013300080007600000002040000060030000090001000400000105000860040051",
-    "049000180160904023700010004200000008090000060080000050005000600000706000470020031"
+            "072000350340502018100030009800000003030000070050000020008000600000103000760050041",
+            "017000230920608054400010009200000001060000020040000090002000800000503000390020047",
+            "052000180480906023600020007500000008020000060030000090005000300000708000370060014",
+            "025000860360208017700010003600000002040000090030000070006000100000507000490030058",
+            "049000380280309056600050007300000002010000030070000090003000800000604000420080013",
+            "071000420490802073300060009200000007060000090010000080007000900000703000130090068",
+            "023000190150402086800050004700000008090000030080000010008000700000306000530070029",
+            "097000280280706013300080007600000002040000060030000090001000400000105000860040051",
+            "049000180160904023700010004200000008090000060080000050005000600000706000470020031"
         ).random(),
         gameType = GameType.Default9x9
     )
