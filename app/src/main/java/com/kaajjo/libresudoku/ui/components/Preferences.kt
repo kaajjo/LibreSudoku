@@ -100,7 +100,7 @@ fun PreferenceRow(
             Box(
                 Modifier
                     .widthIn(min = 56.dp)
-                    .padding(end = 12.dp),
+                    .padding(horizontal = 12.dp),
             ) {
                 action()
             }
