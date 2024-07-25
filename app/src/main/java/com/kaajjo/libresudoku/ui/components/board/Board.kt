@@ -419,7 +419,7 @@ fun Board(
 
             if (cages.isNotEmpty()) {
                 cages.forEach { cage ->
-                    val textToDraw = cage.sum.toString()
+                    val textToDraw = if (questions) "?" else cage.sum.toString()
                     killerSumPaint.getTextBounds(textToDraw, 0, textToDraw.length, killerSumBounds)
                     val cellWithSum = cage.cells.first()
                     drawIntoCanvas { canvas ->
