@@ -73,6 +73,7 @@ dependencies {
     implementation(project(":Color-Picker"))
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+    testImplementation(libs.junit)
 
     implementation(libs.navigation.compose)
 
