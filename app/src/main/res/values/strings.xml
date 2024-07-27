@@ -365,4 +365,6 @@
     <string name="action_share_crash_log">Share crash log</string>
     <string name="action_restart_app">Restart the app</string>
     <string name="crash_screen_title">Whoops, something went wrong</string>
+    <string name="action_generate">Generate</string>
+    <string name="generating_number_of">Generating %1$s/%2$s</string>
 </resources>

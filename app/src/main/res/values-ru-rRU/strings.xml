@@ -366,4 +366,6 @@
     <string name="action_share_crash_log">Поделиться логами</string>
     <string name="action_restart_app">Перезапустить приложение</string>
     <string name="crash_screen_title">Упс, что-то пошло не так</string>
+    <string name="action_generate">Сгенерировать</string>
+    <string name="generating_number_of">Генерация %1$s/%2$s</string>
 </resources>
