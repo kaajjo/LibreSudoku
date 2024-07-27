@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
@@ -25,6 +26,8 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,14 +40,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.DriveFileMove
+import androidx.compose.material.icons.automirrored.outlined.NoteAdd
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.DriveFileMove
 import androidx.compose.material.icons.outlined.Folder
-import androidx.compose.material.icons.outlined.NoteAdd
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AddCircleOutline
+import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Delete
@@ -63,9 +68,11 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -74,6 +81,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -83,6 +91,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -91,6 +100,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
+import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.database.model.Folder
 import com.kaajjo.libresudoku.data.database.model.SavedGame
@@ -102,6 +113,8 @@ import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.EmptyScreen
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
+import com.kaajjo.libresudoku.ui.create_edit_sudoku.DifficultyMenu
+import com.kaajjo.libresudoku.ui.create_edit_sudoku.GameTypeMenu
 import com.kaajjo.libresudoku.ui.gameshistory.ColorfulBadge
 import com.kaajjo.libresudoku.ui.util.isScrolledToEnd
 import com.kaajjo.libresudoku.ui.util.isScrolledToStart
@@ -117,7 +130,7 @@ import kotlin.time.toKotlinDuration
     navArgsDelegate = ExploreFolderScreenNavArgs::class
 )
 @OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalLayoutApi::class
 )
 @Composable
 fun ExploreFolderScreen(
@@ -127,6 +140,7 @@ fun ExploreFolderScreen(
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
 
+    var generateSudokuDialog by rememberSaveable { mutableStateOf(false) }
     var addSudokuBottomSheet by rememberSaveable { mutableStateOf(false) }
     var moveSelectedDialog by rememberSaveable { mutableStateOf(false) }
     var deleteBoardDialog by rememberSaveable { mutableStateOf(false) }
@@ -226,10 +240,10 @@ fun ExploreFolderScreen(
                         items = games.toList(),
                         key = { it.first.uid }
                     ) { game ->
+                        Modifier
+                            .padding(horizontal = 12.dp)
                         GameInFolderWidget(
-                            modifier = Modifier
-                                .padding(horizontal = 12.dp)
-                                .animateItemPlacement(),
+                            modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
                             board = game.second?.currentBoard ?: game.first.initialBoard,
                             difficulty = stringResource(game.first.difficulty.resName),
                             type = stringResource(game.first.type.resName),
@@ -344,6 +358,121 @@ fun ExploreFolderScreen(
             onDismiss = { moveSelectedDialog = false },
             onConfirmMove = { folderUid -> viewModel.moveBoards(folderUid) }
         )
+    } else if (generateSudokuDialog) {
+        var isGenerating by remember { mutableStateOf(false) }
+        var selectedType by remember { mutableStateOf(GameType.Default9x9) }
+        var selectedDifficulty by remember { mutableStateOf(GameDifficulty.Easy) }
+        var numberToGenerate by remember { mutableIntStateOf(1) }
+        val generatedNumber by viewModel.generatedSudokuCount.collectAsStateWithLifecycle(0)
+        AlertDialog(
+            onDismissRequest = {
+                generateSudokuDialog = false
+                viewModel.canelGeneratingIfRunning()
+            },
+            title = { Text(stringResource(R.string.action_generate)) },
+            confirmButton = {
+                Button(
+                    enabled = !isGenerating,
+                    onClick = {
+                        isGenerating = true
+                        viewModel.generateSudoku(selectedType, selectedDifficulty, numberToGenerate)
+                    }) {
+                    Text(stringResource(R.string.dialog_ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    generateSudokuDialog = false
+                    viewModel.canelGeneratingIfRunning()
+                }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
+            text = {
+                AnimatedContent(targetState = isGenerating) { targetState ->
+                    Column {
+                        if (!targetState) {
+                            FlowRow {
+                                Box {
+                                    var difficultyMenu by remember { mutableStateOf(false) }
+                                    val dropDownIconRotation by animateFloatAsState(if (difficultyMenu) 180f else 0f)
+                                    TextButton(
+                                        onClick = { difficultyMenu = !difficultyMenu },
+                                        modifier = Modifier.animateContentSize()
+                                    ) {
+                                        Text(stringResource(selectedDifficulty.resName))
+                                        Icon(
+                                            modifier = Modifier.rotate(dropDownIconRotation),
+                                            imageVector = Icons.Rounded.ArrowDropDown,
+                                            contentDescription = null
+                                        )
+                                    }
+                                    DifficultyMenu(
+                                        expanded = difficultyMenu,
+                                        onDismissRequest = { difficultyMenu = false },
+                                        difficulties = listOf(
+                                            GameDifficulty.Easy,
+                                            GameDifficulty.Moderate,
+                                            GameDifficulty.Hard,
+                                            GameDifficulty.Challenge
+                                        ),
+                                        onClick = { selectedDifficulty = it }
+                                    )
+                                }
+                                Box {
+                                    var gameTypeMenuExpanded by remember { mutableStateOf(false) }
+                                    val dropDownIconRotation by animateFloatAsState(if (gameTypeMenuExpanded) 180f else 0f)
+                                    TextButton(
+                                        onClick = { gameTypeMenuExpanded = !gameTypeMenuExpanded },
+                                        modifier = Modifier.animateContentSize()
+                                    ) {
+                                        Text(stringResource(selectedType.resName))
+                                        Icon(
+                                            modifier = Modifier.rotate(dropDownIconRotation),
+                                            imageVector = Icons.Rounded.ArrowDropDown,
+                                            contentDescription = null
+                                        )
+                                    }
+                                    GameTypeMenu(
+                                        expanded = gameTypeMenuExpanded,
+                                        onDismissRequest = { gameTypeMenuExpanded = false },
+                                        onClick = { selectedType = it }
+                                    )
+                                }
+                            }
+                            Text(
+                                text = numberToGenerate.toString(),
+                                style = MaterialTheme.typography.labelLarge,
+                                modifier = Modifier.padding(start = 12.dp)
+                            )
+                            Slider(
+                                value = numberToGenerate.toFloat(),
+                                onValueChange = { numberToGenerate = it.toInt() },
+                                valueRange = 1f..100f
+                            )
+                        } else {
+                            Text(
+                                stringResource(
+                                    R.string.generating_number_of,
+                                    generatedNumber,
+                                    numberToGenerate
+                                ))
+                            LinearProgressIndicator(
+                                progress = {
+                                    generatedNumber.toFloat() / numberToGenerate.toFloat()
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            LaunchedEffect(generatedNumber) {
+                                if (generatedNumber == numberToGenerate) {
+                                    generateSudokuDialog = false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        )
     }
 
 
@@ -363,12 +492,16 @@ fun ExploreFolderScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(
                         Pair(
+                            stringResource(R.string.action_generate),
+                            Icons.Outlined.AddCircleOutline
+                        ),
+                        Pair(
                             stringResource(R.string.add_to_folder_create_new),
                             Icons.Outlined.Create
                         ),
                         Pair(
                             stringResource(R.string.add_to_folder_from_file),
-                            Icons.Outlined.NoteAdd
+                            Icons.AutoMirrored.Outlined.NoteAdd
                         )
                     ).forEachIndexed { index, item ->
                         Row(
@@ -378,6 +511,10 @@ fun ExploreFolderScreen(
                                 .clickable {
                                     when (index) {
                                         0 -> {
+                                            generateSudokuDialog = true
+                                        }
+
+                                        1 -> {
                                             folder?.let {
                                                 navigator.navigate(
                                                     CreateSudokuScreenDestination(
@@ -387,7 +524,7 @@ fun ExploreFolderScreen(
                                             }
                                         }
 
-                                        1 -> {
+                                        2 -> {
                                             openDocumentLauncher.launch(arrayOf("*/*"))
                                         }
 
@@ -629,7 +766,7 @@ private fun SelectionTopAppbar(
         actions = {
             IconButton(onClick = onClickMoveSelected) {
                 Icon(
-                    imageVector = Icons.Outlined.DriveFileMove,
+                    imageVector = Icons.AutoMirrored.Outlined.DriveFileMove,
                     contentDescription = null
                 )
             }
@@ -661,7 +798,7 @@ private fun MoveSudokuToFolderDialog(
 ) {
     AlertDialog(
         modifier = modifier,
-        icon = { Icon(Icons.Outlined.DriveFileMove, contentDescription = null) },
+        icon = { Icon(Icons.AutoMirrored.Outlined.DriveFileMove, contentDescription = null) },
         title = { Text(stringResource(R.string.action_move_selected)) },
         onDismissRequest = onDismiss,
         confirmButton = {

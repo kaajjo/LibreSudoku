@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Redo
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.ArrowDropDown
-import androidx.compose.material.icons.rounded.Redo
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -238,7 +238,7 @@ fun CreateSudokuScreen(
 
                     ToolbarItem(
                         modifier = Modifier.weight(0.5f),
-                        painter = rememberVectorPainter(Icons.Rounded.Redo),
+                        painter = rememberVectorPainter(Icons.AutoMirrored.Rounded.Redo),
                         onClick = { viewModel.toolbarClick(ToolBarItem.Redo) }
                     )
 
@@ -307,9 +307,14 @@ fun CreateSudokuScreen(
 }
 
 @Composable
-private fun GameTypeMenu(
+fun GameTypeMenu(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
+    types: List<GameType> = listOf(
+        GameType.Default9x9,
+        GameType.Default6x6,
+        GameType.Default12x12,
+    ),
     onClick: (GameType) -> Unit
 ) {
     MaterialTheme(shapes = MaterialTheme.shapes.copy(extraSmall = MaterialTheme.shapes.large)) {
@@ -317,11 +322,7 @@ private fun GameTypeMenu(
             expanded = expanded,
             onDismissRequest = onDismissRequest
         ) {
-            listOf(
-                GameType.Default9x9,
-                GameType.Default6x6,
-                GameType.Default12x12,
-            ).forEach {
+            types.forEach {
                 DropdownMenuItem(
                     text = {
                         Text(stringResource(it.resName))
@@ -387,9 +388,16 @@ private fun ImportStringSudokuDialog(
 }
 
 @Composable
-private fun DifficultyMenu(
+fun DifficultyMenu(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
+    difficulties: List<GameDifficulty> = listOf(
+        GameDifficulty.Easy,
+        GameDifficulty.Moderate,
+        GameDifficulty.Hard,
+        GameDifficulty.Challenge,
+        GameDifficulty.Custom,
+    ),
     onClick: (GameDifficulty) -> Unit
 ) {
     MaterialTheme(shapes = MaterialTheme.shapes.copy(extraSmall = MaterialTheme.shapes.large)) {
@@ -397,13 +405,7 @@ private fun DifficultyMenu(
             expanded = expanded,
             onDismissRequest = onDismissRequest
         ) {
-            listOf(
-                GameDifficulty.Easy,
-                GameDifficulty.Moderate,
-                GameDifficulty.Hard,
-                GameDifficulty.Challenge,
-                GameDifficulty.Custom,
-            ).forEach {
+            difficulties.forEach {
                 DropdownMenuItem(
                     text = {
                         Text(stringResource(it.resName))
