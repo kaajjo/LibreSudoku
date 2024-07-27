@@ -6,6 +6,7 @@
 [![GitHub Latest Release](https://img.shields.io/github/v/release/kaajjo/libre-sudoku?label=Release&logo=GitHub)](https://github.com/kaajjo/Libre-Sudoku/releases/latest)
 [![Translation status](https://hosted.weblate.org/widgets/libresudoku/-/svg-badge.svg)](https://hosted.weblate.org/engage/libresudoku/)
 [![GitHub Downloads](https://img.shields.io/github/downloads/kaajjo/libre-sudoku/total?color=0273b3&label=Downloads&logo=github)](https://github.com/kaajjo/Libre-Sudoku/releases)
+[![Telegram Channel](https://img.shields.io/badge/Telegram%20Channel-2CA5E0)](https://t.me/libresudoku)
 
 </div>
 
