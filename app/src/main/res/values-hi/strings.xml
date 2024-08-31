@@ -70,7 +70,6 @@
     <string name="pref_keep_screen_on">स्क्रीन को चालू रखें</string>
     <string name="pref_app_language">ऐप भाषा</string>
     <string name="about_version">संस्करण</string>
-    <string name="about_github_project">GitHub</string>
     <string name="action_give_up">हार मान लें</string>
     <string name="action_reset_game">गेम रीसेट करें</string>
     <string name="dialog_yes">हाॅं</string>

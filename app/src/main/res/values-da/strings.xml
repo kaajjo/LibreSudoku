@@ -139,7 +139,6 @@
     <string name="about_version">Version</string>
     <string name="dialog_no">Nej</string>
     <string name="action_show_notes">Vis noter</string>
-    <string name="about_github_project">Projekt på GitHub</string>
     <string name="action_show_solution">Vis løsning</string>
     <string name="intro_what_is_sudoku">En klassisk sudoku ser således ud</string>
     <string name="naked_pairs_explanation">To celler deler de samme to blyantmærker. Lige nu kan vi ikke sige, hvilken der er 2\'eren og hvilken der er 3\'eren.

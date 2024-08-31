@@ -61,7 +61,6 @@
     <string name="pref_app_language">Uygulama dili</string>
     <string name="label_default">Varsayılan</string>
     <string name="about_version">Sürüm</string>
-    <string name="about_github_project">GitHub</string>
     <string name="action_reset_game">Oyunu sıfırla</string>
     <string name="action_give_up">Vazgeç</string>
     <string name="onboard_title">Hoş geldin</string>
