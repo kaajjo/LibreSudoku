@@ -76,7 +76,6 @@
     <string name="pref_app_language">Langue de l\'application</string>
     <string name="label_default">Défaut</string>
     <string name="about_version">Version</string>
-    <string name="about_github_project">Le projet sur GitHub</string>
     <string name="action_give_up">Abandonner</string>
     <string name="action_reset_game">Réinitialiser la partie</string>
     <string name="dialog_yes">Oui</string>

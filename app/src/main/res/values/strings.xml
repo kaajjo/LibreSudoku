@@ -79,7 +79,7 @@
     <string name="pref_app_language">App language</string>
     <string name="label_default">Default</string>
     <string name="about_version">Version</string>
-    <string name="about_github_project">GitHub</string>
+    <string name="about_github_project" translatable="false">GitHub</string>
     <string name="about_github_source_code">Source code on GitHub</string>
     <string name="action_give_up">Give up</string>
     <string name="action_reset_game">Reset the game</string>

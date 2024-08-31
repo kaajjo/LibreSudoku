@@ -104,7 +104,6 @@
     <string name="pref_keep_screen_on">Mantener la pantalla despierta</string>
     <string name="pref_remaining_uses_summ">El número de usos restantes de un valor se muestra en el teclado</string>
     <string name="pref_app_language">Idioma de aplicación</string>
-    <string name="about_github_project">GitHub</string>
     <string name="pref_position_lines_summ">Se resaltan la fila y la columna de la celda seleccionada</string>
     <string name="pref_position_lines">Líneas de posición</string>
     <string name="action_give_up">Rendirse</string>

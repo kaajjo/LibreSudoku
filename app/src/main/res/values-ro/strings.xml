@@ -209,7 +209,6 @@
     <string name="pref_keep_screen_on">Țineți ecranul pornit</string>
     <string name="dialog_generating">Generare…</string>
     <string name="dialog_solving">Rezolvare…</string>
-    <string name="about_github_project">Proiect pe GitHub</string>
     <string name="action_give_up">Abandonare</string>
     <string name="games_started">Jocuri începute</string>
     <string name="win_streak">Seria de victorii</string>

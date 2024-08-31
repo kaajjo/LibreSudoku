@@ -65,7 +65,6 @@
     <string name="pref_tipcards_reset">Karty tipov boli resetované!</string>
     <string name="label_default">Predvolený</string>
     <string name="about_version">Verzia</string>
-    <string name="about_github_project">Projekt na GitHube</string>
     <string name="action_give_up">Vzdať sa</string>
     <string name="action_reset_game">Resetovať hru</string>
     <string name="dialog_yes">Áno</string>

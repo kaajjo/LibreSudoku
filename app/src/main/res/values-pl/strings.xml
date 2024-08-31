@@ -223,7 +223,6 @@
     <string name="pref_app_language">Język aplikacji</string>
     <string name="label_default">Domyślny</string>
     <string name="about_version">Wersja</string>
-    <string name="about_github_project">Projekt na GitHub-ie</string>
     <string name="action_reset_game">Zresetuj grę</string>
     <string name="action_show_notes">Pokaż notatki</string>
     <string name="action_clear_notes">Wyczyść notatki</string>

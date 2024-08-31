@@ -74,7 +74,6 @@
     <string name="pref_tipcards_reset">Tippkártyák visszaállítva!</string>
     <string name="pref_app_language">Nyelv</string>
     <string name="about_version">Verzió</string>
-    <string name="about_github_project">Projekt a GitHubon</string>
     <string name="action_give_up">Feladás</string>
     <string name="onboard_title">Üdv</string>
     <string name="first_game_dialog_title">Gyors útmutató</string>

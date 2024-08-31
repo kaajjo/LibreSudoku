@@ -82,7 +82,6 @@
     <string name="pref_tipcards_reset">உதவி அட்டைகள் மீட்டமைக்கப்பட்டன!</string>
     <string name="action_compute_notes">குறிப்புகள் கணக்கிடு</string>
     <string name="about_version">பதிப்பு</string>
-    <string name="about_github_project">GitHubல் திட்டம்</string>
     <string name="dialog_yes">ஆம்</string>
     <string name="action_clear_notes">குறிப்புகள் நீக்கு</string>
     <string name="dialog_no">இல்லை</string>

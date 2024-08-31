@@ -70,7 +70,6 @@
     <string name="pref_app_language">لغة التطبيق</string>
     <string name="label_default">الافتراضي</string>
     <string name="about_version">الإصدار</string>
-    <string name="about_github_project">صفحة المشروع على GitHub</string>
     <string name="action_give_up">استسلم</string>
     <string name="action_reset_game">إعادة تعيين اللعبة</string>
     <string name="dialog_yes">نعم</string>

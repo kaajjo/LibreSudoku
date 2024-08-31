@@ -87,7 +87,6 @@
     <string name="pref_app_language">Llengua de l\'aplicació</string>
     <string name="label_default">Per defecte</string>
     <string name="about_version">Versió</string>
-    <string name="about_github_project">Projecte a GitHub</string>
     <string name="action_reset_game">Reinicia el joc</string>
     <string name="dialog_yes">Sí</string>
     <string name="action_show_notes">Mostra les anotacions</string>

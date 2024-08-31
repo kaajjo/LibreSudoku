@@ -21,7 +21,6 @@
     <string name="pref_board_font_size_large">Besar</string>
     <string name="saved_game_time">Waktu: %1$s</string>
     <string name="pref_pure_black">Tema gelap murni</string>
-    <string name="about_github_project">Proyek di GitHub</string>
     <string name="action_stay">Menetap</string>
     <string name="learn_basic_3">Juga, angka 8 di R7C5 memblokir seluruh baris di kotak kita</string>
     <string name="saved_game_in_progress">Sedang berlangsung</string>

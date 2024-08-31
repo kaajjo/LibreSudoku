@@ -39,7 +39,6 @@
     <string name="saved_game_time">Χρόνος: %1$s</string>
     <string name="pref_pure_black">Κατάμαυρο θέμα</string>
     <string name="action_restore">Επαναφορά</string>
-    <string name="about_github_project">Εγχείρημα στο GitHub</string>
     <string name="action_stay">Παραμονή</string>
     <string name="restoring_backup">Εφαρμογή restore</string>
     <string name="learn_basic_3">Επίσης, ο αριθμός 8 στο R7C5 μπλοκάρει ολόκληρη τη σειρά στο κουτί μας</string>

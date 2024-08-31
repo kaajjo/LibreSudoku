@@ -259,7 +259,6 @@
     <string name="pref_other">其他</string>
     <string name="pref_keep_screen_on">保持屏幕唤醒</string>
     <string name="pref_tipcards_reset">提示卡已重置！</string>
-    <string name="about_github_project">GitHub 上的项目</string>
     <string name="action_give_up">放弃</string>
     <string name="dialog_yes">是的</string>
     <string name="dialog_no">不是</string>
