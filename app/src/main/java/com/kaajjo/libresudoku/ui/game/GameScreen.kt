@@ -311,10 +311,15 @@ fun GameScreen(
                     notes = viewModel.notes,
                     selectedCell = viewModel.currCell,
                     onClick = { cell ->
-                        viewModel.processInput(
-                            cell = cell,
-                            remainingUse = remainingUse,
-                        )
+                        if (!viewModel.gamePlaying) {
+                            viewModel.startTimer()
+                            viewModel.currCell = Cell(-1, -1, 0)
+                        } else {
+                            viewModel.processInput(
+                                cell = cell,
+                                remainingUse = remainingUse,
+                            )
+                        }
                     },
                     onLongClick = { cell ->
                         if (viewModel.processInput(cell, remainingUse, longTap = true)) {
@@ -324,7 +329,6 @@ fun GameScreen(
                     identicalNumbersHighlight = highlightIdentical,
                     errorsHighlight = errorHighlight != 0,
                     positionLines = positionLines,
-                    enabled = viewModel.gamePlaying && !viewModel.endGame,
                     questions = !(viewModel.gamePlaying || viewModel.endGame) && SDK_INT < Build.VERSION_CODES.R,
                     renderNotes = renderNotes && !viewModel.showSolution,
                     zoomable = viewModel.gameType == GameType.Default12x12 || viewModel.gameType == GameType.Killer12x12,
