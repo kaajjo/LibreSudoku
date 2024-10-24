@@ -344,7 +344,6 @@
         <item quantity="one">Last %1$d game</item>
         <item quantity="other">Last %1$d games</item>
     </plurals>
-
     <string name="telegram" translatable="false">Telegram</string>
     <string name="telegram_link">Join us on Telegram</string>
     <string name="donation_title">Donation</string>
@@ -360,8 +359,6 @@
     <string name="perf_assistance_summary">Mistakes checking, highlight identical values, remaining uses…</string>
     <string name="perf_other_summary">Remember type and difficulty, keep screen awake, reset stats…</string>
     <string name="pref_board_theme_summary">Apply accent colors, position lines, font size…</string>
-
-
     <string name="action_share_crash_log">Share crash log</string>
     <string name="action_restart_app">Restart the app</string>
     <string name="crash_screen_title">Whoops, something went wrong</string>
