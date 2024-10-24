@@ -105,4 +105,18 @@
     <string name="pref_delete_stats">پاکسازی تمام آمار</string>
     <string name="pref_pure_black">تم سیاه خالص</string>
     <string name="pref_gameplay">گیم‌پلی</string>
+    <string name="action_edit">ویرایش</string>
+    <string name="folder_empty_label">این پوشه خالی است</string>
+    <string name="dialog_delete_selected">حذف انتخاب شده</string>
+    <string name="add_to_folder">اضافه کردن به پوشه</string>
+    <string name="add_to_folder_create_new">ساخت جدید</string>
+    <string name="add_to_folder_from_file">وارد کردن از یک فایل</string>
+    <string name="last_played_section_title">بازی‌های اخیر</string>
+    <string name="pref_board_theme_title">تم جدول سودوکو</string>
+    <string name="pref_board_theme_subtitle">سفارشی کردن ظاهر جدول سودوکو</string>
+    <string name="move_games_to_folder_subtitle">پوشه‌ای که بازی‌های انتخاب شده را می‌خواهید به آن انتقال دهید، انتخاب کنید</string>
+    <string name="explore_folder_add_sudoku">اضافه کردن سودوکو</string>
+    <string name="board_theme_title">تم جدول</string>
+    <string name="action_move_selected">جابه‌جایی انتخاب شده</string>
+    <string name="edit_sudoku">ویرایش سودوکو</string>
 </resources>
