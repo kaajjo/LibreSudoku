@@ -259,7 +259,7 @@
     <string name="pref_other">其他</string>
     <string name="pref_keep_screen_on">保持屏幕唤醒</string>
     <string name="pref_tipcards_reset">提示卡已重置！</string>
-    <string name="about_github_project">GitHub 上的项目</string>
+    <string name="about_github_project">GitHub</string>
     <string name="action_give_up">放弃</string>
     <string name="dialog_yes">是的</string>
     <string name="dialog_no">不是</string>
@@ -325,4 +325,24 @@
     <plurals name="last_x_games">
         <item quantity="other">最后的 %1$d 个游戏</item>
     </plurals>
+    <string name="perf_appearance_summary">深色主题，配色方案，数板主题，日期格式…</string>
+    <string name="perf_gameplay_summary">输入法，错误限制，计时器…</string>
+    <string name="perf_assistance_summary">错误检查，同值高亮，剩余填入次数…</string>
+    <string name="pref_board_theme_summary">应用强调色，位置线，字体大小…</string>
+    <string name="action_share_crash_log">分享崩溃日志</string>
+    <string name="action_restart_app">重启应用</string>
+    <string name="crash_screen_title">哎呀，出了点问题</string>
+    <string name="about_github_source_code">GitHub 上的源码</string>
+    <string name="action_generate">生成</string>
+    <string name="generating_number_of">生成 %1$s/%2$s</string>
+    <string name="type_killer_9x9">杀手 9x9</string>
+    <string name="type_killer_6x6">杀手 6x6</string>
+    <string name="type_killer_12x12">杀手 12x12</string>
+    <string name="donation_title">捐赠</string>
+    <string name="telegram_link">查看我们的 Telegram 频道</string>
+    <string name="hosted_weblate">您可在 Hosted Weblate 上参与项目翻译工作</string>
+    <string name="libraries_licenses">许可证</string>
+    <string name="app_version">版本 %1$s (%2$s)</string>
+    <string name="donation_description">永无广告的免费应用。您可以通过下面支持</string>
+    <string name="perf_other_summary">记住上次类型和难度，保持屏幕常亮，重置状态…</string>
 </resources>
