@@ -4,7 +4,7 @@
     <string name="nav_bar_home">Hjem</string>
     <string name="new_game">Nyt spil</string>
     <string name="dialog_new_game">Spil i gang</string>
-    <string name="dialog_new_game_text">Du har et ufærdigt spil, vil du virkelig starte et nyt\?</string>
+    <string name="dialog_new_game_text">Du har et ufærdigt spil. Vil du virkelig gerne starte et nyt?</string>
     <string name="dialog_new_game_positive">Start nyt spil</string>
     <string name="action_cancel">Annuller</string>
     <string name="action_play">Spil</string>
@@ -53,7 +53,7 @@
     <string name="pref_disable_hints_summ">Ikke fan af hints\? Bare fjern dem!</string>
     <string name="pref_disable_hints">Deaktiver hints</string>
     <string name="pref_gameplay">Gameplay</string>
-    <string name="pref_assistance">Hjælp</string>
+    <string name="pref_assistance">Hjælpemidler</string>
     <string name="pref_mistakes_check">Fejlkontrol</string>
     <string name="pref_mistakes_check_violations">Regelbrud</string>
     <string name="pref_mistakes_check_final">Med endelig løsning</string>
@@ -139,7 +139,7 @@
     <string name="about_version">Version</string>
     <string name="dialog_no">Nej</string>
     <string name="action_show_notes">Vis noter</string>
-    <string name="about_github_project">Projekt på GitHub</string>
+    <string name="about_github_project">GitHub</string>
     <string name="action_show_solution">Vis løsning</string>
     <string name="intro_what_is_sudoku">En klassisk sudoku ser således ud</string>
     <string name="naked_pairs_explanation">To celler deler de samme to blyantmærker. Lige nu kan vi ikke sige, hvilken der er 2\'eren og hvilken der er 3\'eren.
@@ -199,7 +199,7 @@
     <string name="add_to_folder_create_new">Opret ny</string>
     <string name="add_to_folder_from_file">Importer fra en fil</string>
     <string name="pref_boardtheme_accent">Anvend accentfarver</string>
-    <string name="pref_boardtheme_accent_subtitle">Gør dit sudoko-bræt mere farverigt</string>
+    <string name="pref_boardtheme_accent_subtitle">Gør din sudoku-spillefalde mere farverig</string>
     <string name="pref_board_theme_title">Sudoku-bræt tema</string>
     <string name="board_theme_title">Bræt-tema</string>
     <string name="action_move_selected">Flyt valgte</string>
@@ -329,4 +329,25 @@
     <string name="onboard_settings_description">Juster appen til lige din smag</string>
     <string name="pref_monet_style">Monet-stil</string>
     <string name="monet_fidelity">Fidelitet</string>
+    <string name="hosted_weblate">Du kan hjælpe med oversættelse på Hosted Weblate</string>
+    <string name="perf_appearance_summary">Mørkt designtema, farveskema, spillefladedesigntema, dataformat…</string>
+    <string name="perf_gameplay_summary">Inputmetode, fejlgrænse, timer…</string>
+    <string name="action_restart_app">Genstart appen</string>
+    <string name="perf_assistance_summary">Fejltjek, markering af ens værdier, tilbageværende brug…</string>
+    <string name="perf_other_summary">Husk type og sværhedsgrad, hold skærm vågen, nulstil statistikker…</string>
+    <string name="pref_board_theme_summary">Anvend accentfarver, positionslinjer, skriftstørrelse…</string>
+    <string name="action_share_crash_log">Del nedbrudslog</string>
+    <string name="crash_screen_title">Ups, noget gik galt</string>
+    <string name="about_github_source_code">Kildekode på GitHub</string>
+    <string name="libraries_licenses">Licenser</string>
+    <string name="telegram_link">Slut dig til os på Telegram</string>
+    <string name="donation_title">Donation</string>
+    <string name="donation_description">Denne app er gratis og for altid reklamefri. Du kan støtte mig nedenfor</string>
+    <string name="action_generate">Generér</string>
+    <string name="generating_number_of">Genererer %1$s/%2$s</string>
+    <string name="type_killer_9x9">Killer 9x9</string>
+    <string name="type_killer_6x6">Killer 6x6</string>
+    <string name="app_version">Version %1$s (%2$s)</string>
+    <string name="monet_tonalspot">Tonalpunkt</string>
+    <string name="type_killer_12x12">Killer 12x12</string>
 </resources>
