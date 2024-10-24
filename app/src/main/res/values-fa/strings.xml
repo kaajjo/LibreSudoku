@@ -101,4 +101,8 @@
     <string name="app_version">نسخه‌ی %1$s (%2$s)</string>
     <string name="theme_orange">نارنجی</string>
     <string name="color_picker_title">یک رنگ انتخاب کنید</string>
+    <string name="pref_appearance">ظاهر</string>
+    <string name="pref_delete_stats">پاکسازی تمام آمار</string>
+    <string name="pref_pure_black">تم سیاه خالص</string>
+    <string name="pref_gameplay">گیم‌پلی</string>
 </resources>
