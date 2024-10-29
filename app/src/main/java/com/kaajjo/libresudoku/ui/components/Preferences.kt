@@ -11,13 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -118,17 +115,6 @@ fun PreferenceRowSwitch(
     subtitle: String? = null,
     enabled: Boolean = true
 ) {
-    val icon: (@Composable () -> Unit)? = if (checked) {
-        {
-            Icon(
-                imageVector = Icons.Filled.Check,
-                contentDescription = null,
-                modifier = Modifier.size(SwitchDefaults.IconSize),
-            )
-        }
-    } else {
-        null
-    }
 
     PreferenceRow(
         modifier = modifier,
@@ -138,7 +124,6 @@ fun PreferenceRowSwitch(
         subtitle = subtitle,
         action = {
             Switch(
-                thumbContent = icon,
                 checked = checked,
                 onCheckedChange = { onClick() },
                 enabled = enabled
