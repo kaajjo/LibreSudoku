@@ -8,5 +8,6 @@ package com.kaajjo.libresudoku.core.qqwing.advanced_hint
 data class AdvancedHintSettings(
     val fullHouse: Boolean = true,
     val nakedSingle: Boolean = true,
-    val hiddenSingle: Boolean = true
+    val hiddenSingle: Boolean = true,
+    val checkWrongValue: Boolean = true
 )

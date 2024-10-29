@@ -47,13 +47,35 @@ class AdvancedHint(
     private val columns = getColumns()
     private val boxes = getBoxes()
 
-
     fun getEasiestHint(): AdvancedHintData? {
         val hint: AdvancedHintData? = null
+        if (settings.checkWrongValue) checkForWrongValue()?.let { return it }
         if (settings.fullHouse) checkForFullHouse()?.let { return it }
         if (settings.nakedSingle) checkForNakedSingle()?.let { return it }
         if (settings.hiddenSingle) checkForHiddenSingle()?.let { return it }
         return hint
+    }
+
+    private fun checkForWrongValue(): AdvancedHintData? {
+        for (i in board.indices) {
+            for (j in board.indices) {
+                if (board[i][j].value != 0 && board[i][j].value != solvedBoard[i][j].value) {
+                    return AdvancedHintData(
+                        titleRes = R.string.hint_wrong_value_title,
+                        textResWithArg = Pair(
+                            R.string.hint_wron_value_detail,
+                            listOf(
+                                board[i][j].value.toString(),
+                                cellStringFormat(board[i][j])
+                            )
+                        ),
+                        targetCell = board[i][j],
+                        helpCells = emptyList()
+                    )
+                }
+            }
+        }
+        return null
     }
 
     private fun checkForNakedSingle(): AdvancedHintData? {

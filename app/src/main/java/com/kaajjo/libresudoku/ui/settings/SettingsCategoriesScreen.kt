@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.TipsAndUpdates
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.destinations.SettingsAdvancedHintScreenDestination
 import com.kaajjo.libresudoku.destinations.SettingsAppearanceScreenDestination
 import com.kaajjo.libresudoku.destinations.SettingsAssistanceScreenDestination
 import com.kaajjo.libresudoku.destinations.SettingsGameplayScreenDestination
@@ -98,6 +100,15 @@ fun SettingsCategoriesScreen(
                         navigator.navigate(SettingsAssistanceScreenDestination())
                     },
                     painter = rememberVectorPainter(Icons.Outlined.TipsAndUpdates)
+                )
+            }
+
+            item {
+                PreferenceRow(
+                    title = stringResource(R.string.advanced_hint_title),
+                    subtitle = stringResource(R.string.advanced_hint_summary),
+                    onClick = { navigator.navigate(SettingsAdvancedHintScreenDestination()) },
+                    painter = rememberVectorPainter(Icons.Rounded.AutoAwesome)
                 )
             }
 

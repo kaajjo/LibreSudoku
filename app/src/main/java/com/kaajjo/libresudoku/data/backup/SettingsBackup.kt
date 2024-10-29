@@ -34,7 +34,8 @@ data class SettingsBackup(
     val boardCrossHighlight: Boolean = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT,
     val currentThemeSeedColor: Int = PreferencesConstants.DEFAULT_THEME_SEED_COLOR,
     val paletteStyle: Int = PreferencesConstants.DEFAULT_PALETTE_STYLE,
-    val isUserDefinedSeedColor: Boolean = false
+    val isUserDefinedSeedColor: Boolean = false,
+    val advancedHint: Boolean = PreferencesConstants.DEFAULT_ADVANCED_HINT
 ) {
     suspend fun setSettings(settings: AppSettingsManager, themeSettings: ThemeSettingsManager) {
         settings.setInputMethod(inputMethod)
@@ -54,6 +55,7 @@ data class SettingsBackup(
         settings.setSaveSelectedGameDifficultyType(saveSelectedGameDifficulty)
         settings.setAutoBackupInterval(autoBackupInterval)
         settings.setAutoBackupsNumber(maxAutoBackups)
+        settings.setAdvancedHint(advancedHint)
 
         themeSettings.setDynamicColors(dynamicColors)
         themeSettings.setDarkTheme(darkTheme)
@@ -93,7 +95,8 @@ data class SettingsBackup(
                 boardCrossHighlight = runBlocking { themeSettings.boardCrossHighlight.first() },
                 currentThemeSeedColor = runBlocking { themeSettings.themeColorSeed.first().toArgb() },
                 paletteStyle = runBlocking { ThemeSettingsManager.getPaletteIndex(themeSettings.themePaletteStyle.first()) },
-                isUserDefinedSeedColor = runBlocking { themeSettings.isUserDefinedSeedColor.first() }
+                isUserDefinedSeedColor = runBlocking { themeSettings.isUserDefinedSeedColor.first() },
+                advancedHint = runBlocking { settings.advancedHintEnabled.first() }
             )
         }
     }

@@ -367,4 +367,16 @@
     <string name="crash_screen_title">Whoops, something went wrong</string>
     <string name="action_generate">Generate</string>
     <string name="generating_number_of">Generating %1$s/%2$s</string>
+    <string name="hint_full_house_group_detail">The cell %1$s is the last empty cell in this box, so you can fill it with the %2$s</string>
+    <string name="hint_full_house_group_title">Full House</string>
+    <string name="hint_naked_single_title">Naked single</string>
+    <string name="hint_naked_single_detail">The cell %1$s has only one possible value left, so you can place the %2$s in this cell</string>
+    <string name="hint_hidden_single_title">Hidden single</string>
+    <string name="hint_hidden_single_detail">The cell %1$s is the only cell in this group where %2$s can be</string>
+    <string name="advanced_hint_title">Advanced hint</string>
+    <string name="hint_wrong_value_title">Wrong value</string>
+    <string name="hint_wron_value_detail">The value %1$s in cell %2$s is wrong</string>
+    <string name="advanced_hint_summary">An experimental hint system</string>
+    <string name="nav_back">Back</string>
+    <string name="action_apply">Apply</string>
 </resources>
