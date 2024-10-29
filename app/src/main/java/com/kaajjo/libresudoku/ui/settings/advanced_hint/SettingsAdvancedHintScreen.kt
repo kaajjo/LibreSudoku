@@ -3,6 +3,7 @@ package com.kaajjo.libresudoku.ui.settings.advanced_hint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +18,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,8 +31,10 @@ import com.kaajjo.libresudoku.core.qqwing.advanced_hint.AdvancedHintSettings
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
+import com.kaajjo.libresudoku.ui.gameshistory.ColorfulBadge
 import com.kaajjo.libresudoku.ui.settings.SettingsCategory
 import com.kaajjo.libresudoku.ui.settings.SettingsScaffoldLazyColumn
+import com.kaajjo.libresudoku.ui.theme.ColorUtils.blend
 import com.kaajjo.libresudoku.ui.theme.ColorUtils.harmonizeWithPrimary
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -53,7 +58,8 @@ fun SettingsAdvancedHintScreen(
         ScrollbarLazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item { Spacer(modifier = Modifier.height(12.dp)) }
             item {
@@ -62,7 +68,7 @@ fun SettingsAdvancedHintScreen(
                     onClick = { viewModel.setAdvancedHintEnabled(!advancedHintEnabled) }
                 )
             }
-            item { SettingsCategory(title = "Техники") }
+            item { SettingsCategory(title = stringResource(R.string.settings_advanced_hint_category_techniques)) }
             item {
                 TechniqueItem(
                     title = stringResource(R.string.hint_wrong_value_title),
@@ -114,6 +120,36 @@ fun SettingsAdvancedHintScreen(
                         )
                     }
                 )
+            }
+            item {
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .clip(MaterialTheme.shapes.large)
+                        .background(
+                            with(MaterialTheme.colorScheme) {
+                                primaryContainer
+                                    .blend(secondaryContainer)
+                                    .copy(alpha = 0.75f)
+                                    .compositeOver(surface)
+                            }
+                        )
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                ) {
+                    ColorfulBadge(
+                        text = stringResource(R.string.label_beta),
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        foreground = MaterialTheme.colorScheme.onSecondaryContainer.harmonizeWithPrimary(),
+                        background = MaterialTheme.colorScheme.secondaryContainer.harmonizeWithPrimary()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.advanced_hint_in_development),
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }

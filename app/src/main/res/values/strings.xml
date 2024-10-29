@@ -379,4 +379,7 @@
     <string name="advanced_hint_summary">An experimental hint system</string>
     <string name="nav_back">Back</string>
     <string name="action_apply">Apply</string>
+    <string name="advanced_hint_in_development">More techniques in development…</string>
+    <string name="label_beta">Beta</string>
+    <string name="settings_advanced_hint_category_techniques">Techniques</string>
 </resources>

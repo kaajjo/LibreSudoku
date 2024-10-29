@@ -378,4 +378,7 @@
     <string name="hint_hidden_single_detail">Клетка %1$s это единственная клетка в этом столбце в которой может стоять  %2$s</string>
     <string name="hint_wrong_value_title">Неправильное значение</string>
     <string name="hint_wron_value_detail">Значение %1$s в клетке %2$s неверное</string>
+    <string name="advanced_hint_in_development">Больше техник в разработке…</string>
+    <string name="label_beta">Бета</string>
+    <string name="settings_advanced_hint_category_techniques">Техники</string>
 </resources>
