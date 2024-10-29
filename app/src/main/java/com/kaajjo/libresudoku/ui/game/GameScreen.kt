@@ -454,7 +454,11 @@ fun GameScreen(
                                         ToolbarItem(
                                             modifier = Modifier.weight(1f),
                                             painter = rememberVectorPainter(Icons.Rounded.AutoAwesome),
-                                            onClick = { viewModel.getAdvancedHint() }
+                                            onClick = {
+                                                if (viewModel.gamePlaying) {
+                                                    viewModel.getAdvancedHint()
+                                                }
+                                            }
                                         )
                                     }
                                 }
