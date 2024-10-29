@@ -1,5 +1,6 @@
 package com.kaajjo.libresudoku.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,13 +23,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.qqwing.advanced_hint.AdvancedHintData
+import com.materialkolor.ktx.blend
+import com.materialkolor.ktx.harmonize
 
 @androidx.compose.runtime.Composable
 fun AdvancedHintContainer(
     advancedHintData: AdvancedHintData,
     onApplyClick: () -> Unit,
     onBackClick: () -> Unit,
-    onSettingsClick: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
     Column {
         Row(
@@ -41,11 +44,18 @@ fun AdvancedHintContainer(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 advancedHintData.let {
+                    BackHandler {
+                        onBackClick()
+                    }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(MaterialTheme.shapes.large)
-                            .background(MaterialTheme.colorScheme.tertiaryContainer),
+                            .background(
+                                with(MaterialTheme.colorScheme) {
+                                    primary.blend(secondaryContainer, 0.75f)
+                                }
+                            ),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -55,12 +65,18 @@ fun AdvancedHintContainer(
                             Icon(
                                 imageVector = Icons.Rounded.AutoAwesome,
                                 contentDescription = null,
-                                modifier = Modifier.padding(horizontal = 12.dp)
+                                modifier = Modifier.padding(horizontal = 12.dp),
+                                tint = with(MaterialTheme.colorScheme) {
+                                    onSecondaryContainer.harmonize(primary)
+                                }
                             )
                             Text(
                                 text = stringResource(it.titleRes),
                                 style = MaterialTheme.typography.titleLarge,
-                                modifier = Modifier.padding(vertical = 8.dp)
+                                modifier = Modifier.padding(vertical = 12.dp),
+                                color = with(MaterialTheme.colorScheme) {
+                                    onSecondaryContainer.harmonize(primary)
+                                }
                             )
                         }
                         IconButton(
