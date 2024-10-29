@@ -15,6 +15,8 @@ import com.kaajjo.libresudoku.core.qqwing.Cage
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.QQWingController
+import com.kaajjo.libresudoku.core.qqwing.advanced_hint.AdvancedHint
+import com.kaajjo.libresudoku.core.qqwing.advanced_hint.AdvancedHintData
 import com.kaajjo.libresudoku.core.utils.GameState
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
@@ -34,9 +36,13 @@ import com.kaajjo.libresudoku.navArgs
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 import java.util.Timer
@@ -218,6 +224,19 @@ class GameViewModel @Inject constructor(
     var notesTaken = 0
 
     val allRecords by lazy { getAllRecordsUseCase(gameDifficulty, gameType) }
+
+    val advancedHintEnabled = appSettingsManager.advancedHintEnabled
+    private var _advancedHintMode = MutableStateFlow(false)
+    val advancedHintMode = _advancedHintMode.asStateFlow()
+
+    private var _advancedHintData = MutableStateFlow<AdvancedHintData?>(null)
+    val advancedHintData = _advancedHintData.asStateFlow()
+
+    private var _cellsToHighlight = MutableStateFlow<List<Cell>>(emptyList())
+    val cellsToHighlight = _cellsToHighlight.asStateFlow()
+
+    private var _advancedHintText = MutableStateFlow("")
+    val advancedHintText = _advancedHintText.asStateFlow()
 
     private fun clearNotesAtCell(
         notes: List<Note>,
@@ -771,5 +790,41 @@ class GameViewModel @Inject constructor(
             }
         }
         gameBoard = new
+    }
+
+    fun getAdvancedHint() {
+        viewModelScope.launch(Dispatchers.Default) {
+            currCell = Cell(-1, -1, 0)
+            _advancedHintMode.emit(true)
+            val hintSettings = runBlocking { appSettingsManager.advancedHintSettings.first() }
+            val advancedHint = AdvancedHint(
+                type = boardEntity.type,
+                board = gameBoard,
+                solvedBoard = solvedBoard,
+                notes = notes,
+                settings = hintSettings
+            )
+
+            _advancedHintData.emit(advancedHint.getEasiestHint())
+        }
+    }
+
+    fun cancelAdvancedHint() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _advancedHintData.emit(null)
+            _advancedHintMode.emit(false)
+        }
+    }
+
+    fun applyAdvancedHint() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val cell = _advancedHintData.value?.targetCell
+            if (cell != null) {
+                currCell = gameBoard[cell.row][cell.col]
+                digitFirstNumber = cell.value
+                processInput(cell, true)
+                cancelAdvancedHint()
+            }
+        }
     }
 }

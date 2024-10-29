@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.kaajjo.libresudoku.R
-import com.kaajjo.libresudoku.ui.game.NotesMenu
+import com.kaajjo.libresudoku.ui.game.components.NotesMenu
 import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 

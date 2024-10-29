@@ -12,6 +12,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.qqwing.advanced_hint.AdvancedHintSettings
 import kotlinx.coroutines.flow.map
 import java.time.Instant
 import java.time.ZoneId
@@ -94,6 +95,14 @@ class AppSettingsManager(context: Context) {
     private val autoBackupsNumberKey = intPreferencesKey("auto_backups_max_number")
 
     private val lastBackupDateKey = longPreferencesKey("last_backup_date")
+
+    private val advancedHintKey = booleanPreferencesKey("advanced_hint")
+
+    private val advancedHintTechniqueKey = booleanPreferencesKey("hint_technique_")
+    private val ahFullHouseKey = booleanPreferencesKey("ah_full_house")
+    private val ahNakedSingle = booleanPreferencesKey("ah_naked_single")
+    private val ahHiddenSingle = booleanPreferencesKey("ah_hidden_single")
+    private val ahCheckWrongValue = booleanPreferencesKey("ah_check_wrong_value")
 
     suspend fun setFirstLaunch(value: Boolean) {
         dataStore.edit { settings ->
@@ -374,7 +383,45 @@ class AppSettingsManager(context: Context) {
         } else {
             null
         }
+
+
+
     }
+
+    val advancedHintEnabled = dataStore.data.map { settings ->
+        settings[advancedHintKey] ?: PreferencesConstants.DEFAULT_ADVANCED_HINT
+    }
+
+    suspend fun setAdvancedHint(enabled: Boolean) {
+        dataStore.edit { settings ->
+            settings[advancedHintKey] = enabled
+        }
+    }
+
+    val advancedHintSettings = dataStore.data.map { settings ->
+        val fullHouse = settings[ahFullHouseKey] ?: true
+        val nakedSingle = settings[ahNakedSingle] ?: true
+        val hiddenSingle = settings[ahHiddenSingle] ?: true
+        val checkWrongValue = settings[ahCheckWrongValue] ?: true
+
+        AdvancedHintSettings(
+            fullHouse = fullHouse,
+            nakedSingle = nakedSingle,
+            hiddenSingle = hiddenSingle,
+            checkWrongValue = checkWrongValue
+        )
+    }
+
+    suspend fun updateAdvancedHintSettings(ahSettings: AdvancedHintSettings) {
+        dataStore.edit { settings ->
+            settings[ahFullHouseKey] = ahSettings.fullHouse
+            settings[ahNakedSingle] = ahSettings.nakedSingle
+            settings[ahHiddenSingle] = ahSettings.hiddenSingle
+            settings[ahCheckWrongValue] = ahSettings.checkWrongValue
+        }
+    }
+
+
     companion object {
         fun dateFormat(format: String): DateTimeFormatter = when (format) {
             "" -> {

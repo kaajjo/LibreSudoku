@@ -368,4 +368,17 @@
     <string name="crash_screen_title">Упс, что-то пошло не так</string>
     <string name="action_generate">Сгенерировать</string>
     <string name="generating_number_of">Генерация %1$s/%2$s</string>
+    <string name="hint_full_house_group_detail">Клетка %1$s это единственная пустая клетка в этой группе, поэтому в нее можно поставить %2$s</string>
+    <string name="hint_full_house_group_title">Последняя свободная клетка</string>
+    <string name="hint_naked_single_title">Очевидная одиночка</string>
+    <string name="hint_naked_single_detail">В клетке %1$s присутствует только одно возможное значение, поэтому вы можете поместить %2$s в эту клетку</string>
+    <string name="advanced_hint_title">Продвинутая подсказка</string>
+    <string name="advanced_hint_summary">Экспериментальная система подсказок</string>
+    <string name="hint_hidden_single_title">Скрытая одиночка</string>
+    <string name="hint_hidden_single_detail">Клетка %1$s это единственная клетка в этом столбце в которой может стоять  %2$s</string>
+    <string name="hint_wrong_value_title">Неправильное значение</string>
+    <string name="hint_wron_value_detail">Значение %1$s в клетке %2$s неверное</string>
+    <string name="advanced_hint_in_development">Больше техник в разработке…</string>
+    <string name="label_beta">Бета</string>
+    <string name="settings_advanced_hint_category_techniques">Техники</string>
 </resources>

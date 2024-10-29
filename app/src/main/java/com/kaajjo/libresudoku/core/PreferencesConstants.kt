@@ -22,6 +22,7 @@ class PreferencesConstants {
         const val DEFAULT_SAVE_LAST_SELECTED_DIFF_TYPE = true
         const val DEFAULT_AUTOBACKUP_INTERVAL = 24L
         const val DEFAULT_AUTO_BACKUPS_NUMBER = 3
+        const val DEFAULT_ADVANCED_HINT = false
 
         const val DEFAULT_DYNAMIC_COLORS = true
         const val DEFAULT_DARK_THEME = 0
