@@ -284,4 +284,18 @@
     <string name="dialog_crash_report_text">عفوًا ، تعطل LibreSudoku للتو. هل تريد إرسال تقرير تعطل للمطورين؟</string>
     <string name="pref_save_last_diff_and_type_subtitle">تذكر نوع اللعبة الأخيرة وصعوبتها</string>
     <string name="pref_fun_keyboard_over_num_subtitle">ضع لوحة الوظائف فوق لوحة مفاتيح القيم</string>
+    <string name="onboard_restore_backup">استعادة النسخة الاحتياطية</string>
+    <string name="onboard_restore_backup_description">هل لديك نسخة احتياطية؟ استعدها الآن</string>
+    <string name="parse_color_fail">ليس لونا</string>
+    <string name="perf_gameplay_summary">طريقة الإدخال، حد الخطأ، الموقت…</string>
+    <string name="perf_assistance_summary">التحقق من الأخطاء، واظهار القيم المتطابقة، والارقام المتبقية …</string>
+    <string name="perf_other_summary">تذكر النوع والصعوبة، وأبق الشاشة نشطة، وأعد ضبط الإحصائيات…</string>
+    <string name="onboard_settings_description">ضبط التطبيق حسب رغبتك</string>
+    <string name="donation_description">هذا التطبيق مجاني وخالي من الإعلانات إلى الأبد. يمكنك دعمي أدناه</string>
+    <string name="donation_title">التبرع</string>
+    <string name="app_version">"الاصدار   %1$s (%2$s)"</string>
+    <string name="hosted_weblate">يمكنك المساعدة في الترجمة على Weblate</string>
+    <string name="perf_appearance_summary">المظهر الداكن ونظام الألوان ومظهر لوحة اللعب وتنسيق التاريخ…</string>
+    <string name="color_picker_title">اختر لون</string>
+    <string name="telegram_link">انضم إلينا على تيليجرام</string>
 </resources>
