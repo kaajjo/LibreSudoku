@@ -26,7 +26,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-const val ACRA_SHARED_PREFS_NAME = "acra_shared_pref"
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
@@ -45,7 +44,6 @@ class AppModule {
     @Singleton
     fun provideFolderDao(appDatabase: AppDatabase): FolderDao = appDatabase.folderDao()
 
-    // records
     @Singleton
     @Provides
     fun provideRecordRepository(recordDao: RecordDao): RecordRepository =
@@ -55,8 +53,6 @@ class AppModule {
     @Provides
     fun provideRecordDao(appDatabase: AppDatabase): RecordDao = appDatabase.recordDao()
 
-
-    // boards
     @Singleton
     @Provides
     fun provideBoardRepository(boardDao: BoardDao): BoardRepository = BoardRepositoryImpl(boardDao)
@@ -66,7 +62,6 @@ class AppModule {
     fun provideBoardDao(appDatabase: AppDatabase): BoardDao = appDatabase.boardDao()
 
 
-    // saved games
     @Singleton
     @Provides
     fun provideSavedGameRepository(savedGameDao: SavedGameDao): SavedGameRepository =
@@ -77,13 +72,11 @@ class AppModule {
     fun provideSavedGameDao(appDatabase: AppDatabase): SavedGameDao = appDatabase.savedGameDao()
 
 
-    // settings datastore
     @Provides
     @Singleton
     fun provideAppSettingsManager(@ApplicationContext context: Context) =
         AppSettingsManager(context)
 
-    // appTheme datastore
     @Provides
     @Singleton
     fun provideThemeSettingsManager(@ApplicationContext context: Context) =
