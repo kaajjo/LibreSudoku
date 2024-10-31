@@ -135,7 +135,6 @@
     <string name="about_version">Verze</string>
     <string name="action_reset_game">Resetovat hru</string>
     <string name="pref_mistakes_limit">Limit chyb</string>
-    <string name="about_github_project">Projekt na GitHubu</string>
     <string name="pref_disable_hints_summ">Nemáte rádi nápovědy\? Prostě je vypněte!</string>
     <string name="pref_highlight_identical">Zvýrazněte stejné hodnoty</string>
     <string name="dialog_yes">Ano</string>

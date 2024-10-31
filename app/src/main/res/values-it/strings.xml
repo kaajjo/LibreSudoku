@@ -119,7 +119,6 @@
     <string name="pref_position_lines_summ">La riga e la colonna della cella selezionata sono evidenziate</string>
     <string name="pref_other">Altro</string>
     <string name="about_version">Versione</string>
-    <string name="about_github_project">Progetto su GitHub</string>
     <string name="pref_auto_erase_notes">Cancella automaticamente note</string>
     <string name="pref_keep_screen_on">Tieni schermo acceso</string>
     <string name="pref_reset_tipcards">Ripristina tutti i suggerimenti</string>

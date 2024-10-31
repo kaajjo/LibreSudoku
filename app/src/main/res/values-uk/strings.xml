@@ -54,7 +54,6 @@
     <string name="pref_keep_screen_on">Не вимикати екран</string>
     <string name="pref_tipcards_reset">Підказки скинуто!</string>
     <string name="about_version">Версія</string>
-    <string name="about_github_project">Проект на GitHub</string>
     <string name="action_give_up">Здатися</string>
     <string name="action_reset_game">Почати заново</string>
     <string name="dialog_yes">Так</string>
