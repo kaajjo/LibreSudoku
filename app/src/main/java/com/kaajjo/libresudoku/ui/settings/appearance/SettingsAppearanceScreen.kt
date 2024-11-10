@@ -185,7 +185,8 @@ fun SettingsAppearanceScreen(
                                     1 -> false
                                     else -> true
                                 },
-                                style = currentPaletteStyle
+                                style = currentPaletteStyle,
+                                isAmoled = amoledBlack
                             ),
                             onClick = {
                                 viewModel.updateDynamicColors(false)
@@ -209,7 +210,8 @@ fun SettingsAppearanceScreen(
                                         1 -> false
                                         else -> true
                                     },
-                                    style = currentPaletteStyle
+                                    style = currentPaletteStyle,
+                                    isAmoled = amoledBlack
                                 ),
                                 onClick = {
                                     viewModel.updateDynamicColors(false)
