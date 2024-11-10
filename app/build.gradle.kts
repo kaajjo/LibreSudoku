@@ -5,16 +5,17 @@ plugins {
     alias(libs.plugins.aboutLibraries)
     alias(libs.plugins.hilt)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "com.kaajjo.libresudoku"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.kaajjo.libresudoku"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 7
         versionName = "2.0.0-beta2"
 
@@ -74,8 +75,9 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
     testImplementation(libs.junit)
+    implementation(libs.graphics.shape)
 
-    implementation(libs.navigation.compose)
+    // implementation(libs.navigation.compose)
 
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.pager.indicators)
@@ -105,4 +107,7 @@ dependencies {
     ksp(libs.hilt.common.compiler)
     ksp(libs.hilt.work)
     implementation(libs.materialKolor)
+
+    implementation(libs.okhttp)
+    implementation(libs.composeMarkdown)
 }

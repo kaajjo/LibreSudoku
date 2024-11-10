@@ -380,4 +380,26 @@
     <string name="advanced_hint_in_development">Больше техник в разработке…</string>
     <string name="label_beta">Бета</string>
     <string name="settings_advanced_hint_category_techniques">Техники</string>
+
+    <string name="auto_update_title">Автоматические обновления</string>
+    <string name="update_whats_new">Что нового</string>
+    <string name="action_download">Скачать</string>
+    <string name="update_found">Обновление найдено</string>
+    <string name="update_channel_stable">Стабильный</string>
+    <string name="update_channel_stable_summary">Получать стабильные протестированные релизы</string>
+    <string name="update_channel_beta">Бета</string>
+    <string name="update_channel_beta_summary">Получать бета релизы, доступ к новым функциям и исправлениям в числе первых (возможны баги)</string>
+    <string name="update_channel_disable">Отключить</string>
+    <string name="update_channel_disable_summary">Отключить автоматические обновления</string>
+    <string name="update_found_version">Найдено обновление %1$s</string>
+    <string name="whats_new_in_version">Что нового в %1$s</string>
+    <string name="check_for_updates_error">Не удалось проверить обновления</string>
+    <string name="check_for_update_error_summary">Проверьте подключение к интернету или попробуйте позже (возможно, превышен лимит запросов к GitHub API)</string>
+    <string name="action_retry">Повторить</string>
+    <string name="check_for_updates_checking">Ищем обновления…</string>
+    <string name="check_for_update_using_latest">Вы используете последнюю версию</string>
+    <string name="check_for_update_checking_summary">Это займет немного времени</string>
+    <string name="action_view_on_github">Посмотреть на GitHub</string>
+    <string name="new_update_found_action">Перейти в настройки, чтобы установить</string>
+    <string name="auto_updates_summary">Автоматическая проверка обновлений</string>
 </resources>

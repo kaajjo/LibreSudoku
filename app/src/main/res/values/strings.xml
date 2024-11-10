@@ -382,4 +382,26 @@
     <string name="advanced_hint_in_development">More techniques in development…</string>
     <string name="label_beta">Beta</string>
     <string name="settings_advanced_hint_category_techniques">Techniques</string>
+    <string name="auto_update_title">Auto Update</string>
+    <string name="update_whats_new">What\'s new</string>
+    <string name="action_download">Download</string>
+    <string name="update_found">New update found</string>
+    <string name="update_channel_stable">Stable</string>
+    <string name="update_channel_stable_summary">Get stable tested releases</string>
+    <string name="update_channel_beta">Beta</string>
+    <string name="update_channel_beta_summary">Get beta releases, access new features and fixes first</string>
+    <string name="update_channel_disable">Disable</string>
+    <string name="update_channel_disable_summary">Disable automatic updates</string>
+    <string name="update_found_version">Update found %1$s</string>
+    <string name="whats_new_in_version">What\'s new in %1$s</string>
+    <string name="check_for_updates_error">Couldn\'t check for updates</string>
+    <string name="check_for_update_error_summary">Check your connection or try again later (GitHub API rate limit may have been exceeded)</string>
+    <string name="action_retry">Retry</string>
+    <string name="check_for_updates_checking">Checking for updates…</string>
+    <string name="check_for_update_using_latest">You\'re up to date</string>
+    <string name="check_for_update_checking_summary">This can take some time</string>
+    <string name="check_for_update_latest_summary">Keep it up!</string>
+    <string name="action_view_on_github">View on GitHub</string>
+    <string name="new_update_found_action">Go to settings to update</string>
+    <string name="auto_updates_summary">Automatically check for updates</string>
 </resources>

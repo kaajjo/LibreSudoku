@@ -43,7 +43,9 @@ fun CollapsingTopAppBar(
     collapsingTitle: CollapsingTitle? = null,
     scrollBehavior: CollapsingTopAppBarScrollBehavior? = null,
     collapsedElevation: Dp = DefaultCollapsedElevation,
-    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets
+    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
+    elevatedColor: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(collapsedElevation),
+    surfaceColor: Color = MaterialTheme.colorScheme.surface
 ) {
     val collapsedFraction = when {
         scrollBehavior != null && centralContent == null -> scrollBehavior.state.collapsedFraction
@@ -66,8 +68,8 @@ fun CollapsingTopAppBar(
     }
 
     val containerColor = animateColorAsState(
-        if (showElevation) MaterialTheme.colorScheme.surfaceColorAtElevation(collapsedElevation)
-        else MaterialTheme.colorScheme.surface
+        if (showElevation) elevatedColor
+        else surfaceColor
     )
 
     Surface(
