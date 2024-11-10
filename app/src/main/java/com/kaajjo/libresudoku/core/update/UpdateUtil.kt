@@ -63,8 +63,7 @@ object UpdateUtil {
     }
 
     fun checkForUpdate(allowBetas: Boolean = true): Release? {
-        // val currentVersion = BuildConfig.VERSION_NAME.toVersion()
-        val currentVersion = Version.Stable(1, 4, 2)
+        val currentVersion = BuildConfig.VERSION_NAME.toVersion()
 
         val latestRelease = getLatestRelease(allowBetas)
         val latestVersion = latestRelease.name?.toVersion() ?: Version.Stable(0, 0, 0)
