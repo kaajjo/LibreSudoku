@@ -35,6 +35,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -86,86 +87,89 @@ fun MoreScreen(
     val autoUpdateChannel by viewModel.updateChannel.collectAsStateWithLifecycle(UpdateChannel.Disabled)
     val updateDismissedName by viewModel.updateDismissedName.collectAsStateWithLifecycle("")
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-    ) {
+    Scaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .statusBarsPadding(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .verticalScroll(rememberScrollState())
+                .padding(innerPadding)
         ) {
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.headlineLarge
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.headlineLarge
+                )
+            }
+
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
             )
-        }
 
-        HorizontalDivider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp)
-        )
+            PreferenceRow(
+                title = stringResource(R.string.settings_title),
+                painter = painterResource(R.drawable.ic_settings_24),
+                onClick = { navigator.navigate(SettingsCategoriesScreenDestination()) }
+            )
+            PreferenceRow(
+                title = stringResource(R.string.backup_restore_title),
+                painter = rememberVectorPainter(image = Icons.Rounded.SettingsBackupRestore),
+                onClick = { navigator.navigate(BackupScreenDestination()) }
+            )
+            PreferenceRow(
+                title = stringResource(R.string.title_folders),
+                painter = rememberVectorPainter(Icons.Outlined.Folder),
+                onClick = { navigator.navigate(FoldersScreenDestination()) }
+            )
+            PreferenceRow(
+                title = stringResource(R.string.learn_screen_title),
+                painter = painterResource(R.drawable.ic_outline_help_outline_24),
+                onClick = { navigator.navigate(LearnScreenDestination()) }
+            )
+            PreferenceRow(
+                title = stringResource(R.string.about_title),
+                painter = painterResource(R.drawable.ic_outline_info_24),
+                onClick = { navigator.navigate(AboutScreenDestination()) }
+            )
 
-        PreferenceRow(
-            title = stringResource(R.string.settings_title),
-            painter = painterResource(R.drawable.ic_settings_24),
-            onClick = { navigator.navigate(SettingsCategoriesScreenDestination()) }
-        )
-        PreferenceRow(
-            title = stringResource(R.string.backup_restore_title),
-            painter = rememberVectorPainter(image = Icons.Rounded.SettingsBackupRestore),
-            onClick = { navigator.navigate(BackupScreenDestination()) }
-        )
-        PreferenceRow(
-            title = stringResource(R.string.title_folders),
-            painter = rememberVectorPainter(Icons.Outlined.Folder),
-            onClick = { navigator.navigate(FoldersScreenDestination()) }
-        )
-        PreferenceRow(
-            title = stringResource(R.string.learn_screen_title),
-            painter = painterResource(R.drawable.ic_outline_help_outline_24),
-            onClick = { navigator.navigate(LearnScreenDestination()) }
-        )
-        PreferenceRow(
-            title = stringResource(R.string.about_title),
-            painter = painterResource(R.drawable.ic_outline_info_24),
-            onClick = { navigator.navigate(AboutScreenDestination()) }
-        )
-
-        AnimatedVisibility(autoUpdateChannel != UpdateChannel.Disabled) {
-            var latestRelease by remember { mutableStateOf<Release?>(null) }
-            LaunchedEffect(Unit) {
-                if (latestRelease == null) {
-                    withContext(Dispatchers.IO) {
-                        runCatching {
-                            latestRelease =
-                                UpdateUtil.checkForUpdate(autoUpdateChannel == UpdateChannel.Beta)
+            AnimatedVisibility(autoUpdateChannel != UpdateChannel.Disabled) {
+                var latestRelease by remember { mutableStateOf<Release?>(null) }
+                LaunchedEffect(Unit) {
+                    if (latestRelease == null) {
+                        withContext(Dispatchers.IO) {
+                            runCatching {
+                                latestRelease =
+                                    UpdateUtil.checkForUpdate(autoUpdateChannel == UpdateChannel.Beta)
+                            }
                         }
                     }
                 }
-            }
-            latestRelease?.let { release ->
-                AnimatedVisibility(
-                    visible = release.name.toString() != updateDismissedName,
-                    enter = expandVertically() + fadeIn(),
-                    exit = shrinkVertically() + fadeOut()
-                ) {
-                    UpdateFoundBox(
-                        versionToUpdate = release.name ?: "?",
-                        onClick = {
-                            navigator.navigate(AutoUpdateScreenDestination())
-                        },
-                        onDismissed = {
-                            viewModel.dismissUpdate(release)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp)
-                            .padding(top = 8.dp)
-                    )
+                latestRelease?.let { release ->
+                    AnimatedVisibility(
+                        visible = release.name.toString() != updateDismissedName,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                        UpdateFoundBox(
+                            versionToUpdate = release.name ?: "?",
+                            onClick = {
+                                navigator.navigate(AutoUpdateScreenDestination())
+                            },
+                            onDismissed = {
+                                viewModel.dismissUpdate(release)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp)
+                                .padding(top = 8.dp)
+                        )
+                    }
                 }
             }
         }
