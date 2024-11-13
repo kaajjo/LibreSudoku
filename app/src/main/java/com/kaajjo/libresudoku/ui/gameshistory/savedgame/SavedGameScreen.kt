@@ -2,6 +2,7 @@ package com.kaajjo.libresudoku.ui.gameshistory.savedgame
 
 import android.os.Build.VERSION.SDK_INT
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -9,9 +10,12 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -20,24 +24,24 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Folder
-import androidx.compose.material.icons.rounded.ContentCopy
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,6 +49,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,6 +66,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
+import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.destinations.ExploreFolderScreenDestination
@@ -78,12 +84,18 @@ import kotlin.time.toKotlinDuration
     style = AnimatedNavigation::class,
     navArgsDelegate = SavedGameScreenNavArgs::class
 )
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+    ExperimentalLayoutApi::class
+)
 @Composable
 fun SavedGameScreen(
     viewModel: SavedGameViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
+
     val dateFormat by viewModel.dateFormat.collectAsStateWithLifecycle(
         initialValue = ""
     )
@@ -338,75 +350,111 @@ fun SavedGameScreen(
         }
 
         if (viewModel.exportDialog) {
-            val context = LocalContext.current
-            val clipboardManager = LocalClipboardManager.current
-            viewModel.boardEntity?.let {
-                ExportDialog(
-                    onDismiss = { viewModel.exportDialog = false },
-                    boardString = it.initialBoard
-                        .replace('0', '.')
-                        .uppercase(),
-                    onClickCopy = {
-                        clipboardManager.setText(
-                            AnnotatedString(
-                                it.initialBoard
-                                    .replace('0', '.')
-                                    .uppercase()
-                            )
+            ModalBottomSheet(
+                onDismissRequest = { viewModel.exportDialog = false },
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+            ) {
+                viewModel.boardEntity?.let {
+                    var copyInitial by rememberSaveable { mutableStateOf(true) }
+                    var selectedEmptyCell by rememberSaveable { mutableStateOf(SudokuParser.EMPTY_SEPARATORS.first()) }
+                    Column(
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.export_string_title),
+                            style = MaterialTheme.typography.titleLarge
                         )
-                        // Android 13 and higher have its own notification when copying
-                        if (SDK_INT < 33) {
-                            Toast.makeText(
-                                context,
-                                R.string.export_string_state_copied,
-                                Toast.LENGTH_SHORT
-                            ).show()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Row {
+                                FilterChip(
+                                    selected = copyInitial,
+                                    label = {
+                                        Text(stringResource(R.string.saved_game_initial))
+                                    },
+                                    onClick = {
+                                        copyInitial = true
+                                    }
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                FilterChip(
+                                    selected = !copyInitial,
+                                    label = {
+                                        Text(stringResource(R.string.saved_game_current))
+                                    },
+                                    onClick = {
+                                        copyInitial = false
+                                    }
+                                )
+                            }
+                            viewModel.savedGame?.let { savedGame ->
+                                AnimatedContent(
+                                    if (copyInitial) it.initialBoard else savedGame.currentBoard
+                                        .replace('0', selectedEmptyCell)
+                                        .uppercase()
+                                ) { board ->
+                                    OutlinedTextField(
+                                        modifier = Modifier
+                                            .padding(top = 8.dp),
+                                        value = board,
+                                        onValueChange = { },
+                                        readOnly = true
+                                    )
+                                }
+                            }
+                            Text(
+                                text = stringResource(R.string.export_empty_cell),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            FlowRow(
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                SudokuParser.EMPTY_SEPARATORS
+                                    .forEach {
+                                        FilterChip(
+                                            onClick = {
+                                                selectedEmptyCell = it
+                                            },
+                                            label = {
+                                                Text(it.toString())
+                                            },
+                                            selected = selectedEmptyCell == it
+                                        )
+                                    }
+                            }
+                        }
+                        Button(
+                            onClick = {
+                                val exported =
+                                    if (copyInitial) it.initialBoard else viewModel.savedGame?.currentBoard
+                                        ?: ""
+                                            .replace('0', selectedEmptyCell)
+                                            .uppercase()
+
+                                clipboardManager.setText(
+                                    AnnotatedString(exported)
+                                )
+                                // Android 13 and higher have its own notification when copying
+                                if (SDK_INT < 33) {
+                                    Toast.makeText(
+                                        context,
+                                        R.string.export_string_state_copied,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            },
+                            modifier = Modifier
+                                .padding(vertical = 12.dp)
+                                .align(Alignment.End)
+                        ) {
+                            Text(stringResource(R.string.export_string_copy))
                         }
                     }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ExportDialog(
-    onDismiss: () -> Unit,
-    boardString: String,
-    onClickCopy: () -> Unit
-) {
-    AlertDialog(
-        title = { Text(stringResource(R.string.export_string_title)) },
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.action_cancel))
-            }
-        },
-        text = {
-            Column {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(top = 8.dp),
-                    value = boardString,
-                    onValueChange = { },
-                    readOnly = true
-                )
-                FilledTonalButton(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .align(Alignment.CenterHorizontally),
-                    onClick = {
-                        onClickCopy()
-                        onDismiss()
-                    },
-                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding
-                ) {
-                    Icon(Icons.Rounded.ContentCopy, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.export_string_copy))
                 }
             }
         }
-    )
+    }
 }

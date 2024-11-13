@@ -8,7 +8,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class SudokuParser {
-    private val emptySeparators = listOf('0', '.')
     private val radix = 13
     fun parseBoard(
         board: String,
@@ -31,7 +30,7 @@ class SudokuParser {
             val value = if (emptySeparator != null) {
                 if (board[i] == emptySeparator) 0 else boardDigitToInt(board[i])
             } else {
-                if (board[i] in emptySeparators) 0 else boardDigitToInt(board[i])
+                if (board[i] in SudokuParser.EMPTY_SEPARATORS) 0 else boardDigitToInt(board[i])
             }
 
             listBoard[i / size][i % size].value = value
@@ -109,9 +108,14 @@ class SudokuParser {
         }
         return json.encodeToString(cages)
     }
+
     fun parseKillerSudokuCages(cagesString: String): List<Cage> {
         val json = Json { ignoreUnknownKeys = true }
         return json.decodeFromString<List<Cage>>(cagesString)
+    }
+
+    companion object {
+        val EMPTY_SEPARATORS = listOf('0', '.', '-', '_')
     }
 }
 
