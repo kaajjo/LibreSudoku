@@ -29,7 +29,7 @@ import com.materialkolor.ktx.harmonize
 @androidx.compose.runtime.Composable
 fun AdvancedHintContainer(
     advancedHintData: AdvancedHintData,
-    onApplyClick: () -> Unit,
+    onApplyClick: (() -> Unit)?,
     onBackClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -111,7 +111,8 @@ fun AdvancedHintContainer(
                 Text(stringResource(R.string.nav_back))
             }
             FilledTonalButton(
-                onClick = onApplyClick
+                onClick = onApplyClick ?: { },
+                enabled = onApplyClick != null
             ) {
                 Text(stringResource(R.string.action_apply))
             }

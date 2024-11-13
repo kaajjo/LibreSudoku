@@ -61,6 +61,7 @@ import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.qqwing.advanced_hint.AdvancedHintData
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.destinations.SettingsAdvancedHintScreenDestination
 import com.kaajjo.libresudoku.destinations.SettingsCategoriesScreenDestination
@@ -348,6 +349,28 @@ fun GameScreen(
                             onApplyClick = {
                                 viewModel.applyAdvancedHint()
                             },
+                            onBackClick = {
+                                viewModel.cancelAdvancedHint()
+                            },
+                            onSettingsClick = {
+                                navigator.navigate(
+                                    SettingsAdvancedHintScreenDestination
+                                )
+                            }
+                        )
+                    }
+                    if (advancedHintData == null) {
+                        AdvancedHintContainer(
+                            advancedHintData = AdvancedHintData(
+                                titleRes = R.string.advanced_hint_no_hint_title,
+                                textResWithArg = Pair(
+                                    R.string.advanced_hint_no_hint,
+                                    emptyList()
+                                ),
+                                targetCell = Cell(-1, -1, 0),
+                                helpCells = emptyList()
+                            ),
+                            onApplyClick = null,
                             onBackClick = {
                                 viewModel.cancelAdvancedHint()
                             },

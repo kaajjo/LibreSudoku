@@ -402,4 +402,6 @@
     <string name="action_view_on_github">Посмотреть на GitHub</string>
     <string name="new_update_found_action">Перейти в настройки, чтобы установить</string>
     <string name="auto_updates_summary">Автоматическая проверка обновлений</string>
+    <string name="advanced_hint_no_hint">Не удалось найти подсказку. Может быть, это слишком трудно для нас на текущий момент</string>
+    <string name="advanced_hint_no_hint_title">Нет подсказки</string>
 </resources>

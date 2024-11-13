@@ -404,4 +404,6 @@
     <string name="action_view_on_github">View on GitHub</string>
     <string name="new_update_found_action">Go to settings to update</string>
     <string name="auto_updates_summary">Automatically check for updates</string>
+    <string name="advanced_hint_no_hint">Couldn\'t get a hint. Maybe it\'s too hard for us at the moment</string>
+    <string name="advanced_hint_no_hint_title">No hint</string>
 </resources>
