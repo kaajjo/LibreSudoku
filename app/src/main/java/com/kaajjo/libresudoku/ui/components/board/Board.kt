@@ -225,18 +225,16 @@ fun Board(
             .pointerInput(key1 = enabled, key2 = board) {
                 detectTapGestures(
                     onTap = {
-                        if (enabled) {
-                            val totalOffset = it / zoom + offset
-                            val row =
-                                floor((totalOffset.y) / cellSize)
-                                    .toInt()
-                                    .coerceIn(board.indices)
-                            val column =
-                                floor((totalOffset.x) / cellSize)
-                                    .toInt()
-                                    .coerceIn(board.indices)
-                            onClick(board[row][column])
-                        }
+                        val totalOffset = it / zoom + offset
+                        val row =
+                            floor((totalOffset.y) / cellSize)
+                                .toInt()
+                                .coerceIn(board.indices)
+                        val column =
+                            floor((totalOffset.x) / cellSize)
+                                .toInt()
+                                .coerceIn(board.indices)
+                        onClick(board[row][column])
                     },
                     onLongPress = {
                         if (enabled) {

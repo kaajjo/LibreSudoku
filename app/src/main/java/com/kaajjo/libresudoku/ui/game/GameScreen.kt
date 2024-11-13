@@ -10,15 +10,21 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.AutoAwesome
+import androidx.compose.material.icons.rounded.PlayCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -42,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -308,6 +315,23 @@ fun GameScreen(
                     .fillMaxWidth()
                     .padding(vertical = 12.dp)
             ) {
+                Column(
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
+                    AnimatedVisibility(
+                        visible = !viewModel.gamePlaying,
+                        enter = expandVertically(clip = false) + fadeIn(),
+                        exit = shrinkVertically(clip = false) + fadeOut()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.PlayCircle,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(48.dp)
+                                .shadow(12.dp)
+                        )
+                    }
+                }
                 Board(
                     modifier = Modifier
                         .blur(boardBlur)
@@ -322,6 +346,10 @@ fun GameScreen(
                             cell = cell,
                             remainingUse = remainingUse,
                         )
+                        if (!viewModel.gamePlaying) {
+                            localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                            viewModel.startTimer()
+                        }
                     },
                     onLongClick = { cell ->
                         if (viewModel.processInput(cell, remainingUse, longTap = true)) {
@@ -605,7 +633,6 @@ fun GameScreen(
         }
     }
 }
-
 
 
 @Composable
