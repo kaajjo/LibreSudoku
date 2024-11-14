@@ -14,7 +14,6 @@ activity-compose = "1.9.3"
 material3 = "1.3.1"
 accompanist-pager = "0.28.0"
 accompanist-systemuicontroller = "0.28.0"
-navigation-compose = "2.8.3"
 ksp = "2.0.21-1.0.25"
 compose-destinations = "1.11.6"
 serialization-json = "1.6.3"
@@ -32,47 +31,65 @@ okhttp = "5.0.0-alpha.14"
 composeMarkdown = "0.5.4"
 
 [libraries]
-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx"}
+# Android App
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose"}
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx"}
+documentFile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentFile"}
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime"}
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-runtime"}
+
+# Compose
 ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
 ui-util = { group = "androidx.compose.ui", name = "ui-util", version.ref = "compose" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose" }
+material = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
 material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose" }
+foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
+graphics-shape = { group = "androidx.graphics", name = "graphics-shapes", version.ref = "graphicsShape" }
+compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "animations-core", version.ref = "compose-destinations" }
+compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "compose-destinations" }
 accompanist-pager-indicators = { group = "com.google.accompanist", name = "accompanist-pager-indicators", version.ref = "accompanist-pager" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist-systemuicontroller" }
-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore-preferences" }
+
+# Tests
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+
+# DI Hilt
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation" }
+hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hilt-common" }
+hilt-common-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-common" }
+hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt-work" }
+
+# Database
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-aboutLibraries = { group = "com.mikepenz", name = "aboutlibraries-compose", version.ref = "aboutLibraries" }
-compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "animations-core", version.ref = "compose-destinations" }
-compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "compose-destinations" }
-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization-json" }
-documentFile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentFile"}
-workRuntimeKtx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt-work" }
-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hilt-common" }
-hilt-common-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-common" }
-materialKolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialKolor" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-material = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
-graphics-shape = { group = "androidx.graphics", name = "graphics-shapes", version.ref = "graphicsShape" }
+
+# DataStore
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore-preferences" }
+
+# Network
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+
+# WorkManager
+workRuntimeKtx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+
+# Kotlin
+serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization-json" }
+
+# Other
+aboutLibraries = { group = "com.mikepenz", name = "aboutlibraries-compose", version.ref = "aboutLibraries" }
 composeMarkdown = { group = "com.github.jeziellago", name = "compose-markdown", version.ref = "composeMarkdown"}
+materialKolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialKolor" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

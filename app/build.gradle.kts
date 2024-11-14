@@ -77,8 +77,6 @@ dependencies {
     testImplementation(libs.junit)
     implementation(libs.graphics.shape)
 
-    // implementation(libs.navigation.compose)
-
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.pager.indicators)
 
