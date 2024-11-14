@@ -391,7 +391,7 @@ fun SavedGameScreen(
                             }
                             viewModel.savedGame?.let { savedGame ->
                                 AnimatedContent(
-                                    if (copyInitial) it.initialBoard else savedGame.currentBoard
+                                    (if (copyInitial) it.initialBoard else savedGame.currentBoard)
                                         .replace('0', selectedEmptyCell)
                                         .uppercase()
                                 ) { board ->
@@ -429,10 +429,10 @@ fun SavedGameScreen(
                         Button(
                             onClick = {
                                 val exported =
-                                    if (copyInitial) it.initialBoard else viewModel.savedGame?.currentBoard
-                                        ?: ""
-                                            .replace('0', selectedEmptyCell)
-                                            .uppercase()
+                                    (if (copyInitial) it.initialBoard else viewModel.savedGame?.currentBoard
+                                        ?: "")
+                                        .replace('0', selectedEmptyCell)
+                                        .uppercase()
 
                                 clipboardManager.setText(
                                     AnnotatedString(exported)
