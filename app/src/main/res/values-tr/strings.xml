@@ -338,4 +338,15 @@
     <string name="type_killer_6x6">Kazık 6x6</string>
     <string name="type_killer_12x12">Kazık 12x12</string>
     <string name="app_version">Sürüm %1$s (%2$s)</string>
+    <string name="action_restart_app">Uygulamayı yeniden başlat</string>
+    <string name="crash_screen_title">Tüh, bir şeyler yanlış gitti</string>
+    <string name="action_share_crash_log">Çökme günlüğünü paylaş</string>
+    <string name="hosted_weblate">Hosted Weblate üzerinde çevirilere yardım edebilirsiniz</string>
+    <string name="perf_appearance_summary">Koyu tema, renk düzeni, tahta teması, tarih biçimi…</string>
+    <string name="perf_gameplay_summary">Giriş yöntemi, hata sınırı, zamanlayıcı…</string>
+    <string name="perf_assistance_summary">Hata denetimi, aynı değerleri vurgula, kalan kullanımlar…</string>
+    <string name="perf_other_summary">Türü ve zorluğu hatırla, ekranı uyanık tut, istatistikleri sıfırla…</string>
+    <string name="pref_board_theme_summary">Vurgu renklerini uygula, konum çizgileri, yazı tipi boyutu…</string>
+    <string name="action_generate">Oluştur</string>
+    <string name="generating_number_of">%1$s/%2$s oluşturuluyor</string>
 </resources>

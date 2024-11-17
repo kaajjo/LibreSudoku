@@ -343,4 +343,15 @@
     <string name="type_killer_12x12">Asesino 12x12</string>
     <string name="type_killer_9x9">Asesino 9x9</string>
     <string name="type_killer_6x6">Asesino 6x6</string>
+    <string name="action_share_crash_log">Compartir registro de errores</string>
+    <string name="action_restart_app">Reiniciar la aplicación</string>
+    <string name="crash_screen_title">Vaya, algo salió mal</string>
+    <string name="perf_appearance_summary">Tema oscuro, combinación de colores, tema del tablero, formato de fecha…</string>
+    <string name="perf_gameplay_summary">Método de entrada, límite de errores, temporizador…</string>
+    <string name="perf_assistance_summary">Comprobación de errores, resaltar valores idénticos, usos restantes…</string>
+    <string name="hosted_weblate">Puedes ayudar con la traducción en Hosted Weblate</string>
+    <string name="perf_other_summary">Recuerda la dificultad, mantén la pantalla activa, reinicia las estadísticas…</string>
+    <string name="pref_board_theme_summary">Aplicar colores de acento, posición de resaltado, tamaño de fuente…</string>
+    <string name="action_generate">Generar</string>
+    <string name="generating_number_of">Generando %1$s/%2$s</string>
 </resources>

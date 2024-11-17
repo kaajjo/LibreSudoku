@@ -334,4 +334,24 @@
     <string name="auto_backup_folder_access_description">Pentru copii de securitate automate, trebuie să permiteți accesul la un dosar. Aplicația va crea copii de securitate în dosarul pe care l-ați ales</string>
     <string name="action_grant">Permiteți accesul</string>
     <string name="date_last_played">Data ultimului joc</string>
+    <string name="action_share_crash_log">Partajați registrul de crash</string>
+    <string name="action_restart_app">Reporniți aplicatia</string>
+    <string name="crash_screen_title">Ups, ceva nu a mers</string>
+    <string name="about_github_source_code">Sursă cod pe GitHub</string>
+    <string name="type_killer_9x9">Killer 9x9</string>
+    <string name="type_killer_6x6">Killer 6x6</string>
+    <string name="type_killer_12x12">Killer 12x12</string>
+    <string name="libraries_licenses">Licențe</string>
+    <string name="telegram_link">Alăturați-vă pe Telegram</string>
+    <string name="donation_title">Donație</string>
+    <string name="donation_description">Această aplicație este gratuită și nu va avea anunțuri vreodată. Mă puteți ajuta mai jos</string>
+    <string name="app_version">Versiune %1$s (%2$s)</string>
+    <string name="hosted_weblate">Puteți ajuta cu traducerea pe Hosted Weblate</string>
+    <string name="perf_appearance_summary">Temă întunecată, culori schemă, temă tabel, format dată…</string>
+    <string name="perf_gameplay_summary">Metodă de introducere, limită greșeli, temporizator…</string>
+    <string name="perf_assistance_summary">Verificare greșeli, evidențiere valori identice, folosiri rămase…</string>
+    <string name="perf_other_summary">Salvare tip și dificultate, ținere ecran pornit, resetare statistici…</string>
+    <string name="pref_board_theme_summary">Aplicare culori de accent, poziționare linii, mărime font…</string>
+    <string name="action_generate">Generați</string>
+    <string name="generating_number_of">Se generează %1$s/%2$s</string>
 </resources>

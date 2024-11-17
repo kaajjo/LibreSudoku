@@ -233,7 +233,7 @@
     <string name="daily">प्रतिदिन</string>
     <string name="restore_existing_data_alert">मौजूदा डेटा हटा दिया जाएगा!</string>
     <string name="action_create">बनाएं</string>
-    <string name="action_grant">अनुदान</string>
+    <string name="action_grant">प्रदान करें</string>
     <string name="auto_backup_folder_access_description">स्वचालित बैकअप के लिए, आपको किसी फ़ोल्डर तक पहुंच प्रदान करनी होगी। ऐप आपके द्वारा चुने गए फ़ोल्डर में बैकअप बनाएगा</string>
     <string name="auto_backup_folder_access">स्वचालित बैकअप के लिए फ़ोल्डर पहुंच</string>
     <string name="last_backup_date">नवीनतम बैकअप: %1$s</string>
@@ -334,4 +334,19 @@
     <string name="donation_description">यह ऐप हमेशा के लिए मुफ़्त और विज्ञापन-मुक्त है। आप नीचे मेरा समर्थन कर सकते हैं</string>
     <string name="libraries_licenses">लाइसेंस</string>
     <string name="telegram_link">टेलीग्राम पर हमसे जुड़ें</string>
+    <string name="type_killer_9x9">किलर 9x9</string>
+    <string name="type_killer_6x6">किलर 6x6</string>
+    <string name="type_killer_12x12">किलर 12x12</string>
+    <string name="app_version">संस्करण %1$s (%2$s)</string>
+    <string name="hosted_weblate">आप होस्टेड वेबलेट पर अनुवाद में सहायता कर सकते हैं</string>
+    <string name="perf_appearance_summary">डार्क थीम, रंग योजना, बोर्ड थीम, दिनांक प्रारूप…</string>
+    <string name="action_share_crash_log">क्रैश लॉग शेयर करें</string>
+    <string name="action_restart_app">ऐप पुनः प्रारंभ करें</string>
+    <string name="crash_screen_title">ओह, कुछ ग़लत हो गया</string>
+    <string name="perf_gameplay_summary">इनपुट विधि, गलती सीमा, टाइमर…</string>
+    <string name="perf_assistance_summary">गलतियों की जाँच, समान मानों को हाइलाइट करना, शेष उपयोग…</string>
+    <string name="perf_other_summary">प्रकार और कठिनाई याद रखें, स्क्रीन को चालू रखें, आँकड़े रीसेट करें…</string>
+    <string name="pref_board_theme_summary">एक्सेंट रंग, स्थिति रेखाएँ, फ़ॉन्ट आकार लागू करें…</string>
+    <string name="action_generate">उत्पन्न करें</string>
+    <string name="generating_number_of">%1$s/%2$s उत्पन्न किया जा रहा है</string>
 </resources>

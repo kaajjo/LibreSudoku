@@ -314,4 +314,16 @@
     <string name="autobackup_never">Nunca</string>
     <string name="restore_existing_data_alert">Dados existentes serão deletados!</string>
     <string name="pref_monet_style">Estilo Monet</string>
+    <string name="type_killer_6x6">Assassino 6x6</string>
+    <string name="type_killer_12x12">Assassino 12x12</string>
+    <string name="monet_tonalspot">Ponto tonal</string>
+    <string name="monet_neutral">Neutro</string>
+    <string name="monet_vibrant">Vibrante</string>
+    <string name="monet_expressive">Expressivo</string>
+    <string name="monet_rainbow">Arco-íris</string>
+    <string name="monet_fruitsalad">Salada de frutas</string>
+    <string name="monet_monochrome">Monocromático</string>
+    <string name="type_killer_9x9">Assassino 9x9</string>
+    <string name="about_github_source_code">Código fonte no Github</string>
+    <string name="libraries_licenses">Licenças</string>
 </resources>
