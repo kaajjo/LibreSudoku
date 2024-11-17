@@ -345,7 +345,6 @@
         <item quantity="many">Последние %1$d игр</item>
         <item quantity="other">Последние %1$d игр</item>
     </plurals>
-
     <string name="telegram" translatable="false">Telegram</string>
     <string name="telegram_link">Присоединяйтесь в Telegram</string>
     <string name="donation_title">Пожертвование</string>
@@ -361,7 +360,6 @@
     <string name="perf_assistance_summary">Проверка ошибок, подсветка одинаковых чисел, оставшиеся использования…</string>
     <string name="perf_other_summary">Запоминать сложность и тип, не выключать экран, сброс статистики…</string>
     <string name="pref_board_theme_summary">Применять акцентные цвета, выделение позиции, размер шрифта…</string>
-
     <string name="action_share_crash_log">Поделиться логами</string>
     <string name="action_restart_app">Перезапустить приложение</string>
     <string name="crash_screen_title">Упс, что-то пошло не так</string>
@@ -380,7 +378,6 @@
     <string name="advanced_hint_in_development">Больше техник в разработке…</string>
     <string name="label_beta">Бета</string>
     <string name="settings_advanced_hint_category_techniques">Техники</string>
-
     <string name="auto_update_title">Автоматические обновления</string>
     <string name="update_whats_new">Что нового</string>
     <string name="action_download">Скачать</string>
@@ -405,4 +402,7 @@
     <string name="advanced_hint_no_hint">Не удалось найти подсказку. Может быть, это слишком трудно для нас на текущий момент</string>
     <string name="advanced_hint_no_hint_title">Нет подсказки</string>
     <string name="export_empty_cell">Пустая клетка</string>
+    <string name="action_apply">Применить</string>
+    <string name="nav_back">Назад</string>
+    <string name="check_for_update_latest_summary">Так держать!</string>
 </resources>
