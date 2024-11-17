@@ -359,6 +359,11 @@ fun GameScreen(
                     identicalNumbersHighlight = highlightIdentical,
                     errorsHighlight = errorHighlight != 0,
                     positionLines = positionLines,
+                    notesToHighlight = if (viewModel.digitFirstNumber > 0) {
+                        viewModel.notes.filter { it.value == viewModel.digitFirstNumber }
+                    } else {
+                        emptyList()
+                    },
                     enabled = viewModel.gamePlaying && !viewModel.endGame,
                     questions = !(viewModel.gamePlaying || viewModel.endGame) && SDK_INT < Build.VERSION_CODES.R,
                     renderNotes = renderNotes && !viewModel.showSolution,

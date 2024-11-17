@@ -45,7 +45,9 @@ fun DrawScope.drawRoundCell(
 fun DrawScope.drawNotes(
     size: Int,
     paint: Paint,
+    highlightPaint: Paint,
     notes: List<Note>,
+    notesToHighlight: List<Note>,
     cellSize: Float,
     cellSizeDivWidth: Float,
     killerSumBounds: android.graphics.Rect,
@@ -61,13 +63,29 @@ fun DrawScope.drawNotes(
             val noteTextMeasure = paint.measureText(textToDraw)
 
             val noteCol = getNoteColumnNumber(note.value, size)
+            val noteRow = getNoteRowNumber(note.value, size)
+
+
+
+            val horizontalPadding =
+                if (noteRow == 0) noteTextMeasure / 3f
+                else if (noteRow == 1) 0f
+                else if (noteRow == 2 && note.value > 9) 0f
+                else -(noteTextMeasure / 3f)
+
+
+            if (notesToHighlight.contains(note)) {
+                canvas.nativeCanvas.drawCircle(
+                    note.col * cellSize + cellSizeDivWidth / 2f + (cellSizeDivWidth * noteRow) + horizontalPadding,
+                    note.row * cellSize + noteBounds.height() * 1.5f + killerSumBounds.height() + (cellDivHeight * noteCol) - (noteBounds.height() * 0.5f),
+                    noteTextMeasure * 1.1f,
+                    highlightPaint
+                )
+            }
 
             canvas.nativeCanvas.drawText(
                 textToDraw,
-                note.col * cellSize + cellSizeDivWidth / 2f + (cellSizeDivWidth * getNoteRowNumber(
-                    note.value,
-                    size
-                )) - noteTextMeasure / 2f,
+                note.col * cellSize + cellSizeDivWidth / 2f + (cellSizeDivWidth * noteRow) - noteTextMeasure / 2f + horizontalPadding,
                 note.row * cellSize + noteBounds.height() * 1.5f + killerSumBounds.height() + (cellDivHeight * noteCol),
                 paint
             )
@@ -135,10 +153,11 @@ fun roundRectForCell(
     rect: Rect,
     cornerRadius: CornerRadius
 ): RoundRect {
-    val topLeft = if (row == 0 && col == 0) cornerRadius  else CornerRadius.Zero
-    val topRight = if (row == 0 && col == gameSize - 1)cornerRadius else CornerRadius.Zero
+    val topLeft = if (row == 0 && col == 0) cornerRadius else CornerRadius.Zero
+    val topRight = if (row == 0 && col == gameSize - 1) cornerRadius else CornerRadius.Zero
     val bottomLeft = if (row == gameSize - 1 && col == 0) cornerRadius else CornerRadius.Zero
-    val bottomRight = if (row == gameSize - 1 && col == gameSize - 1) cornerRadius else CornerRadius.Zero
+    val bottomRight =
+        if (row == gameSize - 1 && col == gameSize - 1) cornerRadius else CornerRadius.Zero
 
     return RoundRect(
         rect = rect,

@@ -79,6 +79,7 @@ fun Board(
     questions: Boolean = false,
     renderNotes: Boolean = true,
     cellsToHighlight: List<Cell>? = null,
+    notesToHighlight: List<Note> = emptyList(),
     zoomable: Boolean = false,
     boardColors: SudokuBoardColors = LocalBoardColors.current,
     crossHighlight: Boolean = false,
@@ -112,8 +113,8 @@ fun Board(
         val horThick by remember(size) { mutableIntStateOf(ceil(sqrt(size.toFloat())).toInt()) }
 
         var fontSizePx = with(LocalDensity.current) { mainTextSize.toPx() }
-        var noteSizePx = with(LocalDensity.current) { noteTextSize.toPx() }
-        var killerSumSizePx = with(LocalDensity.current) { noteTextSize.toPx() * 0.9f }
+        val noteSizePx = with(LocalDensity.current) { (cellSizeDivWidth * 0.8f).toSp().toPx() }
+        val killerSumSizePx = with(LocalDensity.current) { noteSizePx * 1.1f }
 
         val thinLineWidth = with(LocalDensity.current) { 1.3.dp.toPx() }
         val thickLineWidth = with(LocalDensity.current) { 1.3.dp.toPx() }
@@ -163,6 +164,15 @@ fun Board(
             )
         }
 
+        val noteHighlightPaint by remember {
+            mutableStateOf(
+                Paint().apply {
+                    color = highlightColor.copy(alpha = 0.3f).toArgb()
+                    isAntiAlias = true
+                }
+            )
+        }
+
         var killerSumPaint by remember {
             mutableStateOf(
                 Paint().apply {
@@ -178,16 +188,6 @@ fun Board(
             fontSizePx = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP,
                 mainTextSize.value,
-                context.resources.displayMetrics
-            )
-            noteSizePx = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP,
-                noteTextSize.value,
-                context.resources.displayMetrics
-            )
-            killerSumSizePx = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP,
-                noteTextSize.value * 0.9f,
                 context.resources.displayMetrics
             )
             textPaint = Paint().apply {
@@ -397,7 +397,9 @@ fun Board(
                 drawNotes(
                     size = size,
                     paint = notePaint,
+                    highlightPaint = noteHighlightPaint,
                     notes = notes,
+                    notesToHighlight = notesToHighlight,
                     cellSize = cellSize,
                     cellSizeDivWidth = cellSizeDivWidth,
                     killerSumBounds = killerSumBounds
