@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.Cell
-import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.Cage
 import com.kaajjo.libresudoku.core.qqwing.CageGenerator
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
@@ -20,8 +19,10 @@ import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -60,18 +61,7 @@ class HomeViewModel
     )
 
     val lastSelectedGameDifficultyType = appSettingsManager.lastSelectedGameDifficultyType
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            initialValue = Pair(difficulties.first(), types.first())
-        )
-
     val saveSelectedGameDifficultyType = appSettingsManager.saveSelectedGameDifficultyType
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            initialValue = PreferencesConstants.DEFAULT_SAVE_LAST_SELECTED_DIFF_TYPE
-        )
 
     var selectedDifficulty by mutableStateOf(difficulties.first())
     var selectedType by mutableStateOf(types.first())
@@ -98,7 +88,8 @@ class HomeViewModel
         solvedPuzzle = List(size) { row -> List(size) { col -> Cell(row, col, 0) } }
 
         viewModelScope.launch(Dispatchers.Default) {
-            if (saveSelectedGameDifficultyType.value) {
+            val saveSelectedGameDifficultyAndType = runBlocking { appSettingsManager.saveSelectedGameDifficultyType.first() }
+            if (saveSelectedGameDifficultyAndType) {
                 appSettingsManager.setLastSelectedGameDifficultyType(
                     difficulty = selectedDifficulty,
                     type = selectedType
@@ -182,13 +173,6 @@ class HomeViewModel
                     )
                 }
             }
-        }
-    }
-
-    fun restoreDifficultyAndType() {
-        if (saveSelectedGameDifficultyType.value) {
-            selectedDifficulty = lastSelectedGameDifficultyType.value.first
-            selectedType = lastSelectedGameDifficultyType.value.second
         }
     }
 }

@@ -54,6 +54,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kaajjo.libresudoku.R
+import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
+import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.toFormattedString
 import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.destinations.GameScreenDestination
@@ -83,6 +85,23 @@ fun HomeScreen(
 
     val lastGame by viewModel.lastSavedGame.collectAsStateWithLifecycle()
     val lastGames by viewModel.lastGames.collectAsStateWithLifecycle(initialValue = emptyMap())
+    val saveSelectedGameDifficultyType by viewModel.saveSelectedGameDifficultyType.collectAsStateWithLifecycle(
+        false
+    )
+    val lastSelectedGameDifficultyType by viewModel.lastSelectedGameDifficultyType.collectAsStateWithLifecycle(
+        Pair(
+            GameDifficulty.Easy, GameType.Default9x9
+        )
+    )
+
+
+    LaunchedEffect(saveSelectedGameDifficultyType) {
+        if (saveSelectedGameDifficultyType) {
+            val (difficulty, type) = lastSelectedGameDifficultyType
+            viewModel.selectedDifficulty = difficulty
+            viewModel.selectedType = type
+        }
+    }
 
     Scaffold { paddingValues ->
         Column(
@@ -197,7 +216,7 @@ fun HomeScreen(
         }
 
         if (lastGamesBottomSheet) {
-            ModalBottomSheet(onDismissRequest = { lastGamesBottomSheet = false } ) {
+            ModalBottomSheet(onDismissRequest = { lastGamesBottomSheet = false }) {
                 Text(
                     text = pluralStringResource(
                         id = R.plurals.last_x_games,
@@ -232,13 +251,6 @@ fun HomeScreen(
                     }
                 }
             }
-        }
-
-        LaunchedEffect(
-            viewModel.lastSelectedGameDifficultyType,
-            viewModel.saveSelectedGameDifficultyType
-        ) {
-            viewModel.restoreDifficultyAndType()
         }
     }
 }
