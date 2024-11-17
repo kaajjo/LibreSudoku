@@ -405,4 +405,5 @@
     <string name="action_apply">Применить</string>
     <string name="nav_back">Назад</string>
     <string name="check_for_update_latest_summary">Так держать!</string>
+    <string name="update_channel">Канал обновлений</string>
 </resources>

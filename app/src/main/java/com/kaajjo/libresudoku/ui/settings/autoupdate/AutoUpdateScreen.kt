@@ -284,7 +284,7 @@ fun AutoUpdateScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Канал обновлений",
+                        text = stringResource(R.string.update_channel),
                         style = MaterialTheme.typography.titleMedium,
                         color = with(MaterialTheme.colorScheme) {
                             onSurface.harmonize(primary)

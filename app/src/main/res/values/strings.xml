@@ -404,4 +404,5 @@
     <string name="advanced_hint_no_hint">Couldn\'t get a hint. Maybe it\'s too hard for us at the moment</string>
     <string name="advanced_hint_no_hint_title">No hint</string>
     <string name="export_empty_cell">Empty cell</string>
+    <string name="update_channel">Update channel</string>
 </resources>
