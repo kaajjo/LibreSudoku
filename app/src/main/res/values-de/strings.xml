@@ -227,7 +227,7 @@
     <string name="learn_app_toolbar_notes_menu">Du kannst den Notiz-Button gedrückt halten um das Notizen-Menü zu öffnen, wo du Aktionen wie das Leeren oder Berechnen von Notizen durchführen und deren Sichtbarkeit steuern kannst</string>
     <string name="saved_game_in_progress">In Arbeit</string>
     <string name="learn_app_toolbar">Werkzeugkasten</string>
-    <string name="sudoku_rules_mistakes_explanation">Der erste Fehler sind 2 Zweien in der sechsten Box. Erinnerst du dich an die Regel, dass es keine doppelten Zahlen in einer Box geben kann\? Der zweite Fehler ist die Zahl 6 in Zeile 2, Spalte 8 (R2C8), da dort bereits eine 6 in dieser Spalte ist (R5C8)</string>
+    <string name="sudoku_rules_mistakes_explanation">Der erste Fehler sind 2 Zweien in der sechsten Box. Erinnerst du dich an die Regel, dass es keine doppelten Zahlen in einer Box geben kann? Der zweite Fehler ist die Zahl 6 in Zeile 2, Spalte 8 (R2C8), da dort bereits eine 6 in dieser Spalte ist (R5C8)</string>
     <string name="custom_sudoku_delete_dialog_title">Ausgewählte löschen</string>
     <string name="custom_sudoku_delete_dialog_text">Bist du dir sicher, dass du das ausgewählte Sudoku löschen willst\? Dies kann nicht rückgängig gemacht werden</string>
     <string name="learn_basic_6">Als Ergebnis bleibt uns nur noch eine Zelle, in der die Zahl 4 stehen kann. Dies ist die Zelle R1C3</string>

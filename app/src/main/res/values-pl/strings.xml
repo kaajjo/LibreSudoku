@@ -246,7 +246,7 @@
     <string name="learn_app_toolbar_notes_menu">Możesz nacisnąć i przytrzymać przycisk Notatki, aby otworzyć menu, w którym możesz czyścić lub obliczać notatki oraz przełączać ich widoczność</string>
     <string name="naked_pairs_explanation">Istnieją dwa pola, które zawierają te same wartości wpisane ołówkiem. W tej chwili nie możemy powiedzieć, która z nich to 2, a która to 3.
 \nPonieważ zasady Sudoku mówią nam, że w każdym kwadracie może być tylko jedna cyfra 2 i tylko jedna cyfra 3, możemy założyć, że jedno z nich to 2, a drugie to 3</string>
-    <string name="sudoku_rules_mistakes_explanation">Pierwszy błąd to dwie dwójki w szóstym kwadracie. Pamiętasz zasadę, że w jednym kwadracie nie może być podwójnych wartości\? Drugi błąd to liczba 6 w rzędzie 2, kolumna 8 (W2K8), ponieważ w tej kolumnie jest już 6 w W5K8</string>
+    <string name="sudoku_rules_mistakes_explanation">Pierwszy błąd to dwie dwójki w szóstym kwadracie. Pamiętasz zasadę, że w jednym kwadracie nie może być podwójnych wartości? Drugi błąd to liczba 6 w rzędzie 2, kolumna 8 (W2K8), ponieważ w tej kolumnie jest już 6 w W5K8</string>
     <string name="move_games_to_folder_subtitle">Wybierz folder, do którego chcesz przenieść zaznaczone gry</string>
     <string name="learn_basic_5">Ta sama logika dotyczy wierszy i kolumn. Spójrz na pierwszy wiersz. Cyfra 4 w W7K3 blokuje trzecią kolumnę w naszym wierszu. Cyfra 4 w W3K5 blokuje jednocześnie dwie kolumny (4 i 6), ponieważ w tym samym kwadracie nie może być innych czwórek. W6K7 blokuje kolumnę 7</string>
     <string name="history_item_id">Gra ID: %1$d</string>

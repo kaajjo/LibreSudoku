@@ -157,7 +157,7 @@
     <string name="saved_game_mistakes_limit">Fejlgrænse overskredet</string>
     <string name="learn_app_toolbar_notes_menu">Du kan trykke længe på noteknappen for at åbne notemenuen, hvor du kan rydde eller beregne noter og skifte deres synlighed</string>
     <string name="sudoku_rules_mistakes">Der er en fejl her, kan du få øje på den\? Måske endda to</string>
-    <string name="sudoku_rules_mistakes_explanation">Den første fejl er to 2\'ere i det sjette felt. Huske reglen om, at der ikke må være dubletnumre i en boks\? Den anden fejl er tallet 6 i række 2, kolonne 8 (R2C8), fordi der allerede er 6 i denne kolonne i R5C8</string>
+    <string name="sudoku_rules_mistakes_explanation">Den første fejl er to 2\'ere i det sjette felt. Huske reglen om, at der ikke må være dubletnumre i en boks? Den anden fejl er tallet 6 i række 2, kolonne 8 (R2C8), fordi der allerede er 6 i denne kolonne i R5C8</string>
     <string name="learn_basic_title">Grundlæggende</string>
     <string name="learn_basic_1">Lad os vælge boks nummer 7. Der er allerede fire celler udfyldt</string>
     <string name="learn_basic_4">Og vi står tilbage med kun én celle, hvor tallet 8 kan stå</string>

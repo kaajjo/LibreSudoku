@@ -43,7 +43,7 @@
     <string name="pref_date_format">Format de la data</string>
     <string name="intro_rules">L\'objectiu del joc és omplir totes les caselles amb nombres de l\'1 al 9. De manera que els nombres no es repeteixin en cap columna, fila o requadre petit (3x3)</string>
     <string name="learn_basic_6">Com a resultat, només ens queda una casella on podem posar-hi el nombre 4. La casella R1C3</string>
-    <string name="sudoku_rules_mistakes_explanation">La primera errada són els dos 2 al sisè requadre. Recordeu la norma que no poden haver-hi valors repetits en un requadre\? La segona errada és el nombre 6 a la segona filera, columna 8 (R2C8) («R» de fila en anglès, «row»), perquè ja hi ha un 6 a aquella columna a R5C8</string>
+    <string name="sudoku_rules_mistakes_explanation">La primera errada són els dos 2 al sisè requadre. Recordeu la norma que no poden haver-hi valors repetits en un requadre? La segona errada és el nombre 6 a la segona filera, columna 8 (R2C8) («R» de fila en anglès, «row»), perquè ja hi ha un 6 a aquella columna a R5C8</string>
     <string name="learn_basic_5">La mateixa lògica s\'aplica a files i columnes. Mireu la primera fila. El nombre 4 a R7C3 bloqueja la tercera columna a la nostra fila. El nombre 4 a R3C5 bloqueja dues columnes a la vegada (4 i 6), perquè no poden haver-hi altres quatres al mateix requadre. R6C7 bloqueja la columna 7</string>
     <string name="action_play">Juga</string>
     <string name="action_continue">Continua</string>
