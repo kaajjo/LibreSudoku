@@ -153,7 +153,7 @@
     <string name="learn_sudoku_rules">Правила судоку</string>
     <string name="sudoku_rules_mistakes">Здесь есть ошибка, сможете заметить? Может быть их даже 2</string>
     <string name="sudoku_rules_mistakes_highlight">Подсветка ошибок</string>
-    <string name="sudoku_rules_mistakes_explanation">Первая ошибка это две 2 в шестом квадрате. Вы еще помните правило про то, что числа не могут повторяться в строках, столбцах и квадратах\? Вторая ошибка это цифра 6 в строке 2, столбце 8 (R2C8), потому что в этом столбце уже есть цифра 6 R5C8</string>
+    <string name="sudoku_rules_mistakes_explanation">Первая ошибка это две 2 в шестом квадрате. Вы еще помните правило про то, что числа не могут повторяться в строках, столбцах и квадратах? Вторая ошибка это цифра 6 в строке 2, столбце 8 (R2C8), потому что в этом столбце уже есть цифра 6 (R5C8)</string>
     <string name="naked_pairs_title">Голые пары</string>
     <string name="naked_pairs_explanation">Здесь две клетки в которых две одинаковых заметки. На данный момент не можем сказать, где будет 2, а где 3
 \nНо так как правила судоку говорят нам, что в каждом блоке должна быть только одна 2 и одна 3, мы можем считать, что одна из них 2, а другая 3</string>
@@ -345,6 +345,7 @@
         <item quantity="many">Последние %1$d игр</item>
         <item quantity="other">Последние %1$d игр</item>
     </plurals>
+
     <string name="telegram" translatable="false">Telegram</string>
     <string name="telegram_link">Присоединяйтесь в Telegram</string>
     <string name="donation_title">Пожертвование</string>

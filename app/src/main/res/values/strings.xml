@@ -159,7 +159,7 @@
     <string name="learn_sudoku_rules">Sudoku rules</string>
     <string name="sudoku_rules_mistakes">There is a mistake here, can you spot it? Maybe even two</string>
     <string name="sudoku_rules_mistakes_highlight">Highlight mistakes</string>
-    <string name="sudoku_rules_mistakes_explanation">The first mistake is two 2s in the sixth box. Remember the rule that there can\'t be double values in a box? The second mistake is the number 6 in row 2, column 8 (R2C8), because there is already a 6 in that column in R5C8</string>
+    <string name="sudoku_rules_mistakes_explanation">The first mistake is two 2s in the sixth box. Remember the rule that there can\'t be double values in a box? The second mistake is the number 6 in row 2, column 8 (R2C8), because there is already a 6 in that column (R5C8)</string>
     <string name="naked_pairs_title">Naked pairs</string>
     <string name="naked_pairs_explanation">There are two cells that share the same two pencil marks. Right now, we can\'t tell which one is the 2 and which one is the 3.\nBut since the Sudoku rules tell us that each box can have only one "2" and only one "3", we can assume that one of them is the 2 and the other is the 3</string>
     <string name="naked_pairs_end">Now, this wouldn\'t help us if there weren\'t any other "2" or "3" pencil marks in that box. But since there are, we can remove them! The other cells in the box cannot be 2 or 3</string>

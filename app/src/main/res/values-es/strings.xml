@@ -218,7 +218,7 @@
     <string name="dialog_crash_report_text">Ups, LibreSudoku se bloqueó. ¿Quieres enviar un informe de error a los desarrolladores\?</string>
     <string name="pref_fun_keyboard_over_num">Panel de funciones sobre los valores</string>
     <string name="pref_fun_keyboard_over_num_subtitle">Coloque el panel de funciones sobre el teclado de valores</string>
-    <string name="sudoku_rules_mistakes_explanation">El primer error son dos 2 en la sexta casilla. ¿Recuerdas la regla de que no puede haber valores dobles en una casilla\? El segundo error es el número 6 en la fila 2, columna 8 (R2C8), porque ya hay un 6 en esa columna en R5C8</string>
+    <string name="sudoku_rules_mistakes_explanation">El primer error son dos 2 en la sexta casilla. ¿Recuerdas la regla de que no puede haber valores dobles en una casilla? El segundo error es el número 6 en la fila 2, columna 8 (R2C8), porque ya hay un 6 en esa columna (R5C8)</string>
     <string name="naked_pairs_end">Ahora bien, esto no nos serviría de nada si no hubiera otras 2 o 3 marcas de lápiz en esa casilla. Pero como las hay, ¡podemos eliminarlas! Las otras casillas de la caja no pueden ser 2 ó 3</string>
     <string name="learn_basic_1">Seleccionemos la casilla número 7. Ya hay cuatro casillas rellenas</string>
     <string name="learn_basic_2">Ahora echemos un vistazo al número 8. El número 8 en la fila 4, columna 3 (R4C3) bloquea toda la columna en nuestra caja. Así que el número 8 no puede estar allí</string>
@@ -389,4 +389,9 @@
     <string name="check_for_update_latest_summary">¡Avanza!</string>
     <string name="auto_updates_summary">Comprobación automática de actualizaciones</string>
     <string name="advanced_hint_no_hint">No pude conseguir una pista. Tal vez es demasiado difícil para nosotros en este momento</string>
+    <string name="hint_naked_single_title">Único solitario (Naked single)</string>
+    <string name="hint_hidden_single_title">Único oculto (Hidden single)</string>
+    <string name="hint_full_house_group_title">Full House</string>
+    <string name="advanced_hint_title">Pista avanzada</string>
+    <string name="advanced_hint_summary">Un sistema de pistas experimental</string>
 </resources>

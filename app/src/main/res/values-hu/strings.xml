@@ -138,7 +138,7 @@
     <string name="learn_app_toolbar">Eszköztár</string>
     <string name="saved_game_give_up">Feladtad</string>
     <string name="history_no_games">Még nem játszottál</string>
-    <string name="sudoku_rules_mistakes_explanation">Az első hiba két 2-es a hatodik mezőben. Emlékszel arra a szabályra, hogy egy dobozban nem lehet dupla érték\? A második hiba a 6-os szám a 2. sor 8. oszlopában (R2C8), mert ebben az oszlopban már van egy 6-os az R5C8-ban</string>
+    <string name="sudoku_rules_mistakes_explanation">Az első hiba két 2-es a hatodik mezőben. Emlékszel arra a szabályra, hogy egy dobozban nem lehet dupla érték? A második hiba a 6-os szám a 2. sor 8. oszlopában (R2C8), mert ebben az oszlopban már van egy 6-os az R5C8-ban</string>
     <string name="learn_screen_title">Segítség</string>
     <string name="sudoku_rules_mistakes_highlight">Hibák kiemelése</string>
     <string name="saved_game_screen_title">Játék #%1$d</string>

@@ -50,7 +50,7 @@
     <string name="nav_bar_statistics">Statistiche</string>
     <string name="dialog_new_game_positive">Inizia nuova</string>
     <string name="action_cancel">Annulla</string>
-    <string name="sudoku_rules_mistakes_explanation">Il primo errore è due 2 nella sesta casella. Ricordi la regola che non ci possono essere valori duplicati in una casella\? Il secondo errore è il numero 6 nella riga 2, colonna 8 (R2C8), perché c\'è già 6 in questa colonna in R5C8</string>
+    <string name="sudoku_rules_mistakes_explanation">Il primo errore è due 2 nella sesta casella. Ricordi la regola che non ci possono essere valori duplicati in una casella? Il secondo errore è il numero 6 nella riga 2, colonna 8 (R2C8), perché c\'è già 6 in questa colonna in R5C8</string>
     <string name="naked_pairs_explanation">Ci sono due celle che condividono gli stessi due segni a matita. In questo momento non possiamo dire qual è il 2 e qual è il 3
 \nPoiché le regole del Sudoku ci dicono che ogni blocco ha solo un 2 e solo un 3, possiamo supporre che uno di loro è il 2 e l\'altro è il 3</string>
     <string name="naked_pairs_end">Ora, questo non ci aiuterebbe se non ci fossero altri 2 o 3 segni a matita in quel blocco. Ma dato che ci sono, possiamo rimuoverli! Le altre celle nel blocco non possono essere 2 o 3</string>

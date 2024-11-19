@@ -65,7 +65,7 @@
     <string name="pref_app_theme">Tema aplikasi</string>
     <string name="pref_remaining_uses_summ">Jumlah sisa penggunaan suatu nilai ditampilkan pada keyboard</string>
     <string name="dialog_new_game">Sedang berlangsung</string>
-    <string name="sudoku_rules_mistakes_explanation">Kesalahan pertama adalah dua angka 2 di kotak keenam. Ingat aturan bahwa tidak boleh ada nilai ganda di dalam kotak\? Kesalahan kedua adalah angka 6 pada baris 2 kolom 8 (R2C8), karena sudah ada 6 di kolom R5C8</string>
+    <string name="sudoku_rules_mistakes_explanation">Kesalahan pertama adalah dua angka 2 di kotak keenam. Ingat aturan bahwa tidak boleh ada nilai ganda di dalam kotak? Kesalahan kedua adalah angka 6 pada baris 2 kolom 8 (R2C8), karena sudah ada 6 di kolom R5C8</string>
     <string name="type_default_9x9">9x9</string>
     <string name="tip_card_records_list_title">Daftar catatan</string>
     <string name="learn_basic_title">Dasar</string>
