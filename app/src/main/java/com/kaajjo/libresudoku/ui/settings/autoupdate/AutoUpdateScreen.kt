@@ -227,7 +227,7 @@ fun AutoUpdateScreen(
                             )
                         } else if (updateChannel != UpdateChannel.Disabled) {
                             if (checkingForUpdatesError) {
-                                CheckingForUpdate(
+                                CheckingUpdateContainer(
                                     text = stringResource(R.string.check_for_updates_error),
                                     subtitle = stringResource(R.string.check_for_update_error_summary),
                                     modifier = Modifier.fillMaxWidth()
@@ -263,7 +263,7 @@ fun AutoUpdateScreen(
                                     }
                                 }
                             } else {
-                                CheckingForUpdate(
+                                CheckingUpdateContainer(
                                     text = if (checkingForUpdates) stringResource(R.string.check_for_updates_checking) else stringResource(
                                         R.string.check_for_update_using_latest
                                     ),
@@ -582,7 +582,7 @@ enum class UpdateChannel {
 }
 
 @Composable
-fun CheckingForUpdate(
+fun CheckingUpdateContainer(
     text: String,
     subtitle: String,
     modifier: Modifier = Modifier,
@@ -633,12 +633,14 @@ fun CheckingForUpdate(
                 )
         )
         Column(
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onPrimaryContainer) {
                 AnimatedVisibility(
                     visible = icon != null,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     if (icon != null) {
                         Icon(
@@ -652,7 +654,7 @@ fun CheckingForUpdate(
                 }
                 Text(
                     text = text,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
