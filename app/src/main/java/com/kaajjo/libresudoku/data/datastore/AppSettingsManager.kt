@@ -63,8 +63,8 @@ class AppSettingsManager(context: Context) {
     // auto erase notes
     private val autoEraseNotesKey = booleanPreferencesKey("notes_auto_erase")
 
-    // font size (0 - small, 1 - medium (default), 2 - big)
-    private val fontSizeKey = intPreferencesKey("font_size")
+    // font size (0 automatic (default), 1 - small, 2 - medium, 3 - big)
+    private val fontSizeKey = intPreferencesKey("board_font_size")
 
     // keep screen on
     private val keepScreenOnKey = booleanPreferencesKey("keep_screen_on")

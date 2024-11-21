@@ -405,4 +405,5 @@
     <string name="advanced_hint_no_hint_title">No hint</string>
     <string name="export_empty_cell">Empty cell</string>
     <string name="update_channel">Update channel</string>
+    <string name="font_size_automatic">Automatic</string>
 </resources>

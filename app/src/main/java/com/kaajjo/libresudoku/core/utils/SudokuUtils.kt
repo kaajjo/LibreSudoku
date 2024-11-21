@@ -128,37 +128,37 @@ class SudokuUtils {
         return newNotes
     }
 
-    // factor: 0 - small, 1 medium (default), 2 - big
+    // factor: 1 - small, 2 - medium, 3 - big
     fun getFontSize(type: GameType, factor: Int): TextUnit {
         return when (type) {
             GameType.Unspecified -> {
                 when (factor) {
-                    1 -> 26.sp
-                    2 -> 34.sp
+                    2 -> 26.sp
+                    3 -> 34.sp
                     else -> 22.sp
                 }
             }
 
             GameType.Default9x9, GameType.Killer9x9 -> {
                 when (factor) {
-                    1 -> 28.sp
-                    2 -> 36.sp
+                    2 -> 28.sp
+                    3 -> 36.sp
                     else -> 22.sp
                 }
             }
 
             GameType.Default12x12, GameType.Killer12x12 -> {
                 when (factor) {
-                    1 -> 24.sp
-                    2 -> 32.sp
+                    2 -> 24.sp
+                    3 -> 32.sp
                     else -> 18.sp
                 }
             }
 
             GameType.Default6x6, GameType.Killer6x6 -> {
                 when (factor) {
-                    1 -> 34.sp
-                    2 -> 40.sp
+                    2 -> 34.sp
+                    3 -> 40.sp
                     else -> 24.sp
                 }
             }

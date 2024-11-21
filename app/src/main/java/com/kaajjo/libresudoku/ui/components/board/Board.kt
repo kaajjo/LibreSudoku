@@ -1,7 +1,6 @@
 package com.kaajjo.libresudoku.ui.components.board
 
 import android.graphics.Paint
-import android.util.TypedValue
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -51,6 +50,31 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.sqrt
 
+/**
+ * Sudoku board
+ *
+ * @param board sudoku game
+ * @param size sudoku game size (always []
+ * @param notes a list of [Note] for sudoku game
+ * @param mainTextSize main numbers text size (used when [autoFontSize] is set to false
+ * @param autoFontSize adjust numbers font size according to cell size. Enabling this will override [mainTextSize]
+ * @param noteTextSize note number text size
+ * @param selectedCell currently selected [Cell]
+ * @param onClick returns [Cell] that was clicked
+ * @param onLongClick returns [Cell] that was long clicked
+ * @param identicalNumbersHighlight highlight cells with the same value as selected cell
+ * @param errorsHighlight whether to highlight mistakes
+ * @param positionLines whether to highlight row and column of currently selected [Cell]
+ * @param enabled
+ * @param questions  if enabled, "?" will be shown instead of number in cells (used instead of blur modifier on android < 12)
+ * @param renderNotes whether to show notes at all
+ * @param cellsToHighlight list of [Cell] to highlight
+ * @param notesToHighlight list of [Note] to highlight
+ * @param zoomable whether to allow zoom and pan the board
+ * @param boardColors colors of the board (see [BoardColors])
+ * @param crossHighlight highlight some boxes on the board
+ * @param cages a list of [Cage] for killer sudoku
+ */
 @Composable
 fun Board(
     modifier: Modifier = Modifier,
@@ -63,6 +87,7 @@ fun Board(
         12 -> 24.sp
         else -> 14.sp
     },
+    autoFontSize: Boolean = false,
     noteTextSize: TextUnit = when (size) {
         6 -> 18.sp
         9 -> 12.sp
@@ -112,7 +137,16 @@ fun Board(
         val vertThick by remember(size) { mutableIntStateOf(floor(sqrt(size.toFloat())).toInt()) }
         val horThick by remember(size) { mutableIntStateOf(ceil(sqrt(size.toFloat())).toInt()) }
 
-        var fontSizePx = with(LocalDensity.current) { mainTextSize.toPx() }
+        var fontSizePx by remember { mutableFloatStateOf(1f) }
+        with(LocalDensity.current) {
+            LaunchedEffect(autoFontSize, size, mainTextSize) {
+                fontSizePx = if (autoFontSize) {
+                    (cellSize * 0.9f).toSp().toPx()
+                } else {
+                    mainTextSize.toPx()
+                }
+            }
+        }
         val noteSizePx = with(LocalDensity.current) { (cellSizeDivWidth * 0.8f).toSp().toPx() }
         val killerSumSizePx = with(LocalDensity.current) { noteSizePx * 1.1f }
 
@@ -123,7 +157,7 @@ fun Board(
 
         // paints
         // numbers
-        var textPaint by remember {
+        var textPaint by remember(fontSizePx) {
             mutableStateOf(
                 Paint().apply {
                     color = foregroundColor.toArgb()
@@ -185,11 +219,6 @@ fun Board(
 
         val context = LocalContext.current
         LaunchedEffect(mainTextSize, noteTextSize, boardColors) {
-            fontSizePx = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP,
-                mainTextSize.value,
-                context.resources.displayMetrics
-            )
             textPaint = Paint().apply {
                 color = foregroundColor.toArgb()
                 isAntiAlias = true
@@ -437,7 +466,10 @@ fun Board(
                         cellSize = cellSize,
                         strokeWidth = thickLineWidth,
                         color = thinLineColor,
-                        cornerTextPadding = Offset(killerSumBounds.width().toFloat(), killerSumBounds.height().toFloat())
+                        cornerTextPadding = Offset(
+                            killerSumBounds.width().toFloat(),
+                            killerSumBounds.height().toFloat()
+                        )
                     )
                 }
             }

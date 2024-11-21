@@ -62,7 +62,7 @@ fun SettingsBoardTheme(
     val positionLines by viewModel.positionLines.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_POSITION_LINES)
     val highlightMistakes by viewModel.highlightMistakes.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES)
     val boardCrossHighlight by viewModel.crossHighlight.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT)
-    val fontSize by viewModel.fontSize.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
+    val fontSizeFactor by viewModel.fontSize.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
 
     var fontSizeDialog by rememberSaveable {
         mutableStateOf(false)
@@ -77,9 +77,9 @@ fun SettingsBoardTheme(
         mutableStateOf(GameType.Default9x9)
     }
 
-    val fontSizeValue by remember(fontSize, selectedBoardType) {
+    val fontSizeValue by remember(fontSizeFactor, selectedBoardType) {
         mutableStateOf(
-            SudokuUtils().getFontSize(selectedBoardType, fontSize)
+            SudokuUtils().getFontSize(selectedBoardType, fontSizeFactor)
         )
     }
     
@@ -132,9 +132,9 @@ fun SettingsBoardTheme(
                 errorsHighlight = highlightMistakes != 0,
                 crossHighlight = boardCrossHighlight,
                 fontSize = fontSizeValue,
+                autoFontSize = fontSizeFactor == 0,
                 gameType = selectedBoardType
             )
-
             val monetSudokuBoard by viewModel.monetSudokuBoard.collectAsStateWithLifecycle(
                 PreferencesConstants.DEFAULT_MONET_SUDOKU_BOARD
             )
@@ -165,10 +165,11 @@ fun SettingsBoardTheme(
             )
             PreferenceRow(
                 title = stringResource(R.string.pref_board_font_size),
-                subtitle = when (fontSize) {
-                    0 -> stringResource(R.string.pref_board_font_size_small)
-                    1 -> stringResource(R.string.pref_board_font_size_medium)
-                    2 -> stringResource(R.string.pref_board_font_size_large)
+                subtitle = when (fontSizeFactor) {
+                    0 -> stringResource(R.string.font_size_automatic)
+                    1 -> stringResource(R.string.pref_board_font_size_small)
+                    2 -> stringResource(R.string.pref_board_font_size_medium)
+                    3 -> stringResource(R.string.pref_board_font_size_large)
                     else -> ""
                 },
                 painter = rememberVectorPainter(Icons.Rounded.FormatSize),
@@ -180,11 +181,12 @@ fun SettingsBoardTheme(
             SelectionDialog(
                 title = stringResource(R.string.pref_board_font_size),
                 selections = listOf(
+                    stringResource(R.string.font_size_automatic),
                     stringResource(R.string.pref_board_font_size_small),
                     stringResource(R.string.pref_board_font_size_medium),
                     stringResource(R.string.pref_board_font_size_large)
                 ),
-                selected = fontSize,
+                selected = fontSizeFactor,
                 onSelect = { index ->
                     viewModel.updateFontSize(index)
                 },
@@ -201,7 +203,8 @@ private fun BoardPreviewTheme(
     crossHighlight: Boolean,
     fontSize: TextUnit,
     gameType: GameType,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    autoFontSize: Boolean = false
 ) {
     val previewBoard = SudokuParser().parseBoard(
         board = when (gameType) {
@@ -228,6 +231,7 @@ private fun BoardPreviewTheme(
         positionLines = positionLines,
         errorsHighlight = errorsHighlight,
         crossHighlight = crossHighlight,
-        mainTextSize = fontSize
+        mainTextSize = fontSize,
+        autoFontSize = autoFontSize
     )
 }

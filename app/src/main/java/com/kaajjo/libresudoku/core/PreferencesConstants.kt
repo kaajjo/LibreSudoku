@@ -15,7 +15,7 @@ class PreferencesConstants {
         const val DEFAULT_REMAINING_USES = true
         const val DEFAULT_POSITION_LINES = true
         const val DEFAULT_AUTO_ERASE_NOTES = true
-        const val DEFAULT_FONT_SIZE_FACTOR = 1
+        const val DEFAULT_FONT_SIZE_FACTOR = 0
         const val DEFAULT_KEEP_SCREEN_ON = true
         const val DEFAULT_INPUT_METHOD = 1
         const val DEFAULT_FUN_KEYBOARD_OVER_NUM = false

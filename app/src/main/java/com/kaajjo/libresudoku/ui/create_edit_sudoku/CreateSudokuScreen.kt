@@ -195,6 +195,7 @@ fun CreateSudokuScreen(
                 modifier = Modifier.padding(vertical = 12.dp),
                 size = viewModel.gameType.size,
                 mainTextSize = fontSizeValue,
+                autoFontSize = fontSizeFactor == 0,
                 board = viewModel.gameBoard,
                 selectedCell = viewModel.currCell,
                 onClick = { cell ->

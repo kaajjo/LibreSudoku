@@ -339,6 +339,7 @@ fun GameScreen(
                     board = if (!viewModel.showSolution) viewModel.gameBoard else viewModel.solvedBoard,
                     size = viewModel.size,
                     mainTextSize = fontSizeValue,
+                    autoFontSize = fontSizeFactor == 0,
                     notes = viewModel.notes,
                     selectedCell = viewModel.currCell,
                     onClick = { cell ->
