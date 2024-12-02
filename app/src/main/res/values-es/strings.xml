@@ -394,4 +394,6 @@
     <string name="hint_full_house_group_title">Full House</string>
     <string name="advanced_hint_title">Pista avanzada</string>
     <string name="advanced_hint_summary">Un sistema de pistas experimental</string>
+    <string name="update_channel">Actualizar canal</string>
+    <string name="font_size_automatic">Automático</string>
 </resources>
