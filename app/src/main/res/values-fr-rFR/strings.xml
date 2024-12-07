@@ -305,4 +305,11 @@
     <string name="monet_fidelity">Fidélité</string>
     <string name="monet_content">Contenu</string>
     <string name="theme_orange">Orange</string>
+    <string name="backup_restore_title">Sauvegarde &amp; restauration</string>
+    <string name="creating_backup_error">Sauvegarde échouée</string>
+    <string name="restore_backup_error">Restauration échouée</string>
+    <string name="save_backup_error">Echec de l\'enregistrement du fichier de sauvegarde</string>
+    <string name="libraries_licenses">Licences</string>
+    <string name="auto_backups_directory">Répertoire de sauvegarde</string>
+    <string name="about_github_source_code">Code source sur GitHub</string>
 </resources>
