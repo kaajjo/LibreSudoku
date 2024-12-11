@@ -4,6 +4,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,19 +28,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.LocaleListCompat
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.WEBLATE_ENGAGE
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
-import com.kaajjo.libresudoku.ui.components.PreferenceRow
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
+import com.kaajjo.libresudoku.ui.components.locale_emoji.LocaleEmoji
 import com.kaajjo.libresudoku.ui.settings.SettingsScaffoldLazyColumn
+import com.kaajjo.libresudoku.ui.theme.ColorUtils.harmonizeWithPrimary
 import com.kaajjo.libresudoku.ui.util.findActivity
 import com.kaajjo.libresudoku.ui.util.getCurrentLocaleTag
 import com.kaajjo.libresudoku.ui.util.getLangs
@@ -58,11 +65,12 @@ fun SettingsLanguageScreen(
     SettingsScaffoldLazyColumn(
         titleText = stringResource(R.string.pref_app_language),
         navigator = navigator
-    ) {  paddingValues ->
+    ) { paddingValues ->
         ScrollbarLazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
                 HelpTranslateCard(
@@ -74,15 +82,16 @@ fun SettingsLanguageScreen(
             item {
                 Spacer(modifier = Modifier.height(12.dp))
             }
-            items(appLanguages.toList()) { language ->
+            items(appLanguages.toList()) { (langCode, langName) ->
                 LanguageItem(
-                    languageName = language.second,
-                    selected = currentLanguage == language.first,
+                    languageName = langName,
+                    languageEmoji = LocaleEmoji.getFlagEmoji(langCode),
+                    selected = currentLanguage == langCode,
                     onClick = {
-                        val locale = if (language.first == "") {
+                        val locale = if (langCode == "") {
                             LocaleListCompat.getEmptyLocaleList()
                         } else {
-                            LocaleListCompat.forLanguageTags(language.first)
+                            LocaleListCompat.forLanguageTags(langCode)
                         }
                         AppCompatDelegate.setApplicationLocales(locale)
                         currentLanguage = getCurrentLocaleTag()
@@ -128,7 +137,7 @@ private fun HelpTranslateCard(
             ) {
                 Text(
                     text = stringResource(R.string.help_translate),
-                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 24.sp )
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 24.sp)
                 )
                 Text(
                     text = stringResource(R.string.hosted_weblate)
@@ -145,25 +154,63 @@ private fun HelpTranslateCard(
 @Composable
 private fun LanguageItem(
     languageName: String,
+    languageEmoji: String?,
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    PreferenceRow(
-        modifier = modifier.background(
-            if (selected) {
-                MaterialTheme.colorScheme.surfaceVariant
-            } else {
-                MaterialTheme.colorScheme.surface
+    val titleStyle = MaterialTheme.typography.titleLarge.copy(
+        color = MaterialTheme.colorScheme.onSurface,
+        fontSize = 20.sp
+    )
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .clip(MaterialTheme.shapes.large)
+            .background(
+                color = with(MaterialTheme.colorScheme) {
+                    if (selected) surfaceContainerLowest.harmonizeWithPrimary()
+                    else Color.Transparent
+                }
+            )
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (languageEmoji != null) {
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 6.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                val localDensity = LocalDensity.current
+                with(localDensity) {
+                    Text(
+                        text = languageEmoji,
+                        fontSize = 24.dp.toSp(),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
             }
-        ),
-        title = languageName,
-        onClick = onClick,
-        action = {
-            RadioButton(
-                selected = selected,
-                onClick = onClick
+        }
+        Column(
+            Modifier
+                .padding(start = if (languageEmoji != null) 6.dp else 12.dp)
+                .weight(1f),
+        ) {
+            Text(
+                text = languageName,
+                style = titleStyle
             )
         }
-    )
+        RadioButton(
+            selected = selected,
+            onClick = onClick
+        )
+    }
 }
