@@ -153,7 +153,7 @@
     <string name="learn_sudoku_rules">Regras do Sudoku</string>
     <string name="sudoku_rules_mistakes">Há um erro aqui, você consegue identificá-lo\? Talvez até dois</string>
     <string name="sudoku_rules_mistakes_highlight">Destacar erros</string>
-    <string name="sudoku_rules_mistakes_explanation">O primeiro erro é dois 2 na sexta caixa. Você se lembra da regra de que não pode haver números duplicados em uma caixa? O segundo erro é o número 6 na linha 2, coluna 8 (L2C8), pois existe um 6 nesta coluna em L5C8</string>
+    <string name="sudoku_rules_mistakes_explanation">O primeiro erro é dois 2 na sexta caixa. Você se lembra da regra de que não pode haver números duplicados em uma caixa? O segundo erro é o número 6 na linha 2, coluna 8 (L2C8), pois existe um 6 nesta coluna (L5C8)</string>
     <string name="naked_pairs_title">Pares soltos</string>
     <string name="naked_pairs_explanation">Existem duas células que compartilham as mesmas duas marcas de lápis. No momento, não podemos dizer qual é o 2 e qual é o 3.
 \nMas, como as regras do Sudoku nos dizem que cada bloco tem apenas um 2 e apenas um 3, podemos assumir que um deles é o 2 e o outro é o 3</string>
@@ -326,4 +326,13 @@
     <string name="type_killer_9x9">Assassino 9x9</string>
     <string name="about_github_source_code">Código fonte no Github</string>
     <string name="libraries_licenses">Licenças</string>
+    <string name="theme_custom">Personalizado</string>
+    <string name="color_picker_title">Escolha uma cor</string>
+    <string name="parse_color_fail">Não é uma cor</string>
+    <string name="monet_fidelity">Fidelidade</string>
+    <string name="monet_content">Conteúdo</string>
+    <string name="theme_cyan">Ciano</string>
+    <string name="theme_orange">Laranja</string>
+    <string name="onboard_restore_backup">Restaurar backup</string>
+    <string name="onboard_restore_backup_description">Você já tem um backup? Restaure-o agora</string>
 </resources>
