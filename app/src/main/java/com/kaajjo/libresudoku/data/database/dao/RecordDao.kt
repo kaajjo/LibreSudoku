@@ -3,6 +3,7 @@ package com.kaajjo.libresudoku.data.database.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
@@ -30,9 +31,9 @@ interface RecordDao {
     @Delete
     suspend fun delete(record: Record)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(record: Record)
 
-    @Insert
-    suspend fun insert(recrods: List<Record>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(records: List<Record>)
 }

@@ -319,7 +319,7 @@ fun GameScreen(
                     modifier = Modifier.align(Alignment.Center)
                 ) {
                     AnimatedVisibility(
-                        visible = !viewModel.gamePlaying,
+                        visible = !viewModel.gamePlaying && !viewModel.endGame,
                         enter = expandVertically(clip = false) + fadeIn(),
                         exit = shrinkVertically(clip = false) + fadeOut()
                     ) {
@@ -615,7 +615,6 @@ fun GameScreen(
 
     LaunchedEffect(viewModel.gameCompleted) {
         if (viewModel.gameCompleted) {
-            viewModel.endGame = true
             viewModel.onGameComplete()
         }
     }

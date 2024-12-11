@@ -692,6 +692,9 @@ class GameViewModel @Inject constructor(
 
     fun onGameComplete() {
         if (endGame) return
+
+        pauseTimer()
+        currCell = Cell(-1, -1, 0)
         viewModelScope.launch(Dispatchers.IO) {
             saveGame()
             recordRepository.insert(
@@ -704,8 +707,7 @@ class GameViewModel @Inject constructor(
                 )
             )
         }
-        pauseTimer()
-        currCell = Cell(-1, -1, 0)
+        endGame = true
     }
 
     fun getFontSize(type: GameType = gameType, factor: Int): TextUnit {
