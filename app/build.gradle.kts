@@ -28,6 +28,12 @@ android {
         }
     }
 
+    // F-Droid
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
