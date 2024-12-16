@@ -1,0 +1,5 @@
+Killer Sudoku
+Advanced Hint System (hints with explanation)
+Redesigned many screens
+Many QoL improvements
+Critical bug fixes
