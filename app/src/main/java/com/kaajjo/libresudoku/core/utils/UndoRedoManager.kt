@@ -7,21 +7,20 @@ class UndoRedoManager(private val initialState: GameState) {
     private var states: MutableList<GameState> = mutableListOf(initialState)
     private var currentState = 0
 
+    /**
+     * Adds a new game state to the history of states.
+     * If the current state changes, all later states are removed.
+     *
+     * @param gameState The new game state to add.
+     */
     fun addState(gameState: GameState) {
-        if (gameState == states[currentState]) {
+        if (currentState in states.indices && gameState == states[currentState]) {
             return
         }
 
-        val statesToDelete = mutableListOf<GameState>()
-        for (i in states.indices - 1) {
-            if (i > currentState) {
-                statesToDelete.add(states[i])
-            }
+        if (currentState < states.size - 1) {
+            states = states.subList(0, currentState + 1).toMutableList()
         }
-        statesToDelete.forEach { item ->
-            states.remove(item)
-        }
-
 
         states.add(gameState)
         currentState = states.size - 1
