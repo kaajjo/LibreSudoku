@@ -1,1 +1,0 @@
-Fixed a bug where attempting to enter a number after resetting a board or configuration change would cause a crash
