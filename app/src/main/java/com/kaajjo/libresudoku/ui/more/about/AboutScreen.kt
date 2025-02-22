@@ -61,6 +61,7 @@ import com.kaajjo.libresudoku.ui.theme.icons.LibreSudokuIconAlt
 import com.kaajjo.libresudoku.ui.theme.icons.Mir
 import com.kaajjo.libresudoku.ui.theme.icons.Ton
 import com.kaajjo.libresudoku.ui.theme.icons.Usdt
+import com.kaajjo.libresudoku.util.FlavorUtil
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -132,7 +133,7 @@ fun AboutScreen(
                 Text(
                     stringResource(
                         R.string.app_version,
-                        BuildConfig.VERSION_NAME,
+                        BuildConfig.VERSION_NAME + if (FlavorUtil.isFoss()) "-FOSS" else "",
                         BuildConfig.VERSION_CODE
                     ),
                     style = MaterialTheme.typography.labelMedium,

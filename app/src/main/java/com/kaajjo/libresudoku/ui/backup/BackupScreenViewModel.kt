@@ -15,6 +15,7 @@ import com.kaajjo.libresudoku.domain.repository.DatabaseRepository
 import com.kaajjo.libresudoku.domain.repository.FolderRepository
 import com.kaajjo.libresudoku.domain.repository.RecordRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
+import com.kaajjo.libresudoku.util.FlavorUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -66,7 +67,7 @@ class BackupScreenViewModel @Inject constructor(
             val savedGames = runBlocking { savedGameRepository.getAll().first() }
 
             backupData = BackupData(
-                appVersionName = BuildConfig.VERSION_NAME,
+                appVersionName = BuildConfig.VERSION_NAME + if (FlavorUtil.isFoss()) "-FOSS" else "",
                 appVersionCode = BuildConfig.VERSION_CODE,
                 createdAt = ZonedDateTime.now(),
                 boards = boards,
