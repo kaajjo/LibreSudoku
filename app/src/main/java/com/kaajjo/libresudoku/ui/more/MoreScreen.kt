@@ -74,6 +74,7 @@ import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.PreferenceRow
 import com.kaajjo.libresudoku.ui.settings.autoupdate.UpdateChannel
 import com.kaajjo.libresudoku.ui.theme.RoundedPolygonShape
+import com.kaajjo.libresudoku.util.FlavorUtil
 import com.materialkolor.ktx.blend
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -142,37 +143,39 @@ fun MoreScreen(
                 onClick = { navigator.navigate(AboutScreenDestination()) }
             )
 
-            AnimatedVisibility(autoUpdateChannel != UpdateChannel.Disabled) {
-                var latestRelease by remember { mutableStateOf<Release?>(null) }
-                LaunchedEffect(Unit) {
-                    if (latestRelease == null) {
-                        withContext(Dispatchers.IO) {
-                            runCatching {
-                                latestRelease =
-                                    UpdateUtil.checkForUpdate(autoUpdateChannel == UpdateChannel.Beta)
+            if (!FlavorUtil.isFoss()) {
+                AnimatedVisibility(autoUpdateChannel != UpdateChannel.Disabled) {
+                    var latestRelease by remember { mutableStateOf<Release?>(null) }
+                    LaunchedEffect(Unit) {
+                        if (latestRelease == null) {
+                            withContext(Dispatchers.IO) {
+                                runCatching {
+                                    latestRelease =
+                                        UpdateUtil.checkForUpdate(autoUpdateChannel == UpdateChannel.Beta)
+                                }
                             }
                         }
                     }
-                }
-                latestRelease?.let { release ->
-                    AnimatedVisibility(
-                        visible = release.name.toString() != updateDismissedName,
-                        enter = expandVertically() + fadeIn(),
-                        exit = shrinkVertically() + fadeOut()
-                    ) {
-                        UpdateFoundBox(
-                            versionToUpdate = release.name ?: "?",
-                            onClick = {
-                                navigator.navigate(AutoUpdateScreenDestination())
-                            },
-                            onDismissed = {
-                                viewModel.dismissUpdate(release)
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp)
-                                .padding(top = 8.dp)
-                        )
+                    latestRelease?.let { release ->
+                        AnimatedVisibility(
+                            visible = release.name.toString() != updateDismissedName,
+                            enter = expandVertically() + fadeIn(),
+                            exit = shrinkVertically() + fadeOut()
+                        ) {
+                            UpdateFoundBox(
+                                versionToUpdate = release.name ?: "?",
+                                onClick = {
+                                    navigator.navigate(AutoUpdateScreenDestination())
+                                },
+                                onDismissed = {
+                                    viewModel.dismissUpdate(release)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp)
+                                    .padding(top = 8.dp)
+                            )
+                        }
                     }
                 }
             }

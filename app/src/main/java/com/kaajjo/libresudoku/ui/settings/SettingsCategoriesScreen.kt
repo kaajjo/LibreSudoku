@@ -52,6 +52,7 @@ import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTopAp
 import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.rememberTopAppBarScrollBehavior
 import com.kaajjo.libresudoku.ui.settings.components.AppThemePreviewItem
 import com.kaajjo.libresudoku.ui.util.getCurrentLocaleString
+import com.kaajjo.libresudoku.util.FlavorUtil
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -124,15 +125,17 @@ fun SettingsCategoriesScreen(
                     painter = rememberVectorPainter(Icons.Outlined.Language)
                 )
             }
-            item {
-                PreferenceRow(
-                    title = stringResource(R.string.auto_update_title),
-                    subtitle = stringResource(R.string.auto_updates_summary),
-                    onClick = {
-                        navigator.navigate(AutoUpdateScreenDestination())
-                    },
-                    painter = rememberVectorPainter(Icons.Rounded.SystemUpdate)
-                )
+            if (!FlavorUtil.isFoss()) {
+                item {
+                    PreferenceRow(
+                        title = stringResource(R.string.auto_update_title),
+                        subtitle = stringResource(R.string.auto_updates_summary),
+                        onClick = {
+                            navigator.navigate(AutoUpdateScreenDestination())
+                        },
+                        painter = rememberVectorPainter(Icons.Rounded.SystemUpdate)
+                    )
+                }
             }
             item {
                 PreferenceRow(

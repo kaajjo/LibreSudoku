@@ -5,6 +5,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.content.FileProvider
 import com.kaajjo.libresudoku.BuildConfig
+import com.kaajjo.libresudoku.util.FlavorUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -64,6 +65,9 @@ object UpdateUtil {
     }
 
     fun checkForUpdate(allowBetas: Boolean = true): Release? {
+        if (FlavorUtil.isFoss()) {
+            return null
+        }
         val currentVersion = BuildConfig.VERSION_NAME.toVersion()
 
         val latestRelease = getLatestRelease(allowBetas)
