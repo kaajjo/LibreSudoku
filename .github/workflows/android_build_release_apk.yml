@@ -32,7 +32,7 @@ jobs:
 
       - name: Decode and Save Keystore Foss
         run: |
-          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/foss/release/key.jks
+          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/build/outputs/apk/foss/releasekey.jks
 
       - name: Sign Foss APK
         id: sign_foss_app
@@ -48,7 +48,7 @@ jobs:
 
       - name: Decode and Save Keystore NonFoss
         run: |
-          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/nonFOSS/release/key.jks
+          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/build/outputs/apk/nonFOSS/releasekey.jks
 
       - name: Sign NonFoss APK
         id: sign_nonfoss_app
