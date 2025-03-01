@@ -1,4 +1,4 @@
-name: Build Release APK
+name: Build Release APKs
 
 on:
   push:
@@ -6,12 +6,12 @@ on:
 
 jobs:
   build_and_release:
-    name: Build Release APK
+    name: Build Release APKs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-    
+
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v2
 
@@ -24,21 +24,52 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
 
-      - name: Build Release APK
-        run: ./gradlew assembleRelease
+      - name: Build Foss Release APK
+        run: ./gradlew assembleFossRelease
 
-      - uses: ilharp/sign-android-release@v1
-        name: Sign app APK
-        id: sign_app
+      - name: Build NonFoss Release APK
+        run: ./gradlew assembleNonFossRelease
+
+      - name: Decode and Save Keystore Foss
+        run: |
+          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/foss/release/key.jks
+
+      - name: Sign Foss APK
+        id: sign_foss_app
+        uses: ilharp/sign-android-release@v1
         with:
-          releaseDir: app/build/outputs/apk/release
+          releaseDir: app/build/outputs/apk/foss/release
           signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
           keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
           buildToolsVersion: 33.0.0
 
-      - uses: actions/upload-artifact@v4
+
+      - name: Decode and Save Keystore NonFoss
+        run: |
+          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/nonFOSS/release/key.jks
+
+      - name: Sign NonFoss APK
+        id: sign_nonfoss_app
+        uses: ilharp/sign-android-release@v1
         with:
-          name: libresudoku-release.apk
-          path: ${{steps.sign_app.outputs.signedFile}}
+          releaseDir: app/build/outputs/apk/nonFOSS/release
+          signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
+          keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          buildToolsVersion: 33.0.0
+
+      # Upload Artifacts
+      - name: Upload Foss APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: foss-release.apk
+          path: ${{ steps.sign_foss_app.outputs.signedFile }}
+
+      - name: Upload NonFoss APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: nonfoss-release.apk
+          path: ${{ steps.sign_nonfoss_app.outputs.signedFile }}
