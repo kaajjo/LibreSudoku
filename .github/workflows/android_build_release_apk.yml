@@ -24,37 +24,46 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
 
+      # Build Foss APK
       - name: Build Foss Release APK
         run: ./gradlew assembleFossRelease
 
-      - name: Build NonFoss Release APK
-        run: ./gradlew assembleNonFossRelease
+      # Sign Foss APK
+      - name: Create release directory foss
+        run: mkdir -p app/foss/release
 
       - name: Decode and Save Keystore Foss
         run: |
-          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/build/outputs/apk/foss/releasekey.jks
+          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/foss/release/key.jks
 
       - name: Sign Foss APK
         id: sign_foss_app
         uses: ilharp/sign-android-release@v1
         with:
-          releaseDir: app/build/outputs/apk/foss/release
+          releaseDir: app/foss/release
           signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
           keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
           buildToolsVersion: 33.0.0
 
+      # Build NonFoss APK
+      - name: Build NonFoss Release APK
+        run: ./gradlew assembleNonFossRelease
+
+      # Sign NonFoss APK
+      - name: Create release directory nonfoss
+        run: mkdir -p app/nonFOSS/release
 
       - name: Decode and Save Keystore NonFoss
         run: |
-          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/build/outputs/apk/nonFOSS/releasekey.jks
+          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/nonFOSS/release/key.jks
 
       - name: Sign NonFoss APK
         id: sign_nonfoss_app
         uses: ilharp/sign-android-release@v1
         with:
-          releaseDir: app/build/outputs/apk/nonFOSS/release
+          releaseDir: app/nonFOSS/release
           signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
           keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -63,13 +72,13 @@ jobs:
 
       # Upload Artifacts
       - name: Upload Foss APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: foss-release.apk
           path: ${{ steps.sign_foss_app.outputs.signedFile }}
 
       - name: Upload NonFoss APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: nonfoss-release.apk
           path: ${{ steps.sign_nonfoss_app.outputs.signedFile }}
