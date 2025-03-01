@@ -72,13 +72,13 @@ jobs:
 
       # Upload Artifacts
       - name: Upload Foss APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: foss-release.apk
           path: ${{ steps.sign_foss_app.outputs.signedFile }}
 
       - name: Upload NonFoss APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nonfoss-release.apk
           path: ${{ steps.sign_nonfoss_app.outputs.signedFile }}
