@@ -33,6 +33,21 @@ Built with [Jetpack Compose](https://developer.android.com/jetpack/compose) and 
 - Create your own sudoku puzzles!
 - Import custom sudoku files
 
+## FOSS vs nonFOSS
+### nonFOSS 
+#### It comes with auto updater that will notify you when a new update is available and you can install it through the app (it checks GitHub Releases page), and requires the specified permissions to do so:
+- `<uses-permission android:name="android.permission.INTERNET"/>`
+- `<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>`
+- `<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>`
+- `<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>`
+
+([nonFOSS AndroidManifest.xml](https://github.com/kaajjo/LibreSudoku/blob/main/app/src/nonFOSS/AndroidManifest.xml))
+### FOSS
+Does not have internet access and does not request any permissions.
+
+([FOSS AndroidManifest.xml](https://github.com/kaajjo/LibreSudoku/blob/main/app/src/foss/AndroidManifest.xml))
+
+
 ## Future plans
 - Better hint system (explain the next move instead of just revealing the value)
 - Complete set of sudoku technique tutorials
