@@ -85,7 +85,7 @@ object UpdateUtil {
     ): Flow<DownloadStatus> =
         withContext(Dispatchers.IO) {
             val downloadUrl = release.assets
-                ?.first()
+                ?.firstOrNull { it.name?.lowercase()?.contains("nonfoss") ?: false }
                 ?.browserDownloadUrl ?: return@withContext emptyFlow()
 
             val request = Request.Builder()
