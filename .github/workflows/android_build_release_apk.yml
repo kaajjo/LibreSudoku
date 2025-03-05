@@ -13,6 +13,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Create keystore file for nonFoss APK
+        run: |
+          mkdir -p app/build/outputs/apk/nonFOSS/release
+          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/build/outputs/apk/nonFOSS/release/key.jks
+
+      - name: Create keystore file for foss APK
+        run: |
+          mkdir -p app/build/outputs/apk/foss/release
+          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/build/outputs/apk/foss/release/key.jks
+
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v2
 
@@ -32,12 +42,12 @@ jobs:
         name: Sign nonFoss APK
         id: sign_nonfoss
         with:
-          releaseDir: app/build/outputs/apk/nonFoss/release 
+          releaseDir: app/build/outputs/apk/nonFOSS/release/
           signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
           keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          buildToolsVersion: 33.0.0
+          buildToolsVersion: 35.0.0
 
       - uses: actions/upload-artifact@v4
         with:
@@ -71,12 +81,12 @@ jobs:
         name: Sign foss APK
         id: sign_foss
         with:
-          releaseDir: app/build/outputs/apk/foss/release
+          releaseDir: app/build/outputs/apk/foss/release/
           signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
           keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          buildToolsVersion: 33.0.0
+          buildToolsVersion: 35.0.0
 
       - uses: actions/upload-artifact@v4
         with:
