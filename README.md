@@ -2,17 +2,43 @@
 <div align="center">
 
 # Libre-Sudoku
+<div>
+  <img src="https://m3-markdown-badges.vercel.app/stars/4/2/kaajjo/libresudoku">
+  <img src="https://m3-markdown-badges.vercel.app/issues/4/2/kaajjo/libresudoku">
+</div>
+<div>
+  <img src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Android/android1.svg">
+  <img src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Kotlin/kotlin1.svg">
+  <img src="https://ziadoua.github.io/m3-Markdown-Badges/badges/Weblate/weblate1.svg">
+  <img src="https://ziadoua.github.io/m3-Markdown-Badges/badges/LicenceGPLv3/licencegplv31.svg">
+</div>
+
+
+<div>
+  <a href="https://f-droid.org/en/packages/com.kaajjo.libresudoku/">
+    <img src="https://f-droid.org/badge/get-it-on.png" height="100">
+  </a>
+  <a href="https://www.openapk.net/libresudoku/com.kaajjo.libresudoku/">
+    <img src="https://www.openapk.net/images/openapk-badge.png" height=100>
+  </a>
+  <a href="https://www.androidfreeware.net/download-libresudoku-apk.html">
+    <img src="https://www.androidfreeware.net/images/androidfreeware-badge.png" height=100>
+  </a>
+  <a href="https://www.rustore.ru/catalog/app/com.kaajjo.libresudoku">
+    <img src="https://www.rustore.ru/help/icons/logo-color-dark.svg" height=90>
+</div>
+
 [![F-Droid](https://img.shields.io/f-droid/v/com.kaajjo.libresudoku?color=green&label=F-Droid&logo=f-droid)](https://f-droid.org/en/packages/com.kaajjo.libresudoku)
 [![GitHub Latest Release](https://img.shields.io/github/v/release/kaajjo/libre-sudoku?label=Release&logo=GitHub)](https://github.com/kaajjo/Libre-Sudoku/releases/latest)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/kaajjo/libresudoku/total?style=flat&logo=GitHub&logoColor=FFFFFF&label=Downloads&link=https%3A%2F%2Fgithub.com%2Fkaajjo%2FLibre-Sudoku%2Freleases)
 [![Translation status](https://hosted.weblate.org/widgets/libresudoku/-/svg-badge.svg)](https://hosted.weblate.org/engage/libresudoku/)
-[![GitHub Downloads](https://img.shields.io/github/downloads/kaajjo/libre-sudoku/total?color=0273b3&label=Downloads&logo=github)](https://github.com/kaajjo/Libre-Sudoku/releases)
-[![Telegram Channel](https://img.shields.io/badge/Telegram%20Channel-2CA5E0)](https://t.me/libresudoku)
 
 </div>
 
 ![LibreSudoku Banner](https://github.com/kaajjo/Libre-Sudoku/assets/87094439/20b710de-4074-4e2e-8b94-04b55507874f")
 Open Source sudoku application designed to be as user friendly and customizable as possible \
 Built with [Jetpack Compose](https://developer.android.com/jetpack/compose) and [Material3](https://m3.material.io/)
+
 
 ## 📱 Screenshots 
 <div>
