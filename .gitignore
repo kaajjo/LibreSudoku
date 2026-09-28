@@ -1,5 +1,6 @@
 # Gradle files
 .gradle/
+.kotlin/
 build/
 
 # Local configuration file (sdk path, etc)
@@ -7,6 +8,7 @@ local.properties
 
 # Log/OS Files
 *.log
+.DS_Store
 
 # Android Studio generated files and folders
 captures/
@@ -31,3 +33,6 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Python cache
+__pycache__/
