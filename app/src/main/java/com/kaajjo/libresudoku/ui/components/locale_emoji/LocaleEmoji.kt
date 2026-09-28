@@ -5,6 +5,8 @@ import android.util.Log
 object LocaleEmoji {
     /**
      * Get a country flag from language code
+     *
+     * @param languageCode Language code looked up in the language-to-country mapping.
      * @return country flag (emoji)
      */
     fun getFlagEmoji(

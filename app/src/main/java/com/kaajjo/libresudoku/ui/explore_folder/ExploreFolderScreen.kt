@@ -68,7 +68,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -117,6 +116,7 @@ import com.kaajjo.libresudoku.ui.create_edit_sudoku.DifficultyMenu
 import com.kaajjo.libresudoku.ui.create_edit_sudoku.GameTypeMenu
 import com.kaajjo.libresudoku.ui.gameshistory.ColorfulBadge
 import com.kaajjo.libresudoku.ui.util.isScrolledToEnd
+import com.kaajjo.libresudoku.ui.components.generation.GenerationDialog
 import com.kaajjo.libresudoku.ui.util.isScrolledToStart
 import com.kaajjo.libresudoku.ui.util.isScrollingUp
 import com.ramcosta.composedestinations.annotation.Destination
@@ -137,6 +137,13 @@ fun ExploreFolderScreen(
     viewModel: ExploreFolderViewModel = hiltViewModel(),
     navigator: DestinationsNavigator,
 ) {
+    val generationState by viewModel.generation.state.collectAsStateWithLifecycle()
+    GenerationDialog(
+        state = generationState,
+        onRetry = viewModel.generation::retry,
+        onCancel = viewModel.generation::cancel
+    )
+
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
 
@@ -359,117 +366,83 @@ fun ExploreFolderScreen(
             onConfirmMove = { folderUid -> viewModel.moveBoards(folderUid) }
         )
     } else if (generateSudokuDialog) {
-        var isGenerating by remember { mutableStateOf(false) }
-        var selectedType by remember { mutableStateOf(GameType.Default9x9) }
-        var selectedDifficulty by remember { mutableStateOf(GameDifficulty.Easy) }
-        var numberToGenerate by remember { mutableIntStateOf(1) }
-        val generatedNumber by viewModel.generatedSudokuCount.collectAsStateWithLifecycle(0)
+        var selectedType by rememberSaveable { mutableStateOf(GameType.Default9x9) }
+        var selectedDifficulty by rememberSaveable { mutableStateOf(GameDifficulty.Easy) }
+        var numberToGenerate by rememberSaveable { mutableIntStateOf(1) }
         AlertDialog(
-            onDismissRequest = {
-                generateSudokuDialog = false
-                viewModel.canelGeneratingIfRunning()
-            },
+            onDismissRequest = { generateSudokuDialog = false },
             title = { Text(stringResource(R.string.action_generate)) },
             confirmButton = {
-                Button(
-                    enabled = !isGenerating,
-                    onClick = {
-                        isGenerating = true
-                        viewModel.generateSudoku(selectedType, selectedDifficulty, numberToGenerate)
-                    }) {
-                    Text(stringResource(R.string.dialog_ok))
-                }
+                Button(onClick = {
+                    viewModel.generateSudoku(selectedType, selectedDifficulty, numberToGenerate)
+                    generateSudokuDialog = false
+                }) { Text(stringResource(R.string.dialog_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = {
-                    generateSudokuDialog = false
-                    viewModel.canelGeneratingIfRunning()
-                }) {
+                TextButton(onClick = { generateSudokuDialog = false }) {
                     Text(stringResource(R.string.action_cancel))
                 }
             },
             text = {
-                AnimatedContent(targetState = isGenerating) { targetState ->
-                    Column {
-                        if (!targetState) {
-                            FlowRow {
-                                Box {
-                                    var difficultyMenu by remember { mutableStateOf(false) }
-                                    val dropDownIconRotation by animateFloatAsState(if (difficultyMenu) 180f else 0f)
-                                    TextButton(
-                                        onClick = { difficultyMenu = !difficultyMenu },
-                                        modifier = Modifier.animateContentSize()
-                                    ) {
-                                        Text(stringResource(selectedDifficulty.resName))
-                                        Icon(
-                                            modifier = Modifier.rotate(dropDownIconRotation),
-                                            imageVector = Icons.Rounded.ArrowDropDown,
-                                            contentDescription = null
-                                        )
-                                    }
-                                    DifficultyMenu(
-                                        expanded = difficultyMenu,
-                                        onDismissRequest = { difficultyMenu = false },
-                                        difficulties = listOf(
-                                            GameDifficulty.Easy,
-                                            GameDifficulty.Moderate,
-                                            GameDifficulty.Hard,
-                                            GameDifficulty.Challenge
-                                        ),
-                                        onClick = { selectedDifficulty = it }
-                                    )
-                                }
-                                Box {
-                                    var gameTypeMenuExpanded by remember { mutableStateOf(false) }
-                                    val dropDownIconRotation by animateFloatAsState(if (gameTypeMenuExpanded) 180f else 0f)
-                                    TextButton(
-                                        onClick = { gameTypeMenuExpanded = !gameTypeMenuExpanded },
-                                        modifier = Modifier.animateContentSize()
-                                    ) {
-                                        Text(stringResource(selectedType.resName))
-                                        Icon(
-                                            modifier = Modifier.rotate(dropDownIconRotation),
-                                            imageVector = Icons.Rounded.ArrowDropDown,
-                                            contentDescription = null
-                                        )
-                                    }
-                                    GameTypeMenu(
-                                        expanded = gameTypeMenuExpanded,
-                                        onDismissRequest = { gameTypeMenuExpanded = false },
-                                        onClick = { selectedType = it }
-                                    )
-                                }
+                Column {
+                    FlowRow {
+                        Box {
+                            var difficultyMenu by remember { mutableStateOf(false) }
+                            val dropDownIconRotation by animateFloatAsState(if (difficultyMenu) 180f else 0f)
+                            TextButton(
+                                onClick = { difficultyMenu = !difficultyMenu },
+                                modifier = Modifier.animateContentSize()
+                            ) {
+                                Text(stringResource(selectedDifficulty.resName))
+                                Icon(
+                                    modifier = Modifier.rotate(dropDownIconRotation),
+                                    imageVector = Icons.Rounded.ArrowDropDown,
+                                    contentDescription = null
+                                )
                             }
-                            Text(
-                                text = numberToGenerate.toString(),
-                                style = MaterialTheme.typography.labelLarge,
-                                modifier = Modifier.padding(start = 12.dp)
+                            DifficultyMenu(
+                                expanded = difficultyMenu,
+                                onDismissRequest = { difficultyMenu = false },
+                                difficulties = listOf(
+                                    GameDifficulty.Easy,
+                                    GameDifficulty.Moderate,
+                                    GameDifficulty.Hard,
+                                    GameDifficulty.Challenge
+                                ),
+                                onClick = { selectedDifficulty = it }
                             )
-                            Slider(
-                                value = numberToGenerate.toFloat(),
-                                onValueChange = { numberToGenerate = it.toInt() },
-                                valueRange = 1f..100f
-                            )
-                        } else {
-                            Text(
-                                stringResource(
-                                    R.string.generating_number_of,
-                                    generatedNumber,
-                                    numberToGenerate
-                                ))
-                            LinearProgressIndicator(
-                                progress = {
-                                    generatedNumber.toFloat() / numberToGenerate.toFloat()
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            LaunchedEffect(generatedNumber) {
-                                if (generatedNumber == numberToGenerate) {
-                                    generateSudokuDialog = false
-                                }
+                        }
+                        Box {
+                            var gameTypeMenuExpanded by remember { mutableStateOf(false) }
+                            val dropDownIconRotation by animateFloatAsState(if (gameTypeMenuExpanded) 180f else 0f)
+                            TextButton(
+                                onClick = { gameTypeMenuExpanded = !gameTypeMenuExpanded },
+                                modifier = Modifier.animateContentSize()
+                            ) {
+                                Text(stringResource(selectedType.resName))
+                                Icon(
+                                    modifier = Modifier.rotate(dropDownIconRotation),
+                                    imageVector = Icons.Rounded.ArrowDropDown,
+                                    contentDescription = null
+                                )
                             }
+                            GameTypeMenu(
+                                expanded = gameTypeMenuExpanded,
+                                onDismissRequest = { gameTypeMenuExpanded = false },
+                                onClick = { selectedType = it }
+                            )
                         }
                     }
+                    Text(
+                        text = numberToGenerate.toString(),
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(start = 12.dp)
+                    )
+                    Slider(
+                        value = numberToGenerate.toFloat(),
+                        onValueChange = { numberToGenerate = it.toInt() },
+                        valueRange = 1f..100f
+                    )
                 }
             }
         )

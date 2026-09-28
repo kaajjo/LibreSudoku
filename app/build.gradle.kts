@@ -18,6 +18,7 @@ android {
         targetSdk = 35
         versionCode = 22
         versionName = "2.0.2"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -61,6 +62,7 @@ android {
         compose = true
         buildConfig = true
     }
+    sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
     }
@@ -91,6 +93,9 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
     testImplementation(libs.junit)
+    androidTestImplementation("androidx.room:room-testing:2.6.1")
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation("androidx.test:runner:1.6.2")
     implementation(libs.graphics.shape)
 
     implementation(libs.accompanist.systemuicontroller)

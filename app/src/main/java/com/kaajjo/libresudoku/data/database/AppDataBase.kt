@@ -6,9 +6,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.kaajjo.libresudoku.data.database.converters.DurationConverter
 import com.kaajjo.libresudoku.data.database.converters.GameDifficultyConverter
 import com.kaajjo.libresudoku.data.database.converters.GameTypeConverter
+import com.kaajjo.libresudoku.data.database.converters.RatingMetadataConverter
 import com.kaajjo.libresudoku.data.database.converters.ZonedDateTimeConverter
 import com.kaajjo.libresudoku.data.database.dao.BoardDao
 import com.kaajjo.libresudoku.data.database.dao.DatabaseDao
@@ -22,7 +25,7 @@ import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 
 @Database(
     entities = [Record::class, SudokuBoard::class, SavedGame::class, Folder::class],
-    version = 6,
+    version = 7,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3),
@@ -35,7 +38,8 @@ import com.kaajjo.libresudoku.data.database.model.SudokuBoard
     DurationConverter::class,
     ZonedDateTimeConverter::class,
     GameDifficultyConverter::class,
-    GameTypeConverter::class
+    GameTypeConverter::class,
+    RatingMetadataConverter::class
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun recordDao(): RecordDao
@@ -49,13 +53,19 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         private var INSTANCE: AppDatabase? = null
 
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE board ADD COLUMN rating_metadata TEXT DEFAULT null")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(
                     context,
                     AppDatabase::class.java,
                     "main_database"
-                ).build()
+                ).addMigrations(MIGRATION_6_7).build()
             }
 
             return INSTANCE as AppDatabase

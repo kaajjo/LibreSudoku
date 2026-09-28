@@ -80,6 +80,10 @@ Does not have internet access and does not request any permissions.
 - Custom sudoku from gallery or camera picture
 - More customization options (customize anything that can be customized🔥)
 
+## Generator and logical rating
+
+The classic generator uses DLX uniqueness checks and a versioned logical rating policy.
+
 ## 🌍 Translation
 You can help to translate LibreSudoku into your language at [Hosted Weblate](https://hosted.weblate.org/engage/libresudoku/)\
 [![Translation status](https://hosted.weblate.org/widgets/libresudoku/-/multi-auto.svg)](https://hosted.weblate.org/engage/libresudoku/)

@@ -299,7 +299,10 @@ class CreateSudokuViewModel @Inject constructor(
                         initialBoard = initialBoard,
                         solvedBoard = solvedBoard,
                         difficulty = gameDifficulty,
-                        type = gameType
+                        type = gameType,
+                        ratingMetadata = if (oldBoard.initialBoard == initialBoard && oldBoard.type == gameType) {
+                            oldBoard.ratingMetadata
+                        } else null
                     )
                 )
             } else {

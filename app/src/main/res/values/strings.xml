@@ -406,4 +406,8 @@
     <string name="export_empty_cell">Empty cell</string>
     <string name="update_channel">Update channel</string>
     <string name="font_size_automatic">Automatic</string>
+    <string name="generation_save_error_title">Couldn’t save the puzzle</string>
+    <string name="generation_save_error_message">The puzzle is ready, but couldn’t be saved</string>
+    <string name="generation_retry">Try again</string>
+    <string name="generation_saved_progress">Puzzles already added to the folder will be kept</string>
 </resources>

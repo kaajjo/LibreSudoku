@@ -1,7 +1,5 @@
 package com.kaajjo.libresudoku.core.qqwing
 
-import com.kaajjo.libresudoku.core.qqwing.QQWing.Companion.cellToColumn
-import com.kaajjo.libresudoku.core.qqwing.QQWing.Companion.cellToRow
 
 // @formatter:off
 /*
@@ -29,6 +27,7 @@ import com.kaajjo.libresudoku.core.qqwing.QQWing.Companion.cellToRow
  * the puzzle was to solve.
  */
 class LogItem {
+    private var boardWidth = 9
     /**
      * The recursion level at which this item was gathered. Used for backing out
      * log items solve branches that don't lead to a solution.
@@ -61,7 +60,9 @@ class LogItem {
         init(r, t, 0, -1)
     }
 
-    constructor(r: Int, t: LogType, v: Int, p: Int) {
+    constructor(r: Int, t: LogType, v: Int, p: Int, boardWidth: Int = 9) {
+        require(boardWidth > 0)
+        this.boardWidth = boardWidth
         init(r, t, v, p)
     }
 
@@ -80,13 +81,13 @@ class LogItem {
      * Get the row (1 indexed), or -1 if no row
      */
     val row: Int
-        get() = if (position <= -1) -1 else cellToRow(position) + 1
+        get() = if (position <= -1) -1 else position / boardWidth + 1
 
     /**
      * Get the column (1 indexed), or -1 if no column
      */
     val column: Int
-        get() = if (position <= -1) -1 else cellToColumn(position) + 1
+        get() = if (position <= -1) -1 else position % boardWidth + 1
 
     /**
      * Get the value, or -1 if no value

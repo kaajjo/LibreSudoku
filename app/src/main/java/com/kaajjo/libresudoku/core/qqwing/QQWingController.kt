@@ -130,7 +130,7 @@ class QQWingController {
                                     havePuzzle = qqWing.generatePuzzleSymmetry(options.symmetry)
                                 } else {
                                     // Read the next puzzle on STDIN
-                                    var puzzle: IntArray? = IntArray(QQWing.BOARD_SIZE)
+                                    var puzzle: IntArray? = IntArray(options.gameType.size * options.gameType.size)
                                     if (getPuzzleToSolve(puzzle)) {
                                         havePuzzle = qqWing.setPuzzle(puzzle)
                                         if (havePuzzle) {

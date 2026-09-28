@@ -1,5 +1,6 @@
 package com.kaajjo.libresudoku.ui.explore_folder
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.QQWingController
+import com.kaajjo.libresudoku.ui.components.generation.GenerationSession
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.domain.usecase.UpdateManyBoardsUseCase
@@ -22,9 +24,6 @@ import com.kaajjo.libresudoku.domain.usecase.folder.GetFoldersUseCase
 import com.kaajjo.libresudoku.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -55,10 +54,9 @@ class ExploreFolderViewModel @Inject constructor(
 
     val folders = getFoldersUseCase()
 
-    private var _generatedSudokuCount = MutableStateFlow(0)
-    val generatedSudokuCount = _generatedSudokuCount.asStateFlow()
-
-    private var generatingJob: Job? = null
+    val generation = GenerationSession(viewModelScope, onError = { exception ->
+        Log.e(TAG, "Unable to generate or save Sudoku puzzles for a folder", exception)
+    })
 
     fun prepareSudokuToPlay(board: SudokuBoard) {
         gameUidToPlay = board.uid
@@ -121,36 +119,24 @@ class ExploreFolderViewModel @Inject constructor(
     }
 
     fun generateSudoku(type: GameType, difficulty: GameDifficulty, numberToGenerate: Int) {
-        generatingJob = viewModelScope.launch(Dispatchers.Default) {
-            withContext(Dispatchers.Main) {
-                _generatedSudokuCount.emit(0)
-            }
-
-            val sudokuParser = SudokuParser()
-
-            for (i in 1..numberToGenerate) {
-                val qqWingController = QQWingController()
-                val generatedBoard = qqWingController.generate(type, difficulty)
-
-                val board = SudokuBoard(
-                    uid = 0L,
-                    type = type,
-                    difficulty = difficulty,
-                    initialBoard = sudokuParser.boardToString(generatedBoard),
-                    solvedBoard = "",
-                    folderId = folderUid
-                )
-                withContext(Dispatchers.IO) {
-                    insertBoardUseCase(board)
-                }
-                withContext(Dispatchers.Main) {
-                    _generatedSudokuCount.emit(i)
-                }
-            }
+        generation.start(type, difficulty, numberToGenerate) { result ->
+            val parser = SudokuParser()
+            Log.d("BOARD", parser.boardToString(result.puzzle))
+            val board = SudokuBoard(
+                uid = 0L,
+                type = type,
+                difficulty = result.difficulty,
+                initialBoard = parser.boardToString(result.puzzle),
+                solvedBoard = parser.boardToString(result.solution),
+                killerCages = result.killerCages?.let(parser::killerSudokuCagesToString),
+                folderId = folderUid,
+                ratingMetadata = result.ratingMetadata
+            )
+            withContext(Dispatchers.IO) { insertBoardUseCase(board) }
         }
     }
 
-    fun canelGeneratingIfRunning() {
-        generatingJob?.cancel()
+    private companion object {
+        const val TAG = "ExploreFolderVM"
     }
 }
