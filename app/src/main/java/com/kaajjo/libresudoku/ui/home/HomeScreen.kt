@@ -61,6 +61,8 @@ import com.kaajjo.libresudoku.data.database.model.SavedGame
 import com.kaajjo.libresudoku.destinations.GameScreenDestination
 import com.kaajjo.libresudoku.ui.components.AnimatedNavigation
 import com.kaajjo.libresudoku.ui.components.ScrollbarLazyColumn
+import com.kaajjo.libresudoku.ui.components.generation.GenerationDialog
+import com.kaajjo.libresudoku.ui.components.generation.GenerationState
 import com.kaajjo.libresudoku.ui.components.board.BoardPreview
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -68,7 +70,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import java.time.ZonedDateTime
 import kotlin.math.sqrt
 import kotlin.time.toKotlinDuration
-import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination(style = AnimatedNavigation::class)
@@ -95,27 +96,25 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel(), navigator: Destinatio
         }
     }
 
+    val generationState by viewModel.generation.state.collectAsStateWithLifecycle()
+    LaunchedEffect(generationState) {
+        if (generationState == GenerationState.Completed) {
+            viewModel.generation.cancel()
+            navigator.navigate(GameScreenDestination(viewModel.insertedBoardUid, playedBefore = false))
+        }
+    }
+    GenerationDialog(
+        state = generationState,
+        onRetry = viewModel.generation::retry,
+        onCancel = viewModel.generation::cancel
+    )
+
     Scaffold { paddingValues ->
         Column(
                 modifier = Modifier.padding(paddingValues).fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceAround
         ) {
-            if (viewModel.readyToPlay) {
-                viewModel.readyToPlay = false
-
-                runBlocking {
-                    // viewModel.saveToDatabase()
-                    val saved = lastGame?.completed ?: false
-                    navigator.navigate(
-                            GameScreenDestination(
-                                    gameUid = viewModel.insertedBoardUid,
-                                    playedBefore = saved
-                            )
-                    )
-                }
-            }
-
             Text(
                     text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineLarge
@@ -157,24 +156,11 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel(), navigator: Destinatio
                 } else {
                     Button(
                             onClick = {
-                                viewModel.giveUpLastGame()
                                 viewModel.startGame()
                             }
                     ) { Text(stringResource(R.string.action_play)) }
                 }
             }
-        }
-
-        if (viewModel.isGenerating || viewModel.isSolving) {
-            GeneratingDialog(
-                    onDismiss = {},
-                    text =
-                            when {
-                                viewModel.isGenerating -> stringResource(R.string.dialog_generating)
-                                viewModel.isSolving -> stringResource(R.string.dialog_solving)
-                                else -> ""
-                            }
-            )
         }
 
         if (continueGameDialog) {
@@ -185,7 +171,6 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel(), navigator: Destinatio
                         TextButton(
                                 onClick = {
                                     continueGameDialog = false
-                                    viewModel.giveUpLastGame()
                                     viewModel.startGame()
                                 }
                         ) { Text(stringResource(R.string.dialog_new_game_positive)) }

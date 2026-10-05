@@ -408,4 +408,8 @@
     <string name="check_for_update_latest_summary">Так держать!</string>
     <string name="update_channel">Канал обновлений</string>
     <string name="font_size_automatic">Автоматически</string>
+    <string name="generation_save_error_title">Не удалось сохранить головоломку</string>
+    <string name="generation_save_error_message">Судоку готово, но сохранить его не удалось. Попробуйте сохранить ещё раз или отмените генерацию</string>
+    <string name="generation_retry">Повторить попытку</string>
+    <string name="generation_saved_progress">Головоломки, уже добавленные в папку, сохранятся</string>
 </resources>

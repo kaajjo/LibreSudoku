@@ -43,6 +43,7 @@ class SudokuParser {
     /**
      * Converts sudoku board to string
      * @param boardList Sudoku board
+     * @param emptySeparator Text written for empty cells instead of their numeric zero value.
      * @return Sudoku in string
      */
     fun boardToString(boardList: List<List<Cell>>, emptySeparator: Char = '0'): String {

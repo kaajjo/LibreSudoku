@@ -2,7 +2,6 @@ package com.kaajjo.libresudoku.core.qqwing
 
 import java.util.*
 
-// @formatter:off
 /*
  * qqwing - Sudoku solver and generator
  * Copyright (C) 2006-2014 Stephen Ostermiller http://ostermiller.org/
@@ -23,12 +22,24 @@ import java.util.*
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-// @formatter:on
 /**
  * The board containing all the memory structures and methods for solving or
  * generating sudoku puzzles.
+ *
+ * @param type Game variant supplying the grid and box dimensions.
+ * @param difficulty Initial difficulty setting; solving can derive a different rating from its history.
  */
 class QQWing(type: GameType, difficulty: GameDifficulty) {
+    // Legacy callers still use this solver. Geometry and RNG belong to each instance so
+    // importing/playing a different board size cannot corrupt an in-flight solve.
+    private val GRID_SIZE_ROW = type.sectionHeight
+    private val GRID_SIZE_COL = type.sectionWidth
+    private val ROW_COL_SEC_SIZE = type.size
+    private val SEC_GROUP_SIZE = ROW_COL_SEC_SIZE * GRID_SIZE_ROW
+    private val BOARD_SIZE = ROW_COL_SEC_SIZE * ROW_COL_SEC_SIZE
+    private val POSSIBILITY_SIZE = BOARD_SIZE * ROW_COL_SEC_SIZE
+    private var random = Random()
+
     /**
      * A list of moves used to solve the puzzle. This list contains all moves,
      * even on solve branches that did not lead to a solution.
@@ -112,18 +123,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
     init {
         gameType = type
         this.difficulty = difficulty
-        GRID_SIZE_ROW = type.sectionHeight // 3    // 2
-        GRID_SIZE_COL = type.sectionWidth // 3    // 3
-        ROW_COL_SEC_SIZE = GRID_SIZE_ROW * GRID_SIZE_COL //  3*3 = 9     // 6
-        SEC_GROUP_SIZE = ROW_COL_SEC_SIZE * GRID_SIZE_ROW // 9 * 3 = 27 ? // 12
-        BOARD_SIZE = ROW_COL_SEC_SIZE * ROW_COL_SEC_SIZE // 9 * 9 = 81   // 36
-        POSSIBILITY_SIZE = BOARD_SIZE * ROW_COL_SEC_SIZE // 81 * 9
-        puzzle = IntArray(BOARD_SIZE)
-        solution = IntArray(BOARD_SIZE)
-        solutionRound = IntArray(BOARD_SIZE)
-        possibilities = IntArray(POSSIBILITY_SIZE)
-        randomBoardArray = fillIncrementing(IntArray(BOARD_SIZE))
-        randomPossibilityArray = fillIncrementing(IntArray(ROW_COL_SEC_SIZE))
+
     }
 
     /**
@@ -141,7 +141,9 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
 
     /**
      * Set the board to the given puzzle. The given puzzle must be an array of
-     * 81 integers.
+     * N*N integers, where N is the side length of this instance.
+     *
+     * @param initPuzzle Row-major givens to copy; zero means empty. Null clears all givens.
      */
     fun setPuzzle(initPuzzle: IntArray?): Boolean {
         for (i in 0 until BOARD_SIZE) {
@@ -173,7 +175,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                 if (possibilities[valPos] != 0) return false
                 mark(position, round, value)
                 if (logHistory || recordHistory) addHistoryItem(
-                    LogItem(
+                    createLogItem(
                         round,
                         LogType.GIVEN,
                         value,
@@ -195,17 +197,15 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         if (getPointingPairTripleCount() > 0) return GameDifficulty.Hard
         if (getHiddenPairCount() > 0) return GameDifficulty.Moderate
         if (getNakedPairCount() > 0) return GameDifficulty.Moderate
-        when (gameType) {
-            GameType.Default6x6 -> if (getHiddenSingleCount() > 0) return GameDifficulty.Moderate
-            GameType.Default9x9 -> if (getHiddenSingleCount() > 10) return GameDifficulty.Moderate
-            GameType.Default12x12 -> if (getHiddenSingleCount() > 20) return GameDifficulty.Moderate
+        when (gameType.size) {
+            6 -> if (getHiddenSingleCount() > 0) return GameDifficulty.Moderate
+            12 -> if (getHiddenSingleCount() > 20) return GameDifficulty.Moderate
             else -> if (getHiddenSingleCount() > 10) return GameDifficulty.Moderate
         }
-        when (gameType) {
-            GameType.Default6x6 -> if (getSingleCount() > 10) return GameDifficulty.Easy
-            GameType.Default9x9 -> if (getSingleCount() > 35) return GameDifficulty.Easy
-            GameType.Default12x12 -> if (getSingleCount() > 50) return GameDifficulty.Easy
-            else -> if (getSingleCount() > 20) return GameDifficulty.Easy
+        when (gameType.size) {
+            6 -> if (getSingleCount() > 10) return GameDifficulty.Easy
+            12 -> if (getSingleCount() > 50) return GameDifficulty.Easy
+            else -> if (getSingleCount() > 35) return GameDifficulty.Easy
         }
         return GameDifficulty.Unspecified
     }
@@ -544,6 +544,9 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
 
     private fun solve(round: Int): Boolean {
         lastSolveRound = round
+        if (isSolved()) return true
+        if (isImpossible()) return false
+
         while (singleSolveMove(round)) {
             if (isSolved()) return true
             if (isImpossible()) return false
@@ -607,6 +610,15 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
     }
 
     private fun countSolutions(round: Int, limitToTwo: Boolean): Int {
+        if (isSolved()) {
+            rollbackRound(round)
+            return 1
+        }
+        if (isImpossible()) {
+            rollbackRound(round)
+            return 0
+        }
+
         while (singleSolveMove(round)) {
             if (isSolved()) {
                 rollbackRound(round)
@@ -633,7 +645,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
     }
 
     private fun rollbackRound(round: Int) {
-        if (logHistory || recordHistory) addHistoryItem(LogItem(round, LogType.ROLLBACK))
+        if (logHistory || recordHistory) addHistoryItem(createLogItem(round, LogType.ROLLBACK))
         for (i in 0 until BOARD_SIZE) {
             if (solutionRound[i] == round) {
                 solutionRound[i] = 0
@@ -706,7 +718,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                 if (localGuessCount == guessNumber) {
                     val value = valIndex + 1
                     if (logHistory || recordHistory) addHistoryItem(
-                        LogItem(
+                        createLogItem(
                             round,
                             LogType.GUESS,
                             value,
@@ -742,7 +754,6 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                 val colStart = columnToFirstCell(col)
                 var inOneBox = true
                 var colBox = -1
-                // this part is checked!
                 for (i in 0 until GRID_SIZE_COL) {
                     for (j in 0 until GRID_SIZE_ROW) {
                         val row = i * GRID_SIZE_ROW + j
@@ -777,7 +788,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                     }
                     if (doneSomething) {
                         if (logHistory || recordHistory) addHistoryItem(
-                            LogItem(
+                            createLogItem(
                                 round,
                                 LogType.COLUMN_BOX,
                                 valIndex + 1,
@@ -832,7 +843,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                     }
                     if (doneSomething) {
                         if (logHistory || recordHistory) addHistoryItem(
-                            LogItem(
+                            createLogItem(
                                 round,
                                 LogType.ROW_BOX,
                                 valIndex + 1,
@@ -847,7 +858,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return false
     }
 
-    // CHECKED!
+
     private fun pointingRowReduction(round: Int): Boolean {
         for (valIndex in 0 until ROW_COL_SEC_SIZE) {
             for (section in 0 until ROW_COL_SEC_SIZE) {
@@ -882,7 +893,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                     }
                     if (doneSomething) {
                         if (logHistory || recordHistory) addHistoryItem(
-                            LogItem(
+                            createLogItem(
                                 round,
                                 LogType.POINTING_PAIR_TRIPLE_ROW,
                                 valIndex + 1,
@@ -897,7 +908,6 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return false
     }
 
-    // CHECKED! .. pretty sure this is correct now
     private fun pointingColumnReduction(round: Int): Boolean {
         for (valIndex in 0 until ROW_COL_SEC_SIZE) {
             for (section in 0 until ROW_COL_SEC_SIZE) {
@@ -932,7 +942,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                     }
                     if (doneSomething) {
                         if (logHistory || recordHistory) addHistoryItem(
-                            LogItem(
+                            createLogItem(
                                 round,
                                 LogType.POINTING_PAIR_TRIPLE_COLUMN,
                                 valIndex + 1,
@@ -947,7 +957,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return false
     }
 
-    // CHECKED!
+
     private fun countPossibilities(position: Int): Int {
         var count = 0
         for (valIndex in 0 until ROW_COL_SEC_SIZE) {
@@ -957,7 +967,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return count
     }
 
-    // CHECKED!
+
     private fun arePossibilitiesSame(position1: Int, position2: Int): Boolean {
         for (valIndex in 0 until ROW_COL_SEC_SIZE) {
             val valPos1 = getPossibilityIndex(valIndex, position1)
@@ -969,7 +979,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return true
     }
 
-    // CHECKED!
+
     private fun removePossibilitiesInOneFromTwo(
         position1: Int,
         position2: Int,
@@ -987,7 +997,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return doneSomething
     }
 
-    // CHECKED!
+
     private fun hiddenPairInColumn(round: Int): Boolean {
         for (column in 0 until ROW_COL_SEC_SIZE) {
             for (valIndex in 0 until ROW_COL_SEC_SIZE) {
@@ -1043,7 +1053,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                             }
                             if (doneSomething) {
                                 if (logHistory || recordHistory) addHistoryItem(
-                                    LogItem(
+                                    createLogItem(
                                         round,
                                         LogType.HIDDEN_PAIR_COLUMN,
                                         valIndex + 1,
@@ -1060,7 +1070,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return false
     }
 
-    // CHECKED!
+
     private fun hiddenPairInSection(round: Int): Boolean {
         for (section in 0 until ROW_COL_SEC_SIZE) {
             for (valIndex in 0 until ROW_COL_SEC_SIZE) {
@@ -1116,7 +1126,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                             }
                             if (doneSomething) {
                                 if (logHistory || recordHistory) addHistoryItem(
-                                    LogItem(
+                                    createLogItem(
                                         round,
                                         LogType.HIDDEN_PAIR_SECTION,
                                         valIndex + 1,
@@ -1133,7 +1143,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return false
     }
 
-    // CHECKED!
+
     private fun hiddenPairInRow(round: Int): Boolean {
         for (row in 0 until ROW_COL_SEC_SIZE) {
             for (valIndex in 0 until ROW_COL_SEC_SIZE) {
@@ -1189,7 +1199,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                             }
                             if (doneSomething) {
                                 if (logHistory || recordHistory) addHistoryItem(
-                                    LogItem(
+                                    createLogItem(
                                         round,
                                         LogType.HIDDEN_PAIR_ROW,
                                         valIndex + 1,
@@ -1206,7 +1216,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return false
     }
 
-    // CHECKED!
+
     private fun handleNakedPairs(round: Int): Boolean {
         for (position in 0 until BOARD_SIZE) {
             val possibilities = countPossibilities(position)
@@ -1233,7 +1243,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                                 }
                                 if (doneSomething) {
                                     if (logHistory || recordHistory) addHistoryItem(
-                                        LogItem(
+                                        createLogItem(
                                             round,
                                             LogType.NAKED_PAIR_ROW,
                                             0,
@@ -1258,7 +1268,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                                 }
                                 if (doneSomething) {
                                     if (logHistory || recordHistory) addHistoryItem(
-                                        LogItem(
+                                        createLogItem(
                                             round,
                                             LogType.NAKED_PAIR_COLUMN,
                                             0,
@@ -1286,7 +1296,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                                 }
                                 if (doneSomething) {
                                     if (logHistory || recordHistory) addHistoryItem(
-                                        LogItem(
+                                        createLogItem(
                                             round,
                                             LogType.NAKED_PAIR_SECTION,
                                             0,
@@ -1309,7 +1319,8 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
      * such a cell exists. This method will look in a row for a possibility that
      * is only listed for one cell. This type of cell is often called a
      * "hidden single"
-     * CHECKED!
+     *
+     * @param round Search round recorded on placements and eliminations so they can be rolled back.
      */
     private fun onlyValueInRow(round: Int): Boolean {
         for (row in 0 until ROW_COL_SEC_SIZE) {
@@ -1327,7 +1338,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                 if (count == 1) {
                     val value = valIndex + 1
                     if (logHistory || recordHistory) addHistoryItem(
-                        LogItem(
+                        createLogItem(
                             round,
                             LogType.HIDDEN_SINGLE_ROW,
                             value,
@@ -1347,7 +1358,8 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
      * if such a cell exists. This method will look in a column for a
      * possibility that is only listed for one cell. This type of cell is often
      * called a "hidden single"
-     * CHECKED!
+     *
+     * @param round Search round recorded on placements and eliminations so they can be rolled back.
      */
     private fun onlyValueInColumn(round: Int): Boolean {
         for (col in 0 until ROW_COL_SEC_SIZE) {
@@ -1365,7 +1377,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                 if (count == 1) {
                     val value = valIndex + 1
                     if (logHistory || recordHistory) addHistoryItem(
-                        LogItem(
+                        createLogItem(
                             round,
                             LogType.HIDDEN_SINGLE_COLUMN,
                             value,
@@ -1385,7 +1397,8 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
      * if such a cell exists. This method will look in a section for a
      * possibility that is only listed for one cell. This type of cell is often
      * called a "hidden single"
-     * Checked!
+     *
+     * @param round Search round recorded on placements and eliminations so they can be rolled back.
      */
     private fun onlyValueInSection(round: Int): Boolean {
         for (sec in 0 until ROW_COL_SEC_SIZE) {
@@ -1406,7 +1419,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                 if (count == 1) {
                     val value = valIndex + 1
                     if (logHistory || recordHistory) addHistoryItem(
-                        LogItem(
+                        createLogItem(
                             round,
                             LogType.HIDDEN_SINGLE_SECTION,
                             value,
@@ -1425,7 +1438,8 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
      * Mark exactly one cell that has a single possibility, if such a cell
      * exists. This method will look for a cell that has only one possibility.
      * This type of cell is often called a "single"
-     * Checked!
+     *
+     * @param round Search round recorded on placements and eliminations so they can be rolled back.
      */
     private fun onlyPossibilityForCell(round: Int): Boolean {
         for (position in 0 until BOARD_SIZE) {
@@ -1442,7 +1456,7 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
                 if (count == 1) {
                     mark(position, round, lastValue)
                     if (logHistory || recordHistory) addHistoryItem(
-                        LogItem(
+                        createLogItem(
                             round,
                             LogType.SINGLE,
                             lastValue,
@@ -1460,10 +1474,9 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
      * Mark the given value at the given position. Go through the row, column,
      * and section for the position and remove the value from the possibilities.
      *
-     * @param position Position into the board (0-80)
+     * @param position Position into the board (0 until BOARD_SIZE)
      * @param round    Round to mark for rollback purposes
      * @param value    The value to go in the square at the given position
-     * Checked!
      */
     private fun mark(position: Int, round: Int, value: Int) {
         require(solution[position] == 0) { "Marking position that already has been marked." }
@@ -1523,6 +1536,8 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
     /**
      * print the given BOARD_SIZEd array of ints as a sudoku puzzle. Use print
      * options from member variables.
+     *
+     * @param sudoku Row-major values to print, with zero representing an empty cell.
      */
     private fun print(sudoku: IntArray) {
         print(puzzleToString(sudoku))
@@ -1601,6 +1616,9 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
     /**
      * Given a vector of LogItems, determine how many log items in the vector
      * are of the specified type.
+     *
+     * @param v History entries to count; entries must be non-null.
+     * @param type Log entry type to include in the count.
      */
     private fun getLogCount(v: ArrayList<LogItem?>, type: LogType): Int {
         var count = 0
@@ -1610,132 +1628,145 @@ class QQWing(type: GameType, difficulty: GameDifficulty) {
         return count
     }
 
+    private fun createLogItem(
+        round: Int,
+        type: LogType,
+        value: Int = 0,
+        position: Int = -1
+    ) = LogItem(round, type, value, position, ROW_COL_SEC_SIZE)
+
+    private fun fillIncrementing(arr: IntArray): IntArray {
+        for (i in arr.indices) {
+            arr[i] = i
+        }
+        return arr
+    }
+
+    /**
+     * Shuffle the values in an array of integers.
+     *
+     * @param array Array whose prefix is shuffled in place.
+     * @param size Length of the prefix to shuffle, from zero through the array length.
+     */
+    private fun shuffleArray(array: IntArray, size: Int) {
+        for (i in 0 until size) {
+            val tailSize = size - i
+            val randTailPos = random.nextInt(tailSize) + i
+            val temp = array[i]
+            array[i] = array[randTailPos]
+            array[randTailPos] = temp
+        }
+    }
+
+    // not the first and last value which are NONE and RANDOM
+    private val randomSymmetry: Symmetry
+        get() {
+            val values = Symmetry.values()
+            // not the first and last value which are NONE and RANDOM
+            return values[1 + random.nextInt(values.size - 2)]
+        }
+
+    /**
+     * Given the index of a cell (0 until BOARD_SIZE) calculate the column (0 until ROW_COL_SEC_SIZE) in which that
+     * cell resides.
+     *
+     * @param cell Zero-based cell index in the row-major board.
+     */
+    fun cellToColumn(cell: Int): Int {
+        return cell % ROW_COL_SEC_SIZE
+    }
+
+    /**
+     * Given the index of a cell (0 until BOARD_SIZE) calculate the row (0 until ROW_COL_SEC_SIZE) in which it
+     * resides.
+     *
+     * @param cell Zero-based cell index in the row-major board.
+     */
+    fun cellToRow(cell: Int): Int {
+        return cell / ROW_COL_SEC_SIZE
+    }
+
+    /**
+     * Given the index of a cell (0 until BOARD_SIZE) calculate the section (0 until ROW_COL_SEC_SIZE) in which it
+     * resides.
+     *
+     * @param cell Zero-based cell index in the row-major board.
+     */
+    fun cellToSection(cell: Int): Int {
+        return cell / SEC_GROUP_SIZE * GRID_SIZE_ROW + cellToColumn(cell) / GRID_SIZE_COL
+    }
+
+    /**
+     * Given the index of a cell (0 until BOARD_SIZE) calculate the cell (0 until BOARD_SIZE) that is the
+     * upper left start cell of that section.
+     *
+     * @param cell Zero-based cell index in the row-major board.
+     */
+    fun cellToSectionStartCell(cell: Int): Int {
+        return cell / SEC_GROUP_SIZE * SEC_GROUP_SIZE + cellToColumn(cell) / GRID_SIZE_COL * GRID_SIZE_COL
+    }
+
+    /**
+     * Given a row (0 until ROW_COL_SEC_SIZE) calculate the first cell (0 until BOARD_SIZE) of that row.
+     *
+     * @param row Zero-based row index in the current board.
+     */
+    fun rowToFirstCell(row: Int): Int {
+        return ROW_COL_SEC_SIZE * row
+    }
+
+    /**
+     * Given a column (0 until ROW_COL_SEC_SIZE) calculate the first cell (0 until BOARD_SIZE) of that column.
+     *
+     * @param column Zero-based column index in the current board.
+     */
+    fun columnToFirstCell(column: Int): Int {
+        return column
+    }
+
+    /**
+     * Given a section (0 until ROW_COL_SEC_SIZE) calculate the first cell (0 until BOARD_SIZE) of that section.
+     *
+     * @param section Zero-based box index, ordered by box rows and then box columns.
+     */
+    fun sectionToFirstCell(section: Int): Int {
+        return section % GRID_SIZE_ROW * GRID_SIZE_COL + section / GRID_SIZE_ROW * SEC_GROUP_SIZE
+    }
+
+    /**
+     * Given a value for a cell (0 until ROW_COL_SEC_SIZE) and a cell number (0 until BOARD_SIZE) calculate the
+     * offset into the possibility array (0 until POSSIBILITY_SIZE).
+     *
+     * @param valueIndex Zero-based symbol index (the displayed value minus one).
+     * @param cell Zero-based cell index in the row-major board.
+     */
+    fun getPossibilityIndex(valueIndex: Int, cell: Int): Int {
+        return valueIndex + ROW_COL_SEC_SIZE * cell
+    }
+
+    /**
+     * Given a row (0 until ROW_COL_SEC_SIZE) and a column (0 until ROW_COL_SEC_SIZE) calculate the cell (0 until BOARD_SIZE).
+     *
+     * @param row Zero-based row index in the current board.
+     * @param column Zero-based column index in the current board.
+     */
+    fun rowColumnToCell(row: Int, column: Int): Int {
+        return row * ROW_COL_SEC_SIZE + column
+    }
+
+    /**
+     * Given a section (0 until ROW_COL_SEC_SIZE) and an offset into that section (0 until ROW_COL_SEC_SIZE) calculate the
+     * cell (0 until BOARD_SIZE)
+     *
+     * @param section Zero-based box index, ordered by box rows and then box columns.
+     * @param offset Zero-based row-major cell offset inside the box.
+     */
+    fun sectionToCell(section: Int, offset: Int): Int {
+        return sectionToFirstCell(section) + offset / GRID_SIZE_COL * ROW_COL_SEC_SIZE + offset % GRID_SIZE_COL
+    }
+
     companion object {
         const val QQWING_VERSION = "1.3.4"
-        private val NL = System.getProperties().getProperty("line.separator")
-
-        //public static final int GRID_SIZE = 3;
-        var GRID_SIZE_ROW = 3
-        var GRID_SIZE_COL = 3
-        var ROW_COL_SEC_SIZE = GRID_SIZE_ROW * GRID_SIZE_COL
-        var SEC_GROUP_SIZE = ROW_COL_SEC_SIZE * GRID_SIZE_ROW
-        var BOARD_SIZE = ROW_COL_SEC_SIZE * ROW_COL_SEC_SIZE
-        var POSSIBILITY_SIZE = BOARD_SIZE * ROW_COL_SEC_SIZE
-        private var random = Random()
-        private fun fillIncrementing(arr: IntArray): IntArray {
-            for (i in arr.indices) {
-                arr[i] = i
-            }
-            return arr
-        }
-
-        /**
-         * Shuffle the values in an array of integers.
-         */
-        private fun shuffleArray(array: IntArray, size: Int) {
-            for (i in 0 until size) {
-                val tailSize = size - i
-                val randTailPos = Math.abs(random.nextInt()) % tailSize + i
-                val temp = array[i]
-                array[i] = array[randTailPos]
-                array[randTailPos] = temp
-            }
-        }
-
-        // not the first and last value which are NONE and RANDOM
-        private val randomSymmetry: Symmetry
-            get() {
-                val values = Symmetry.values()
-                // not the first and last value which are NONE and RANDOM
-                return values[Math.abs(random.nextInt()) % (values.size - 1) + 1]
-            }
-
-        /**
-         * Given the index of a cell (0-80) calculate the column (0-8) in which that
-         * cell resides.
-         * Checked!
-         */
-        @JvmStatic
-        fun cellToColumn(cell: Int): Int {
-            return cell % ROW_COL_SEC_SIZE
-        }
-
-        /**
-         * Given the index of a cell (0-80) calculate the row (0-8) in which it
-         * resides.
-         * Checked!
-         */
-        @JvmStatic
-        fun cellToRow(cell: Int): Int {
-            return cell / ROW_COL_SEC_SIZE
-        }
-
-        /**
-         * Given the index of a cell (0-80) calculate the section (0-8) in which it
-         * resides.
-         * Checked!
-         */
-        fun cellToSection(cell: Int): Int {
-            return cell / SEC_GROUP_SIZE * GRID_SIZE_ROW + cellToColumn(cell) / GRID_SIZE_COL
-        }
-
-        /**
-         * Given the index of a cell (0-80) calculate the cell (0-80) that is the
-         * upper left start cell of that section.
-         * Checked!
-         */
-        fun cellToSectionStartCell(cell: Int): Int {
-            return cell / SEC_GROUP_SIZE * SEC_GROUP_SIZE + cellToColumn(cell) / GRID_SIZE_COL * GRID_SIZE_COL
-        }
-
-        /**
-         * Given a row (0-8) calculate the first cell (0-80) of that row.
-         * Checked!
-         */
-        fun rowToFirstCell(row: Int): Int {
-            return ROW_COL_SEC_SIZE * row
-        }
-
-        /**
-         * Given a column (0-8) calculate the first cell (0-80) of that column.
-         * Checked!
-         */
-        fun columnToFirstCell(column: Int): Int {
-            return column
-        }
-
-        /**
-         * Given a section (0-8) calculate the first cell (0-80) of that section.
-         * Checked!
-         */
-        fun sectionToFirstCell(section: Int): Int {
-            return section % GRID_SIZE_ROW * GRID_SIZE_COL + section / GRID_SIZE_ROW * SEC_GROUP_SIZE
-        }
-
-        /**
-         * Given a value for a cell (0-8) and a cell number (0-80) calculate the
-         * offset into the possibility array (0-728).
-         * Checked!
-         */
-        fun getPossibilityIndex(valueIndex: Int, cell: Int): Int {
-            return valueIndex + ROW_COL_SEC_SIZE * cell
-        }
-
-        /**
-         * Given a row (0-8) and a column (0-8) calculate the cell (0-80).
-         * Checked!
-         */
-        fun rowColumnToCell(row: Int, column: Int): Int {
-            return row * ROW_COL_SEC_SIZE + column
-        }
-
-        /**
-         * Given a section (0-8) and an offset into that section (0-8) calculate the
-         * cell (0-80)
-         * Checked!
-         */
-        fun sectionToCell(section: Int, offset: Int): Int {
-            return sectionToFirstCell(section) + offset / GRID_SIZE_COL * ROW_COL_SEC_SIZE + offset % GRID_SIZE_COL
-        }
+        private val NL = System.getProperty("line.separator")
     }
 }

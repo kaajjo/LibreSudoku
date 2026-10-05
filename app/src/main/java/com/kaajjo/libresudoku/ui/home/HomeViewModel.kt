@@ -1,16 +1,14 @@
 package com.kaajjo.libresudoku.ui.home
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaajjo.libresudoku.core.Cell
-import com.kaajjo.libresudoku.core.qqwing.Cage
-import com.kaajjo.libresudoku.core.qqwing.CageGenerator
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
-import com.kaajjo.libresudoku.core.qqwing.QQWingController
+import com.kaajjo.libresudoku.ui.components.generation.GenerationSession
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.data.database.model.SudokuBoard
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
@@ -21,8 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -66,84 +62,46 @@ class HomeViewModel
     var selectedDifficulty by mutableStateOf(difficulties.first())
     var selectedType by mutableStateOf(types.first())
 
-    var isGenerating by mutableStateOf(false)
-    var isSolving by mutableStateOf(false)
-    var readyToPlay by mutableStateOf(false)
-
-    private var puzzle =
-        List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
-    private var solvedPuzzle =
-        List(selectedType.size) { row -> List(selectedType.size) { col -> Cell(row, col, 0) } }
-
+    val generation = GenerationSession(viewModelScope, onError = { exception ->
+        Log.e(TAG, "Unable to generate or save a Sudoku puzzle", exception)
+    })
 
     fun startGame() {
-        isSolving = false
-        isGenerating = false
-
-        val gameTypeToGenerate = selectedType
-        val gameDifficultyToGenerate = selectedDifficulty
-        val size = gameTypeToGenerate.size
-
-        puzzle = List(size) { row -> List(size) { col -> Cell(row, col, 0) } }
-        solvedPuzzle = List(size) { row -> List(size) { col -> Cell(row, col, 0) } }
-
-        viewModelScope.launch(Dispatchers.Default) {
-            val saveSelectedGameDifficultyAndType = runBlocking { appSettingsManager.saveSelectedGameDifficultyType.first() }
-            if (saveSelectedGameDifficultyAndType) {
-                appSettingsManager.setLastSelectedGameDifficultyType(
-                    difficulty = selectedDifficulty,
-                    type = selectedType
-                )
-            }
-
-            val qqWingController = QQWingController()
-
-            // generating
-            isGenerating = true
-            val generated = qqWingController.generate(gameTypeToGenerate, gameDifficultyToGenerate)
-            isGenerating = false
-
-            isSolving = true
-            val solved = qqWingController.solve(generated, gameTypeToGenerate)
-            isSolving = false
-
-
-            if (!qqWingController.isImpossible && qqWingController.solutionCount == 1) {
-                for (i in 0 until size) {
-                    for (j in 0 until size) {
-                        puzzle[i][j].value = generated[i * size + j]
-                        solvedPuzzle[i][j].value = solved[i * size + j]
-                    }
-                }
-
-                var cages: List<Cage>? = null
-                if (gameTypeToGenerate in setOf(
-                        GameType.Killer9x9,
-                        GameType.Killer12x12,
-                        GameType.Killer6x6
+        val type = selectedType
+        val difficulty = selectedDifficulty
+        val previousGame = lastSavedGame.value
+        var storedUid: Long? = null
+        generation.start(type, difficulty) { result ->
+            check(result.solutionCount == 1) { "Generated puzzle is not unique" }
+            // A save retry must not insert a second board if updating the previous game failed.
+            if (storedUid == null) {
+                val board = withContext(Dispatchers.Default) {
+                    val parser = SudokuParser()
+                    SudokuBoard(
+                        uid = 0,
+                        initialBoard = parser.boardToString(result.puzzle),
+                        solvedBoard = parser.boardToString(result.solution),
+                        difficulty = result.difficulty,
+                        type = type,
+                        killerCages = result.killerCages?.let(parser::killerSudokuCagesToString),
+                        ratingMetadata = result.ratingMetadata
                     )
-                ) {
-                    val generator = CageGenerator(solvedPuzzle, gameTypeToGenerate)
-                    cages = generator.generate(2, 5)
                 }
+                if (appSettingsManager.saveSelectedGameDifficultyType.first()) {
+                    appSettingsManager.setLastSelectedGameDifficultyType(
+                        difficulty = result.difficulty,
+                        type = type
+                    )
+                }
+                storedUid = withContext(Dispatchers.IO) { boardRepository.insert(board) }
+            }
+            if (previousGame != null && !previousGame.completed) {
                 withContext(Dispatchers.IO) {
-                    val sudokuParser = SudokuParser()
-                    insertedBoardUid = boardRepository.insert(
-                        SudokuBoard(
-                            uid = 0,
-                            initialBoard = sudokuParser.boardToString(puzzle),
-                            solvedBoard = sudokuParser.boardToString(solvedPuzzle),
-                            difficulty = selectedDifficulty,
-                            type = selectedType,
-                            killerCages = if (cages != null) sudokuParser.killerSudokuCagesToString(
-                                cages
-                            ) else null
-                        )
-                    )
+                    savedGameRepository.update(previousGame.copy(completed = true, canContinue = true))
                 }
-
-                readyToPlay = true
             }
+            insertedBoardUid = checkNotNull(storedUid)
+            selectedDifficulty = result.difficulty
         }
     }
 
@@ -161,18 +119,7 @@ class HomeViewModel
         }
     }
 
-    fun giveUpLastGame() {
-        viewModelScope.launch(Dispatchers.IO) {
-            lastSavedGame.value?.let {
-                if (!it.completed) {
-                    savedGameRepository.update(
-                        it.copy(
-                            completed = true,
-                            canContinue = true
-                        )
-                    )
-                }
-            }
-        }
+    private companion object {
+        const val TAG = "HomeViewModel"
     }
 }

@@ -6,6 +6,8 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
+import com.kaajjo.libresudoku.core.qqwing.models.RatingMetadata
+import com.kaajjo.libresudoku.data.backup.serializer.RatingMetadataSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -27,5 +29,8 @@ data class SudokuBoard(
     @ColumnInfo(name = "difficulty") val difficulty: GameDifficulty,
     @ColumnInfo(name = "type") val type: GameType,
     @ColumnInfo(name = "folder_id", defaultValue = "null") val folderId: Long? = null,
-    @ColumnInfo(name = "killer_cages", defaultValue = "null") val killerCages: String? = null
+    @ColumnInfo(name = "killer_cages", defaultValue = "null") val killerCages: String? = null,
+    @Serializable(with = RatingMetadataSerializer::class)
+    @ColumnInfo(name = "rating_metadata", defaultValue = "null")
+    val ratingMetadata: RatingMetadata? = null
 )
