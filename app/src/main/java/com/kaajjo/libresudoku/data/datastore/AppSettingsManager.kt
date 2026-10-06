@@ -13,7 +13,6 @@ import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.advanced_hint.AdvancedHintSettings
-import com.kaajjo.libresudoku.ui.settings.autoupdate.UpdateChannel
 import kotlinx.coroutines.flow.map
 import java.time.Instant
 import java.time.ZoneId
@@ -104,9 +103,6 @@ class AppSettingsManager(context: Context) {
     private val ahNakedSingle = booleanPreferencesKey("ah_naked_single")
     private val ahHiddenSingle = booleanPreferencesKey("ah_hidden_single")
     private val ahCheckWrongValue = booleanPreferencesKey("ah_check_wrong_value")
-
-    private val autoUpdateChannelKey = intPreferencesKey("auto_update")
-    private val updateDismissedNameKey = stringPreferencesKey("update_dismissed_name") // name of the update that was dismissed
 
     suspend fun setFirstLaunch(value: Boolean) {
         dataStore.edit { settings ->
@@ -422,36 +418,6 @@ class AppSettingsManager(context: Context) {
             settings[ahNakedSingle] = ahSettings.nakedSingle
             settings[ahHiddenSingle] = ahSettings.hiddenSingle
             settings[ahCheckWrongValue] = ahSettings.checkWrongValue
-        }
-    }
-
-    val autoUpdateChannel = dataStore.data.map { settings ->
-        val channel = settings[autoUpdateChannelKey] ?: PreferencesConstants.DEFAULT_AUTOUPDATE_CHANNEL
-        when (channel) {
-            0 -> UpdateChannel.Disabled
-            1 -> UpdateChannel.Stable
-            2 -> UpdateChannel.Beta
-            else -> UpdateChannel.Disabled
-        }
-    }
-
-    suspend fun setAutoUpdateChannel(channel: UpdateChannel) {
-        dataStore.edit { settings ->
-            settings[autoUpdateChannelKey] = when (channel) {
-                UpdateChannel.Disabled -> 0
-                UpdateChannel.Stable -> 1
-                UpdateChannel.Beta -> 2
-            }
-        }
-    }
-
-    val updateDismissedName = dataStore.data.map { settings ->
-        settings[updateDismissedNameKey] ?: ""
-    }
-
-    suspend fun setUpdateDismissedName(name: String) {
-        dataStore.edit { settings ->
-            settings[updateDismissedNameKey] = name
         }
     }
 

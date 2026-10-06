@@ -1,61 +1,12 @@
-name: Build and Sign Flavored Release APKs (Two Jobs)
+name: Build and Sign Release APK
 
 on:
   push:
     branches: ["main"]
 
 jobs:
-  build_and_sign_nonFoss:
-    name: Build and Sign nonFoss APK
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Create keystore file for nonFoss APK
-        run: |
-          mkdir -p app/build/outputs/apk/nonFOSS/release
-          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/build/outputs/apk/nonFOSS/release/key.jks
-
-      - name: Create keystore file for foss APK
-        run: |
-          mkdir -p app/build/outputs/apk/foss/release
-          echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > app/build/outputs/apk/foss/release/key.jks
-
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v2
-
-      - name: Set Up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: temurin
-
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
-
-      - name: Build nonFoss Release APK
-        run: ./gradlew assemblenonFossRelease
-
-      - uses: ilharp/sign-android-release@v1
-        name: Sign nonFoss APK
-        id: sign_nonfoss
-        with:
-          releaseDir: app/build/outputs/apk/nonFOSS/release/
-          signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
-          keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          buildToolsVersion: 35.0.0
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: nonFoss-release.apk
-          path: ${{ steps.sign_nonfoss.outputs.signedFile }}
-
-  build_and_sign_foss:
-    name: Build and Sign foss APK
+  build_and_sign:
+    name: Build and Sign APK
     runs-on: ubuntu-latest
 
     steps:
@@ -74,14 +25,14 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
 
-      - name: Build foss Release APK
-        run: ./gradlew assemblefossRelease
+      - name: Build Release APK
+        run: ./gradlew :app:assembleRelease
 
       - uses: ilharp/sign-android-release@v1
-        name: Sign foss APK
-        id: sign_foss
+        name: Sign APK
+        id: sign_release
         with:
-          releaseDir: app/build/outputs/apk/foss/release/
+          releaseDir: app/build/outputs/apk/release/
           signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
           keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -90,5 +41,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: foss-release.apk
-          path: ${{ steps.sign_foss.outputs.signedFile }}
+          name: release.apk
+          path: ${{ steps.sign_release.outputs.signedFile }}
