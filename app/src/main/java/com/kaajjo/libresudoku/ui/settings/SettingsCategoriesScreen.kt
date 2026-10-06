@@ -14,7 +14,6 @@ import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material.icons.rounded.AutoAwesome
-import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,7 +36,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kaajjo.libresudoku.R
-import com.kaajjo.libresudoku.destinations.AutoUpdateScreenDestination
 import com.kaajjo.libresudoku.destinations.SettingsAdvancedHintScreenDestination
 import com.kaajjo.libresudoku.destinations.SettingsAppearanceScreenDestination
 import com.kaajjo.libresudoku.destinations.SettingsAssistanceScreenDestination
@@ -52,7 +50,6 @@ import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.CollapsingTopAp
 import com.kaajjo.libresudoku.ui.components.collapsing_topappbar.rememberTopAppBarScrollBehavior
 import com.kaajjo.libresudoku.ui.settings.components.AppThemePreviewItem
 import com.kaajjo.libresudoku.ui.util.getCurrentLocaleString
-import com.kaajjo.libresudoku.util.FlavorUtil
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -124,18 +121,6 @@ fun SettingsCategoriesScreen(
                     },
                     painter = rememberVectorPainter(Icons.Outlined.Language)
                 )
-            }
-            if (!FlavorUtil.isFoss()) {
-                item {
-                    PreferenceRow(
-                        title = stringResource(R.string.auto_update_title),
-                        subtitle = stringResource(R.string.auto_updates_summary),
-                        onClick = {
-                            navigator.navigate(AutoUpdateScreenDestination())
-                        },
-                        painter = rememberVectorPainter(Icons.Rounded.SystemUpdate)
-                    )
-                }
             }
             item {
                 PreferenceRow(

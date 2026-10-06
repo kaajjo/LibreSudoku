@@ -352,27 +352,12 @@
     <string name="hint_wron_value_detail">%2$s Hücresindeki %1$s değeri yanlış</string>
     <string name="nav_back">Geri</string>
     <string name="action_apply">Uygula</string>
-    <string name="update_channel_beta">Beta</string>
-    <string name="update_channel_disable">Devre dışı bırak</string>
-    <string name="update_channel_disable_summary">Otomatik güncellemeleri devre dışı bırak</string>
-    <string name="update_found_version">Güncelleme bulundu %1$s</string>
-    <string name="check_for_updates_error">Güncellemeler kontrol edilemedi</string>
-    <string name="action_retry">Tekrar dene</string>
-    <string name="check_for_update_using_latest">Son sürüme sahipsiniz</string>
-    <string name="action_view_on_github">GitHub\'da görüntüle</string>
     <string name="advanced_hint_no_hint_title">İpucu yok</string>
     <string name="export_empty_cell">Boş hücre</string>
     <string name="advanced_hint_title">Gelişmiş ipucu</string>
     <string name="hint_wrong_value_title">Yanlış değer</string>
     <string name="advanced_hint_summary">Deneysel bir ipucu sistemi</string>
     <string name="label_beta">Beta</string>
-    <string name="update_whats_new">Yeni ne var</string>
-    <string name="update_found">Yeni güncelleme bulundu</string>
     <string name="settings_advanced_hint_category_techniques">Teknikler</string>
-    <string name="action_download">İndir</string>
-    <string name="check_for_update_checking_summary">Bu biraz zaman alabilir</string>
-    <string name="check_for_updates_checking">Güncellemeler kontrol ediliyor…</string>
-    <string name="check_for_update_latest_summary">Böyle devam et!</string>
-    <string name="auto_updates_summary">Güncellemeleri otomatik olarak kontrol et</string>
     <string name="hint_full_house_group_detail">%1$s Hücresi bu kutudaki son boş hücre olduğundan, onu %2$s ile doldurabilrsin</string>
 </resources>

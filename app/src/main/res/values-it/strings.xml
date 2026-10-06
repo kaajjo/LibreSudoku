@@ -332,23 +332,6 @@
     <string name="action_apply">Applica</string>
     <string name="label_beta">Beta</string>
     <string name="settings_advanced_hint_category_techniques">Tecniche</string>
-    <string name="auto_update_title">Aggiornamento automatico</string>
-    <string name="update_whats_new">Cosa c\'è di nuovo</string>
-    <string name="update_found">Nuovo aggiornamento trovato</string>
-    <string name="update_channel_beta">Beta</string>
-    <string name="update_channel_disable">Disabilita</string>
-    <string name="update_channel_disable_summary">Disabilità gli aggiornamenti automatici</string>
-    <string name="update_found_version">Aggiornamento trovato %1$s</string>
-    <string name="whats_new_in_version">Cosa c\'è di nuovo in %1$s</string>
-    <string name="check_for_updates_error">Impossibile verificare gli aggiornamenti</string>
-    <string name="action_retry">Riprova</string>
-    <string name="check_for_updates_checking">Controllo degli aggiornamenti…</string>
-    <string name="check_for_update_using_latest">Sei aggiornato</string>
-    <string name="check_for_update_checking_summary">Questo potrebbe richiedere del tempo</string>
-    <string name="check_for_update_latest_summary">Continua così!</string>
-    <string name="action_view_on_github">Visualizza su GitHub</string>
-    <string name="new_update_found_action">Vai alle impostazioni per aggiornare</string>
-    <string name="auto_updates_summary">Controlla automaticamente gli aggiornamenti</string>
     <string name="advanced_hint_no_hint_title">Nessun suggerimento</string>
     <string name="export_empty_cell">Cella vuota</string>
     <string name="backup_option_games">Giochi e cartelle</string>
@@ -366,8 +349,6 @@
     <string name="type_killer_12x12">Killer 12x12</string>
     <string name="type_killer_9x9">Killer 9x9</string>
     <string name="type_killer_6x6">Killer 6x6</string>
-    <string name="update_channel">Canale di aggiornamento</string>
     <string name="perf_assistance_summary">Controllo errori, evidenzia valori uguali, usi rimanenti…</string>
     <string name="advanced_hint_summary">Un sistema di suggerimenti sperimentale</string>
-    <string name="update_channel_stable">Stabile</string>
 </resources>

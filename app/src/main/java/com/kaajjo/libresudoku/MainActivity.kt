@@ -2,7 +2,6 @@ package com.kaajjo.libresudoku
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -15,7 +14,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -31,8 +29,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.kaajjo.libresudoku.core.PreferencesConstants
-import com.kaajjo.libresudoku.core.update.Release
-import com.kaajjo.libresudoku.core.update.UpdateUtil
 import com.kaajjo.libresudoku.core.utils.GlobalExceptionHandler
 import com.kaajjo.libresudoku.data.datastore.AppSettingsManager
 import com.kaajjo.libresudoku.data.datastore.ThemeSettingsManager
@@ -43,7 +39,6 @@ import com.kaajjo.libresudoku.destinations.StatisticsScreenDestination
 import com.kaajjo.libresudoku.destinations.WelcomeScreenDestination
 import com.kaajjo.libresudoku.ui.app_crash.CrashActivity
 import com.kaajjo.libresudoku.ui.components.navigation_bar.NavigationBarComponent
-import com.kaajjo.libresudoku.ui.settings.autoupdate.UpdateChannel
 import com.kaajjo.libresudoku.ui.theme.BoardColors
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.ui.theme.SudokuBoardColorsImpl
@@ -55,8 +50,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 val LocalBoardColors = staticCompositionLocalOf { SudokuBoardColorsImpl() }
@@ -82,8 +75,6 @@ class MainActivity : AppCompatActivity() {
             val firstLaunch by mainViewModel.firstLaunch.collectAsStateWithLifecycle(false)
             val colorSeed by mainViewModel.colorSeed.collectAsStateWithLifecycle(initialValue = Color.Red)
             val paletteStyle by mainViewModel.paletteStyle.collectAsStateWithLifecycle(initialValue = PaletteStyle.TonalSpot)
-            val autoUpdateChannel by mainViewModel.autoUpdateChannel.collectAsStateWithLifecycle(UpdateChannel.Disabled)
-            val updateDismissedName by mainViewModel.updateDismissedName.collectAsStateWithLifecycle("")
 
             LibreSudokuTheme(
                 darkTheme = when (darkTheme) {
@@ -146,28 +137,12 @@ class MainActivity : AppCompatActivity() {
                             thinLineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.25f)
                         )
                     }
-                var latestRelease by remember { mutableStateOf<Release?>(null) }
-                if (autoUpdateChannel != UpdateChannel.Disabled) {
-                    LaunchedEffect(Unit) {
-                        if (latestRelease == null) {
-                            withContext(Dispatchers.IO) {
-                                try {
-                                    latestRelease = UpdateUtil.checkForUpdate(autoUpdateChannel == UpdateChannel.Beta)
-                                } catch (e: Exception) {
-                                    Log.e("UpdateUtil", "Failed to check for update: ${e.message.toString()}")
-                                    e.printStackTrace()
-                                }
-                            }
-                        }
-                    }
-                }
                 CompositionLocalProvider(LocalBoardColors provides boardColors) {
                     Scaffold(
                         bottomBar = {
                             NavigationBarComponent(
                                 navController = navController,
-                                isVisible = bottomBarState,
-                                updateAvailable = latestRelease != null && latestRelease!!.name.toString() != updateDismissedName
+                                isVisible = bottomBarState
                             )
                         },
                         contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp)
@@ -198,8 +173,6 @@ class MainActivityViewModel
     val monetSudokuBoard = themeSettingsManager.monetSudokuBoard
     val colorSeed = themeSettingsManager.themeColorSeed
     val paletteStyle = themeSettingsManager.themePaletteStyle
-    val autoUpdateChannel = appSettingsManager.autoUpdateChannel
-    val updateDismissedName = appSettingsManager.updateDismissedName
 }
 
 @Destination(
