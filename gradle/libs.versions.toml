@@ -25,6 +25,9 @@ materialKolor = "2.0.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+robolectric = "4.14.1"
+coroutinesTest = "1.7.3"
+androidxTestCore = "1.6.1"
 foundationAndroid = "1.7.5"
 graphicsShape = "1.0.1"
 okhttp = "5.0.0-alpha.14"
@@ -60,6 +63,9 @@ accompanist-systemuicontroller = { group = "com.google.accompanist", name = "acc
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+androidx-test-core = { group = "androidx.test", name = "core-ktx", version.ref = "androidxTestCore" }
 
 # DI Hilt
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }

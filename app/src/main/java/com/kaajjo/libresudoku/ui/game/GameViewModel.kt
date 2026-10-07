@@ -273,7 +273,8 @@ class GameViewModel @Inject constructor(
     private fun setValueCell(
         value: Int,
         row: Int = currCell.row,
-        col: Int = currCell.col
+        col: Int = currCell.col,
+        countMistake: Boolean = true
     ): List<List<Cell>> {
         var new = getBoardNoRef()
 
@@ -307,7 +308,7 @@ class GameViewModel @Inject constructor(
 
         currCell.error = currCell.value == 0
         // updating mistakes limit
-        if (new[row][col].error) {
+        if (countMistake && new[row][col].error) {
             mistakesMade++
             if (mistakesLimit.value) {
                 mistakesCount++
@@ -516,12 +517,13 @@ class GameViewModel @Inject constructor(
 
     private fun useHint() {
         if (solvedBoard.isEmpty()) solveBoard()
-        if (currCell.row >= 0 && currCell.col >= 0 && !currCell.locked) {
-            notes = clearNotesAtCell(notes, currCell.row, currCell.col)
-            gameBoard = setValueCell(solvedBoard[currCell.row][currCell.col].value)
-
-            val new = getBoardNoRef()
-            new[currCell.row][currCell.col].error = false
+        // setValueCell() may reset currCell (e.g. via giveUp()), so keep the coordinates
+        val row = currCell.row
+        val col = currCell.col
+        if (row >= 0 && col >= 0 && !currCell.locked) {
+            notes = clearNotesAtCell(notes, row, col)
+            val new = setValueCell(solvedBoard[row][col].value, row, col, countMistake = false)
+            new[row][col].error = false
             gameBoard = new
 
             duration = duration.plus(30.toDuration(DurationUnit.SECONDS))
