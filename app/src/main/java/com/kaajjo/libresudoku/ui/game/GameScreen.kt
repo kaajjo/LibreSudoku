@@ -5,6 +5,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,6 +28,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.PlayCircle
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -39,7 +42,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -64,12 +66,13 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.kaajjo.libresudoku.R
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.advanced_hint.AdvancedHintData
-import com.kaajjo.libresudoku.core.utils.SudokuParser
+import com.kaajjo.libresudoku.core.utils.SudokuUtils
 import com.kaajjo.libresudoku.destinations.SettingsAdvancedHintScreenDestination
 import com.kaajjo.libresudoku.destinations.SettingsCategoriesScreenDestination
 import com.kaajjo.libresudoku.ui.components.AdvancedHintContainer
@@ -81,6 +84,9 @@ import com.kaajjo.libresudoku.ui.game.components.NotesMenu
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
 import com.kaajjo.libresudoku.ui.game.components.ToolbarItem
 import com.kaajjo.libresudoku.ui.game.components.UndoRedoMenu
+import com.kaajjo.libresudoku.ui.game.models.GameUiEvent
+import com.kaajjo.libresudoku.ui.game.models.GameUiSideEffect
+import com.kaajjo.libresudoku.ui.game.models.GameUiState
 import com.kaajjo.libresudoku.ui.onboarding.FirstGameDialog
 import com.kaajjo.libresudoku.ui.util.ReverseArrangement
 import com.ramcosta.composedestinations.annotation.Destination
@@ -90,453 +96,303 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
     style = AnimatedNavigation::class,
     navArgsDelegate = GameScreenNavArgs::class
 )
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreen(
     viewModel: GameViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
-    val localView = LocalView.current // vibration
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val localView = LocalView.current
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
+    var restartButtonAngle by remember { mutableFloatStateOf(0f) }
 
-    val firstGame by viewModel.firstGame.collectAsStateWithLifecycle(initialValue = false)
-    val resetTimer by viewModel.resetTimerOnRestart.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_GAME_RESET_TIMER)
-    val mistakesLimit by viewModel.mistakesLimit.collectAsStateWithLifecycle(
-        initialValue = PreferencesConstants.DEFAULT_MISTAKES_LIMIT
-    )
-    val errorHighlight by viewModel.mistakesMethod.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES)
-    val keepScreenOn by viewModel.keepScreenOn.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_KEEP_SCREEN_ON)
-    val remainingUse by viewModel.remainingUse.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_REMAINING_USES)
-    val highlightIdentical by viewModel.identicalHighlight.collectAsStateWithLifecycle(
-        initialValue = PreferencesConstants.DEFAULT_HIGHLIGHT_IDENTICAL
-    )
-    val positionLines by viewModel.positionLines.collectAsStateWithLifecycle(
-        initialValue = PreferencesConstants.DEFAULT_POSITION_LINES
-    )
-    val crossHighlight by viewModel.crossHighlight.collectAsStateWithLifecycle(
-        initialValue = PreferencesConstants.DEFAULT_BOARD_CROSS_HIGHLIGHT
-    )
-    val funKeyboardOverNum by viewModel.funKeyboardOverNum.collectAsStateWithLifecycle(
-        initialValue = PreferencesConstants.DEFAULT_FUN_KEYBOARD_OVER_NUM
-    )
-
-    val fontSizeFactor by viewModel.fontSize.collectAsStateWithLifecycle(initialValue = PreferencesConstants.DEFAULT_FONT_SIZE_FACTOR)
-    val fontSizeValue by remember(fontSizeFactor, viewModel.gameType) {
-        mutableStateOf(
-            viewModel.getFontSize(factor = fontSizeFactor)
-        )
+    LaunchedEffect(viewModel, lifecycleOwner, navigator, clipboardManager, context, localView) {
+        viewModel.effect
+            .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .collect { effect ->
+                when (effect) {
+                    GameUiSideEffect.NavigateBack -> navigator.popBackStack()
+                    GameUiSideEffect.OpenSettings -> navigator.navigate(
+                        SettingsCategoriesScreenDestination(launchedFromGame = true)
+                    )
+                    GameUiSideEffect.OpenHintSettings -> navigator.navigate(
+                        SettingsAdvancedHintScreenDestination
+                    )
+                    is GameUiSideEffect.CopyBoard -> {
+                        clipboardManager.setText(AnnotatedString(effect.board))
+                        if (SDK_INT < 33) {
+                            Toast.makeText(
+                                context,
+                                R.string.export_string_state_copied,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    GameUiSideEffect.HapticFeedback -> {
+                        localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                    }
+                    GameUiSideEffect.GameRestarted -> restartButtonAngle -= 360f
+                    GameUiSideEffect.SaveFailed -> Toast.makeText(
+                        context,
+                        R.string.game_save_error,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
     }
-    val advancedHintEnabled by viewModel.advancedHintEnabled.collectAsStateWithLifecycle(
-        initialValue = PreferencesConstants.DEFAULT_ADVANCED_HINT
-    )
-    val advancedHintMode by viewModel.advancedHintMode.collectAsStateWithLifecycle(false)
-    val advancedHintData by viewModel.advancedHintData.collectAsStateWithLifecycle(null)
-    if (keepScreenOn) {
+
+    OnLifecycleEvent { _, event ->
+        when (event) {
+            Lifecycle.Event.ON_RESUME -> viewModel.sendEvent(GameUiEvent.ScreenResumed)
+            Lifecycle.Event.ON_PAUSE, Lifecycle.Event.ON_DESTROY -> {
+                viewModel.sendEvent(GameUiEvent.ScreenPaused)
+            }
+            else -> Unit
+        }
+    }
+    DisposableEffect(viewModel) {
+        onDispose { viewModel.sendEvent(GameUiEvent.ScreenPaused) }
+    }
+
+    if (uiState.settings.keepScreenOn) {
         KeepScreenOn()
     }
 
-    if (firstGame) {
-        viewModel.pauseTimer()
-        FirstGameDialog(
-            onFinished = {
-                viewModel.setFirstGameFalse()
-                viewModel.startTimer()
-            }
-        )
-    }
+    BackHandler { viewModel.sendEvent(GameUiEvent.NavigateBack) }
 
-    var restartButtonAngleState by remember { mutableFloatStateOf(0f) }
-    val restartButtonAnimation: Float by animateFloatAsState(
-        targetValue = restartButtonAngleState,
-        animationSpec = tween(durationMillis = 250), label = "restartButtonAnimation"
+    GameScreenContent(
+        uiState = uiState,
+        onEvent = viewModel::sendEvent,
+        restartButtonAngle = restartButtonAngle
     )
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun GameScreenContent(
+    uiState: GameUiState,
+    onEvent: (GameUiEvent) -> Unit,
+    restartButtonAngle: Float
+) {
+    val settings = uiState.settings
+    val sudokuUtils = remember { SudokuUtils() }
+    val fontSize = remember(settings.fontSize, uiState.gameType) {
+        sudokuUtils.getFontSize(uiState.gameType, settings.fontSize)
+    }
+    val restartButtonAnimation by animateFloatAsState(
+        targetValue = restartButtonAngle,
+        animationSpec = tween(durationMillis = 250),
+        label = "restartButtonAnimation"
+    )
     val boardBlur by animateDpAsState(
-        targetValue = if (viewModel.gamePlaying || viewModel.endGame) 0.dp else 10.dp,
+        targetValue = if (uiState.gamePlaying || uiState.endGame) 0.dp else 10.dp,
         label = "Game board blur"
     )
     val boardScale by animateFloatAsState(
-        targetValue = if (viewModel.gamePlaying || viewModel.endGame) 1f else 0.90f,
+        targetValue = if (uiState.gamePlaying || uiState.endGame) 1f else 0.90f,
         label = "Game board scale"
     )
+
+    BackHandler(enabled = uiState.advancedHintMode) {
+        onEvent(GameUiEvent.CancelAdvancedHint)
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.popBackStack() }) {
+                    IconButton(onClick = { onEvent(GameUiEvent.NavigateBack) }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_round_arrow_back_24),
-                            contentDescription = null
+                            contentDescription = stringResource(R.string.nav_back)
                         )
                     }
                 },
                 actions = {
-                    AnimatedVisibility(visible = viewModel.endGame && (viewModel.mistakesCount >= PreferencesConstants.MISTAKES_LIMIT || viewModel.giveUp)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
+                    if (!uiState.isLoading && !uiState.loadError) {
+                        AnimatedVisibility(
+                            visible = uiState.endGame &&
+                                    (uiState.mistakesCount >= PreferencesConstants.MISTAKES_LIMIT || uiState.giveUp)
                         ) {
-                            FilledTonalButton(
-                                onClick = { viewModel.showSolution = !viewModel.showSolution }
-                            ) {
+                            FilledTonalButton(onClick = { onEvent(GameUiEvent.ToggleSolution) }) {
                                 AnimatedContent(
-                                    if (viewModel.showSolution) stringResource(R.string.action_show_mine_sudoku)
-                                    else stringResource(R.string.action_show_solution),
+                                    targetState = uiState.showSolution,
                                     label = "Show solution/mine button"
-                                ) {
-                                    Text(it)
+                                ) { showSolution ->
+                                    Text(
+                                        stringResource(
+                                            if (showSolution) R.string.action_show_mine_sudoku
+                                            else R.string.action_show_solution
+                                        )
+                                    )
                                 }
                             }
                         }
-                    }
-
-                    AnimatedVisibility(visible = !viewModel.endGame) {
-                        val rotationAngle by animateFloatAsState(
-                            targetValue = if (viewModel.gamePlaying) 0f else 360f,
-                            label = "Play/Pause game icon rotation"
-                        )
-                        IconButton(onClick = {
-                            if (!viewModel.gamePlaying) viewModel.startTimer() else viewModel.pauseTimer()
-                            viewModel.currCell = Cell(-1, -1, 0)
-                        }) {
-                            Icon(
-                                modifier = Modifier.rotate(rotationAngle),
-                                painter = painterResource(
-                                    if (viewModel.gamePlaying) {
-                                        R.drawable.ic_round_pause_24
-                                    } else {
-                                        R.drawable.ic_round_play_24
-                                    }
-                                ),
-                                contentDescription = null
+                        AnimatedVisibility(visible = !uiState.endGame) {
+                            val rotationAngle by animateFloatAsState(
+                                targetValue = if (uiState.gamePlaying) 0f else 360f,
+                                label = "Play/Pause game icon rotation"
                             )
-                        }
-                    }
-
-                    AnimatedVisibility(visible = !viewModel.endGame) {
-                        IconButton(onClick = { viewModel.restartDialog = true }) {
-                            Icon(
-                                modifier = Modifier.rotate(restartButtonAnimation),
-                                painter = painterResource(R.drawable.ic_round_replay_24),
-                                contentDescription = null
-                            )
-                        }
-                    }
-                    AnimatedVisibility(visible = !viewModel.endGame) {
-                        Box {
-                            IconButton(onClick = { viewModel.showMenu = !viewModel.showMenu }) {
+                            IconButton(onClick = { onEvent(GameUiEvent.TogglePause) }) {
                                 Icon(
-                                    Icons.Default.MoreVert,
+                                    modifier = Modifier.rotate(rotationAngle),
+                                    painter = painterResource(
+                                        if (uiState.gamePlaying) R.drawable.ic_round_pause_24
+                                        else R.drawable.ic_round_play_24
+                                    ),
                                     contentDescription = null
                                 )
                             }
-                            GameMenu(
-                                expanded = viewModel.showMenu,
-                                onDismiss = { viewModel.showMenu = false },
-                                onGiveUpClick = {
-                                    viewModel.pauseTimer()
-                                    viewModel.giveUpDialog = true
-                                },
-                                onSettingsClick = {
-                                    navigator.navigate(
-                                        SettingsCategoriesScreenDestination(
-                                            launchedFromGame = true
-                                        )
-                                    )
-                                    viewModel.showMenu = false
-                                },
-                                onExportClick = {
-                                    val stringBoard = SudokuParser().boardToString(
-                                        viewModel.gameBoard,
-                                        emptySeparator = '.'
-                                    )
-                                    clipboardManager.setText(
-                                        AnnotatedString(
-                                            stringBoard.uppercase()
-                                        )
-                                    )
-
-                                    if (SDK_INT < 33) {
-                                        Toast.makeText(
-                                            context,
-                                            R.string.export_string_state_copied,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
+                        }
+                        AnimatedVisibility(visible = !uiState.endGame) {
+                            IconButton(onClick = { onEvent(GameUiEvent.ShowRestartDialog) }) {
+                                Icon(
+                                    modifier = Modifier.rotate(restartButtonAnimation),
+                                    painter = painterResource(R.drawable.ic_round_replay_24),
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                        AnimatedVisibility(visible = !uiState.endGame) {
+                            Box {
+                                IconButton(onClick = {
+                                    onEvent(GameUiEvent.SetMenuVisible(!uiState.showMenu))
+                                }) {
+                                    Icon(Icons.Default.MoreVert, contentDescription = null)
                                 }
-                            )
+                                GameMenu(
+                                    expanded = uiState.showMenu,
+                                    onDismiss = { onEvent(GameUiEvent.SetMenuVisible(false)) },
+                                    onGiveUpClick = { onEvent(GameUiEvent.ShowGiveUpDialog) },
+                                    onSettingsClick = { onEvent(GameUiEvent.OpenSettings) },
+                                    onExportClick = { onEvent(GameUiEvent.ExportBoard) }
+                                )
+                            }
                         }
                     }
                 }
             )
         }
     ) { scaffoldPaddings ->
+        if (uiState.isLoading || uiState.loadError) {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(scaffoldPaddings),
+                contentAlignment = Alignment.Center
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(stringResource(R.string.game_load_error))
+                        TextButton(onClick = { onEvent(GameUiEvent.RetryLoading) }) {
+                            Text(stringResource(R.string.action_retry))
+                        }
+                    }
+                }
+            }
+            return@Scaffold
+        }
+
         Column(
-            modifier = Modifier
-                .padding(scaffoldPaddings)
-                .padding(horizontal = 12.dp),
+            modifier = Modifier.padding(scaffoldPaddings).padding(horizontal = 12.dp),
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            AnimatedVisibility(visible = !viewModel.endGame) {
+            AnimatedVisibility(visible = !uiState.endGame) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    TopBoardSection(stringResource(viewModel.gameDifficulty.resName))
-
-                    if (mistakesLimit && errorHighlight != 0) {
+                    TopBoardSection(stringResource(uiState.gameDifficulty.resName))
+                    if (settings.mistakesLimit && settings.mistakesMethod != 0) {
                         TopBoardSection(
                             stringResource(
                                 R.string.mistakes_number_out_of,
-                                viewModel.mistakesCount,
-                                3
+                                uiState.mistakesCount,
+                                PreferencesConstants.MISTAKES_LIMIT
                             )
                         )
                     }
-
-                    val timerEnabled by viewModel.timerEnabled.collectAsStateWithLifecycle(
-                        initialValue = PreferencesConstants.DEFAULT_SHOW_TIMER
-                    )
-                    AnimatedVisibility(visible = timerEnabled || viewModel.endGame) {
-                        TopBoardSection(viewModel.timeText)
+                    AnimatedVisibility(visible = settings.timerEnabled || uiState.endGame) {
+                        TopBoardSection(uiState.timeText)
                     }
                 }
             }
 
-            var renderNotes by remember { mutableStateOf(true) }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp)
-            ) {
-                Column(
-                    modifier = Modifier.align(Alignment.Center)
-                ) {
+            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
+                Column(modifier = Modifier.align(Alignment.Center)) {
                     AnimatedVisibility(
-                        visible = !viewModel.gamePlaying && !viewModel.endGame,
+                        visible = !uiState.gamePlaying && !uiState.endGame,
                         enter = expandVertically(clip = false) + fadeIn(),
                         exit = shrinkVertically(clip = false) + fadeOut()
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.PlayCircle,
                             contentDescription = null,
-                            modifier = Modifier
-                                .size(48.dp)
-                                .shadow(12.dp)
+                            modifier = Modifier.size(48.dp).shadow(12.dp)
                         )
                     }
                 }
                 Board(
-                    modifier = Modifier
-                        .blur(boardBlur)
-                        .scale(boardScale, boardScale),
-                    board = if (!viewModel.showSolution) viewModel.gameBoard else viewModel.solvedBoard,
-                    size = viewModel.size,
-                    mainTextSize = fontSizeValue,
-                    autoFontSize = fontSizeFactor == 0,
-                    notes = viewModel.notes,
-                    selectedCell = viewModel.currCell,
+                    modifier = Modifier.blur(boardBlur).scale(boardScale, boardScale),
+                    board = if (uiState.showSolution) uiState.solvedBoard else uiState.gameBoard,
+                    size = uiState.size,
+                    mainTextSize = fontSize,
+                    autoFontSize = settings.fontSize == 0,
+                    notes = uiState.notes,
+                    selectedCell = uiState.currCell,
                     onClick = { cell ->
-                        viewModel.processInput(
-                            cell = cell,
-                            remainingUse = remainingUse,
-                        )
-                        if (!viewModel.gamePlaying) {
-                            localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                            viewModel.startTimer()
-                        }
+                        onEvent(GameUiEvent.CellTapped(cell.row, cell.col))
                     },
                     onLongClick = { cell ->
-                        if (viewModel.processInput(cell, remainingUse, longTap = true)) {
-                            localView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-                        }
+                        onEvent(GameUiEvent.CellTapped(cell.row, cell.col, longTap = true))
                     },
-                    identicalNumbersHighlight = highlightIdentical,
-                    errorsHighlight = errorHighlight != 0,
-                    positionLines = positionLines,
-                    notesToHighlight = if (viewModel.digitFirstNumber > 0) {
-                        viewModel.notes.filter { it.value == viewModel.digitFirstNumber }
+                    identicalNumbersHighlight = settings.identicalHighlight,
+                    errorsHighlight = settings.mistakesMethod != 0,
+                    positionLines = settings.positionLines,
+                    notesToHighlight = if (uiState.digitFirstNumber > 0) {
+                        uiState.notes.filter { it.value == uiState.digitFirstNumber }
                     } else {
                         emptyList()
                     },
-                    enabled = viewModel.gamePlaying && !viewModel.endGame,
-                    questions = !(viewModel.gamePlaying || viewModel.endGame) && SDK_INT < Build.VERSION_CODES.R,
-                    renderNotes = renderNotes && !viewModel.showSolution,
-                    zoomable = viewModel.gameType == GameType.Default12x12 || viewModel.gameType == GameType.Killer12x12,
-                    crossHighlight = crossHighlight,
-                    cages = viewModel.cages,
-                    cellsToHighlight = if (advancedHintMode && advancedHintData != null) advancedHintData!!.helpCells + advancedHintData!!.targetCell else null
+                    enabled = uiState.gamePlaying && !uiState.endGame,
+                    questions = !(uiState.gamePlaying || uiState.endGame) && SDK_INT < Build.VERSION_CODES.R,
+                    renderNotes = uiState.renderNotes && !uiState.showSolution,
+                    zoomable = uiState.gameType == GameType.Default12x12 || uiState.gameType == GameType.Killer12x12,
+                    crossHighlight = settings.crossHighlight,
+                    cages = uiState.cages,
+                    cellsToHighlight = uiState.advancedHintData
+                        ?.takeIf { uiState.advancedHintMode }
+                        ?.let { it.helpCells + it.targetCell }
                 )
             }
 
-            AnimatedContent(advancedHintMode) { targetState ->
-                if (targetState) {
-                    advancedHintData?.let { hintData ->
-                        AdvancedHintContainer(
-                            advancedHintData = hintData,
-                            onApplyClick = {
-                                viewModel.applyAdvancedHint()
-                            },
-                            onBackClick = {
-                                viewModel.cancelAdvancedHint()
-                            },
-                            onSettingsClick = {
-                                navigator.navigate(
-                                    SettingsAdvancedHintScreenDestination
-                                )
-                            }
-                        )
-                    }
-                    if (advancedHintData == null) {
-                        AdvancedHintContainer(
-                            advancedHintData = AdvancedHintData(
-                                titleRes = R.string.advanced_hint_no_hint_title,
-                                textResWithArg = Pair(
-                                    R.string.advanced_hint_no_hint,
-                                    emptyList()
-                                ),
-                                targetCell = Cell(-1, -1, 0),
-                                helpCells = emptyList()
-                            ),
-                            onApplyClick = null,
-                            onBackClick = {
-                                viewModel.cancelAdvancedHint()
-                            },
-                            onSettingsClick = {
-                                navigator.navigate(
-                                    SettingsAdvancedHintScreenDestination
-                                )
-                            }
-                        )
-                    }
+            AnimatedContent(uiState.advancedHintMode, label = "Advanced hint mode") { hintMode ->
+                if (hintMode) {
+                    GameHintContent(uiState, onEvent)
                 } else {
-                    AnimatedContent(!viewModel.endGame, label = "") { contentState ->
-                        if (contentState) {
-                            Column(
-                                verticalArrangement = if (funKeyboardOverNum) ReverseArrangement else Arrangement.Top
-                            ) {
-                                DefaultGameKeyboard(
-                                    size = viewModel.size,
-                                    remainingUses = if (remainingUse) viewModel.remainingUsesList else null,
-                                    onClick = {
-                                        viewModel.processInputKeyboard(number = it)
-                                    },
-                                    onLongClick = {
-                                        viewModel.processInputKeyboard(
-                                            number = it,
-                                            longTap = true
-                                        )
-                                    },
-                                    selected = viewModel.digitFirstNumber
-                                )
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    modifier = Modifier.padding(vertical = 8.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        UndoRedoMenu(
-                                            expanded = viewModel.showUndoRedoMenu,
-                                            onDismiss = { viewModel.showUndoRedoMenu = false },
-                                            onRedoClick = { viewModel.toolbarClick(ToolBarItem.Redo) }
-                                        )
-                                        ToolbarItem(
-                                            painter = painterResource(R.drawable.ic_round_undo_24),
-                                            onClick = { viewModel.toolbarClick(ToolBarItem.Undo) },
-                                            onLongClick = { viewModel.showUndoRedoMenu = true }
-                                        )
-
-                                    }
-                                    val hintsDisabled by viewModel.disableHints.collectAsStateWithLifecycle(
-                                        initialValue = PreferencesConstants.DEFAULT_HINTS_DISABLED
-                                    )
-                                    if (!hintsDisabled) {
-                                        ToolbarItem(
-                                            modifier = Modifier.weight(1f),
-                                            painter = painterResource(R.drawable.ic_lightbulb_stars_24),
-                                            onClick = { viewModel.toolbarClick(ToolBarItem.Hint) }
-                                        )
-                                    }
-
-                                    Box(
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        NotesMenu(
-                                            expanded = viewModel.showNotesMenu,
-                                            onDismiss = { viewModel.showNotesMenu = false },
-                                            onComputeNotesClick = { viewModel.computeNotes() },
-                                            onClearNotesClick = { viewModel.clearNotes() },
-                                            renderNotes = renderNotes,
-                                            onRenderNotesClick = { renderNotes = !renderNotes }
-                                        )
-                                        ToolbarItem(
-                                            painter = painterResource(R.drawable.ic_round_edit_24),
-                                            toggled = viewModel.notesToggled,
-                                            onClick = { viewModel.toolbarClick(ToolBarItem.Note) },
-                                            onLongClick = {
-                                                if (viewModel.gamePlaying) {
-                                                    localView.performHapticFeedback(
-                                                        HapticFeedbackConstants.VIRTUAL_KEY
-                                                    )
-                                                    viewModel.showNotesMenu = true
-                                                }
-                                            }
-                                        )
-
-                                    }
-                                    ToolbarItem(
-                                        modifier = Modifier.weight(1f),
-                                        painter = painterResource(R.drawable.ic_eraser_24),
-                                        toggled = viewModel.eraseButtonToggled,
-                                        onClick = {
-                                            viewModel.toolbarClick(ToolBarItem.Remove)
-                                        },
-                                        onLongClick = {
-                                            if (viewModel.gamePlaying) {
-                                                localView.performHapticFeedback(
-                                                    HapticFeedbackConstants.VIRTUAL_KEY
-                                                )
-                                                viewModel.toggleEraseButton()
-                                            }
-                                        }
-                                    )
-                                    if (advancedHintEnabled) {
-                                        ToolbarItem(
-                                            modifier = Modifier.weight(1f),
-                                            painter = rememberVectorPainter(Icons.Rounded.AutoAwesome),
-                                            onClick = {
-                                                if (viewModel.gamePlaying) {
-                                                    viewModel.getAdvancedHint()
-                                                }
-                                            }
-                                        )
-                                    }
-                                }
-                            }
+                    AnimatedContent(!uiState.endGame, label = "Game controls") { playing ->
+                        if (playing) {
+                            GameControls(uiState, onEvent)
                         } else {
-                            // Game completed section
-                            val allRecords by viewModel.allRecords.collectAsStateWithLifecycle(
-                                initialValue = emptyList()
-                            )
                             AfterGameStats(
                                 modifier = Modifier.fillMaxWidth(),
-                                difficulty = viewModel.gameDifficulty,
-                                type = viewModel.gameType,
-                                hintsUsed = viewModel.hintsUsed,
-                                mistakesMade = viewModel.mistakesMade,
-                                mistakesLimit = mistakesLimit,
-                                mistakesLimitCount = viewModel.mistakesCount,
-                                giveUp = viewModel.giveUp,
-                                notesTaken = viewModel.notesTaken,
-                                records = allRecords,
-                                timeText = viewModel.timeText
+                                difficulty = uiState.gameDifficulty,
+                                type = uiState.gameType,
+                                hintsUsed = uiState.hintsUsed,
+                                mistakesMade = uiState.mistakesMade,
+                                mistakesLimit = settings.mistakesLimit,
+                                mistakesLimitCount = uiState.mistakesCount,
+                                giveUp = uiState.giveUp,
+                                notesTaken = uiState.notesTaken,
+                                records = uiState.allRecords,
+                                timeText = uiState.timeText
                             )
                         }
                     }
@@ -545,114 +401,150 @@ fun GameScreen(
         }
     }
 
-    // dialogs
-    if (viewModel.restartDialog) {
-        viewModel.pauseTimer()
+    if (!uiState.isLoading && !uiState.loadError && settings.firstGame) {
+        FirstGameDialog(onFinished = { onEvent(GameUiEvent.FirstGameFinished) })
+    }
+    if (uiState.restartDialog) {
         AlertDialog(
             title = { Text(stringResource(R.string.action_reset_game)) },
             text = { Text(stringResource(R.string.reset_game_text)) },
             dismissButton = {
-                TextButton(onClick = {
-                    viewModel.restartDialog = false
-                    viewModel.startTimer()
-                }) {
+                TextButton(onClick = { onEvent(GameUiEvent.DismissRestartDialog) }) {
                     Text(stringResource(R.string.dialog_no))
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    restartButtonAngleState -= 360
-                    viewModel.resetGame(resetTimer)
-                    viewModel.restartDialog = false
-                    viewModel.startTimer()
-                }) {
+                TextButton(onClick = { onEvent(GameUiEvent.ConfirmRestart) }) {
                     Text(stringResource(R.string.dialog_yes))
                 }
             },
-            onDismissRequest = {
-                viewModel.restartDialog = false
-                viewModel.startTimer()
-            }
+            onDismissRequest = { onEvent(GameUiEvent.DismissRestartDialog) }
         )
-    } else if (viewModel.giveUpDialog) {
-        viewModel.pauseTimer()
+    } else if (uiState.giveUpDialog) {
         AlertDialog(
             title = { Text(stringResource(R.string.action_give_up)) },
             text = { Text(stringResource(R.string.give_up_text)) },
             dismissButton = {
-                TextButton(onClick = {
-                    viewModel.giveUpDialog = false
-                    viewModel.startTimer()
-                }) {
+                TextButton(onClick = { onEvent(GameUiEvent.DismissGiveUpDialog) }) {
                     Text(stringResource(R.string.dialog_no))
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    viewModel.giveUp()
-                    viewModel.giveUpDialog = false
-                    viewModel.pauseTimer()
-                }) {
+                TextButton(onClick = { onEvent(GameUiEvent.ConfirmGiveUp) }) {
                     Text(stringResource(R.string.dialog_yes))
                 }
             },
-            onDismissRequest = {
-                viewModel.giveUpDialog = false
-                viewModel.startTimer()
-            },
+            onDismissRequest = { onEvent(GameUiEvent.DismissGiveUpDialog) }
         )
     }
+}
 
-    LaunchedEffect(viewModel.mistakesMethod) {
-        viewModel.checkMistakesAll()
-    }
-
-    LaunchedEffect(Unit) {
-        if (!viewModel.endGame && !viewModel.gameCompleted) {
-            viewModel.startTimer()
-        }
-    }
-
-    LaunchedEffect(viewModel.gameCompleted) {
-        if (viewModel.gameCompleted) {
-            viewModel.onGameComplete()
-        }
-    }
-
-
-    // so that the timer doesn't run in the background
-    // https://stackoverflow.com/questions/66546962/jetpack-compose-how-do-i-refresh-a-screen-when-app-returns-to-foreground/66807899#66807899
-    OnLifecycleEvent { _, event ->
-        when (event) {
-            Lifecycle.Event.ON_RESUME -> {
-                if (viewModel.gamePlaying) viewModel.startTimer()
+@Composable
+private fun GameHintContent(uiState: GameUiState, onEvent: (GameUiEvent) -> Unit) {
+    if (uiState.advancedHintLoading) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            CircularProgressIndicator()
+            TextButton(onClick = { onEvent(GameUiEvent.CancelAdvancedHint) }) {
+                Text(stringResource(R.string.action_cancel))
             }
+        }
+    } else {
+        val hintData = uiState.advancedHintData
+        AdvancedHintContainer(
+            advancedHintData = hintData ?: AdvancedHintData(
+                titleRes = R.string.advanced_hint_no_hint_title,
+                textResWithArg = R.string.advanced_hint_no_hint to emptyList(),
+                targetCell = Cell(-1, -1),
+                helpCells = emptyList()
+            ),
+            onApplyClick = if (hintData != null) {
+                { onEvent(GameUiEvent.ApplyAdvancedHint) }
+            } else {
+                null
+            },
+            onBackClick = { onEvent(GameUiEvent.CancelAdvancedHint) },
+            onSettingsClick = { onEvent(GameUiEvent.OpenHintSettings) }
+        )
+    }
+}
 
-            Lifecycle.Event.ON_PAUSE -> {
-                viewModel.pauseTimer()
-                viewModel.currCell = Cell(-1, -1, 0)
+@Composable
+private fun GameControls(uiState: GameUiState, onEvent: (GameUiEvent) -> Unit) {
+    Column(
+        verticalArrangement = if (uiState.settings.funKeyboardOverNum) ReverseArrangement else Arrangement.Top
+    ) {
+        DefaultGameKeyboard(
+            size = uiState.size,
+            remainingUses = uiState.remainingUsesList.takeIf { uiState.settings.remainingUse },
+            onClick = { onEvent(GameUiEvent.NumberTapped(it)) },
+            onLongClick = { onEvent(GameUiEvent.NumberTapped(it, longTap = true)) },
+            selected = uiState.digitFirstNumber
+        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(vertical = 8.dp)
+        ) {
+            Box(modifier = Modifier.weight(1f)) {
+                UndoRedoMenu(
+                    expanded = uiState.showUndoRedoMenu,
+                    onDismiss = { onEvent(GameUiEvent.SetUndoRedoMenuVisible(false)) },
+                    onRedoClick = { onEvent(GameUiEvent.ToolbarClicked(ToolBarItem.Redo)) }
+                )
+                ToolbarItem(
+                    painter = painterResource(R.drawable.ic_round_undo_24),
+                    onClick = { onEvent(GameUiEvent.ToolbarClicked(ToolBarItem.Undo)) },
+                    onLongClick = { onEvent(GameUiEvent.SetUndoRedoMenuVisible(true)) }
+                )
             }
-
-            Lifecycle.Event.ON_DESTROY -> viewModel.pauseTimer()
-            else -> {}
+            if (!uiState.settings.disableHints) {
+                ToolbarItem(
+                    modifier = Modifier.weight(1f),
+                    painter = painterResource(R.drawable.ic_lightbulb_stars_24),
+                    onClick = { onEvent(GameUiEvent.ToolbarClicked(ToolBarItem.Hint)) }
+                )
+            }
+            Box(modifier = Modifier.weight(1f)) {
+                NotesMenu(
+                    expanded = uiState.showNotesMenu,
+                    onDismiss = { onEvent(GameUiEvent.SetNotesMenuVisible(false)) },
+                    onComputeNotesClick = { onEvent(GameUiEvent.ComputeNotes) },
+                    onClearNotesClick = { onEvent(GameUiEvent.ClearNotes) },
+                    renderNotes = uiState.renderNotes,
+                    onRenderNotesClick = { onEvent(GameUiEvent.ToggleRenderNotes) }
+                )
+                ToolbarItem(
+                    painter = painterResource(R.drawable.ic_round_edit_24),
+                    toggled = uiState.notesToggled,
+                    onClick = { onEvent(GameUiEvent.ToolbarClicked(ToolBarItem.Note)) },
+                    onLongClick = { onEvent(GameUiEvent.SetNotesMenuVisible(true)) }
+                )
+            }
+            ToolbarItem(
+                modifier = Modifier.weight(1f),
+                painter = painterResource(R.drawable.ic_eraser_24),
+                toggled = uiState.eraseButtonToggled,
+                onClick = { onEvent(GameUiEvent.ToolbarClicked(ToolBarItem.Remove)) },
+                onLongClick = { onEvent(GameUiEvent.ToggleEraseMode) }
+            )
+            if (uiState.settings.advancedHintEnabled) {
+                ToolbarItem(
+                    modifier = Modifier.weight(1f),
+                    painter = rememberVectorPainter(Icons.Rounded.AutoAwesome),
+                    onClick = { onEvent(GameUiEvent.RequestAdvancedHint) }
+                )
+            }
         }
     }
 }
 
-
 @Composable
-fun TopBoardSection(
-    text: String,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(horizontal = 4.dp)
-        )
+fun TopBoardSection(text: String, modifier: Modifier = Modifier) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        Text(text = text, modifier = Modifier.padding(horizontal = 4.dp))
     }
 }
 
@@ -666,11 +558,8 @@ fun OnLifecycleEvent(onEvent: (owner: LifecycleOwner, event: Lifecycle.Event) ->
         val observer = LifecycleEventObserver { owner, event ->
             eventHandler.value(owner, event)
         }
-
         lifecycle.addObserver(observer)
-        onDispose {
-            lifecycle.removeObserver(observer)
-        }
+        onDispose { lifecycle.removeObserver(observer) }
     }
 }
 

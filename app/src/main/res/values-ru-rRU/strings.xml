@@ -412,4 +412,6 @@
     <string name="generation_save_error_message">Судоку готово, но сохранить его не удалось. Попробуйте сохранить ещё раз или отмените генерацию</string>
     <string name="generation_retry">Повторить попытку</string>
     <string name="generation_saved_progress">Головоломки, уже добавленные в папку, сохранятся</string>
+    <string name="game_load_error">Не удалось загрузить игру</string>
+    <string name="game_save_error">Не удалось сохранить игру</string>
 </resources>

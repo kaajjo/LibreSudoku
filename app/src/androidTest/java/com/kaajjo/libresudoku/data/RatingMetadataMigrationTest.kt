@@ -28,7 +28,7 @@ class RatingMetadataMigrationTest {
     )
 
     @Test
-    fun migrateExistingBoardAndStoreNewRating() {
+    fun migrateExistingBoardAndStoreNewRating() = runBlocking {
         helper.createDatabase(DATABASE_NAME, 6).apply {
             execSQL(
                 "INSERT INTO board (uid, initial_board, solved_board, difficulty, type) " +
@@ -65,7 +65,7 @@ class RatingMetadataMigrationTest {
                 type = GameType.Default6x6,
                 ratingMetadata = metadata
             )
-            val uid = runBlocking { database.boardDao().insert(board) }
+            val uid = database.boardDao().insert(board)
             assertEquals(board.copy(uid = uid), database.boardDao().get(uid))
             database.openHelper.readableDatabase.query(
                 "SELECT rating_metadata FROM board WHERE uid = ?", arrayOf(uid)

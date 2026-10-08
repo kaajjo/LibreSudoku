@@ -59,7 +59,7 @@ interface BoardDao {
 
 
     @Query("SELECT * FROM board WHERE uid == :uid")
-    fun get(uid: Long): SudokuBoard
+    suspend fun get(uid: Long): SudokuBoard
 
     @Insert
     suspend fun insert(boards: List<SudokuBoard>): List<Long>

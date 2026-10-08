@@ -1,6 +1,5 @@
 package com.kaajjo.libresudoku.ui.components
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,9 +43,6 @@ fun AdvancedHintContainer(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 advancedHintData.let {
-                    BackHandler {
-                        onBackClick()
-                    }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()

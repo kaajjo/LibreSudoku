@@ -123,7 +123,7 @@ fun DefaultGameKeyboard(
                         KeyboardRow {
                             chunked.forEach { number ->
                                 val hide =
-                                    remainingUses != null && (remainingUses.size > number && remainingUses[number - 1] <= 0)
+                                    remainingUses != null && (remainingUses.size >= number && remainingUses[number - 1] <= 0)
                                 KeyboardItem(
                                     modifier = itemModifier
                                         .weight(1f)
@@ -155,7 +155,7 @@ fun DefaultGameKeyboard(
             KeyboardRow(modifier = modifier) {
                 numbers.forEach { number ->
                     val hide =
-                        remainingUses != null && (remainingUses.size > number && remainingUses[number - 1] <= 0)
+                        remainingUses != null && (remainingUses.size >= number && remainingUses[number - 1] <= 0)
                     KeyboardItem(
                         modifier = itemModifier
                             .weight(1f)

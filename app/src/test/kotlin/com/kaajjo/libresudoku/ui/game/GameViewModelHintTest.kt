@@ -2,6 +2,7 @@ package com.kaajjo.libresudoku.ui.game
 
 import android.app.Application
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.test.core.app.ApplicationProvider
 import com.kaajjo.libresudoku.core.PreferencesConstants
 import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
@@ -18,8 +19,10 @@ import com.kaajjo.libresudoku.domain.usecase.board.GetBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.board.UpdateBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.record.GetAllRecordsUseCase
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
+import com.kaajjo.libresudoku.ui.game.models.GameUiEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
@@ -44,7 +47,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [34], application = Application::class)
 class GameViewModelHintTest {
 
-    // Main is queued like the real main looper, so init's withContext(Main) runs after the constructor
+    // Keep initialization and events on the same dispatcher as the ViewModel's state updates.
     private val mainDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: GameViewModel
 
@@ -55,6 +58,9 @@ class GameViewModelHintTest {
 
         val appSettingsManager = AppSettingsManager(context)
         runBlocking {
+            appSettingsManager.setFirstGame(false)
+            appSettingsManager.setInputMethod(0)
+            appSettingsManager.setRemainingUse(false)
             appSettingsManager.setMistakesLimit(true)
             // check for rules violations
             appSettingsManager.setHighlightMistakes(1)
@@ -84,54 +90,61 @@ class GameViewModelHintTest {
         )
 
         waitUntil {
-            viewModel.remainingUsesList.isNotEmpty() &&
-                    viewModel.mistakesMethod.value == 1 &&
-                    viewModel.mistakesLimit.value
+            val state = viewModel.uiState.value
+            !state.isLoading && !state.loadError && state.remainingUsesList.isNotEmpty() &&
+                    state.settings.mistakesMethod == 1 && state.settings.mistakesLimit
         }
-        viewModel.startTimer()
+        viewModel.sendEvent(GameUiEvent.ScreenResumed)
+        mainDispatcher.scheduler.runCurrent()
     }
 
     @After
     fun tearDown() {
-        if (viewModel.gamePlaying) viewModel.pauseTimer()
+        if (::viewModel.isInitialized) {
+            viewModel.viewModelScope.cancel()
+            mainDispatcher.scheduler.runCurrent()
+        }
         Dispatchers.resetMain()
     }
 
     @Test
     fun hintConflictingWithWrongUserInput_onLastAllowedMistake_doesNotCrashOrEndGame() {
-        // the user puts a wrong digit at (0, 1): 5 belongs to (0, 0)
-        viewModel.currCell = viewModel.gameBoard[0][1]
-        viewModel.processNumberInput(5)
-        viewModel.mistakesCount = PreferencesConstants.MISTAKES_LIMIT - 1
+        // Two wrong entries reach the last allowed mistake; 5 belongs to (0, 0).
+        viewModel.sendEvent(GameUiEvent.CellTapped(0, 1))
+        viewModel.sendEvent(GameUiEvent.NumberTapped(4))
+        viewModel.sendEvent(GameUiEvent.NumberTapped(5))
+        assertEquals(PreferencesConstants.MISTAKES_LIMIT - 1, viewModel.uiState.value.mistakesCount)
 
         // the correct value 5 at (0, 0) now violates the row rule because of the user's digit
-        viewModel.currCell = viewModel.gameBoard[0][0]
-        viewModel.toolbarClick(ToolBarItem.Hint)
+        viewModel.sendEvent(GameUiEvent.CellTapped(0, 0))
+        viewModel.sendEvent(GameUiEvent.ToolbarClicked(ToolBarItem.Hint))
 
-        val hintedCell = viewModel.gameBoard[0][0]
+        val state = viewModel.uiState.value
+        val hintedCell = state.gameBoard[0][0]
         assertEquals(5, hintedCell.value)
         assertFalse(hintedCell.error)
-        assertEquals(PreferencesConstants.MISTAKES_LIMIT - 1, viewModel.mistakesCount)
-        assertFalse(viewModel.endGame)
-        assertFalse(viewModel.giveUp)
-        assertEquals(1, viewModel.hintsUsed)
+        assertEquals(PreferencesConstants.MISTAKES_LIMIT - 1, state.mistakesCount)
+        assertFalse(state.endGame)
+        assertFalse(state.giveUp)
+        assertEquals(1, state.hintsUsed)
     }
 
     @Test
     fun hintOnEmptyCell_setsSolutionValueWithoutMistake() {
-        viewModel.currCell = viewModel.gameBoard[0][1]
-        viewModel.toolbarClick(ToolBarItem.Hint)
+        viewModel.sendEvent(GameUiEvent.CellTapped(0, 1))
+        viewModel.sendEvent(GameUiEvent.ToolbarClicked(ToolBarItem.Hint))
 
-        assertEquals(3, viewModel.gameBoard[0][1].value)
-        assertFalse(viewModel.gameBoard[0][1].error)
-        assertEquals(0, viewModel.mistakesCount)
-        assertEquals(1, viewModel.hintsUsed)
+        val state = viewModel.uiState.value
+        assertEquals(3, state.gameBoard[0][1].value)
+        assertFalse(state.gameBoard[0][1].error)
+        assertEquals(0, state.mistakesCount)
+        assertEquals(1, state.hintsUsed)
     }
 
     private fun waitUntil(timeoutMs: Long = 5_000, condition: () -> Boolean) {
         val deadline = System.currentTimeMillis() + timeoutMs
         while (true) {
-            mainDispatcher.scheduler.advanceUntilIdle()
+            mainDispatcher.scheduler.runCurrent()
             if (condition()) return
             check(System.currentTimeMillis() < deadline) { "Timed out waiting for GameViewModel" }
             Thread.sleep(10)

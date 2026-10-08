@@ -1,22 +1,14 @@
 package com.kaajjo.libresudoku.ui.game
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.TextUnit
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.Note
 import com.kaajjo.libresudoku.core.PreferencesConstants
-import com.kaajjo.libresudoku.core.qqwing.Cage
-import com.kaajjo.libresudoku.core.qqwing.GameDifficulty
-import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.qqwing.QQWingController
 import com.kaajjo.libresudoku.core.qqwing.advanced_hint.AdvancedHint
-import com.kaajjo.libresudoku.core.qqwing.advanced_hint.AdvancedHintData
 import com.kaajjo.libresudoku.core.utils.GameState
 import com.kaajjo.libresudoku.core.utils.SudokuParser
 import com.kaajjo.libresudoku.core.utils.SudokuUtils
@@ -34,23 +26,33 @@ import com.kaajjo.libresudoku.domain.usecase.board.UpdateBoardUseCase
 import com.kaajjo.libresudoku.domain.usecase.record.GetAllRecordsUseCase
 import com.kaajjo.libresudoku.navArgs
 import com.kaajjo.libresudoku.ui.game.components.ToolBarItem
+import com.kaajjo.libresudoku.ui.game.models.GameSettings
+import com.kaajjo.libresudoku.ui.game.models.GameUiEvent
+import com.kaajjo.libresudoku.ui.game.models.GameUiSideEffect
+import com.kaajjo.libresudoku.ui.game.models.GameUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
-import java.util.Timer
 import javax.inject.Inject
-import kotlin.concurrent.fixedRateTimer
 import kotlin.time.Duration
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 import kotlin.time.toKotlinDuration
 
@@ -62,773 +64,652 @@ class GameViewModel @Inject constructor(
     private val updateBoardUseCase: UpdateBoardUseCase,
     private val getBoardUseCase: GetBoardUseCase,
     themeSettingsManager: ThemeSettingsManager,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val getAllRecordsUseCase: GetAllRecordsUseCase
 ) : ViewModel() {
-    init {
-        val navArgs: GameScreenNavArgs = savedStateHandle.navArgs()
-        val sudokuParser = SudokuParser()
-        val continueSaved = navArgs.playedBefore
+    private val _uiState = MutableStateFlow(GameUiState())
+    val uiState = _uiState.asStateFlow()
 
-        viewModelScope.launch(Dispatchers.IO) {
-            boardEntity = getBoardUseCase(navArgs.gameUid)
-            val savedGame = savedGameRepository.get(boardEntity.uid)
+    private val effectChannel = Channel<GameUiSideEffect>(Channel.BUFFERED)
+    val effect = effectChannel.receiveAsFlow()
 
-            withContext(Dispatchers.Main) {
-                gameType = boardEntity.type
-                gameDifficulty = boardEntity.difficulty
-            }
-
-
-            withContext(Dispatchers.Default) {
-                initialBoard = sudokuParser.parseBoard(
-                    boardEntity.initialBoard,
-                    boardEntity.type
-                ).toList()
-                initialBoard.forEach { cells ->
-                    cells.forEach { cell ->
-                        cell.locked = cell.value != 0
-                    }
-                }
-
-                if (boardEntity.solvedBoard.isNotBlank() && !boardEntity.solvedBoard.contains("0")) {
-                    solvedBoard = sudokuParser.parseBoard(
-                        boardEntity.solvedBoard,
-                        boardEntity.type
-                    )
-                    boardEntity.killerCages?.let { cagesString ->
-                        cages = sudokuParser.parseKillerSudokuCages(cagesString)
-                    }
-                    for (i in solvedBoard.indices) {
-                        for (j in solvedBoard.indices) {
-                            solvedBoard[i][j].locked = initialBoard[i][j].locked
-                        }
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        solveBoard()
-                    }
-                }
-            }
-
-            withContext(Dispatchers.Main) {
-                if (savedGame != null && continueSaved) {
-                    restoreSavedGame(savedGame)
-                } else {
-                    gameBoard = initialBoard
-                }
-                size = gameBoard.size
-                undoRedoManager = UndoRedoManager(GameState(gameBoard, notes))
-                remainingUsesList = countRemainingUses(gameBoard)
-            }
-            saveGame()
-        }
-    }
-
-    var giveUp by mutableStateOf(false)
-
-    val fontSize = appSettingsManager.fontSize
-    val keepScreenOn = appSettingsManager.keepScreenOn
-
-    var remainingUsesList = emptyList<Int>()
-    val firstGame = appSettingsManager.firstGame
-    private lateinit var boardEntity: SudokuBoard
-    var size by mutableIntStateOf(9)
-    var gameType by mutableStateOf(GameType.Unspecified)
-    var gameDifficulty by mutableStateOf(GameDifficulty.Unspecified)
-
-    // dialogs, menus
-    var restartDialog by mutableStateOf(false)
-    var showMenu by mutableStateOf(false)
-    var showNotesMenu by mutableStateOf(false)
-    var showUndoRedoMenu by mutableStateOf(false)
-
-    // count remaining uses
-    var remainingUse = appSettingsManager.remainingUse
-
-    // timer
-    var timerEnabled = appSettingsManager.timerEnabled
-
-    // identical numbers highlight
-    val identicalHighlight = appSettingsManager.highlightIdentical
-
-    // mistakes checking method
-    var mistakesMethod = appSettingsManager.highlightMistakes.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        PreferencesConstants.DEFAULT_HIGHLIGHT_MISTAKES
-    )
-
-    var positionLines = appSettingsManager.positionLines
-    val crossHighlight = themeSettingsManager.boardCrossHighlight
-    val funKeyboardOverNum = appSettingsManager.funKeyboardOverNumbers
-
-    var mistakesLimit = appSettingsManager.mistakesLimit.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        PreferencesConstants.DEFAULT_MISTAKES_LIMIT
-    )
-
-    private var autoEraseNotes = appSettingsManager.autoEraseNotes.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        PreferencesConstants.DEFAULT_AUTO_ERASE_NOTES
-    )
-
-    var resetTimerOnRestart = appSettingsManager.resetTimerEnabled
-
-    var disableHints = appSettingsManager.hintsDisabled
-
-    var endGame by mutableStateOf(false)
-    var giveUpDialog by mutableStateOf(false)
-
-    // mistakes
-    // used for mistakes limit
-    var mistakesCount by mutableIntStateOf(0)
-
-    // notes
-    var notesToggled by mutableStateOf(false)
-    var notes by mutableStateOf(emptyList<Note>())
-
-    private lateinit var initialBoard: List<List<Cell>>
-    var gameBoard by mutableStateOf(List(9) { row -> List(9) { col -> Cell(row, col, 0) } })
-    var solvedBoard = emptyList<List<Cell>>()
-    var cages by mutableStateOf(emptyList<Cage>())
-
-    var currCell by mutableStateOf(Cell(-1, -1, 0))
-    private var undoRedoManager = UndoRedoManager(GameState(gameBoard, notes))
-    private var sudokuUtils = SudokuUtils()
-    var gameCompleted by mutableStateOf(false)
-
-    // Selected number for digit first method
-    var digitFirstNumber by mutableIntStateOf(0)
-    private val inputMethod = appSettingsManager.inputMethod
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = PreferencesConstants.DEFAULT_INPUT_METHOD
-        )
-
-    // temporarily use digit first method when true
-    private var overrideInputMethodDF by mutableStateOf(false)
-
-    // show/hide solution (when give up)
-    var showSolution by mutableStateOf(false)
-
-    // when true, tapping on any cell will clear it
-    var eraseButtonToggled by mutableStateOf(false)
-
-    // used only in the game-completed section. Not saved anywhere
-    var hintsUsed = 0
-    var mistakesMade = 0
-    var notesTaken = 0
-
-    val allRecords by lazy { getAllRecordsUseCase(gameDifficulty, gameType) }
-
-    val advancedHintEnabled = appSettingsManager.advancedHintEnabled
-    private var _advancedHintMode = MutableStateFlow(false)
-    val advancedHintMode = _advancedHintMode.asStateFlow()
-
-    private var _advancedHintData = MutableStateFlow<AdvancedHintData?>(null)
-    val advancedHintData = _advancedHintData.asStateFlow()
-
-    private var _cellsToHighlight = MutableStateFlow<List<Cell>>(emptyList())
-    val cellsToHighlight = _cellsToHighlight.asStateFlow()
-
-    private var _advancedHintText = MutableStateFlow("")
-    val advancedHintText = _advancedHintText.asStateFlow()
-
-    private fun clearNotesAtCell(
-        notes: List<Note>,
-        row: Int = currCell.row,
-        col: Int = currCell.col
-    ): List<Note> {
-        return notes.minus(
-            notes.filter { note ->
-                note.row == row
-                        && note.col == col
-            }.toSet()
-        )
-    }
-
-    private fun emptyNotes(): List<Note> = emptyList()
-
-    fun clearNotes() {
-        notes = emptyNotes()
-        undoRedoManager.addState(
-            GameState(gameBoard, notes)
-        )
-    }
-
-    private fun addNote(note: Int, row: Int, col: Int): List<Note> {
-        return notes.plus(Note(row, col, note))
-    }
-
-    private fun removeNote(note: Int, row: Int, col: Int): List<Note> =
-        notes.minus(Note(row, col, note))
-
-    private fun getBoardNoRef(): List<List<Cell>> =
-        gameBoard.map { items -> items.map { item -> item.copy() } }
-
-    private fun setValueCell(
-        value: Int,
-        row: Int = currCell.row,
-        col: Int = currCell.col,
-        countMistake: Boolean = true
-    ): List<List<Cell>> {
-        var new = getBoardNoRef()
-
-        new[row][col].value = value
-        remainingUsesList = countRemainingUses(new)
-
-        if (currCell.row == row && currCell.col == col) {
-            currCell = currCell.copy(value = new[row][col].value)
-        }
-        if (value == 0) {
-            new[row][col].error = false
-            currCell.error = false
-            return new
-        }
-        // checking for mistakes
-        if (mistakesMethod.value == 1) {
-            // rule violations
-            new[row][col].error =
-                !sudokuUtils.isValidCellDynamic(new, new[row][col], boardEntity.type)
-            new.forEach { cells ->
-                cells.forEach { cell ->
-                    if (cell.value != 0 && cell.error) {
-                        cell.error = !sudokuUtils.isValidCellDynamic(new, cell, boardEntity.type)
-                    }
-                }
-            }
-        } else if (mistakesMethod.value == 2) {
-            // check with final solution
-            new = isValidCell(new, new[row][col])
-        }
-
-        currCell.error = currCell.value == 0
-        // updating mistakes limit
-        if (countMistake && new[row][col].error) {
-            mistakesMade++
-            if (mistakesLimit.value) {
-                mistakesCount++
-                if (mistakesCount >= PreferencesConstants.MISTAKES_LIMIT) {
-                    pauseTimer()
-                    giveUp()
-                    endGame = true
-                }
-            }
-        }
-
-        gameCompleted = isCompleted(new)
-
-        if (autoEraseNotes.value) {
-            notes = autoEraseNotes(new, currCell)
-        }
-
-        return new
-    }
-
-    private fun countRemainingUses(board: List<List<Cell>>): MutableList<Int> {
-        val uses = mutableListOf<Int>()
-        for (i in 0..size) {
-            uses.add(size - sudokuUtils.countNumberInBoard(board, i + 1))
-        }
-        return uses
-    }
-
-    fun processInput(cell: Cell, remainingUse: Boolean, longTap: Boolean = false): Boolean {
-        if (gamePlaying) {
-            currCell =
-                if (currCell.row == cell.row && currCell.col == cell.col && digitFirstNumber == 0) {
-                    Cell(-1, -1)
-                } else {
-                    cell
-                }
-
-            if (currCell.row >= 0 && currCell.col >= 0 && !gameBoard[currCell.row][currCell.col].locked) {
-                if ((inputMethod.value == 1 || overrideInputMethodDF) && digitFirstNumber > 0) {
-                    if (!longTap) {
-                        if ((remainingUsesList.size >= digitFirstNumber && remainingUsesList[digitFirstNumber - 1] > 0) || !remainingUse) {
-                            processNumberInput(digitFirstNumber)
-                            undoRedoManager.addState(GameState(gameBoard, notes))
-                            if (notesToggled) currCell =
-                                Cell(currCell.row, currCell.col, digitFirstNumber)
-                        }
-                    } else if (!currCell.locked) {
-                        gameBoard = setValueCell(0)
-                        setNote(digitFirstNumber)
-                        undoRedoManager.addState(GameState(gameBoard, notes))
-                    }
-                } else if (eraseButtonToggled) {
-                    val oldCell = currCell
-                    processNumberInput(0)
-                    if (oldCell.value != 0 && !oldCell.locked) {
-                        undoRedoManager.addState(GameState(gameBoard, notes))
-                    }
-                }
-                remainingUsesList = countRemainingUses(gameBoard)
-                return true
-            } else {
-                return false
-            }
-        } else {
-            return false
-        }
-    }
-
-    fun processInputKeyboard(number: Int, longTap: Boolean = false) {
-        if (gamePlaying) {
-            if (!longTap) {
-                if (inputMethod.value == 0 && !currCell.locked && currCell.col >= 0 && currCell.row >= 0) {
-                    overrideInputMethodDF = false
-                    digitFirstNumber = 0
-                    processNumberInput(number)
-                    undoRedoManager.addState(GameState(gameBoard, notes))
-                } else if (inputMethod.value == 1) {
-                    digitFirstNumber = if (digitFirstNumber == number) 0 else number
-                    currCell = Cell(-1, -1, digitFirstNumber)
-                }
-            } else {
-                if (inputMethod.value == 0) {
-                    overrideInputMethodDF = true
-                    digitFirstNumber = if (digitFirstNumber == number) 0 else number
-                    currCell = Cell(-1, -1, digitFirstNumber)
-                }
-            }
-            eraseButtonToggled = false
-        }
-    }
-
-
-    fun processNumberInput(number: Int) {
-        if (currCell.row >= 0 && currCell.col >= 0 && gamePlaying && !currCell.locked) {
-            if (!notesToggled) {
-                // Clear all note to set a number
-                notes = clearNotesAtCell(notes, currCell.row, currCell.col)
-
-                gameBoard = setValueCell(
-                    if (gameBoard[currCell.row][currCell.col].value == number) 0 else number
-                )
-            } else {
-                gameBoard = setValueCell(0)
-                setNote(number)
-                remainingUsesList = countRemainingUses(gameBoard)
-            }
-        }
-    }
-
-    private fun setNote(number: Int) {
-        val note = Note(currCell.row, currCell.col, number)
-        notes = if (notes.contains(note)) {
-            removeNote(note.value, note.row, note.col)
-        } else {
-            notesTaken++
-            addNote(note.value, note.row, note.col)
-        }
-    }
-
-    var timeText by mutableStateOf("00:00")
+    private val state get() = _uiState.value
+    private val navArgs: GameScreenNavArgs = savedStateHandle.navArgs()
+    private val sudokuUtils = SudokuUtils()
+    private val parser = SudokuParser()
+    private val settingsReady = CompletableDeferred<Unit>()
+    private var boardEntity: SudokuBoard? = null
+    private var initialBoard: List<List<Cell>> = emptyList()
+    private var undoRedoManager = UndoRedoManager(GameState(emptyList(), emptyList()))
     private var duration = Duration.ZERO
-    private lateinit var timer: Timer
-    var gamePlaying by mutableStateOf(false)
+    private var timerJob: Job? = null
+    private var hintJob: Job? = null
+    private var loadJob: Job? = null
+    private var recordsJob: Job? = null
+    private var screenResumed = false
+    private var playRequested = true
+    private var overrideInputMethodDF = false
 
-    fun startTimer() {
-        if (!gamePlaying) {
-            gamePlaying = true
-            val updateRate = 50L
+    // Capture before suspending and write in order, so an autosave cannot overwrite a result
+    private data class SaveRequest(
+        val board: SudokuBoard,
+        val state: GameUiState,
+        val duration: Duration,
+        val recordCompletion: Boolean,
+        val completed: CompletableDeferred<Unit> = CompletableDeferred()
+    )
 
-            timer = fixedRateTimer(initialDelay = updateRate, period = updateRate) {
-                val prevTime = duration
+    private val saves = Channel<SaveRequest>(Channel.UNLIMITED)
 
-                duration = duration.plus((updateRate * 1e6).toDuration(DurationUnit.NANOSECONDS))
-                // update text every second
-                if (prevTime.toInt(DurationUnit.SECONDS) != duration.toInt(DurationUnit.SECONDS)) {
-                    timeText = duration.toFormattedString()
-                    // save game
-                    if (gameBoard.any { it.any { cell -> cell.value != 0 } }) {
-                        viewModelScope.launch(Dispatchers.IO) {
-                            saveGame()
-                        }
-                    }
+    init {
+        viewModelScope.launch {
+            for (request in saves) {
+                try {
+                    saveGame(request)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    produceSideEffect(GameUiSideEffect.SaveFailed)
+                } finally {
+                    request.completed.complete(Unit)
                 }
             }
         }
-    }
-
-    fun pauseTimer() {
-        gamePlaying = false
-        timer.cancel()
-    }
-
-    fun toolbarClick(item: ToolBarItem) {
-        if (gamePlaying) {
-            when (item) {
-                ToolBarItem.Undo -> {
-                    if (undoRedoManager.canUndo()) {
-                        undoRedoManager.undo().also {
-                            gameBoard = it.board
-                            notes = it.notes
-                        }
-                        checkMistakesAll()
+        viewModelScope.launch {
+            combine(
+                appSettingsManager.firstGame.setting { copy(firstGame = it) },
+                appSettingsManager.fontSize.setting { copy(fontSize = it) },
+                appSettingsManager.keepScreenOn.setting { copy(keepScreenOn = it) },
+                appSettingsManager.remainingUse.setting { copy(remainingUse = it) },
+                appSettingsManager.timerEnabled.setting { copy(timerEnabled = it) },
+                appSettingsManager.highlightIdentical.setting { copy(identicalHighlight = it) },
+                appSettingsManager.highlightMistakes.setting { copy(mistakesMethod = it) },
+                appSettingsManager.positionLines.setting { copy(positionLines = it) },
+                themeSettingsManager.boardCrossHighlight.setting { copy(crossHighlight = it) },
+                appSettingsManager.funKeyboardOverNumbers.setting { copy(funKeyboardOverNum = it) },
+                appSettingsManager.mistakesLimit.setting { copy(mistakesLimit = it) },
+                appSettingsManager.autoEraseNotes.setting { copy(autoEraseNotes = it) },
+                appSettingsManager.resetTimerEnabled.setting { copy(resetTimerOnRestart = it) },
+                appSettingsManager.hintsDisabled.setting { copy(disableHints = it) },
+                appSettingsManager.inputMethod.setting { copy(inputMethod = it) },
+                appSettingsManager.advancedHintEnabled.setting { copy(advancedHintEnabled = it) }
+            ) { mutations ->
+                mutations.fold(GameSettings()) { settings, mutate -> mutate(settings) }
+            }.collect { settings ->
+                val previous = state.settings
+                _uiState.update { it.copy(settings = settings) }
+                settingsReady.complete(Unit)
+                if (!state.isLoading && !state.loadError) {
+                    if (previous.mistakesMethod != settings.mistakesMethod) checkMistakesAll()
+                    if (previous.inputMethod != settings.inputMethod) {
+                        overrideInputMethodDF = false
+                        _uiState.update { it.copy(digitFirstNumber = 0, currCell = Cell(-1, -1)) }
                     }
-                    remainingUsesList = countRemainingUses(gameBoard)
-                }
-
-                ToolBarItem.Redo -> {
-                    if (undoRedoManager.canRedo()) {
-                        undoRedoManager.redo()?.let {
-                            gameBoard = it.board
-                            notes = it.notes
-                        }
-                        checkMistakesAll()
-                    }
-                    remainingUsesList = countRemainingUses(gameBoard)
-                }
-
-                ToolBarItem.Hint -> {
-                    useHint()
-                }
-
-                ToolBarItem.Note -> {
-                    notesToggled = !notesToggled
-                    eraseButtonToggled = false
-                }
-
-                ToolBarItem.Remove -> {
-                    if (inputMethod.value == 1 || eraseButtonToggled) {
-                        toggleEraseButton()
-                        return
-                    }
-                    if (currCell.row >= 0 && currCell.col >= 0 && !currCell.locked) {
-                        val prevValue = gameBoard[currCell.row][currCell.col].value
-                        val notesInCell =
-                            notes.count { note -> note.row == currCell.row && note.col == currCell.col }
-                        notes = clearNotesAtCell(notes)
-                        gameBoard = setValueCell(0)
-                        if (prevValue != 0 || notesInCell != 0) {
-                            undoRedoManager.addState(GameState(gameBoard, notes))
-                        }
-                    }
+                    if (settings.firstGame) pauseTimer() else startTimer()
                 }
             }
         }
+        loadGame()
     }
 
-    private fun useHint() {
-        if (solvedBoard.isEmpty()) solveBoard()
-        // setValueCell() may reset currCell (e.g. via giveUp()), so keep the coordinates
-        val row = currCell.row
-        val col = currCell.col
-        if (row >= 0 && col >= 0 && !currCell.locked) {
-            notes = clearNotesAtCell(notes, row, col)
-            val new = setValueCell(solvedBoard[row][col].value, row, col, countMistake = false)
-            new[row][col].error = false
-            gameBoard = new
+    fun sendEvent(event: GameUiEvent) {
+        if (!canHandleEvent(event)) return
 
-            duration = duration.plus(30.toDuration(DurationUnit.SECONDS))
-            timeText = duration.toFormattedString()
-            undoRedoManager.addState(GameState(gameBoard, notes))
-            hintsUsed++
+        val previous = state
+        when (event) {
+            GameUiEvent.ScreenResumed -> onScreenResumed()
+            GameUiEvent.ScreenPaused -> onScreenPaused()
+            GameUiEvent.NavigateBack -> leaveScreen(GameUiSideEffect.NavigateBack)
+            GameUiEvent.OpenSettings -> leaveScreen(GameUiSideEffect.OpenSettings)
+            GameUiEvent.OpenHintSettings -> leaveScreen(GameUiSideEffect.OpenHintSettings)
+            GameUiEvent.RetryLoading -> retryLoading()
+            GameUiEvent.TogglePause -> togglePause()
+            GameUiEvent.FirstGameFinished -> finishFirstGameOnboarding()
+            is GameUiEvent.CellTapped -> onCellTapped(event)
+            is GameUiEvent.NumberTapped -> processInputKeyboard(event.number, event.longTap)
+            is GameUiEvent.ToolbarClicked -> toolbarClick(event.item)
+            GameUiEvent.ToggleEraseMode -> toggleEraseMode()
+            GameUiEvent.RequestAdvancedHint -> getAdvancedHint()
+            GameUiEvent.CancelAdvancedHint -> cancelAdvancedHint()
+            GameUiEvent.ApplyAdvancedHint -> applyAdvancedHint()
+            GameUiEvent.ToggleSolution -> toggleSolution()
+            GameUiEvent.ShowRestartDialog -> showRestartDialog()
+            GameUiEvent.DismissRestartDialog -> dismissRestartDialog()
+            GameUiEvent.ConfirmRestart -> confirmRestart()
+            GameUiEvent.ShowGiveUpDialog -> showGiveUpDialog()
+            GameUiEvent.DismissGiveUpDialog -> dismissGiveUpDialog()
+            GameUiEvent.ConfirmGiveUp -> confirmGiveUp()
+            is GameUiEvent.SetMenuVisible -> setMenuVisible(event.visible)
+            is GameUiEvent.SetNotesMenuVisible -> setNotesMenuVisible(event.visible)
+            is GameUiEvent.SetUndoRedoMenuVisible -> setUndoRedoMenuVisible(event.visible)
+            GameUiEvent.ToggleRenderNotes -> toggleRenderNotes()
+            GameUiEvent.ComputeNotes -> computeNotes()
+            GameUiEvent.ClearNotes -> clearNotes()
+            GameUiEvent.ExportBoard -> exportBoard()
         }
+
+        onGameStateChanged(previous)
     }
 
-    fun resetGame(resetTimer: Boolean) {
-        // stop and reset game
-        notes = emptyNotes()
-        currCell = Cell(-1, -1, 0)
-        if (resetTimer) {
-            duration = Duration.ZERO
-            timeText = duration.toFormattedString()
-        }
-        digitFirstNumber = 0
-        notesToggled = false
-        undoRedoManager.clear()
-
-        // init a new game with initial board
-        gameBoard = initialBoard.map { items -> items.map { item -> item.copy() } }
-
-        remainingUsesList = countRemainingUses(gameBoard)
-
-        hintsUsed = 0
-        mistakesMade = 0
-        notesTaken = 0
+    private fun canHandleEvent(event: GameUiEvent): Boolean = when (event) {
+        GameUiEvent.ScreenResumed,
+        GameUiEvent.ScreenPaused,
+        GameUiEvent.NavigateBack,
+        GameUiEvent.OpenSettings,
+        GameUiEvent.OpenHintSettings,
+        GameUiEvent.RetryLoading -> true
+        else -> !state.isLoading && !state.loadError
     }
 
-    private fun isValidCell(
-        board: List<List<Cell>> = getBoardNoRef(),
-        cell: Cell
-    ): List<List<Cell>> {
-        if (solvedBoard.isNotEmpty()) {
-            board[cell.row][cell.col].error =
-                solvedBoard[cell.row][cell.col].value != board[cell.row][cell.col].value
-        } else {
-            solveBoard()
-        }
-        return board
+    private fun onScreenResumed() {
+        screenResumed = true
+        startTimer()
     }
 
-    private fun isCompleted(board: List<List<Cell>> = getBoardNoRef()): Boolean {
-        if (solvedBoard.isEmpty()) solveBoard()
-        for (i in solvedBoard.indices) {
-            for (j in solvedBoard.indices) {
-                if (solvedBoard[i][j].value != board[i][j].value) {
-                    return false
-                }
-            }
-        }
-        viewModelScope.launch(Dispatchers.IO) {
-            val savedGame = savedGameRepository.get(boardEntity.uid)
-            if (savedGame != null) {
-                savedGameRepository.update(
-                    savedGame.copy(
-                        completed = true,
-                        giveUp = false,
-                        canContinue = false,
-                        finishedAt = ZonedDateTime.now()
-                    )
-                )
-            }
-        }
-        return true
-    }
-
-    fun computeNotes() {
-        notes = sudokuUtils.computeNotes(gameBoard, boardEntity.type)
-        undoRedoManager.addState(GameState(gameBoard, notes))
-    }
-
-    private fun autoEraseNotes(board: List<List<Cell>> = getBoardNoRef(), cell: Cell): List<Note> {
-        if (currCell.row < 0 || currCell.col < 0) {
-            return notes
-        }
-        return sudokuUtils.autoEraseNotes(board, notes, cell, boardEntity.type)
-    }
-
-    private suspend fun saveGame() {
-        val savedGame = savedGameRepository.get(boardEntity.uid)
-        val sudokuParser = SudokuParser()
-        if (savedGame != null) {
-            savedGameRepository.update(
-                savedGame.copy(
-                    timer = java.time.Duration.ofSeconds(duration.inWholeSeconds),
-                    currentBoard = sudokuParser.boardToString(gameBoard),
-                    notes = sudokuParser.notesToString(notes),
-                    mistakes = mistakesCount,
-                    lastPlayed = ZonedDateTime.now()
-                )
-            )
-        } else {
-            savedGameRepository.insert(
-                SavedGame(
-                    uid = boardEntity.uid,
-                    currentBoard = sudokuParser.boardToString(gameBoard),
-                    notes = sudokuParser.notesToString(notes),
-                    timer = java.time.Duration.ofSeconds(duration.inWholeSeconds),
-                    mistakes = mistakesCount,
-                    lastPlayed = ZonedDateTime.now(),
-                    startedAt = ZonedDateTime.now()
-                )
-            )
-        }
-    }
-
-    private fun restoreSavedGame(savedGame: SavedGame?) {
-        if (savedGame != null) {
-            // restore timer and text
-            duration = savedGame.timer.toKotlinDuration()
-            timeText = duration.toFormattedString()
-
-            mistakesCount = savedGame.mistakes
-            val sudokuParser = SudokuParser()
-            gameBoard = sudokuParser.parseBoard(
-                savedGame.currentBoard,
-                boardEntity.type
-            )
-            notes = sudokuParser.parseNotes(savedGame.notes)
-
-            for (i in gameBoard.indices) {
-                for (j in gameBoard.indices) {
-                    gameBoard[i][j].locked = initialBoard[i][j].locked
-
-                    if (gameBoard[i][j].value != 0 && !gameBoard[i][j].locked) {
-                        if (mistakesMethod.value == 1) {
-                            gameBoard[i][j].error =
-                                !sudokuUtils.isValidCellDynamic(
-                                    board = gameBoard,
-                                    cell = gameBoard[i][j],
-                                    type = boardEntity.type
-                                )
-                        } else {
-                            gameBoard[i][j].error =
-                                isValidCell(gameBoard, gameBoard[i][j])[i][j].error
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fun giveUp() {
-        giveUp = true
-        endGame = true
-        currCell = Cell(-1, -1, 0)
-        viewModelScope.launch(Dispatchers.IO) {
-            val savedGame = savedGameRepository.get(boardEntity.uid)
-            if (savedGame != null) {
-                val sudokuParser = SudokuParser()
-                savedGameRepository.update(
-                    savedGame.copy(
-                        timer = java.time.Duration.ofSeconds(duration.inWholeSeconds),
-                        currentBoard = sudokuParser.boardToString(gameBoard),
-                        completed = true,
-                        giveUp = true,
-                        mistakes = mistakesCount,
-                        canContinue = false,
-                        finishedAt = ZonedDateTime.now()
-                    )
-                )
-            }
-        }
-    }
-
-    fun onGameComplete() {
-        if (endGame) return
-
+    private fun onScreenPaused() {
+        screenResumed = false
         pauseTimer()
-        currCell = Cell(-1, -1, 0)
-        viewModelScope.launch(Dispatchers.IO) {
-            saveGame()
-            recordRepository.insert(
-                Record(
-                    board_uid = boardEntity.uid,
-                    type = boardEntity.type,
-                    difficulty = boardEntity.difficulty,
-                    date = ZonedDateTime.now(),
-                    time = duration.toJavaDuration()
-                )
-            )
-        }
-        endGame = true
+        cancelAdvancedHint()
+        _uiState.update { it.copy(currCell = Cell(-1, -1)) }
+        queueSave()
     }
 
-    fun getFontSize(type: GameType = gameType, factor: Int): TextUnit {
-        return sudokuUtils.getFontSize(type, factor)
+    private fun retryLoading() {
+        if (state.loadError) loadGame()
     }
 
-    fun setFirstGameFalse() {
-        viewModelScope.launch(Dispatchers.IO) {
+    private fun togglePause() {
+        playRequested = !state.gamePlaying
+        if (playRequested) startTimer() else pauseTimer()
+        _uiState.update { it.copy(currCell = Cell(-1, -1)) }
+    }
+
+    private fun finishFirstGameOnboarding() {
+        viewModelScope.launch {
             appSettingsManager.setFirstGame(false)
         }
     }
 
-    fun toggleEraseButton() {
-        notesToggled = false
-        currCell = Cell(-1, -1, 0)
-        digitFirstNumber = -1
-        eraseButtonToggled = !eraseButtonToggled
+    private fun toggleEraseMode() {
+        if (!state.gamePlaying) return
+        toggleEraseButton()
+        produceSideEffect(GameUiSideEffect.HapticFeedback)
     }
 
-    // to make sure that solvedBoard really contains a solved board
-    private fun solveBoard() {
-        val qqWing = QQWingController()
-        val boardToSolve = boardEntity.initialBoard.map { it.digitToInt(13) }.toIntArray()
-        val solved = qqWing.solve(boardToSolve, boardEntity.type)
+    private fun toggleSolution() {
+        if (!state.endGame) return
+        _uiState.update { it.copy(showSolution = !it.showSolution) }
+    }
 
-        val newSolvedBoard = List(boardEntity.type.size) { row ->
-            List(boardEntity.type.size) { col ->
-                Cell(
-                    row,
-                    col,
-                    0
-                )
+    private fun showRestartDialog() {
+        if (state.endGame) return
+        pauseTimer()
+        cancelAdvancedHint()
+        _uiState.update { it.copy(restartDialog = true) }
+    }
+
+    private fun dismissRestartDialog() {
+        _uiState.update { it.copy(restartDialog = false) }
+        startTimer()
+    }
+
+    private fun confirmRestart() {
+        if (state.restartDialog) resetGame()
+    }
+
+    private fun showGiveUpDialog() {
+        if (state.endGame) return
+        pauseTimer()
+        cancelAdvancedHint()
+        _uiState.update { it.copy(giveUpDialog = true, showMenu = false) }
+    }
+
+    private fun dismissGiveUpDialog() {
+        _uiState.update { it.copy(giveUpDialog = false) }
+        startTimer()
+    }
+
+    private fun confirmGiveUp() {
+        if (state.giveUpDialog) finishGame(giveUp = true)
+    }
+
+    private fun setMenuVisible(visible: Boolean) {
+        _uiState.update { it.copy(showMenu = visible) }
+    }
+
+    private fun setNotesMenuVisible(visible: Boolean) {
+        if (visible && !state.gamePlaying) return
+        _uiState.update { it.copy(showNotesMenu = visible) }
+        if (visible) produceSideEffect(GameUiSideEffect.HapticFeedback)
+    }
+
+    private fun setUndoRedoMenuVisible(visible: Boolean) {
+        _uiState.update { it.copy(showUndoRedoMenu = visible && it.gamePlaying) }
+    }
+
+    private fun toggleRenderNotes() {
+        _uiState.update { it.copy(renderNotes = !it.renderNotes) }
+    }
+
+    private fun computeNotes() {
+        if (!state.gamePlaying) return
+        _uiState.update { it.copy(notes = sudokuUtils.computeNotes(it.gameBoard, it.gameType)) }
+        rememberMove()
+    }
+
+    private fun clearNotes() {
+        if (!state.gamePlaying) return
+        _uiState.update { it.copy(notes = emptyList()) }
+        rememberMove()
+    }
+
+    private fun exportBoard() {
+        val board = parser.boardToString(state.gameBoard, emptySeparator = '.').uppercase()
+        produceSideEffect(GameUiSideEffect.CopyBoard(board))
+    }
+
+    private fun onGameStateChanged(previous: GameUiState) {
+        if (previous.gameBoard != state.gameBoard || previous.notes != state.notes) {
+            cancelAdvancedHint()
+            when {
+                state.endGame -> Unit
+                state.settings.mistakesLimit && state.mistakesCount >= PreferencesConstants.MISTAKES_LIMIT ->
+                    finishGame(giveUp = true)
+                isCompleted() -> finishGame(giveUp = false)
+                else -> queueSave()
             }
         }
-        for (i in 0 until size) {
-            for (j in 0 until size) {
-                newSolvedBoard[i][j].value = solved[i * size + j]
+    }
+
+    private fun loadGame() {
+        if (loadJob?.isActive == true) return
+        _uiState.update { it.copy(isLoading = true, loadError = false) }
+        loadJob = viewModelScope.launch {
+            try {
+                settingsReady.await()
+                val entity = getBoardUseCase(navArgs.gameUid)
+                val saved = savedGameRepository.get(entity.uid).takeIf { navArgs.playedBefore }
+                val initial = parser.parseBoard(entity.initialBoard, entity.type).map { row ->
+                    row.map { it.copy(locked = it.value != 0) }
+                }
+                val solved = if (entity.solvedBoard.isNotBlank() && !entity.solvedBoard.contains('0')) {
+                    parser.parseBoard(entity.solvedBoard, entity.type)
+                } else {
+                    val values = withContext(Dispatchers.Default) {
+                        QQWingController().solve(entity.initialBoard.map { it.digitToInt(13) }.toIntArray(), entity.type)
+                    }
+                    List(entity.type.size) { row ->
+                        List(entity.type.size) { col -> Cell(row, col, values[row * entity.type.size + col]) }
+                    }.also { updateBoardUseCase(entity.copy(solvedBoard = parser.boardToString(it))) }
+                }.mapIndexed { row, cells ->
+                    cells.mapIndexed { col, cell -> cell.copy(locked = initial[row][col].locked) }
+                }
+                val board = saved?.let { parser.parseBoard(it.currentBoard, entity.type) } ?: initial
+                val restoredBoard = board.mapIndexed { row, cells ->
+                    cells.mapIndexed { col, cell -> cell.copy(locked = initial[row][col].locked) }
+                }
+                boardEntity = entity
+                initialBoard = initial
+                duration = saved?.timer?.toKotlinDuration() ?: Duration.ZERO
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        gameType = entity.type,
+                        gameDifficulty = entity.difficulty,
+                        gameBoard = restoredBoard,
+                        solvedBoard = solved,
+                        cages = entity.killerCages?.let(parser::parseKillerSudokuCages) ?: emptyList(),
+                        notes = saved?.let { game -> parser.parseNotes(game.notes) } ?: emptyList(),
+                        timeText = duration.toFormattedString(),
+                        mistakesCount = saved?.mistakes ?: 0,
+                        endGame = saved?.completed == true,
+                        giveUp = saved?.giveUp == true,
+                        remainingUsesList = countRemainingUses(restoredBoard)
+                    )
+                }
+                checkMistakesAll()
+                undoRedoManager = UndoRedoManager(GameState(state.gameBoard, state.notes))
+                recordsJob?.cancel()
+                recordsJob = viewModelScope.launch {
+                    getAllRecordsUseCase(entity.difficulty, entity.type).collect { records ->
+                        _uiState.update { it.copy(allRecords = records) }
+                    }
+                }
+                queueSave()
+                startTimer()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e("GameViewModel", "Failed to load game ${navArgs.gameUid}", e)
+                _uiState.update { it.copy(isLoading = false, loadError = true) }
             }
         }
+    }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            val sudokuParser = SudokuParser()
-            updateBoardUseCase(
-                boardEntity.copy(solvedBoard = sudokuParser.boardToString(newSolvedBoard))
+    private fun onCellTapped(event: GameUiEvent.CellTapped) {
+        if (state.endGame || event.row !in state.gameBoard.indices || event.col !in state.gameBoard.indices) return
+        if (!state.gamePlaying) {
+            if (!event.longTap) {
+                playRequested = true
+                startTimer()
+                if (state.gamePlaying) produceSideEffect(GameUiSideEffect.HapticFeedback)
+            }
+            return
+        }
+        val cell = state.gameBoard[event.row][event.col]
+        val selected = if (state.currCell.row == cell.row && state.currCell.col == cell.col && state.digitFirstNumber == 0) {
+            Cell(-1, -1)
+        } else cell.copy()
+        _uiState.update { it.copy(currCell = selected) }
+        if (selected.row < 0 || selected.locked) return
+        if ((state.settings.inputMethod == 1 || overrideInputMethodDF) && state.digitFirstNumber > 0) {
+            if (event.longTap) {
+                setValueCell(0)
+                setNote(state.digitFirstNumber)
+                rememberMove()
+            } else if (!state.settings.remainingUse || state.remainingUsesList[state.digitFirstNumber - 1] > 0) {
+                processNumberInput(state.digitFirstNumber)
+                rememberMove()
+                if (state.notesToggled) _uiState.update { it.copy(currCell = selected.copy(value = it.digitFirstNumber)) }
+            }
+        } else if (state.eraseButtonToggled) {
+            processNumberInput(0)
+            rememberMove()
+        }
+        if (event.longTap) produceSideEffect(GameUiSideEffect.HapticFeedback)
+    }
+
+    private fun processInputKeyboard(number: Int, longTap: Boolean) {
+        if (!state.gamePlaying || number !in 1..state.size) return
+        if (!longTap) {
+            if (state.settings.inputMethod == 0 && selectedCellEditable()) {
+                overrideInputMethodDF = false
+                _uiState.update { it.copy(digitFirstNumber = 0) }
+                processNumberInput(number)
+                rememberMove()
+            } else if (state.settings.inputMethod == 1) {
+                selectDigit(number)
+            }
+        } else if (state.settings.inputMethod == 0) {
+            overrideInputMethodDF = true
+            selectDigit(number)
+        }
+        _uiState.update { it.copy(eraseButtonToggled = false) }
+    }
+
+    private fun selectDigit(number: Int) {
+        _uiState.update {
+            val digit = if (it.digitFirstNumber == number) 0 else number
+            it.copy(digitFirstNumber = digit, currCell = Cell(-1, -1, digit))
+        }
+    }
+
+    private fun selectedCellEditable(): Boolean = state.currCell.let {
+        it.row in state.gameBoard.indices && it.col in state.gameBoard.indices && !state.gameBoard[it.row][it.col].locked
+    }
+
+    private fun processNumberInput(number: Int) {
+        if (!state.gamePlaying || !selectedCellEditable()) return
+        if (state.notesToggled && number > 0) {
+            setValueCell(0)
+            setNote(number)
+        } else {
+            clearNotesAtCell()
+            val cell = state.currCell
+            setValueCell(if (state.gameBoard[cell.row][cell.col].value == number) 0 else number)
+        }
+    }
+
+    private fun clearNotesAtCell() {
+        _uiState.update { current ->
+            current.copy(notes = current.notes.filterNot { it.row == current.currCell.row && it.col == current.currCell.col })
+        }
+    }
+
+    private fun setNote(number: Int) {
+        val note = Note(state.currCell.row, state.currCell.col, number)
+        _uiState.update {
+            if (note in it.notes) it.copy(notes = it.notes - note)
+            else it.copy(notes = it.notes + note, notesTaken = it.notesTaken + 1)
+        }
+    }
+
+    private fun setValueCell(value: Int, countMistake: Boolean = true) {
+        val current = state
+        val selected = current.currCell
+        val board = current.gameBoard.copyCells()
+        board[selected.row][selected.col].value = value
+        val checked = checkedBoard(board)
+        val cell = checked[selected.row][selected.col]
+        if (!countMistake) cell.error = false
+        _uiState.update {
+            it.copy(
+                gameBoard = checked,
+                currCell = cell.copy(),
+                remainingUsesList = countRemainingUses(checked),
+                mistakesMade = it.mistakesMade + if (countMistake && cell.error) 1 else 0,
+                mistakesCount = it.mistakesCount + if (countMistake && cell.error && it.settings.mistakesLimit) 1 else 0,
+                notes = if (value != 0 && it.settings.autoEraseNotes) {
+                    sudokuUtils.autoEraseNotes(checked, it.notes, cell, it.gameType)
+                } else it.notes
             )
         }
-        solvedBoard = newSolvedBoard
+    }
 
-        for (i in solvedBoard.indices) {
-            for (j in solvedBoard.indices) {
-                solvedBoard[i][j].locked = initialBoard[i][j].locked
+    private fun checkedBoard(board: List<List<Cell>>): List<List<Cell>> = board.map { row ->
+        row.map { cell ->
+            val error = if (cell.value == 0 || cell.locked) false else when (state.settings.mistakesMethod) {
+                1 -> !sudokuUtils.isValidCellDynamic(board, cell, state.gameType)
+                2 -> state.solvedBoard[cell.row][cell.col].value != cell.value
+                else -> false
             }
+            cell.copy(error = error)
         }
     }
 
-    fun checkMistakesAll() {
-        var new = getBoardNoRef()
+    private fun checkMistakesAll() {
+        val board = checkedBoard(state.gameBoard)
+        _uiState.update {
+            it.copy(gameBoard = board, currCell = board.getOrNull(it.currCell.row)?.getOrNull(it.currCell.col)?.copy() ?: it.currCell)
+        }
+    }
 
-        if (!this::initialBoard.isInitialized) return
+    private fun countRemainingUses(board: List<List<Cell>>) =
+        (1..board.size).map { board.size - sudokuUtils.countNumberInBoard(board, it) }
 
-        for (i in new.indices) {
-            for (j in new.indices) {
-                if (new[i][j].value != 0 && !new[i][j].locked) {
-                    when (mistakesMethod.value) {
-                        0 -> {
-                            // mistake checking is off
-                            new[i][j].error = false
-                        }
+    private fun rememberMove() {
+        undoRedoManager.addState(GameState(state.gameBoard, state.notes))
+    }
 
-                        1 -> {
-                            // rules violations
-                            new[i][j].error =
-                                !sudokuUtils.isValidCellDynamic(new, new[i][j], boardEntity.type)
-                        }
-
-                        2 -> {
-                            // check with final solution
-                            new = isValidCell(new, new[i][j])
-                        }
-                    }
+    private fun toolbarClick(item: ToolBarItem) {
+        if (!state.gamePlaying) return
+        when (item) {
+            ToolBarItem.Undo -> if (undoRedoManager.canUndo()) restoreMove(undoRedoManager.undo())
+            ToolBarItem.Redo -> if (undoRedoManager.canRedo()) undoRedoManager.redo()?.let(::restoreMove)
+            ToolBarItem.Hint -> if (!state.settings.disableHints) useHint()
+            ToolBarItem.Note -> _uiState.update { it.copy(notesToggled = !it.notesToggled, eraseButtonToggled = false) }
+            ToolBarItem.Remove -> {
+                if (state.settings.inputMethod == 1 || state.eraseButtonToggled) toggleEraseButton()
+                else if (selectedCellEditable()) {
+                    clearNotesAtCell()
+                    setValueCell(0)
+                    rememberMove()
                 }
             }
         }
-        gameBoard = new
     }
 
-    fun getAdvancedHint() {
-        viewModelScope.launch(Dispatchers.Default) {
-            currCell = Cell(-1, -1, 0)
-            _advancedHintMode.emit(true)
-            val hintSettings = runBlocking { appSettingsManager.advancedHintSettings.first() }
-            val advancedHint = AdvancedHint(
-                type = boardEntity.type,
-                board = gameBoard,
-                solvedBoard = solvedBoard,
-                notes = notes,
-                settings = hintSettings
+    private fun restoreMove(move: GameState) {
+        val board = checkedBoard(move.board)
+        _uiState.update {
+            it.copy(
+                gameBoard = board, notes = move.notes, remainingUsesList = countRemainingUses(board),
+                currCell = board.getOrNull(it.currCell.row)?.getOrNull(it.currCell.col)?.copy() ?: it.currCell
             )
-
-            _advancedHintData.emit(advancedHint.getEasiestHint())
         }
     }
 
-    fun cancelAdvancedHint() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _advancedHintData.emit(null)
-            _advancedHintMode.emit(false)
+    private fun toggleEraseButton() {
+        _uiState.update {
+            it.copy(notesToggled = false, currCell = Cell(-1, -1), digitFirstNumber = -1, eraseButtonToggled = !it.eraseButtonToggled)
         }
     }
 
-    fun applyAdvancedHint() {
-        viewModelScope.launch(Dispatchers.Default) {
-            val cell = _advancedHintData.value?.targetCell
-            if (cell != null) {
-                currCell = gameBoard[cell.row][cell.col]
-                digitFirstNumber = cell.value
-                processInput(cell, true)
-                cancelAdvancedHint()
+    private fun useHint() {
+        if (!selectedCellEditable()) return
+        clearNotesAtCell()
+        setValueCell(state.solvedBoard[state.currCell.row][state.currCell.col].value, countMistake = false)
+        duration += 30.seconds
+        _uiState.update { it.copy(timeText = duration.toFormattedString(), hintsUsed = it.hintsUsed + 1) }
+        rememberMove()
+    }
+
+    private fun resetGame() {
+        cancelAdvancedHint()
+        if (state.settings.resetTimerOnRestart) duration = Duration.ZERO
+        overrideInputMethodDF = false
+        val board = initialBoard.copyCells()
+        _uiState.update {
+            GameUiState(
+                isLoading = false, settings = it.settings, gameType = it.gameType, gameDifficulty = it.gameDifficulty,
+                gameBoard = board, solvedBoard = it.solvedBoard, cages = it.cages,
+                remainingUsesList = countRemainingUses(board), timeText = duration.toFormattedString(),
+                allRecords = it.allRecords, renderNotes = it.renderNotes
+            )
+        }
+        undoRedoManager = UndoRedoManager(GameState(state.gameBoard, state.notes))
+        playRequested = true
+        startTimer()
+        queueSave()
+        produceSideEffect(GameUiSideEffect.GameRestarted)
+    }
+
+    private fun isCompleted(): Boolean = state.solvedBoard.isNotEmpty() && state.gameBoard.indices.all { row ->
+        state.gameBoard[row].indices.all { col -> state.gameBoard[row][col].value == state.solvedBoard[row][col].value }
+    }
+
+    private fun finishGame(giveUp: Boolean) {
+        if (state.endGame) return
+        pauseTimer()
+        cancelAdvancedHint()
+        _uiState.update {
+            it.copy(endGame = true, giveUp = giveUp, currCell = Cell(-1, -1), giveUpDialog = false, showMenu = false)
+        }
+        queueSave(recordCompletion = !giveUp)
+    }
+
+    private fun startTimer() {
+        if (!screenResumed || !playRequested || state.isLoading || state.loadError || state.endGame ||
+            state.settings.firstGame || state.restartDialog || state.giveUpDialog || timerJob?.isActive == true) return
+        _uiState.update { it.copy(gamePlaying = true) }
+        timerJob = viewModelScope.launch {
+            while (isActive) {
+                delay(50)
+                val previousSeconds = duration.inWholeSeconds
+                duration += 50.milliseconds
+                if (previousSeconds != duration.inWholeSeconds) {
+                    _uiState.update { it.copy(timeText = duration.toFormattedString()) }
+                    queueSave()
+                }
             }
         }
     }
+
+    private fun pauseTimer() {
+        timerJob?.cancel()
+        timerJob = null
+        _uiState.update { it.copy(gamePlaying = false) }
+    }
+
+    private fun queueSave(recordCompletion: Boolean = false): CompletableDeferred<Unit>? {
+        val entity = boardEntity ?: return null
+        if (state.isLoading || state.loadError) return null
+        val request = SaveRequest(entity, state, duration, recordCompletion)
+        return if (saves.trySend(request).isSuccess) request.completed else null
+    }
+
+    private suspend fun saveGame(request: SaveRequest) {
+        val snapshot = request.state
+        val existing = savedGameRepository.get(request.board.uid)
+        val now = ZonedDateTime.now()
+        val saved = SavedGame(
+            uid = request.board.uid,
+            currentBoard = parser.boardToString(snapshot.gameBoard),
+            notes = parser.notesToString(snapshot.notes),
+            timer = request.duration.toJavaDuration(),
+            mistakes = snapshot.mistakesCount,
+            completed = snapshot.endGame,
+            giveUp = snapshot.giveUp,
+            canContinue = !snapshot.endGame,
+            lastPlayed = now,
+            startedAt = existing?.startedAt ?: now,
+            finishedAt = if (snapshot.endGame) existing?.finishedAt ?: now else null
+        )
+        if (existing == null) savedGameRepository.insert(saved) else savedGameRepository.update(saved)
+        if (request.recordCompletion) {
+            recordRepository.insert(
+                Record(
+                    board_uid = request.board.uid, type = request.board.type, difficulty = request.board.difficulty,
+                    date = now, time = request.duration.toJavaDuration()
+                )
+            )
+        }
+    }
+
+    private fun getAdvancedHint() {
+        if (!state.gamePlaying || !state.settings.advancedHintEnabled) return
+        cancelAdvancedHint()
+        val snapshot = state
+        _uiState.update { it.copy(advancedHintMode = true, advancedHintLoading = true, currCell = Cell(-1, -1)) }
+        hintJob = viewModelScope.launch {
+            val settings = appSettingsManager.advancedHintSettings.first()
+            val hint = withContext(Dispatchers.Default) {
+                AdvancedHint(
+                    type = snapshot.gameType, board = snapshot.gameBoard.copyCells(),
+                    solvedBoard = snapshot.solvedBoard.copyCells(), notes = snapshot.notes, settings = settings
+                ).getEasiestHint()
+            }
+            _uiState.update { it.copy(advancedHintData = hint, advancedHintLoading = false) }
+        }
+    }
+
+    private fun cancelAdvancedHint() {
+        hintJob?.cancel()
+        hintJob = null
+        _uiState.update { it.copy(advancedHintMode = false, advancedHintLoading = false, advancedHintData = null) }
+    }
+
+    private fun applyAdvancedHint() {
+        if (!state.gamePlaying) return
+        val target = state.advancedHintData?.targetCell ?: return
+        if (target.row !in state.gameBoard.indices || target.col !in state.gameBoard.indices) return
+        _uiState.update { it.copy(currCell = it.gameBoard[target.row][target.col].copy()) }
+        if (selectedCellEditable()) {
+            clearNotesAtCell()
+            setValueCell(if (state.currCell.value == target.value) 0 else target.value)
+            rememberMove()
+        }
+        cancelAdvancedHint()
+    }
+
+    private fun leaveScreen(effect: GameUiSideEffect) {
+        screenResumed = false
+        pauseTimer()
+        cancelAdvancedHint()
+        _uiState.update { it.copy(showMenu = false) }
+        val saved = queueSave()
+        viewModelScope.launch {
+            saved?.await()
+            effectChannel.send(effect)
+        }
+    }
+
+    private fun produceSideEffect(effect: GameUiSideEffect) {
+        viewModelScope.launch { effectChannel.send(effect) }
+    }
 }
+
+private fun List<List<Cell>>.copyCells() = map { row -> row.map { it.copy() } }
+
+private fun <T> Flow<T>.setting(mutation: GameSettings.(T) -> GameSettings): Flow<(GameSettings) -> GameSettings> =
+    map { value -> { settings -> settings.mutation(value) } }
