@@ -93,6 +93,7 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
     testImplementation(libs.junit)
+    testImplementation(libs.kxml2)
     testImplementation(libs.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.test.core)

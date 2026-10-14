@@ -9,6 +9,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kaajjo.libresudoku.core.parser.FileImportResult
 import com.kaajjo.libresudoku.core.parser.GsudokuParser
 import com.kaajjo.libresudoku.core.parser.OpenSudokuParser
 import com.kaajjo.libresudoku.core.parser.SdmParser
@@ -20,6 +21,7 @@ import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.domain.usecase.folder.InsertFolderUseCase
 import com.kaajjo.libresudoku.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -58,11 +60,13 @@ class ImportFromFileViewModel @Inject constructor(
     val importError = _importingError.asStateFlow()
 
     fun readData(inputStream: InputStreamReader) {
-        viewModelScope.launch(Dispatchers.Default) {
-            var toImport = listOf<String>()
+        viewModelScope.launch {
+            isLoading = true
+            _importingError.value = false
+            _sudokuListToImport.value = emptyList()
             try {
-                BufferedReader(inputStream).use { bufferRead ->
-                    val contentText = bufferRead.readText()
+                val result = withContext(Dispatchers.IO) {
+                    val contentText = BufferedReader(inputStream).use { it.readText() }
 
                     val parser = when {
                         contentText.contains("<opensudoku") -> OpenSudokuParser()
@@ -71,21 +75,19 @@ class ImportFromFileViewModel @Inject constructor(
 
                         else -> SdmParser()
                     }
-                    val result = parser.toBoards(contentText)
-                    toImport = result.second
-                    _importingError.emit(!result.first)
-                    isLoading = false
+                    parser.toBoards(contentText)
                 }
+                when (result) {
+                    is FileImportResult.Success -> _sudokuListToImport.value = result.boards
+                    FileImportResult.Failure -> _importingError.value = true
+                }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 e.printStackTrace()
-                _importingError.emit(true)
+                _importingError.value = true
             } finally {
-                withContext(Dispatchers.IO) {
-                    inputStream.close()
-                }
-                if (!_importingError.value) {
-                    _sudokuListToImport.emit(toImport.toList())
-                }
+                isLoading = false
             }
         }
     }

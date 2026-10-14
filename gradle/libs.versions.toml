@@ -1,6 +1,7 @@
 [versions]
 agp = "8.6.1"
 kotlin = "2.0.21"
+kxml2 = "2.3.0"
 room = "2.6.1"
 aboutLibraries = '10.6.1'
 compose = '1.7.5'
@@ -39,6 +40,7 @@ activity-compose = { group = "androidx.activity", name = "activity-compose", ver
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx"}
 documentFile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentFile"}
+kxml2 = { module = "net.sf.kxml:kxml2", version.ref = "kxml2" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime"}
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-runtime"}
 
