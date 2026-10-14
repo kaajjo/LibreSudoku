@@ -1,28 +1,76 @@
 package com.kaajjo.libresudoku.ui.components.board
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.kaajjo.libresudoku.core.Cell
 import com.kaajjo.libresudoku.core.qqwing.Cage
 
-fun DrawScope.drawKillerCage(
+/**
+ * Draws each Killer Sudoku cage with a dashed outline and a sum in its first cell's corner
+ *
+ * @param cages cages containing their cells and target sums
+ * @param geometry board and cell dimensions in pixels
+ * @param sumGlyphs painter configured for cage sum text
+ * @param lineColor dashed outline color
+ * @param sumColor cage sum text color
+ * @param lineWidth dashed outline stroke width in pixels
+ * @param questions whether to replace each sum with a question mark
+ */
+fun DrawScope.drawCages(
+    cages: List<Cage>,
+    geometry: BoardGeometry,
+    sumGlyphs: GlyphPainter,
+    lineColor: Color,
+    sumColor: Color,
+    lineWidth: Float,
+    questions: Boolean
+) {
+    if (cages.isEmpty()) return
+    val cellSize = geometry.cellSize
+    val dashes = PathEffect.dashPathEffect(floatArrayOf(cellSize / 12f, cellSize / 12f))
+    val sumPadding = cellSize * 0.05f
+
+    cages.forEach { cage ->
+        val cellWithSum = cage.cells.firstOrNull() ?: return@forEach
+        val label = if (questions) "?" else cage.sum.toString()
+        drawGlyphAt(
+            painter = sumGlyphs,
+            text = label,
+            topLeft = geometry.cellTopLeft(cellWithSum.position) + Offset(sumPadding, sumPadding),
+            color = sumColor
+        )
+        drawCageOutline(
+            cage = cage,
+            cellWithSum = cellWithSum,
+            cellSize = cellSize,
+            strokeWidth = lineWidth,
+            color = lineColor,
+            pathEffect = dashes,
+            sumSize = sumGlyphs.inkBounds(label).size
+        )
+    }
+}
+
+private fun DrawScope.drawCageOutline(
     cage: Cage,
     cellWithSum: Cell,
     cellSize: Float,
     strokeWidth: Float,
     color: Color,
-    cornerTextPadding: Offset
+    pathEffect: PathEffect,
+    sumSize: Size
 ) {
-    val pathEffect = PathEffect.dashPathEffect(floatArrayOf(cellSize / 12f, cellSize / 12f))
     val padding = cellSize * 0.1f
+    val halfPadding = padding / 2f
 
     cage.cells.forEach { cell ->
-        val halfPadding = padding / 2f
         val xCell = cell.col * cellSize
         val yCell = cell.row * cellSize
 
+        // the outline makes way for the sum in the corner
         val hasPaddingForText = cell == cellWithSum
 
         val hasNeighborLeft = hasNeighborLeft(cell, cage)
@@ -35,7 +83,7 @@ fun DrawScope.drawKillerCage(
                 color = color,
                 start = Offset(
                     x = xCell + padding,
-                    y = yCell + if (hasPaddingForText) (cornerTextPadding.y + padding) else if (hasNeighborTop) -halfPadding else padding
+                    y = yCell + if (hasPaddingForText) (sumSize.height + padding) else if (hasNeighborTop) -halfPadding else padding
                 ),
                 end = Offset(
                     x = xCell + padding,
@@ -65,7 +113,7 @@ fun DrawScope.drawKillerCage(
             drawLine(
                 color = color,
                 start = Offset(
-                    x = xCell + if (hasPaddingForText) (cornerTextPadding.x + padding) else if (hasNeighborLeft) -halfPadding else padding,
+                    x = xCell + if (hasPaddingForText) (sumSize.width + padding) else if (hasNeighborLeft) -halfPadding else padding,
                     y = yCell + padding
                 ),
                 end = Offset(

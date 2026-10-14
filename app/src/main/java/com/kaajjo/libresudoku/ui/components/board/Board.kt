@@ -1,37 +1,29 @@
 package com.kaajjo.libresudoku.ui.components.board
 
-import android.graphics.Paint
-import androidx.compose.foundation.Canvas
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,39 +33,42 @@ import com.kaajjo.libresudoku.core.Note
 import com.kaajjo.libresudoku.core.qqwing.Cage
 import com.kaajjo.libresudoku.core.qqwing.GameType
 import com.kaajjo.libresudoku.core.utils.SudokuParser
+import com.kaajjo.libresudoku.ui.components.board.HighlightAlpha.CROSS
+import com.kaajjo.libresudoku.ui.components.board.HighlightAlpha.HINT
+import com.kaajjo.libresudoku.ui.components.board.HighlightAlpha.NOTE
+import com.kaajjo.libresudoku.ui.components.board.HighlightAlpha.POSITION_LINES
+import com.kaajjo.libresudoku.ui.components.board.HighlightAlpha.SAME_NUMBER
+import com.kaajjo.libresudoku.ui.components.board.HighlightAlpha.SELECTED_CELL
 import com.kaajjo.libresudoku.ui.theme.BoardColors
 import com.kaajjo.libresudoku.ui.theme.LibreSudokuTheme
 import com.kaajjo.libresudoku.ui.theme.SudokuBoardColors
 import com.kaajjo.libresudoku.ui.theme.SudokuBoardColorsImpl
 import com.kaajjo.libresudoku.ui.util.LightDarkPreview
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.sqrt
 
 /**
- * Sudoku board
+ * Interactive Sudoku board with animated digits, notes and highlights
  *
- * @param board sudoku game
- * @param size sudoku game size (always []
- * @param notes a list of [Note] for sudoku game
- * @param mainTextSize main numbers text size (used when [autoFontSize] is set to false
- * @param autoFontSize adjust numbers font size according to cell size. Enabling this will override [mainTextSize]
- * @param noteTextSize note number text size
- * @param selectedCell currently selected [Cell]
- * @param onClick returns [Cell] that was clicked
- * @param onLongClick returns [Cell] that was long clicked
- * @param identicalNumbersHighlight highlight cells with the same value as selected cell
- * @param errorsHighlight whether to highlight mistakes
- * @param positionLines whether to highlight row and column of currently selected [Cell]
- * @param enabled
- * @param questions  if enabled, "?" will be shown instead of number in cells (used instead of blur modifier on android < 12)
- * @param renderNotes whether to show notes at all
- * @param cellsToHighlight list of [Cell] to highlight
- * @param notesToHighlight list of [Note] to highlight
- * @param zoomable whether to allow zoom and pan the board
- * @param boardColors colors of the board (see [BoardColors])
- * @param crossHighlight highlight some boxes on the board
- * @param cages a list of [Cage] for killer sudoku
+ * @param modifier layout, drawing and input modifiers applied to the board
+ * @param board square matrix of cells with values, lock states and error flags
+ * @param size number of rows and columns, supported values are 6, 9 and 12
+ * @param notes pencil marks to display, or null when there are none
+ * @param mainTextSize size of the main digits when [autoFontSize] is false
+ * @param autoFontSize whether to derive the main digit size from the cell size instead of [mainTextSize]
+ * @param selectedCell selected cell, or a cell with negative coordinates when no cell is selected
+ * @param onClick callback receiving the tapped cell, including when [enabled] is false
+ * @param onLongClick callback receiving the long-pressed cell when [enabled] is true
+ * @param identicalNumbersHighlight whether to highlight filled cells matching [selectedCell]'s value
+ * @param errorsHighlight whether to highlight cells marked as errors
+ * @param positionLines whether to highlight the selected cell's row and column
+ * @param enabled whether long presses and zoom gestures are accepted, while taps are always reported
+ * @param questions whether to replace digits and cage sums with question marks and hide notes
+ * @param renderNotes whether to display notes when [questions] is false
+ * @param cellsToHighlight additional cells highlighted by a hint or tutorial
+ * @param notesToHighlight visible pencil marks that should receive a circular highlight
+ * @param zoomable whether to install zoom and pan handling and clip the board to its viewport
+ * @param boardColors colors used for text, grid lines and highlights
+ * @param crossHighlight whether to tint alternating boxes, ignored for 6x6 boards
+ * @param cages Killer Sudoku cages whose outlines and sums should be drawn
  */
 @Composable
 fun Board(
@@ -88,12 +83,6 @@ fun Board(
         else -> 14.sp
     },
     autoFontSize: Boolean = false,
-    noteTextSize: TextUnit = when (size) {
-        6 -> 18.sp
-        9 -> 12.sp
-        12 -> 7.sp
-        else -> 14.sp
-    },
     selectedCell: Cell,
     onClick: (Cell) -> Unit,
     onLongClick: (Cell) -> Unit = { },
@@ -110,373 +99,161 @@ fun Board(
     crossHighlight: Boolean = false,
     cages: List<Cage> = emptyList()
 ) {
-    BoxWithConstraints(
+    val gameSize = size
+    val content = boardContent(
+        board = board,
+        gameSize = gameSize,
+        notes = if (renderNotes && !questions) notes.orEmpty() else emptyList(),
+        selectedCell = selectedCell,
+        highlightSameNumbers = identicalNumbersHighlight,
+        highlightErrors = errorsHighlight,
+        cellsToHighlight = cellsToHighlight.orEmpty(),
+        notesToHighlight = notesToHighlight
+    )
+
+    val animations = rememberBoardAnimations()
+
+    // Runs after composition but before the frame is drawn
+    SideEffect { animations.update(content) }
+    LaunchedEffect(content.selected) {
+        animations.selection.animateTo(content.selected)
+    }
+
+    val zoomState = remember { BoardZoomState() }
+    LaunchedEffect(enabled) {
+        if (!enabled) zoomState.reset()
+    }
+
+    val crossHighlightAlpha = animateFloatAsState(
+        // doesn't look good on 6x6
+        targetValue = if (crossHighlight && gameSize != 6) 1f else 0f,
+        label = "Cross highlight"
+    )
+
+    val currentBoard by rememberUpdatedState(board)
+    val currentOnClick by rememberUpdatedState(onClick)
+    val currentOnLongClick by rememberUpdatedState(onLongClick)
+
+    Spacer(
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(1f)
+            .then(if (zoomable) Modifier.clipToBounds() else Modifier)
             .padding(4.dp)
-    ) {
-        val maxWidth = constraints.maxWidth.toFloat()
-
-        // single cell size
-        val cellSize by remember(size) { mutableFloatStateOf(maxWidth / size.toFloat()) }
-        // div for notes in one row in cell
-        val cellSizeDivWidth by remember(size) { mutableFloatStateOf(cellSize / ceil(sqrt(size.toFloat()))) }
-
-        val errorColor = boardColors.errorColor
-        val foregroundColor = boardColors.foregroundColor
-        val thickLineColor = boardColors.thickLineColor
-        val thinLineColor = boardColors.thinLineColor
-        // locked numbers
-        val altForegroundColor = boardColors.altForegroundColor
-        val notesColor = boardColors.notesColor
-
-        // highlight (cells)
-        val highlightColor = boardColors.highlightColor
-
-        val vertThick by remember(size) { mutableIntStateOf(floor(sqrt(size.toFloat())).toInt()) }
-        val horThick by remember(size) { mutableIntStateOf(ceil(sqrt(size.toFloat())).toInt()) }
-
-        var fontSizePx by remember { mutableFloatStateOf(1f) }
-        with(LocalDensity.current) {
-            LaunchedEffect(autoFontSize, size, mainTextSize) {
-                fontSizePx = if (autoFontSize) {
-                    (cellSize * 0.9f).toSp().toPx()
-                } else {
-                    mainTextSize.toPx()
+            .then(if (zoomable) Modifier.boardZoom(zoomState, enabled) else Modifier)
+            .pointerInput(gameSize, enabled) {
+                fun cellAt(position: Offset): Cell? {
+                    if (currentBoard.isEmpty()) return null
+                    val cell = BoardGeometry(gameSize, this.size.width.toFloat()).cellAt(position)
+                    return currentBoard[cell.row][cell.col]
                 }
-            }
-        }
-        val noteSizePx = with(LocalDensity.current) { (cellSizeDivWidth * 0.8f).toSp().toPx() }
-        val killerSumSizePx = with(LocalDensity.current) { noteSizePx * 1.1f }
-
-        val thinLineWidth = with(LocalDensity.current) { 1.3.dp.toPx() }
-        val thickLineWidth = with(LocalDensity.current) { 1.3.dp.toPx() }
-
-        val killerSumBounds by remember { mutableStateOf(android.graphics.Rect()) }
-
-        // paints
-        // numbers
-        var textPaint by remember(fontSizePx) {
-            mutableStateOf(
-                Paint().apply {
-                    color = foregroundColor.toArgb()
-                    isAntiAlias = true
-                    textSize = fontSizePx
-                }
-            )
-        }
-        // errors
-        var errorTextPaint by remember {
-            mutableStateOf(
-                Paint().apply {
-                    color = errorColor.toArgb()
-                    isAntiAlias = true
-                    textSize = fontSizePx
-                }
-            )
-        }
-        // locked numbers
-        var lockedTextPaint by remember {
-            mutableStateOf(
-                Paint().apply {
-                    color = altForegroundColor.toArgb()
-                    isAntiAlias = true
-                    textSize = fontSizePx
-                }
-            )
-        }
-
-        // notes
-        var notePaint by remember {
-            mutableStateOf(
-                Paint().apply {
-                    color = notesColor.toArgb()
-                    isAntiAlias = true
-                    textSize = noteSizePx
-                }
-            )
-        }
-
-        val noteHighlightPaint by remember {
-            mutableStateOf(
-                Paint().apply {
-                    color = highlightColor.copy(alpha = 0.3f).toArgb()
-                    isAntiAlias = true
-                }
-            )
-        }
-
-        var killerSumPaint by remember {
-            mutableStateOf(
-                Paint().apply {
-                    color = notesColor.toArgb()
-                    isAntiAlias = true
-                    textSize = killerSumSizePx
-                }
-            )
-        }
-
-        val context = LocalContext.current
-        LaunchedEffect(mainTextSize, noteTextSize, boardColors) {
-            textPaint = Paint().apply {
-                color = foregroundColor.toArgb()
-                isAntiAlias = true
-                textSize = fontSizePx
-            }
-            notePaint = Paint().apply {
-                color = notesColor.toArgb()
-                isAntiAlias = true
-                textSize = noteSizePx
-            }
-            errorTextPaint = Paint().apply {
-                color = Color(230, 67, 83).toArgb()
-                isAntiAlias = true
-                textSize = fontSizePx
-            }
-            lockedTextPaint = Paint().apply {
-                color = altForegroundColor.toArgb()
-                isAntiAlias = true
-                textSize = fontSizePx
-            }
-            killerSumPaint = Paint().apply {
-                color = notesColor.toArgb()
-                isAntiAlias = true
-                textSize = killerSumSizePx
-            }
-        }
-
-        var zoom by remember(enabled) { mutableFloatStateOf(1f) }
-        var offset by remember(enabled) { mutableStateOf(Offset.Zero) }
-
-        val boardModifier = Modifier
-            .fillMaxSize()
-            .pointerInput(key1 = enabled, key2 = board) {
                 detectTapGestures(
-                    onTap = {
-                        val totalOffset = it / zoom + offset
-                        val row =
-                            floor((totalOffset.y) / cellSize)
-                                .toInt()
-                                .coerceIn(board.indices)
-                        val column =
-                            floor((totalOffset.x) / cellSize)
-                                .toInt()
-                                .coerceIn(board.indices)
-                        onClick(board[row][column])
-                    },
-                    onLongPress = {
-                        if (enabled) {
-                            val totalOffset = it / zoom + offset
-                            val row = floor((totalOffset.y) / cellSize).toInt()
-                            val column = floor((totalOffset.x) / cellSize).toInt()
-                            onLongClick(board[row][column])
-                        }
+                    onTap = { position -> cellAt(position)?.let(currentOnClick) },
+                    onLongPress = if (enabled) {
+                        { position -> cellAt(position)?.let(currentOnLongClick) }
+                    } else {
+                        null
                     }
                 )
             }
+            .drawWithCache {
+                val boardRect = this.size.toRect()
+                val geometry = BoardGeometry(gameSize, boardRect.width)
+                val digitGlyphs = GlyphPainter(
+                    textSize = if (autoFontSize) geometry.cellSize * AutoFontScale else mainTextSize.toPx()
+                )
+                val noteTextSize = geometry.cellSize / geometry.boxWidth * NoteFontScale
+                val noteGlyphs = GlyphPainter(noteTextSize)
+                val cageSumGlyphs = GlyphPainter(noteTextSize * CageSumFontScale)
+                val noteLayout = NoteLayout(
+                    geometry = geometry,
+                    topReserve = if (cages.isEmpty()) 0f else cageSumGlyphs.inkBounds("0").height
+                )
+                val cornerRadius = CornerRadius(BoardCornerRadius.toPx())
+                val outline = Path().apply { addRoundRect(RoundRect(boardRect, cornerRadius)) }
+                val lineWidth = BoardLineWidth.toPx()
+                val highlight = boardColors.highlightColor
 
-        val zoomModifier = Modifier
-            .pointerInput(enabled) {
-                detectTransformGestures(
-                    onGesture = { gestureCentroid, gesturePan, gestureZoom, _ ->
-                        if (enabled) {
-                            val oldScale = zoom
-                            val newScale = (zoom * gestureZoom).coerceIn(1f..3f)
-
-                            offset = (offset + gestureCentroid / oldScale) -
-                                    (gestureCentroid / newScale + gesturePan / oldScale)
-
-                            zoom = newScale
-                            if (offset.x < 0) {
-                                offset = Offset(0f, offset.y)
-                            } else if (maxWidth - offset.x < maxWidth / zoom) {
-                                offset = offset.copy(x = maxWidth - maxWidth / zoom)
-                            }
-                            if (offset.y < 0) {
-                                offset = Offset(offset.x, 0f)
-                            } else if (maxWidth - offset.y < maxWidth / zoom) {
-                                offset = offset.copy(y = maxWidth - maxWidth / zoom)
-                            }
-                        }
+                onDrawBehind {
+                    clipPath(outline) {
+                        drawCrossHighlight(
+                            geometry = geometry,
+                            color = highlight.copy(alpha = HighlightAlpha.CROSS * crossHighlightAlpha.value)
+                        )
+                        drawSelection(
+                            geometry = geometry,
+                            selection = animations.selection,
+                            cellColor = highlight.copy(alpha = HighlightAlpha.SELECTED_CELL),
+                            lineColor = if (positionLines) highlight.copy(alpha = HighlightAlpha.POSITION_LINES) else null
+                        )
+                        drawCellHighlights(
+                            geometry = geometry,
+                            cells = animations.sameNumberCells,
+                            color = highlight.copy(alpha = HighlightAlpha.SAME_NUMBER)
+                        )
+                        drawCellHighlights(
+                            geometry = geometry,
+                            cells = animations.hintCells,
+                            color = highlight.copy(alpha = HighlightAlpha.HINT)
+                        )
                     }
-                )
-            }
-            .graphicsLayer {
-                translationX = -offset.x * zoom
-                translationY = -offset.y * zoom
-                scaleX = zoom
-                scaleY = zoom
-                TransformOrigin(0f, 0f).also { transformOrigin = it }
-            }
-        Canvas(
-            modifier = if (zoomable) boardModifier.then(zoomModifier) else boardModifier
-        ) {
-            val cornerRadius = CornerRadius(15f, 15f)
-
-            if (selectedCell.row >= 0 && selectedCell.col >= 0) {
-                // current cell
-                drawRoundCell(
-                    row = selectedCell.row,
-                    col = selectedCell.col,
-                    gameSize = size,
-                    rect = Rect(
-                        offset = Offset(
-                            x = selectedCell.col * cellSize,
-                            y = selectedCell.row * cellSize
-                        ),
-                        size = Size(cellSize, cellSize)
-                    ),
-                    color = highlightColor.copy(alpha = 0.2f),
-                    cornerRadius = cornerRadius
-                )
-                if (positionLines) {
-                    drawPositionLines(
-                        row = selectedCell.row,
-                        col = selectedCell.col,
-                        gameSize = size,
-                        color = highlightColor.copy(alpha = 0.1f),
-                        cellSize = cellSize,
-                        lineLength = maxWidth,
+                    drawGrid(
+                        geometry = geometry,
+                        thinLineColor = boardColors.thinLineColor,
+                        thickLineColor = boardColors.thickLineColor,
+                        lineWidth = lineWidth,
                         cornerRadius = cornerRadius
                     )
-                }
-            }
-            if (identicalNumbersHighlight) {
-                for (i in 0 until size) {
-                    for (j in 0 until size) {
-                        if (board[i][j].value == selectedCell.value && board[i][j].value != 0) {
-                            drawRoundCell(
-                                row = board[i][j].row,
-                                col = board[i][j].col,
-                                gameSize = size,
-                                rect = Rect(
-                                    offset = Offset(
-                                        x = board[i][j].col * cellSize,
-                                        y = board[i][j].row * cellSize
-                                    ),
-                                    size = Size(cellSize, cellSize)
-                                ),
-                                color = highlightColor.copy(alpha = 0.2f),
-                                cornerRadius = cornerRadius
-                            )
+                    drawDigits(
+                        geometry = geometry,
+                        animations = animations,
+                        glyphs = digitGlyphs,
+                        colors = boardColors,
+                        questions = questions,
+                        isLocked = { cell ->
+                            board.getOrNull(cell.row)?.getOrNull(cell.col)?.locked == true
                         }
-                    }
-                }
-            }
-            cellsToHighlight?.forEach {
-                drawRoundCell(
-                    row = it.row,
-                    col = it.col,
-                    gameSize = size,
-                    color = highlightColor.copy(alpha = 0.3f),
-                    rect = Rect(
-                        Offset(
-                            x = it.col * cellSize,
-                            y = it.row * cellSize
-                        ),
-                        size = Size(cellSize, cellSize)
-                    ),
-                    cornerRadius = cornerRadius
-                )
-            }
-
-            drawBoardFrame(
-                thickLineColor = thickLineColor,
-                thickLineWidth = thickLineWidth,
-                maxWidth = maxWidth,
-                cornerRadius = CornerRadius(15f, 15f)
-            )
-
-            // horizontal line
-            for (i in 1 until size) {
-                val isThickLine = i % horThick == 0
-                drawLine(
-                    color = if (isThickLine) thickLineColor else thinLineColor,
-                    start = Offset(cellSize * i.toFloat(), 0f),
-                    end = Offset(cellSize * i.toFloat(), maxWidth),
-                    strokeWidth = if (isThickLine) thickLineWidth else thinLineWidth
-                )
-            }
-            // vertical line
-            for (i in 1 until size) {
-                val isThickLine = i % vertThick == 0
-                if (maxWidth >= cellSize * i) {
-                    drawLine(
-                        color = if (isThickLine) thickLineColor else thinLineColor,
-                        start = Offset(0f, cellSize * i.toFloat()),
-                        end = Offset(maxWidth, cellSize * i.toFloat()),
-                        strokeWidth = if (isThickLine) thickLineWidth else thinLineWidth
+                    )
+                    drawNotes(
+                        animations = animations,
+                        layout = noteLayout,
+                        glyphs = noteGlyphs,
+                        color = boardColors.notesColor,
+                        highlightColor = highlight.copy(alpha = HighlightAlpha.NOTE)
+                    )
+                    drawCages(
+                        cages = cages,
+                        geometry = geometry,
+                        sumGlyphs = cageSumGlyphs,
+                        lineColor = boardColors.thinLineColor,
+                        sumColor = boardColors.notesColor,
+                        lineWidth = lineWidth,
+                        questions = questions
                     )
                 }
             }
-
-            drawNumbers(
-                size = size,
-                board = board,
-                highlightErrors = errorsHighlight,
-                errorTextPaint = errorTextPaint,
-                lockedTextPaint = lockedTextPaint,
-                textPaint = textPaint,
-                questions = questions,
-                cellSize = cellSize
-            )
-
-            if (!notes.isNullOrEmpty() && !questions && renderNotes) {
-                drawNotes(
-                    size = size,
-                    paint = notePaint,
-                    highlightPaint = noteHighlightPaint,
-                    notes = notes,
-                    notesToHighlight = notesToHighlight,
-                    cellSize = cellSize,
-                    cellSizeDivWidth = cellSizeDivWidth,
-                    killerSumBounds = killerSumBounds
-                )
-            }
-
-            // doesn't look good on 6x6
-            if (crossHighlight && size != 6) {
-                drawCrossSelection(
-                    gameSize = size,
-                    sectionWidth = getSectionWidthForSize(size),
-                    sectionHeight = getSectionHeightForSize(size),
-                    color = highlightColor.copy(alpha = 0.1f),
-                    cellSize = cellSize
-                )
-            }
-
-            if (cages.isNotEmpty()) {
-                cages.forEach { cage ->
-                    val textToDraw = if (questions) "?" else cage.sum.toString()
-                    killerSumPaint.getTextBounds(textToDraw, 0, textToDraw.length, killerSumBounds)
-                    val cellWithSum = cage.cells.first()
-                    drawIntoCanvas { canvas ->
-                        canvas.nativeCanvas.drawText(
-                            textToDraw,
-                            cellWithSum.col * cellSize + (cellSize * 0.05f),
-                            cellWithSum.row * cellSize + killerSumBounds.height() + (cellSize * 0.05f),
-                            killerSumPaint
-                        )
-                    }
-
-                    drawKillerCage(
-                        cage = cage,
-                        cellWithSum = cellWithSum,
-                        cellSize = cellSize,
-                        strokeWidth = thickLineWidth,
-                        color = thinLineColor,
-                        cornerTextPadding = Offset(
-                            killerSumBounds.width().toFloat(),
-                            killerSumBounds.height().toFloat()
-                        )
-                    )
-                }
-            }
-        }
-    }
+    )
 }
 
+private val BoardCornerRadius = 5.dp
+private val BoardLineWidth = 1.3.dp
+
+// Text sizes, relative to the cell
+private const val AutoFontScale = 0.9f
+private const val NoteFontScale = 0.8f // of a note slot
+private const val CageSumFontScale = 1.1f // of a note
+
+/**
+ * Alpha of the highlight color for each kind of highlight
+ */
+private object HighlightAlpha {
+    const val SELECTED_CELL = 0.2f
+    const val POSITION_LINES = 0.1f
+    const val SAME_NUMBER = 0.2f
+    const val HINT = 0.3f
+    const val NOTE = 0.3f
+    const val CROSS = 0.1f
+}
 
 @LightDarkPreview
 @Composable

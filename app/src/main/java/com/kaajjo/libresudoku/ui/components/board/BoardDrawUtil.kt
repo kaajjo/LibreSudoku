@@ -1,192 +1,230 @@
 package com.kaajjo.libresudoku.ui.components.board
 
-import android.graphics.Paint
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
-import com.kaajjo.libresudoku.core.Cell
-import com.kaajjo.libresudoku.core.Note
-import kotlin.math.floor
-import kotlin.math.sqrt
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.util.lerp
+import com.kaajjo.libresudoku.ui.theme.SudokuBoardColors
 
-fun DrawScope.drawRoundCell(
-    row: Int,
-    col: Int,
-    gameSize: Int,
-    rect: Rect,
-    color: Color,
-    cornerRadius: CornerRadius = CornerRadius.Zero
-) {
-    val path = Path().apply {
-        addRoundRect(
-            roundRectForCell(
-                row = row,
-                col = col,
-                gameSize = gameSize,
-                rect = rect,
-                cornerRadius = cornerRadius
-            )
-        )
-    }
-    drawPath(
-        path = path,
-        color = color
-    )
-}
-
-fun DrawScope.drawNotes(
-    size: Int,
-    paint: Paint,
-    highlightPaint: Paint,
-    notes: List<Note>,
-    notesToHighlight: List<Note>,
-    cellSize: Float,
-    cellSizeDivWidth: Float,
-    killerSumBounds: android.graphics.Rect,
-) {
-    val noteBounds = android.graphics.Rect()
-
-    paint.getTextBounds("1", 0, 1, noteBounds)
-    val cellDivHeight = (cellSize - killerSumBounds.height() * 1.5f) / floor(sqrt(size.toFloat()))
-
-    drawIntoCanvas { canvas ->
-        notes.forEach { note ->
-            val textToDraw = note.value.toString(16).uppercase()
-            val noteTextMeasure = paint.measureText(textToDraw)
-
-            val noteCol = getNoteColumnNumber(note.value, size)
-            val noteRow = getNoteRowNumber(note.value, size)
-
-
-
-            val horizontalPadding =
-                if (noteRow == 0) noteTextMeasure / 3f
-                else if (noteRow == 1) 0f
-                else if (noteRow == 2 && note.value > 9) 0f
-                else -(noteTextMeasure / 3f)
-
-
-            if (notesToHighlight.contains(note)) {
-                canvas.nativeCanvas.drawCircle(
-                    note.col * cellSize + cellSizeDivWidth / 2f + (cellSizeDivWidth * noteRow) + horizontalPadding,
-                    note.row * cellSize + noteBounds.height() * 1.5f + killerSumBounds.height() + (cellDivHeight * noteCol) - (noteBounds.height() * 0.5f),
-                    noteTextMeasure * 1.1f,
-                    highlightPaint
-                )
-            }
-
-            canvas.nativeCanvas.drawText(
-                textToDraw,
-                note.col * cellSize + cellSizeDivWidth / 2f + (cellSizeDivWidth * noteRow) - noteTextMeasure / 2f + horizontalPadding,
-                note.row * cellSize + noteBounds.height() * 1.5f + killerSumBounds.height() + (cellDivHeight * noteCol),
-                paint
-            )
-        }
-    }
-}
-
-fun DrawScope.drawNumbers(
-    size: Int,
-    board: List<List<Cell>>,
-    highlightErrors: Boolean,
-    errorTextPaint: Paint,
-    lockedTextPaint: Paint,
-    textPaint: Paint,
-    questions: Boolean,
-    cellSize: Float
-) {
-    drawIntoCanvas { canvas ->
-        for (i in 0 until size) {
-            for (j in 0 until size) {
-                if (board[i][j].value != 0) {
-                    val paint = when {
-                        board[i][j].error && highlightErrors -> errorTextPaint
-                        board[i][j].locked -> lockedTextPaint
-                        else -> textPaint
-                    }
-
-                    val textToDraw =
-                        if (questions) "?" else board[i][j].value.toString(16).uppercase()
-                    val textBounds = android.graphics.Rect()
-                    textPaint.getTextBounds(textToDraw, 0, 1, textBounds)
-                    val textWidth = paint.measureText(textToDraw)
-
-                    canvas.nativeCanvas.drawText(
-                        textToDraw,
-                        board[i][j].col * cellSize + (cellSize - textWidth) / 2f,
-                        board[i][j].row * cellSize + (cellSize + textBounds.height()) / 2f,
-                        paint
-                    )
-                }
-            }
-        }
-    }
-}
-
-fun DrawScope.drawBoardFrame(
-    thickLineColor: Color,
-    thickLineWidth: Float,
-    maxWidth: Float,
-    cornerRadius: CornerRadius
-) {
-    drawRoundRect(
-        color = thickLineColor,
-        topLeft = Offset.Zero,
-        size = Size(maxWidth, maxWidth),
-        cornerRadius = cornerRadius,
-        style = Stroke(width = thickLineWidth)
-    )
-}
-
-fun roundRectForCell(
-    row: Int,
-    col: Int,
-    gameSize: Int,
-    rect: Rect,
-    cornerRadius: CornerRadius
-): RoundRect {
-    val topLeft = if (row == 0 && col == 0) cornerRadius else CornerRadius.Zero
-    val topRight = if (row == 0 && col == gameSize - 1) cornerRadius else CornerRadius.Zero
-    val bottomLeft = if (row == gameSize - 1 && col == 0) cornerRadius else CornerRadius.Zero
-    val bottomRight =
-        if (row == gameSize - 1 && col == gameSize - 1) cornerRadius else CornerRadius.Zero
-
-    return RoundRect(
-        rect = rect,
-        topLeft = topLeft,
-        topRight = topRight,
-        bottomLeft = bottomLeft,
-        bottomRight = bottomRight
-    )
-}
-
-fun DrawScope.drawCrossSelection(
-    gameSize: Int,
-    sectionHeight: Int,
-    sectionWidth: Int,
-    color: Color,
-    cellSize: Float
-) {
-    for (i in 0 until gameSize / sectionWidth) {
-        for (j in 0 until gameSize / sectionHeight) {
-            if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) {
+/**
+ * Draws a checkerboard of tinted boxes to make them easier to tell apart
+ *
+ * @param geometry board dimensions and box layout in pixels
+ * @param color box fill color including its opacity
+ */
+fun DrawScope.drawCrossHighlight(geometry: BoardGeometry, color: Color) {
+    if (color.alpha == 0f) return
+    val boxSize = Size(geometry.boxWidth * geometry.cellSize, geometry.boxHeight * geometry.cellSize)
+    for (boxRow in 0 until geometry.gameSize / geometry.boxHeight) {
+        for (boxCol in 0 until geometry.gameSize / geometry.boxWidth) {
+            if ((boxRow + boxCol) % 2 == 1) {
                 drawRect(
                     color = color,
-                    topLeft = Offset(
-                        x = i * sectionWidth * cellSize,
-                        y = j * sectionHeight * cellSize
-                    ),
-                    size = Size(cellSize * sectionWidth, cellSize * sectionHeight)
+                    topLeft = Offset(boxCol * boxSize.width, boxRow * boxSize.height),
+                    size = boxSize
                 )
             }
+        }
+    }
+}
+
+/**
+ * Draws the selected cell and optionally its row and column
+ *
+ * Row and column fills overlap the selected cell, making its background more saturated
+ *
+ * @param geometry board and cell dimensions in pixels
+ * @param selection animated cell position and visibility
+ * @param cellColor selected cell fill color before applying animated visibility
+ * @param lineColor row and column fill color, or null to omit those highlights
+ */
+fun DrawScope.drawSelection(
+    geometry: BoardGeometry,
+    selection: SelectionAnimation,
+    cellColor: Color,
+    lineColor: Color?
+) {
+    val visibility = selection.visibility.value
+    if (visibility <= 0f) return
+    val cellSize = geometry.cellSize
+    val topLeft = selection.position.value * cellSize
+
+    if (lineColor != null) {
+        val color = lineColor.copy(alpha = lineColor.alpha * visibility)
+        drawRect(color, topLeft = Offset(topLeft.x, 0f), size = Size(cellSize, geometry.boardSize))
+        drawRect(color, topLeft = Offset(0f, topLeft.y), size = Size(geometry.boardSize, cellSize))
+    }
+    drawRect(
+        color = cellColor.copy(alpha = cellColor.alpha * visibility),
+        topLeft = topLeft,
+        size = Size(cellSize, cellSize)
+    )
+}
+
+/**
+ * Draws cell backgrounds that fade in and out with their set
+ *
+ * @param geometry board and cell dimensions in pixels
+ * @param cells cell positions with their current visibility fractions
+ * @param color cell fill color before applying animated visibility
+ */
+fun DrawScope.drawCellHighlights(
+    geometry: BoardGeometry,
+    cells: AnimatedSet<CellPosition>,
+    color: Color
+) {
+    cells.forEach { cell, entry ->
+        drawRect(
+            color = color.copy(alpha = color.alpha * entry.fraction.coerceIn(0f, 1f)),
+            topLeft = geometry.cellTopLeft(cell),
+            size = Size(geometry.cellSize, geometry.cellSize)
+        )
+    }
+}
+
+/**
+ * Draws cell and box borders and the rounded frame around the board
+ *
+ * @param geometry board dimensions and box layout in pixels
+ * @param thinLineColor color of borders between cells within a box
+ * @param thickLineColor color of box borders and the outer frame
+ * @param lineWidth stroke width in pixels for all grid lines and the frame
+ * @param cornerRadius outer frame corner radii in pixels
+ */
+fun DrawScope.drawGrid(
+    geometry: BoardGeometry,
+    thinLineColor: Color,
+    thickLineColor: Color,
+    lineWidth: Float,
+    cornerRadius: CornerRadius
+) {
+    // Thin lines go first, so box borders run uninterrupted on top of them
+    drawGridLines(geometry, thinLineColor, lineWidth, boxBorders = false)
+    drawGridLines(geometry, thickLineColor, lineWidth, boxBorders = true)
+    drawRoundRect(
+        color = thickLineColor,
+        size = Size(geometry.boardSize, geometry.boardSize),
+        cornerRadius = cornerRadius,
+        style = Stroke(width = lineWidth)
+    )
+}
+
+private fun DrawScope.drawGridLines(
+    geometry: BoardGeometry,
+    color: Color,
+    lineWidth: Float,
+    boxBorders: Boolean
+) {
+    for (i in 1 until geometry.gameSize) {
+        val position = i * geometry.cellSize
+        if ((i % geometry.boxWidth == 0) == boxBorders) {
+            drawLine(
+                color = color,
+                start = Offset(position, 0f),
+                end = Offset(position, geometry.boardSize),
+                strokeWidth = lineWidth
+            )
+        }
+        if ((i % geometry.boxHeight == 0) == boxBorders) {
+            drawLine(
+                color = color,
+                start = Offset(0f, position),
+                end = Offset(geometry.boardSize, position),
+                strokeWidth = lineWidth
+            )
+        }
+    }
+}
+
+/**
+ * Draws digits with animated entry, removal, error color and horizontal shake
+ *
+ * @param geometry board and cell dimensions in pixels
+ * @param animations digit visibility, error highlighting and shake state
+ * @param glyphs painter configured for the main digit text size
+ * @param colors foreground, locked-digit and error colors
+ * @param questions whether to draw a question mark instead of each digit
+ * @param isLocked lookup indicating whether the cell at a position contains a locked clue
+ */
+fun DrawScope.drawDigits(
+    geometry: BoardGeometry,
+    animations: BoardAnimations,
+    glyphs: GlyphPainter,
+    colors: SudokuBoardColors,
+    questions: Boolean,
+    isLocked: (CellPosition) -> Boolean
+) {
+    animations.digits.forEach { digit, entry ->
+        val cell = digit.position
+        val fraction = entry.fraction
+        val digitScale: Float
+        val alpha: Float
+        if (entry.isEntering) {
+            digitScale = lerp(BoardMotion.DigitEnterFromScale, 1f, fraction)
+            // Opaque halfway through, so the bounce reads as a solid digit, not a blinking one
+            alpha = (fraction * 2f).coerceIn(0f, 1f)
+        } else {
+            digitScale = lerp(BoardMotion.DigitExitToScale, 1f, fraction)
+            alpha = fraction.coerceIn(0f, 1f)
+        }
+
+        val baseColor = if (isLocked(cell)) colors.altForegroundColor else colors.foregroundColor
+        val color = lerp(baseColor, colors.errorColor, animations.errors.fractionOf(cell).coerceIn(0f, 1f))
+        val shift = animations.shakeOf(cell) * BoardMotion.ErrorShakeAmplitude * geometry.cellSize
+        val position = geometry.cellCenter(cell) + Offset(shift, 0f)
+
+        scale(digitScale, pivot = position) {
+            drawGlyph(
+                painter = glyphs,
+                text = if (questions) "?" else digitLabel(digit.value),
+                center = position,
+                color = color.copy(alpha = color.alpha * alpha)
+            )
+        }
+    }
+}
+
+/**
+ * Draws pencil marks with a circle behind the highlighted ones
+ *
+ * @param animations note and highlight visibility state
+ * @param layout note slot positions and highlight radius in pixels
+ * @param glyphs painter configured for the note text size
+ * @param color note text color before applying animated visibility
+ * @param highlightColor circle fill color before applying animated visibility
+ */
+fun DrawScope.drawNotes(
+    animations: BoardAnimations,
+    layout: NoteLayout,
+    glyphs: GlyphPainter,
+    color: Color,
+    highlightColor: Color
+) {
+    // Circles go first, so a circle never covers a neighboring note
+    animations.highlightedNotes.forEach { note, entry ->
+        val fraction = entry.fraction
+        drawCircle(
+            color = highlightColor,
+            radius = layout.highlightRadius * fraction.coerceAtLeast(0f),
+            center = layout.center(note),
+            alpha = fraction.coerceIn(0f, 1f)
+        )
+    }
+    animations.notes.forEach { note, entry ->
+        val fraction = entry.fraction.coerceIn(0f, 1f)
+        val position = layout.center(note)
+        scale(lerp(BoardMotion.NoteEnterFromScale, 1f, fraction), pivot = position) {
+            drawGlyph(
+                painter = glyphs,
+                text = digitLabel(note.value),
+                center = position,
+                color = color.copy(alpha = color.alpha * fraction)
+            )
         }
     }
 }
