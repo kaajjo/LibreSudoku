@@ -13,5 +13,5 @@ not regenerate their own expected results.
 Run:
 
 ```bash
-./gradlew :app:testFossDebugUnitTest --tests 'com.kaajjo.libresudoku.generation.validation.*'
+./gradlew :app:testDebugUnitTest --tests 'com.kaajjo.libresudoku.generation.validation.*'
 ```

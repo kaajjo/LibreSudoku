@@ -17,7 +17,6 @@ import com.kaajjo.libresudoku.domain.repository.BoardRepository
 import com.kaajjo.libresudoku.domain.repository.FolderRepository
 import com.kaajjo.libresudoku.domain.repository.RecordRepository
 import com.kaajjo.libresudoku.domain.repository.SavedGameRepository
-import com.kaajjo.libresudoku.util.FlavorUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
@@ -78,7 +77,7 @@ class BackupWorker @AssistedInject constructor(
             val documentFile = DocumentFile.fromTreeUri(context, backupUri.toUri())
             if (documentFile != null) {
                 val backupData = BackupData(
-                    appVersionName = BuildConfig.VERSION_NAME + if (FlavorUtil.isFoss()) "-FOSS" else "",
+                    appVersionName = BuildConfig.VERSION_NAME,
                     appVersionCode = BuildConfig.VERSION_CODE,
                     createdAt = ZonedDateTime.now(),
                     boards = boards,

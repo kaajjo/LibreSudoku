@@ -42,15 +42,6 @@ android {
         }
     }
 
-    flavorDimensions += "version"
-    productFlavors {
-        create("foss") {
-            dimension = "version"
-        }
-        create("nonFOSS") {
-            dimension = "version"
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -132,6 +123,4 @@ dependencies {
     ksp(libs.hilt.work)
     implementation(libs.materialKolor)
 
-    implementation(libs.okhttp)
-    implementation(libs.composeMarkdown)
 }
