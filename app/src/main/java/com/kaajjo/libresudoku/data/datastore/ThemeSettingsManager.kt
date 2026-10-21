@@ -1,8 +1,6 @@
 package com.kaajjo.libresudoku.data.datastore
 
 import android.content.Context
-import android.os.Build.VERSION.SDK_INT
-import android.os.Build.VERSION_CODES
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.datastore.core.DataStore
@@ -52,8 +50,8 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
     }
 
     val dynamicColors = dataStore.data.map { preferences ->
-        // return dynamic theme true only if an android version >= 12
-        preferences[dynamicColorsKey] ?: (SDK_INT >= VERSION_CODES.S)
+        // off by default so the brushed steel theme is used
+        preferences[dynamicColorsKey] ?: PreferencesConstants.DEFAULT_DYNAMIC_COLORS
     }
 
     suspend fun setDarkTheme(value: Int) {
@@ -103,7 +101,7 @@ class ThemeSettingsManager @Inject constructor(@ApplicationContext context: Cont
     }
 
     val themeColorSeed = dataStore.data.map { prefs ->
-        Color(prefs[themeSeedColorKey] ?: Color.Green.toArgb())
+        Color(prefs[themeSeedColorKey] ?: PreferencesConstants.DEFAULT_THEME_SEED_COLOR)
     }
 
     suspend fun setPaletteStyle(style: PaletteStyle) {

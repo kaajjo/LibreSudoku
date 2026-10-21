@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">LibreSudoku</string>
+    <string name="app_name" translatable="false">Robot Sudoku</string>
     <string name="nav_bar_statistics">Statistiques</string>
     <string name="nav_bar_home">Accueil</string>
     <string name="nav_bar_more">Plus</string>
