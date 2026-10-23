@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">LibreSudoku</string>
+    <string name="app_name" translatable="false">Robot Sudoku</string>
     <string name="nav_bar_statistics">Statistics</string>
     <string name="nav_bar_home">Home</string>
     <string name="nav_bar_more">More</string>
@@ -390,4 +390,7 @@
     <string name="generation_save_error_message">The puzzle is ready, but couldn’t be saved</string>
     <string name="generation_retry">Try again</string>
     <string name="generation_saved_progress">Puzzles already added to the folder will be kept</string>
+    <string name="home_welcome">Beep boop! Ready to train your brain, human?</string>
+    <string name="home_label_difficulty">Difficulty</string>
+    <string name="home_label_size">Board size</string>
 </resources>

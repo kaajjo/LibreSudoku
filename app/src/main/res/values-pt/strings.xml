@@ -311,4 +311,7 @@
     <string name="action_grant">Conceder</string>
     <string name="autobackup_never">Nunca</string>
     <string name="restore_existing_data_alert">Dados existentes serão deletados!</string>
+    <string name="home_welcome">Bip bop! Pronto para treinar o cérebro, humano?</string>
+    <string name="home_label_difficulty">Dificuldade</string>
+    <string name="home_label_size">Tamanho do tabuleiro</string>
 </resources>

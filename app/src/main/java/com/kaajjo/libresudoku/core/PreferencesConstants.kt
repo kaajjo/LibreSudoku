@@ -24,12 +24,12 @@ class PreferencesConstants {
         const val DEFAULT_AUTO_BACKUPS_NUMBER = 3
         const val DEFAULT_ADVANCED_HINT = false
 
-        const val DEFAULT_DYNAMIC_COLORS = true
+        const val DEFAULT_DYNAMIC_COLORS = false
         const val DEFAULT_DARK_THEME = 0
         const val DEFAULT_AMOLED_BLACK = false
         const val DEFAULT_MONET_SUDOKU_BOARD = true
         const val DEFAULT_BOARD_CROSS_HIGHLIGHT = false
-        const val DEFAULT_THEME_SEED_COLOR = -16711936 /* Color.Green.toArgb() */
+        const val DEFAULT_THEME_SEED_COLOR = -8875876 /* 0xFF78909C, brushed steel */
         const val DEFAULT_PALETTE_STYLE = 0
     }
 }
